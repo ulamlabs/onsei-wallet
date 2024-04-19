@@ -1,20 +1,20 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { useDeviceContext } from "twrnc";
+import tw from "@/lib/tailwind";
+import MainScreenNavigation from "@/navigation/MainScreenNavigation";
+import AccountProvider from "@/store/account";
+import AddressBookProvider from "@/store/addressBook";
 
 export default function App() {
+  useDeviceContext(tw);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaProvider>
+      <AccountProvider>
+        <AddressBookProvider>
+          <MainScreenNavigation />
+        </AddressBookProvider>
+      </AccountProvider>
+    </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
