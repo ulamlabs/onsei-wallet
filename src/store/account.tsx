@@ -1,5 +1,3 @@
-import { generateWallet, restoreWallet } from "@sei-js/cosmjs";
-import { create } from "zustand";
 import {
   loadFromSecureStorage,
   loadFromStorage,
@@ -8,6 +6,16 @@ import {
   saveToSecureStorage,
   saveToStorage,
 } from "@/utils";
+import { generateWallet, restoreWallet } from "@sei-js/cosmjs";
+import { create } from "zustand";
+
+const NODE_KEY = "NETWORK";
+const nodes: Record<Node, string> = {
+  MainNet: "https://rpc.wallet.pacific-1.sei.io",
+  TestNet: "https://rpc.wallet.atlantic-2.sei.io",
+};
+
+export type Node = "MainNet" | "TestNet";
 
 export type Account = {
   name: string;
@@ -32,6 +40,9 @@ type AccountsStore = {
   clearStore: () => void;
   getMnemonic: (name: string) => string;
   subscribeToAccounts: () => void;
+  getRawBalance: (address?: string) => number;
+  getBalance: (address?: string) => number;
+  getUSDBalance: (address?: string) => number;
 };
 
 export const useAccountsStore = create<AccountsStore>((set) => ({

@@ -1,18 +1,32 @@
-import { ActivityIndicator, Text, Pressable, ViewStyle } from "react-native";
 import tw from "@/lib/tailwind";
+import { ActivityIndicator, Pressable, Text, ViewStyle } from "react-native";
 
 type PrimaryButtonProps = {
-  label: string;
+  label?: string;
   onPress: () => any;
   isLoading?: boolean;
   styles?: ViewStyle;
+  icon?: JSX.Element;
+  status?: "primary" | "danger" | "ghost";
+  disabled?: boolean;
 };
 
-export default ({ label, isLoading, styles, onPress }: PrimaryButtonProps) => {
+export default ({
+  label,
+  isLoading,
+  styles,
+  onPress,
+  icon,
+  status = "primary",
+  disabled = false,
+}: PrimaryButtonProps) => {
   return (
     <Pressable
+      disabled={disabled}
       style={[
-        tw`bg-primary-400 items-center px-6 py-3 rounded-1 flex flex-row`,
+        tw`items-center px-6 py-3 rounded-1 flex flex-row ${
+          status === "primary" ? "bg-primary-400" : ""
+        } ${status === "danger" ? "bg-danger-600" : ""}`,
         styles,
       ]}
       onPress={onPress}
@@ -20,7 +34,8 @@ export default ({ label, isLoading, styles, onPress }: PrimaryButtonProps) => {
       {isLoading && (
         <ActivityIndicator size={5} color="#fff" style={tw`mr-5`} />
       )}
-      <Text style={tw`text-white font-bold`}>{label}</Text>
+      {icon}
+      {label && <Text style={tw`text-white font-bold`}>{label}</Text>}
     </Pressable>
   );
 };
