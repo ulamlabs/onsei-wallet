@@ -3,9 +3,7 @@ import { Text, TextInput, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { MainStackParamList } from "@/navigation/MainScreenNavigation";
 import { useAccountsStore } from "@/store";
-import SafeLayout from "@/components/SafeLayout";
-import BackButton from "@/components/BackButton";
-import PrimaryButton from "@/components/PrimaryButton";
+import { SafeLayout, BackButton, PrimaryButton } from "@/components";
 import { useInputState } from "@/hooks";
 import { resetNavigationStack } from "@/utils";
 import tw from "@/lib/tailwind";
@@ -36,8 +34,8 @@ export default ({ navigation }: NewWalletProps) => {
   async function onImport() {
     try {
       const newAccount = await accountsStore.importAccount(
-        nameInput.value,
-        mnemoInput.value
+        nameInput.value.trim(),
+        mnemoInput.value.trim()
       );
       accountsStore.setActiveAccount(newAccount.address);
       accountsStore.subscribeToAccounts();

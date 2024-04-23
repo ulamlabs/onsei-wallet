@@ -4,10 +4,10 @@ import "fastestsmallesttextencoderdecoder";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useDeviceContext } from "twrnc";
 import tw from "@/lib/tailwind";
-import MainScreenNavigation from "@/navigation/MainScreenNavigation";
-import AddressBookProvider from "@/store/addressBook";
-import { useAccountsStore } from "@/store";
+import { useAccountsStore, useAuthStore, AddressBookProvider } from "@/store";
 import { useEffect } from "react";
+import { UnlockScreen } from "@/screens/auth";
+import MainScreenNavigation from "@/navigation/MainScreenNavigation";
 
 export default function App() {
   useDeviceContext(tw);
@@ -17,10 +17,16 @@ export default function App() {
     accountsStore.init();
   }, []);
 
+  const authStore = useAuthStore();
+
   return (
     <SafeAreaProvider>
       <AddressBookProvider>
-        <MainScreenNavigation />
+        {authStore.state === "locked" ? (
+          <UnlockScreen />
+        ) : (
+          <MainScreenNavigation />
+        )}
       </AddressBookProvider>
     </SafeAreaProvider>
   );

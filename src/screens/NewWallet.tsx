@@ -1,12 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useAccountsStore, Wallet } from "@/store";
 import { MainStackParamList } from "@/navigation/MainScreenNavigation";
-import SafeLayout from "@/components/SafeLayout";
-import BackButton from "@/components/BackButton";
-import MnemonicWords from "@/components/MnemonicWords";
-import PrimaryButton from "@/components/PrimaryButton";
+import {
+  SafeLayout,
+  BackButton,
+  MnemonicWords,
+  PrimaryButton,
+} from "@/components";
 import tw from "@/lib/tailwind";
 
 type NewWalletProps = NativeStackScreenProps<MainStackParamList, "New Wallet">;

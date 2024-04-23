@@ -1,5 +1,4 @@
 import React, { useContext, useEffect } from "react";
-import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import InitScreen from "@/screens/InitScreen";
 import NewWallet from "@/screens/NewWallet";
@@ -11,6 +10,7 @@ import {
   AddressBookContext,
   AddressBookContextType,
 } from "@/store/addressBook";
+import { NavigationContainer } from "@react-navigation/native";
 
 export type MainStackParamList = {
   Init: undefined;

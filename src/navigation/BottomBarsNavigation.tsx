@@ -2,10 +2,10 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import WalletOverview from "@/screens/WalletOverview";
 import AddressBook from "@/screens/AddressBook";
-import Settings from "@/screens/settings/Settings";
 import { User, Book1, Setting2 } from "iconsax-react-native";
 import tw from "@/lib/tailwind";
 import { View } from "react-native";
+import SettingsScreen from "@/screens/settings/SettingsScreen";
 
 export type BottomTabsParamList = {
   "My wallet": undefined;
@@ -44,15 +44,16 @@ export default () => {
         },
         tabBarActiveTintColor: primaryColor,
         tabBarInactiveTintColor: inactiveColor,
-        headerShown: false,
         tabBarLabel: route.name.toUpperCase(),
         tabBarLabelStyle: tw`font-bold`,
         tabBarStyle: tw`bg-background`,
+        headerStyle: { backgroundColor: tw.color("header-background") },
+        headerTintColor: "white",
       })}
     >
       <Screen name="My wallet" component={WalletOverview} />
       <Screen name="Address Book" component={AddressBook} />
-      <Screen name="Settings" component={Settings} />
+      <Screen name="Settings" component={SettingsScreen} />
     </Navigator>
   );
 };
