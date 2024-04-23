@@ -1,5 +1,4 @@
 import React, { useContext, useEffect } from "react";
-import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import InitScreen from "@/screens/InitScreen";
 import NewWallet from "@/screens/NewWallet";
@@ -33,17 +32,15 @@ export default () => {
   }, []);
 
   return (
-    <NavigationContainer>
-      <Navigator
-        screenOptions={{ headerShown: false }}
-        initialRouteName={accountsStore.activeAccount ? "Connected" : "Init"}
-      >
-        <Screen name="Init" component={InitScreen} />
-        <Screen name="New Wallet" component={NewWallet} />
-        <Screen name="Confirm Mnemonic" component={ConfirmMnemonic} />
-        <Screen name="Import Wallet" component={ImportWallet} />
-        <Screen name="Connected" component={ConnectedScreenNavigation} />
-      </Navigator>
-    </NavigationContainer>
+    <Navigator
+      screenOptions={{ headerShown: false }}
+      initialRouteName={accountsStore.activeAccount ? "Connected" : "Init"}
+    >
+      <Screen name="Init" component={InitScreen} />
+      <Screen name="New Wallet" component={NewWallet} />
+      <Screen name="Confirm Mnemonic" component={ConfirmMnemonic} />
+      <Screen name="Import Wallet" component={ImportWallet} />
+      <Screen name="Connected" component={ConnectedScreenNavigation} />
+    </Navigator>
   );
 };

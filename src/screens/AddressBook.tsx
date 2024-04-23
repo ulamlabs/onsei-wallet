@@ -15,7 +15,6 @@ export default ({ navigation }: AddressBookProps) => {
   return (
     <SafeLayout>
       <View style={tw`items-center`}>
-        <Text style={tw`title`}>ADDRESS BOOK</Text>
         <Text style={tw`text-white`}>TODO</Text>
       </View>
     </SafeLayout>

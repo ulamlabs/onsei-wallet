@@ -36,8 +36,8 @@ export default ({ navigation }: NewWalletProps) => {
   async function onImport() {
     try {
       const newAccount = await accountsStore.importAccount(
-        nameInput.value,
-        mnemoInput.value
+        nameInput.value.trim(),
+        mnemoInput.value.trim()
       );
       accountsStore.setActiveAccount(newAccount.address);
       accountsStore.subscribeToAccounts();
