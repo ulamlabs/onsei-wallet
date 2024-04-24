@@ -112,7 +112,6 @@ export default ({
     [backgroundColor, containerStyle, dimensions, height, width]
   );
 
-  console.log(tooltipStyle);
   return (
     <View ref={renderedElement}>
       <Pressable

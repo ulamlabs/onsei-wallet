@@ -12,14 +12,8 @@ import Popover from "./Popover";
 
 export default () => {
   const navigation = useNavigation();
-  const {
-    activeAccount,
-    node,
-    getBalance,
-    accounts,
-    getMnemonic,
-    changeActiveAccount,
-  } = useAccountsStore();
+  const { activeAccount, node, getBalance, accounts, getMnemonic } =
+    useAccountsStore();
   const [accountsSorted, setAccountsSorted] = useState<Account[]>([]);
   const [visiblePopover, setVisiblePopover] = useState<string | null>(null);
   const [mnemoToShow, setMnemoToShow] = useState<string[] | null>(null);
@@ -36,7 +30,7 @@ export default () => {
   }
 
   function onSelect(address: string) {
-    changeActiveAccount(address);
+    //changeActiveAccount(address);
   }
 
   function onCopy(address: string) {
