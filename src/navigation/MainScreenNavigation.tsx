@@ -6,7 +6,7 @@ import NewWallet from "@/screens/NewWallet";
 import ConfirmMnemonic from "@/screens/ConfirmMnemonic";
 import ImportWallet from "@/screens/ImportWallet";
 import ConnectedScreenNavigation from "./ConnectedScreenNavigation";
-import { AccountContext, AccountContextType } from "@/store/account";
+import { useAccountsStore, Wallet } from "@/store";
 import {
   AddressBookContext,
   AddressBookContextType,
@@ -16,14 +16,14 @@ export type MainStackParamList = {
   Init: undefined;
   "New Wallet": undefined;
   "Import Wallet": undefined;
-  "Confirm Mnemonic": { mnemonic: string[] };
+  "Confirm Mnemonic": { wallet: Wallet };
   Connected: undefined;
 };
 
 const { Navigator, Screen } = createNativeStackNavigator<MainStackParamList>();
 
 export default () => {
-  const { activeAccount } = useContext(AccountContext) as AccountContextType;
+  const accountsStore = useAccountsStore();
   const { initStore: initBookStore } = useContext(
     AddressBookContext
   ) as AddressBookContextType;
@@ -36,7 +36,7 @@ export default () => {
     <NavigationContainer>
       <Navigator
         screenOptions={{ headerShown: false }}
-        initialRouteName={activeAccount ? "Connected" : "Init"}
+        initialRouteName={accountsStore.activeAccount ? "Connected" : "Init"}
       >
         <Screen name="Init" component={InitScreen} />
         <Screen name="New Wallet" component={NewWallet} />

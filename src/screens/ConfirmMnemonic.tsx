@@ -1,16 +1,13 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FlatList, Text, TextInput, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { AccountContext, AccountContextType } from "@/store/account";
+import { useAccountsStore } from "@/store/account";
 import { MainStackParamList } from "@/navigation/MainScreenNavigation";
 import SafeLayout from "@/components/SafeLayout";
 import BackButton from "@/components/BackButton";
 import PrimaryButton from "@/components/PrimaryButton";
+import { MNEMONIC_WORDS_COUNT, resetNavigationStack } from "@/utils";
 import { useInputState } from "@/hooks";
-import {
-  AddressBookContext,
-  AddressBookContextType,
-} from "../store/addressBook";
 import tw from "@/lib/tailwind";
 
 type ConfirmMnemoProps = NativeStackScreenProps<
@@ -26,15 +23,10 @@ type WordDict = {
 export default ({
   navigation,
   route: {
-    params: { mnemonic },
+    params: { wallet },
   },
 }: ConfirmMnemoProps) => {
-  const { fetchAccount, changeActiveAccount, subscribeToAccounts } = useContext(
-    AccountContext
-  ) as AccountContextType;
-  const { validateEntry, addNewAddress } = useContext(
-    AddressBookContext
-  ) as AddressBookContextType;
+  const accountsStore = useAccountsStore();
   const [toConfirm, setToConfirm] = useState<WordDict[]>([]);
   const [loading, setLoading] = useState(false);
   const nameInput = useInputState();
@@ -45,63 +37,52 @@ export default ({
     useInputState(),
   ];
   const [error, setError] = useState<string | null>(null);
+  const mnemonic = wallet.mnemonic.split(" ");
 
   useEffect(() => {
     const idsChosen: number[] = [];
     const wordsChosen = [];
     while (wordsChosen.length < 4) {
-      const wordId = Math.floor(Math.random() * 12);
+      const wordId = Math.floor(Math.random() * MNEMONIC_WORDS_COUNT);
       if (idsChosen.includes(wordId)) continue;
       idsChosen.push(wordId);
       wordsChosen.push({ word: mnemonic[wordId], wordLabel: wordId + 1 });
     }
     setToConfirm(wordsChosen);
-  }, [mnemonic]);
+  }, [wallet.mnemonic]);
 
   useEffect(() => {
     if (loading) {
       onConfirm();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
 
   function onButtonPress() {
-    setError("");
+    setError(null);
     setLoading(true);
   }
 
   async function onConfirm() {
-    setLoading(true);
-    setError(null);
-
-    try {
-      validateEntry(nameInput.value);
-    } catch (e: any) {
-      setError(e.message);
-      setLoading(false);
-      return;
-    }
-
     for (let i = 0; i < 4; i++) {
-      if (toConfirm[i].word !== mnemoInputs[i].value?.toLowerCase()) {
+      if (toConfirm[i].word !== mnemoInputs[i].value.toLowerCase()) {
         setError("Provided words do not match passphrase");
         setLoading(false);
         return;
       }
     }
 
-    let newAccount: string;
     try {
-      newAccount = await fetchAccount(mnemonic.join(" ").toLowerCase());
+      await accountsStore.storeAccount(nameInput.value, wallet);
+      accountsStore.setActiveAccount(wallet.address);
+      accountsStore.subscribeToAccounts();
+
+      navigation.navigate("Connected");
+      resetNavigationStack(navigation);
     } catch (e: any) {
       console.log("Error on wallet import:", e);
       setError(e.message);
     } finally {
       setLoading(false);
-      addNewAddress(nameInput.value, newAccount!);
-      changeActiveAccount(newAccount!);
-      subscribeToAccounts();
-      navigation.navigate("Connected");
     }
   }
 
@@ -137,6 +118,7 @@ export default ({
               <TextInput
                 style={tw`input flex-1 my-2 w-[100%]`}
                 autoCapitalize="none"
+                autoCorrect={false}
                 {...mnemoInputs[index]}
               />
             </View>

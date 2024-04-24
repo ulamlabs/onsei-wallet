@@ -1,16 +1,13 @@
-import React, { useContext, useEffect, useState } from "react";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { AccountContext, AccountContextType } from "@/store/account";
-import { MainStackParamList } from "@/navigation/MainScreenNavigation";
+import React, { useEffect, useState } from "react";
 import { Text, TextInput, View } from "react-native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { MainStackParamList } from "@/navigation/MainScreenNavigation";
+import { useAccountsStore } from "@/store";
 import SafeLayout from "@/components/SafeLayout";
 import BackButton from "@/components/BackButton";
 import PrimaryButton from "@/components/PrimaryButton";
 import { useInputState } from "@/hooks";
-import {
-  AddressBookContext,
-  AddressBookContextType,
-} from "@/store/addressBook";
+import { resetNavigationStack } from "@/utils";
 import tw from "@/lib/tailwind";
 
 type NewWalletProps = NativeStackScreenProps<
@@ -19,12 +16,7 @@ type NewWalletProps = NativeStackScreenProps<
 >;
 
 export default ({ navigation }: NewWalletProps) => {
-  const { fetchAccount, changeActiveAccount, subscribeToAccounts } = useContext(
-    AccountContext
-  ) as AccountContextType;
-  const { validateEntry, addNewAddress } = useContext(
-    AddressBookContext
-  ) as AddressBookContextType;
+  const accountsStore = useAccountsStore();
   const nameInput = useInputState();
   const mnemoInput = useInputState();
   const [loading, setLoading] = useState(false);
@@ -34,7 +26,6 @@ export default ({ navigation }: NewWalletProps) => {
     if (loading) {
       onImport();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
 
   function onButtonPress() {
@@ -43,28 +34,16 @@ export default ({ navigation }: NewWalletProps) => {
   }
 
   async function onImport() {
-    // TODO: Find equivalent in SEI
-    /* if (!mnemonicValidate(mnemoInput.value!)) {
-      setError("Provided mnemonic is invalid");
-      setLoading(false);
-      return;
-    } */
     try {
-      validateEntry(nameInput.value);
-    } catch (e: any) {
-      setError(e.message);
-      setLoading(false);
-      return;
-    }
+      const newAccount = await accountsStore.importAccount(
+        nameInput.value,
+        mnemoInput.value
+      );
+      accountsStore.setActiveAccount(newAccount.address);
+      accountsStore.subscribeToAccounts();
 
-    let newAccount: string;
-    try {
-      newAccount = await fetchAccount(mnemoInput.value!);
-
-      addNewAddress(nameInput.value, newAccount!);
-      changeActiveAccount(newAccount!);
-      subscribeToAccounts();
       navigation.navigate("Connected");
+      resetNavigationStack(navigation);
     } catch (e: any) {
       console.log("Error on wallet import:", e);
       setError(e.message);
