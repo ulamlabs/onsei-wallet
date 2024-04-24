@@ -1,14 +1,13 @@
-import React from "react";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeLayout } from "@/components";
-import { BottomTabsParamList } from "@/navigation/BottomBarsNavigation";
-import { MainStackParamList } from "@/navigation/MainScreenNavigation";
-import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";
-import { useAccountsStore } from "@/store";
-import { resetNavigationStack } from "@/utils";
-import { useAuthStore } from "@/store";
-import { Button, Text, View } from "react-native";
 import tw from "@/lib/tailwind";
+import { BottomTabsParamList } from "@/navigation/BottomBarsNavigation";
+import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";
+import { MainStackParamList } from "@/navigation/MainScreenNavigation";
+import { useAccountsStore, useAuthStore } from "@/store";
+import { resetNavigationStack } from "@/utils";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import React from "react";
+import { Button, Text, View } from "react-native";
 
 type SettingsProps = NativeStackScreenProps<
   BottomTabsParamList & MainStackParamList & ConnectedStackParamList,

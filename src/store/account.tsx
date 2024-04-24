@@ -30,6 +30,8 @@ export type Wallet = {
 type AccountsStore = {
   accounts: Account[];
   activeAccount: Account | null;
+  tokenPrice: number;
+  node: Node;
   init: () => Promise<void>;
   setActiveAccount: (address: string | null) => void;
   generateWallet: () => Promise<Wallet>;
@@ -45,9 +47,11 @@ type AccountsStore = {
   getUSDBalance: (address?: string) => number;
 };
 
-export const useAccountsStore = create<AccountsStore>((set) => ({
+export const useAccountsStore = create<AccountsStore>((set, get) => ({
   accounts: [],
   activeAccount: null,
+  tokenPrice: 0,
+  node: "MainNet",
   init: async () => {
     const accounts = await loadFromStorage("accounts", []);
     set({ accounts, activeAccount: accounts[0] });
@@ -129,6 +133,18 @@ export const useAccountsStore = create<AccountsStore>((set) => ({
   },
   subscribeToAccounts: () => {
     // TODO: a function that observes balance changes on accounts and updates them
+  },
+  getRawBalance: (address: string = get().activeAccount!.address) => {
+    if (!address || false) return 0.0;
+    // TODO: handle fetching acount balance
+    return 0.0;
+  },
+  getBalance: (address: string = get().activeAccount!.address) => {
+    if (!address) return 0;
+    return get().getRawBalance(address) / 10;
+  },
+  getUSDBalance: (address: string = get().activeAccount!.address) => {
+    return get().getBalance(address) * get().tokenPrice;
   },
 }));
 

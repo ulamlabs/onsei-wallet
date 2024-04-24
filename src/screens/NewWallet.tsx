@@ -3,12 +3,7 @@ import tw from "@/lib/tailwind";
 import { MainStackParamList } from "@/navigation/MainScreenNavigation";
 import { Wallet, useAccountsStore } from "@/store";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, {
-  default as React,
-  default as React,
-  useEffect,
-  useState,
-} from "react";
+import { default as React, useEffect, useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 
 type NewWalletProps = NativeStackScreenProps<MainStackParamList, "New Wallet">;

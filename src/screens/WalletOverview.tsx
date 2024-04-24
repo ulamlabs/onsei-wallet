@@ -6,7 +6,7 @@ import tw from "@/lib/tailwind";
 import { BottomTabsParamList } from "@/navigation/BottomBarsNavigation";
 import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";
 import { MainStackParamList } from "@/navigation/MainScreenNavigation";
-import { AccountContext, AccountContextType } from "@/store/account";
+import { useAccountsStore } from "@/store";
 import { formatTokenAmount } from "@/utils/formatAmount";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
@@ -14,7 +14,7 @@ import {
   DirectboxSend,
   Notification,
 } from "iconsax-react-native";
-import React, { useContext } from "react";
+import React from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 
 type WalletOverviewProps = NativeStackScreenProps<
@@ -23,9 +23,7 @@ type WalletOverviewProps = NativeStackScreenProps<
 >;
 
 export default ({ navigation }: WalletOverviewProps) => {
-  const { activeAccount, node, getBalance, getUSDBalance } = useContext(
-    AccountContext
-  ) as AccountContextType;
+  const { activeAccount, node, getBalance, getUSDBalance } = useAccountsStore();
 
   function onNotification() {
     //navigation.push('Notifications');
@@ -56,7 +54,9 @@ export default ({ navigation }: WalletOverviewProps) => {
         <Text style={tw`title`}>PORTFOLIO</Text>
         {activeAccount ? (
           <>
-            <Text style={tw`text-basic-600 text-xs mb-5`}>{activeAccount}</Text>
+            <Text style={tw`text-basic-600 text-xs mb-5`}>
+              {activeAccount.address}
+            </Text>
             <Text style={tw`text-white text-2xl font-bold`}>
               {formatTokenAmount(getBalance())} SEI
             </Text>

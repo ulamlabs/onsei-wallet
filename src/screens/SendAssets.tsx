@@ -4,7 +4,7 @@ import Modal from "@/components/Modal";
 import SafeLayout from "@/components/SafeLayout";
 import tw from "@/lib/tailwind";
 import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";
-import { AccountContext, AccountContextType } from "@/store/account";
+import { useAccountsStore } from "@/store";
 import {
   AddressBookContext,
   AddressBookContextType,
@@ -16,9 +16,7 @@ import { Text, TextInput, View } from "react-native";
 type SendAssetsProps = NativeStackScreenProps<ConnectedStackParamList, "Send">;
 
 export default ({ navigation }: SendAssetsProps) => {
-  const { activeAccount, getBalance } = useContext(
-    AccountContext
-  ) as AccountContextType;
+  const { activeAccount, getBalance } = useAccountsStore();
   const { addressBook } = useContext(
     AddressBookContext
   ) as AddressBookContextType;

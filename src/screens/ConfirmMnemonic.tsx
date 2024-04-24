@@ -1,4 +1,5 @@
 import BackButton from "@/components/BackButton";
+import Button from "@/components/Button";
 import SafeLayout from "@/components/SafeLayout";
 import { useInputState } from "@/hooks";
 import tw from "@/lib/tailwind";

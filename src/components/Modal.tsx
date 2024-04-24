@@ -41,7 +41,7 @@ export default ({
             {onCancel && (
               <Button
                 styles={tw``}
-                status="danger"
+                type="danger"
                 onPress={onCancel}
                 label="Cancel"
               />
