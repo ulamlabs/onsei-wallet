@@ -1,5 +1,5 @@
 import AccountsList from "@/components/AccountsList";
-import PrimaryButton from "@/components/PrimaryButton";
+import Button from "@/components/Button";
 import SafeLayout from "@/components/SafeLayout";
 import Web3WalletConnect from "@/components/Web3WalletConnect";
 import tw from "@/lib/tailwind";
@@ -48,7 +48,7 @@ export default ({ navigation }: WalletOverviewProps) => {
             <Text style={tw`text-xs`}>TestNet</Text>
           </View>
         )}
-        <PrimaryButton
+        <Button
           styles={tw`absolute right-0 bg-background`}
           onPress={onNotification}
           icon={<Notification />}
@@ -65,7 +65,7 @@ export default ({ navigation }: WalletOverviewProps) => {
             </Text>
             <View style={tw`w-full my-8 justify-around items-center flex-row`}>
               <View style={tw`flex-col items-center`}>
-                <PrimaryButton
+                <Button
                   onPress={onReceive}
                   icon={<DirectboxReceive size={20} color="white" />}
                   styles={tw`rounded-full w-12 h-12 justify-center mb-2 p-0`}
@@ -73,7 +73,7 @@ export default ({ navigation }: WalletOverviewProps) => {
                 <Text style={tw`text-white text-base`}>Receive</Text>
               </View>
               <View style={tw`flex-col items-center`}>
-                <PrimaryButton
+                <Button
                   onPress={onSend}
                   icon={<DirectboxSend size={20} color="white" />}
                   styles={tw`rounded-full w-12 h-12 justify-center mb-2 p-0`}

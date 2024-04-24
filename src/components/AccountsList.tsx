@@ -7,8 +7,8 @@ import * as Clipboard from "expo-clipboard";
 import { More } from "iconsax-react-native";
 import { useContext, useEffect, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import Button from "./Button";
 import Popover from "./Popover";
-import PrimaryButton from "./PrimaryButton";
 
 export default () => {
   const navigation = useNavigation();
@@ -63,7 +63,7 @@ export default () => {
     <View style={tw`w-full`}>
       <View style={tw`flex-row justify-between items-center mb-2`}>
         <Text style={tw`text-2xl text-white font-bold`}>Accounts</Text>
-        <PrimaryButton
+        <Button
           onPress={onAddNew}
           styles={tw`rounded-full h-7 w-7 p-0 justify-center items-center`}
           label="+"
@@ -81,8 +81,8 @@ export default () => {
             {acc === activeAccount ? (
               <Text style={tw`text-success-500`}>Active</Text>
             ) : (
-              <PrimaryButton
-                status="ghost"
+              <Button
+                type="ghost"
                 onPress={() => onSelect(acc)}
                 label="Select"
               />
@@ -98,27 +98,27 @@ export default () => {
               onBackdropPress={() => setVisiblePopover(null)}
             >
               <View>
-                <PrimaryButton
-                  status="ghost"
+                <Button
+                  type="ghost"
                   onPress={() => onCopy(acc)}
                   label="Copy Address"
                 />
-                <PrimaryButton
-                  status="ghost"
+                <Button
+                  type="ghost"
                   onPress={() => onMnemoShow(acc)}
                   label="View Passphrase"
                 />
                 {/* API for transactions works only on MainNet, so there's no point in showing this on TestNet */}
                 {node === "MainNet" && (
-                  <PrimaryButton
-                    status="ghost"
+                  <Button
+                    type="ghost"
                     onPress={() => onTxnsShow(acc)}
                     label="View Transactions"
                   />
                 )}
                 {activeAccount !== acc && (
-                  <PrimaryButton
-                    status="ghost"
+                  <Button
+                    type="ghost"
                     onPress={() => onRemove(acc)}
                     label="Remove Account"
                   />

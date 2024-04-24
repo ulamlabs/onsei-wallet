@@ -4,8 +4,8 @@ import { Camera } from "expo-camera";
 import { Link1 } from "iconsax-react-native";
 import { useState } from "react";
 import { Text, TextInput, View } from "react-native";
+import Button from "./Button";
 import Modal from "./Modal";
-import PrimaryButton from "./PrimaryButton";
 
 export default () => {
   const [initModalOpened, setInitModalOpened] = useState(false);
@@ -32,7 +32,7 @@ export default () => {
   }
   return (
     <>
-      <PrimaryButton
+      <Button
         onPress={() => setInitModalOpened(true)}
         icon={<Link1 size={20} color="white" />}
         styles={tw`rounded-full w-12 h-12 justify-center mb-2 p-0`}
@@ -54,7 +54,7 @@ export default () => {
             placeholder="uri"
             {...uriInput}
           />
-          <PrimaryButton onPress={() => onDappConnect} label="->" />
+          <Button onPress={() => onDappConnect} label="->" />
         </View>
       </Modal>
       <Modal
@@ -69,7 +69,7 @@ export default () => {
             <Text style={tw`text-center mb-5 text-white`}>
               We need your permission to show the camera
             </Text>
-            <PrimaryButton
+            <Button
               onPress={requestPermission}
               styles={tw`justify-center`}
               label="Grant permission"

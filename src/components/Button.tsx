@@ -1,13 +1,13 @@
 import tw from "@/lib/tailwind";
 import { ActivityIndicator, Pressable, Text, ViewStyle } from "react-native";
 
-type PrimaryButtonProps = {
+type ButtonProps = {
   label?: string;
   onPress: () => any;
   isLoading?: boolean;
   styles?: ViewStyle;
   icon?: JSX.Element;
-  status?: "primary" | "danger" | "ghost";
+  type?: "primary" | "danger" | "ghost";
   disabled?: boolean;
 };
 
@@ -17,16 +17,16 @@ export default ({
   styles,
   onPress,
   icon,
-  status = "primary",
+  type = "primary",
   disabled = false,
-}: PrimaryButtonProps) => {
+}: ButtonProps) => {
   return (
     <Pressable
       disabled={disabled}
       style={[
         tw`items-center px-6 py-3 rounded-1 flex flex-row ${
-          status === "primary" ? "bg-primary-400" : ""
-        } ${status === "danger" ? "bg-danger-600" : ""}`,
+          type === "primary" ? "bg-primary-400" : ""
+        } ${type === "danger" ? "bg-danger-600" : ""}`,
         styles,
       ]}
       onPress={onPress}

@@ -1,7 +1,7 @@
 import tw from "@/lib/tailwind";
 import { PropsWithChildren } from "react";
 import { Modal, Text, View } from "react-native";
-import PrimaryButton from "./PrimaryButton";
+import Button from "./Button";
 import SafeLayout from "./SafeLayout";
 
 type ModalProps = PropsWithChildren & {
@@ -39,14 +39,14 @@ export default ({
 
           <View style={tw`flex-row gap-4`}>
             {onCancel && (
-              <PrimaryButton
+              <Button
                 styles={tw``}
                 status="danger"
                 onPress={onCancel}
                 label="Cancel"
               />
             )}
-            <PrimaryButton
+            <Button
               disabled={confirmBtnDisabled}
               onPress={onConfirm}
               label={buttonTxt}

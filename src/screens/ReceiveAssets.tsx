@@ -1,5 +1,5 @@
 import BackButton from "@/components/BackButton";
-import PrimaryButton from "@/components/PrimaryButton";
+import Button from "@/components/Button";
 import SafeLayout from "@/components/SafeLayout";
 import tw from "@/lib/tailwind";
 import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";
@@ -44,7 +44,7 @@ export default ({}: ReceiveAssetsProps) => {
           {activeAccount!}
         </Text>
 
-        <PrimaryButton
+        <Button
           onPress={onCopy}
           icon={
             addressCopied ? (

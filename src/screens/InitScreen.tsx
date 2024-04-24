@@ -1,5 +1,5 @@
 import BackButton from "@/components/BackButton";
-import PrimaryButton from "@/components/PrimaryButton";
+import Button from "@/components/Button";
 import SafeLayout from "@/components/SafeLayout";
 import tw from "@/lib/tailwind";
 import { MainStackParamList } from "@/navigation/MainScreenNavigation";
@@ -49,9 +49,9 @@ export default ({ navigation }: NewWalletProps) => {
         </Text>
 
         <Animated.View style={{ opacity: fadeAnim, alignItems: "center" }}>
-          <PrimaryButton label="Create new Account" onPress={onCreateNew} />
+          <Button label="Create new Account" onPress={onCreateNew} />
           <Text style={tw`my-10 text-white font-bold text-lg`}>OR</Text>
-          <PrimaryButton label="Import existing Account" onPress={onImport} />
+          <Button label="Import existing Account" onPress={onImport} />
         </Animated.View>
       </View>
     </SafeLayout>

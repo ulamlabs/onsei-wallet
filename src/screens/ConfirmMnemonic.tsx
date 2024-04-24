@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { FlatList, Text, TextInput, View } from "react-native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useAccountsStore } from "@/store/account";
-import { MainStackParamList } from "@/navigation/MainScreenNavigation";
-import { BackButton, SafeLayout, PrimaryButton } from "@/components";
-import { MNEMONIC_WORDS_COUNT, resetNavigationStack } from "@/utils";
+import BackButton from "@/components/BackButton";
+import SafeLayout from "@/components/SafeLayout";
 import { useInputState } from "@/hooks";
 import tw from "@/lib/tailwind";
+import { MainStackParamList } from "@/navigation/MainScreenNavigation";
+import { useAccountsStore } from "@/store/account";
+import { MNEMONIC_WORDS_COUNT, resetNavigationStack } from "@/utils";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import React, { useEffect, useState } from "react";
+import { FlatList, Text, TextInput, View } from "react-native";
 
 type ConfirmMnemoProps = NativeStackScreenProps<
   MainStackParamList,
@@ -124,7 +125,7 @@ export default ({
           keyExtractor={(item) => item.word}
         />
 
-        <PrimaryButton
+        <Button
           label="Confirm"
           styles={tw`mt-5`}
           isLoading={loading}

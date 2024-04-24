@@ -1,6 +1,6 @@
 import BackButton from "@/components/BackButton";
+import Button from "@/components/Button";
 import Modal from "@/components/Modal";
-import PrimaryButton from "@/components/PrimaryButton";
 import SafeLayout from "@/components/SafeLayout";
 import tw from "@/lib/tailwind";
 import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";
@@ -104,17 +104,17 @@ export default ({ navigation }: SendAssetsProps) => {
         />
 
         <Text style={tw`text-white mt-5`}>Amount to send</Text>
-        <View style={tw`width-full items-center flex-row mt-2`}>
+        <View style={tw`w-full items-center flex-row mt-2`}>
           <TextInput
             style={tw`input flex-6 mr-2`}
             placeholder="Amount"
             keyboardType="decimal-pad"
             value={amountInput}
           />
-          <PrimaryButton label="MAX" onPress={onMax} />
+          <Button label="MAX" onPress={onMax} />
         </View>
 
-        <PrimaryButton
+        <Button
           label="Sign and Send"
           isLoading={loading}
           styles={tw`mt-8 mb-3`}
