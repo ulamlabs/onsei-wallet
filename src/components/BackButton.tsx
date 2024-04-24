@@ -16,7 +16,7 @@ export default () => {
         tw`absolute elevation-3 z-10`,
         {
           top: insets.top,
-          left: insets.left + 10,
+          left: insets.left + 20,
         },
       ]}
     >

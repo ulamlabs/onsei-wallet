@@ -5,6 +5,9 @@ import SafeLayout from "@/components/SafeLayout";
 import { BottomTabsParamList } from "@/navigation/BottomBarsNavigation";
 import { MainStackParamList } from "@/navigation/MainScreenNavigation";
 import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";
+import PrimaryButton from "@/components/PrimaryButton";
+import { useAccountsStore } from "@/store";
+import { resetNavigationStack } from "@/utils";
 import tw from "@/lib/tailwind";
 
 type SettingsProps = NativeStackScreenProps<
@@ -13,11 +16,24 @@ type SettingsProps = NativeStackScreenProps<
 >;
 
 export default ({ navigation }: SettingsProps) => {
+  const accountsStore = useAccountsStore();
+
+  async function onRemove() {
+    accountsStore.clearStore();
+    // TODO clear address book
+    navigation.navigate("Init");
+    resetNavigationStack(navigation);
+  }
+
   return (
     <SafeLayout>
       <View style={tw`items-center`}>
         <Text style={tw`title`}>SETTINGS</Text>
-        <Text style={tw`text-white`}>TODO</Text>
+
+        <PrimaryButton
+          label="Remove all accounts and logout"
+          onPress={onRemove}
+        />
       </View>
     </SafeLayout>
   );

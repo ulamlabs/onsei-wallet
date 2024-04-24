@@ -1,5 +1,5 @@
 // Not encrypted storage for non-sensitive and frequently used data.
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import Storage from "expo-storage";
 
 /**
  * The key and value pair is permanently stored unless you remove it yourself.
@@ -8,15 +8,16 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
  */
 export async function saveToStorage(key: string, data: any) {
   try {
-    await AsyncStorage.setItem(key, JSON.stringify(data));
-  } catch (e) {
+    await Storage.setItem({ key, value: JSON.stringify(data) });
+  } catch (e: any) {
     console.error(e);
+    throw Error(e.message);
   }
 }
 
 export async function loadFromStorage(key: string, defaultValue: any = null) {
   try {
-    const data = await AsyncStorage.getItem(key);
+    const data = await Storage.getItem({ key });
     if (!data) return defaultValue;
     return JSON.parse(data);
   } catch (e) {
@@ -26,5 +27,5 @@ export async function loadFromStorage(key: string, defaultValue: any = null) {
 }
 
 export async function removeFromStorage(key: string) {
-  await AsyncStorage.removeItem(key);
+  await Storage.removeItem({ key });
 }

@@ -14,7 +14,10 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ulamlabs.seiwallet"
+      "bundleIdentifier": "com.ulamlabs.seiwallet",
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -31,6 +34,7 @@
         "projectId": "f523b313-e5c0-43ea-86ba-0adb942de302"
       }
     },
-    "owner": "ulam-labs"
+    "owner": "ulam-labs",
+    "plugins": ["expo-secure-store"]
   }
 }
