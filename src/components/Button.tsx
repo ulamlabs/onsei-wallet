@@ -9,12 +9,14 @@ type ButtonProps = {
   icon?: JSX.Element;
   type?: "primary" | "danger" | "ghost";
   disabled?: boolean;
+  textStyles?: string;
 };
 
 export default ({
   label,
   isLoading,
   styles,
+  textStyles,
   onPress,
   icon,
   type = "primary",
@@ -26,7 +28,8 @@ export default ({
       style={[
         tw`items-center px-6 py-3 rounded-1 flex flex-row ${
           type === "primary" ? "bg-primary-400" : ""
-        } ${type === "danger" ? "bg-danger-600" : ""}`,
+        } ${type === "danger" ? "bg-danger-600" : ""}
+        ${icon && label ? "gap-3" : ""}`,
         styles,
       ]}
       onPress={onPress}
@@ -35,7 +38,11 @@ export default ({
         <ActivityIndicator size={5} color="#fff" style={tw`mr-5`} />
       )}
       {icon}
-      {label && <Text style={tw`text-white font-bold`}>{label}</Text>}
+      {label && (
+        <Text style={tw`text-white font-bold ${textStyles || ""}`}>
+          {label}
+        </Text>
+      )}
     </Pressable>
   );
 };

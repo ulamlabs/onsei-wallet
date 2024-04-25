@@ -22,6 +22,7 @@ export type ConnectedStackParamList = {
   Authorize: { nextRoute: keyof NavigatorParamsList; nextParams?: any };
   Receive: undefined;
   Send: undefined;
+  Transactions: { address: string };
 };
 
 const { Navigator, Screen } =
@@ -50,6 +51,7 @@ export default () => {
       <Screen name="Authorize" component={AuthorizeScreen} />
       <Screen name="Send" component={SendAssets} />
       <Screen name="Receive" component={ReceiveAssets} />
+      <Screen name="Transactions" component={Transactions} />
     </Navigator>
   );
 };

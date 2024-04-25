@@ -93,7 +93,6 @@ const getTooltipCoordinate = (
   ];
   // current quadrant index
   const qIndex = sortedArea[0].id;
-  const getWithPointerOffsetY = () => 0;
   const getWithPointerOffsetX = () => center[0];
   const newX =
     getWithPointerOffsetX() +
@@ -103,8 +102,7 @@ const getTooltipCoordinate = (
     y:
       center[1] +
       (dY * directionCorrection[qIndex][1] +
-        dislocateReferencePoint[qIndex][1]) +
-      getWithPointerOffsetY(),
+        dislocateReferencePoint[qIndex][1]),
   };
 };
 

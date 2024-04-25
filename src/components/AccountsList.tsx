@@ -4,18 +4,31 @@ import { formatTokenAmount } from "@/utils/formatAmount";
 import { trimAddress } from "@/utils/trimAddress";
 import { useNavigation } from "@react-navigation/native";
 import * as Clipboard from "expo-clipboard";
-import { More } from "iconsax-react-native";
+import {
+  ArrangeHorizontal,
+  Clipboard as ClipboardCopy,
+  Lock1,
+  More,
+} from "iconsax-react-native";
 import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import Button from "./Button";
-import Popover from "./Popover";
+import MnemonicWords from "./MnemonicWords";
+import Modal from "./Modal";
+import Tooltip from "./Tooltip";
 
 export default () => {
   const navigation = useNavigation();
-  const { activeAccount, node, getBalance, accounts, getMnemonic } =
-    useAccountsStore();
+  const {
+    activeAccount,
+    node,
+    getBalance,
+    accounts,
+    getMnemonic,
+    deleteAccount,
+  } = useAccountsStore();
   const [accountsSorted, setAccountsSorted] = useState<Account[]>([]);
-  const [visiblePopover, setVisiblePopover] = useState<string | null>(null);
+  const [visibleTooltip, setVisibleTooltip] = useState<string | null>(null);
   const [mnemoToShow, setMnemoToShow] = useState<string[] | null>(null);
   const [addressToRemove, setAddressToRemove] = useState<string | null>(null);
 
@@ -35,22 +48,28 @@ export default () => {
 
   function onCopy(address: string) {
     Clipboard.setStringAsync(address);
-    setVisiblePopover(null);
+    setVisibleTooltip(null);
   }
 
   function onMnemoShow(address: string) {
     setMnemoToShow(getMnemonic(address).split(" "));
-    setVisiblePopover(null);
+    setVisibleTooltip(null);
   }
 
   function onTxnsShow(address: string) {
-    setVisiblePopover(null);
+    setVisibleTooltip(null);
     (navigation as any).push("Transactions", { address });
   }
 
   function onRemove(address: string) {
     setAddressToRemove(address);
-    setVisiblePopover(null);
+    setVisibleTooltip(null);
+  }
+
+  function onRemoveConfirm() {
+    // TODO: remove address from address book
+    deleteAccount(addressToRemove!);
+    setAddressToRemove(null);
   }
 
   return (
@@ -82,11 +101,11 @@ export default () => {
               />
             )}
 
-            <Popover
-              onPress={() => setVisiblePopover(address)}
+            <Tooltip
+              onPress={() => setVisibleTooltip(address)}
               toggleElement={<More />}
-              isVisible={visiblePopover === address}
-              onBackdropPress={() => setVisiblePopover(null)}
+              isVisible={visibleTooltip === address}
+              onBackdropPress={() => setVisibleTooltip(null)}
               backgroundColor="#212B46"
               width={200}
               height={130}
@@ -94,12 +113,16 @@ export default () => {
               <Button
                 type="ghost"
                 onPress={() => onCopy(address)}
+                textStyles={`text-primary-500`}
                 label="Copy Address"
+                icon={<ClipboardCopy color="#00C9BD" size={16} />}
               />
               <Button
                 type="ghost"
                 onPress={() => onMnemoShow(address)}
+                textStyles={`text-primary-500`}
                 label="View Passphrase"
+                icon={<Lock1 color="#00C9BD" size={16} />}
               />
               {/* API for transactions works only on MainNet, so there's no point in showing this on TestNet */}
               {node === "MainNet" && (
@@ -107,19 +130,42 @@ export default () => {
                   type="ghost"
                   onPress={() => onTxnsShow(address)}
                   label="View Transactions"
+                  textStyles={`text-primary-500`}
+                  icon={<ArrangeHorizontal color="#00C9BD" size={16} />}
                 />
               )}
               {activeAccount?.address !== address && (
                 <Button
                   type="ghost"
                   onPress={() => onRemove(address)}
+                  textStyles={`text-primary-500`}
                   label="Remove Account"
                 />
               )}
-            </Popover>
+            </Tooltip>
           </View>
         </View>
       ))}
+
+      <Modal
+        isVisible={!!mnemoToShow}
+        title="Your Passphrase"
+        description="Remember to not share this passphrase with anyone, as it grants full access to your account"
+        buttonTxt="Close"
+        onConfirm={() => setMnemoToShow(null)}
+      >
+        {mnemoToShow && <MnemonicWords mnemonic={mnemoToShow} />}
+      </Modal>
+      <Modal
+        isVisible={!!addressToRemove}
+        title="Remove account?"
+        description={
+          "Are you sure you want to remove this account?\nThis action cannot be reversed."
+        }
+        buttonTxt="Confirm"
+        onConfirm={onRemoveConfirm}
+        onCancel={() => setAddressToRemove(null)}
+      />
     </View>
   );
 };

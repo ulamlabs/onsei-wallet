@@ -1,17 +1,19 @@
+import tw from "@/lib/tailwind";
+import { scale, verticalScale } from "@/utils";
 import React, { PropsWithChildren } from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  ViewStyle,
   View,
+  ViewStyle,
 } from "react-native";
-import { scale, verticalScale } from "@/utils";
-import tw from "@/lib/tailwind";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+type LayoutProps = PropsWithChildren & { noScroll?: boolean };
 
 // Layout with safe paddings that ensure that content won't be hidden behind phone elements (like front camera)
-export default ({ children }: PropsWithChildren) => {
+export default ({ children, noScroll }: LayoutProps) => {
   const insets = useSafeAreaInsets();
   const layoutStyle: ViewStyle = {
     flex: 1,
@@ -27,12 +29,16 @@ export default ({ children }: PropsWithChildren) => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={tw`bg-background`}
     >
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        style={{ minHeight: "100%" }}
-      >
-        <View style={layoutStyle}>{children}</View>
-      </ScrollView>
+      {noScroll ? (
+        <View style={[tw`bg-background`, layoutStyle]}>{children}</View>
+      ) : (
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          style={{ minHeight: "100%" }}
+        >
+          <View style={layoutStyle}>{children}</View>
+        </ScrollView>
+      )}
     </KeyboardAvoidingView>
   );
 };

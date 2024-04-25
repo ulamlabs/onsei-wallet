@@ -1,7 +1,6 @@
 import AccountsList from "@/components/AccountsList";
 import Button from "@/components/Button";
 import SafeLayout from "@/components/SafeLayout";
-import Web3WalletConnect from "@/components/Web3WalletConnect";
 import tw from "@/lib/tailwind";
 import { BottomTabsParamList } from "@/navigation/BottomBarsNavigation";
 import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";
@@ -79,10 +78,6 @@ export default ({ navigation }: WalletOverviewProps) => {
                   styles={tw`rounded-full w-12 h-12 justify-center mb-2 p-0`}
                 />
                 <Text style={tw`text-white text-base`}>Send</Text>
-              </View>
-              <View style={tw`flex-col items-center`}>
-                <Web3WalletConnect />
-                <Text style={tw`text-white text-base`}>Connect</Text>
               </View>
             </View>
             <AccountsList />
