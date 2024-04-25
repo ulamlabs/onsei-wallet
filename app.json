@@ -35,14 +35,6 @@
       }
     },
     "owner": "ulam-labs",
-    "plugins": [
-      "expo-secure-store",
-      [
-        "expo-camera",
-        {
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera"
-        }
-      ]
-    ]
+    "plugins": ["expo-secure-store"]
   }
 }

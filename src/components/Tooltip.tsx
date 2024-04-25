@@ -14,10 +14,8 @@ import {
   Platform,
   Pressable,
   StatusBar,
-  StyleProp,
   TouchableOpacity,
   View,
-  ViewStyle,
 } from "react-native";
 
 type Props = PropsWithChildren & {
@@ -26,8 +24,7 @@ type Props = PropsWithChildren & {
   onBackdropPress: () => void;
   height?: number;
   width?: number;
-  containerStyle?: StyleProp<ViewStyle>;
-  backgroundColor?: string;
+  styles?: string;
   onPress: () => void;
 };
 
@@ -38,8 +35,7 @@ export default ({
   onBackdropPress,
   height = 40,
   width = 150,
-  containerStyle = {},
-  backgroundColor = "#617080",
+  styles,
   onPress,
 }: Props) => {
   const isIOS = Platform.OS === "ios";
@@ -104,12 +100,10 @@ export default ({
     () =>
       getTooltipStyle({
         ...dimensions,
-        backgroundColor,
-        containerStyle,
         height,
         width,
       }),
-    [backgroundColor, containerStyle, dimensions, height, width]
+    [dimensions, height, width]
   );
 
   return (
@@ -123,7 +117,6 @@ export default ({
         {toggleElement}
       </Pressable>
       <Modal
-        style={tw`bg-background`}
         animationType="fade"
         transparent={true}
         visible={isVisible}
@@ -131,7 +124,13 @@ export default ({
       >
         <TouchableOpacity style={tw`w-full h-full`} onPress={onBackdropPress}>
           <View
-            style={[tooltipStyle, tw`border-black border-opacity-40 border-2`]}
+            style={[
+              tooltipStyle,
+              tw.style(
+                `border-black border-opacity-40 border-2 absolute items-center justify-center flex-1 p-2 rounded-lg bg-background`,
+                styles
+              ),
+            ]}
           >
             {children}
           </View>

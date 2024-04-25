@@ -39,12 +39,7 @@ export default ({
 
           <View style={tw`flex-row gap-4`}>
             {onCancel && (
-              <Button
-                styles={tw``}
-                type="danger"
-                onPress={onCancel}
-                label="Cancel"
-              />
+              <Button type="danger" onPress={onCancel} label="Cancel" />
             )}
             <Button
               disabled={confirmBtnDisabled}

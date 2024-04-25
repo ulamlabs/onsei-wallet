@@ -20,6 +20,8 @@ export type Node = "MainNet" | "TestNet";
 export type Account = {
   name: string;
   address: string;
+  balance: number;
+  usdBalance: number;
 };
 
 export type Wallet = {
@@ -32,8 +34,6 @@ type AccountsStore = {
   activeAccount: Account | null;
   tokenPrice: number;
   node: Node;
-  currentBalance: number;
-  usdBalance: number;
   init: () => Promise<void>;
   setActiveAccount: (address: string | null) => void;
   generateWallet: () => Promise<Wallet>;
@@ -45,7 +45,7 @@ type AccountsStore = {
   getMnemonic: (name: string) => string;
   subscribeToAccounts: () => void;
   getRawBalance: (address?: string) => Promise<number>;
-  getUSDBalance: (address?: string) => void;
+  getUSDBalance: (balance: number) => number;
 };
 
 export const useAccountsStore = create<AccountsStore>((set, get) => ({
@@ -53,8 +53,6 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
   activeAccount: null,
   tokenPrice: 0,
   node: "TestNet",
-  currentBalance: 0,
-  usdBalance: 0,
   init: async () => {
     const accounts = await loadFromStorage("accounts", []);
     set({ accounts, activeAccount: accounts[0] });
@@ -77,9 +75,13 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
     useAccountsStore.getState().checkDuplicate(name, wallet.address);
     saveToSecureStorage(getMnenomicKey(wallet.address), wallet.mnemonic);
 
+    const balance = await get().getRawBalance(wallet.address);
+
     const account: Account = {
       name,
       address: wallet.address,
+      balance,
+      usdBalance: get().getUSDBalance(balance),
     };
     set((state) => {
       const accounts = [...state.accounts, account];
@@ -94,9 +96,12 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
     saveToSecureStorage(getMnenomicKey(address), wallet.mnemonic);
 
     const seiAccount = (await wallet.getAccounts())[0];
+    const balance = await get().getRawBalance(seiAccount.address);
     const newAccount: Account = {
       name,
       address: seiAccount.address,
+      balance,
+      usdBalance: get().getUSDBalance(balance),
     };
 
     set((state) => {
@@ -140,22 +145,24 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
   getRawBalance: async (
     address: string | undefined = get().activeAccount?.address
   ) => {
-    if (!address) {
+    try {
+      if (!address) {
+        return 0;
+      }
+      const queryClient = await getQueryClient(nodes[get().node]);
+      const balance = await queryClient.cosmos.bank.v1beta1.allBalances({
+        address,
+      });
+      const amount = +balance.balances[0]?.amount || 0;
+      return amount;
+    } catch (error) {
+      console.log(error);
       return 0;
     }
-    const queryClient = await getQueryClient(nodes[get().node]);
-    await queryClient.cosmos.bank.v1beta1
-      .allBalances({
-        address,
-      })
-      .then((resp) => set({ currentBalance: +resp.balances[0]?.amount || 0 }))
-      .catch((err) => console.log(err));
-
-    return get().currentBalance;
   },
-  getUSDBalance: () => {
+  getUSDBalance: (balance) => {
     // TODO: handle get token price
-    set({ usdBalance: get().currentBalance * get().tokenPrice });
+    return balance * get().tokenPrice;
   },
 }));
 

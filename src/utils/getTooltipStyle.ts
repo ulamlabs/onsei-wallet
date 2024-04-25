@@ -1,10 +1,4 @@
-import {
-  Dimensions,
-  I18nManager,
-  StyleProp,
-  StyleSheet,
-  ViewStyle,
-} from "react-native";
+import { Dimensions, I18nManager, StyleSheet, ViewStyle } from "react-native";
 import getTooltipCoordinate from "./getTooltipCoordinate";
 
 const Screen = Dimensions.get("window");
@@ -18,8 +12,6 @@ type Props = {
   elementWidth: number;
   width: number;
   height: number;
-  backgroundColor: string;
-  containerStyle: StyleProp<ViewStyle>;
 };
 
 export const getTooltipStyle = ({
@@ -29,8 +21,6 @@ export const getTooltipStyle = ({
   elementWidth,
   width,
   height,
-  backgroundColor,
-  containerStyle,
 }: Props): ViewStyle => {
   const { x, y } = getTooltipCoordinate(
     xOffset,
@@ -44,20 +34,10 @@ export const getTooltipStyle = ({
   );
   return StyleSheet.flatten([
     {
-      position: "absolute",
       [I18nManager.isRTL ? "right" : "left"]: x,
       top: y,
       width,
       height,
-      backgroundColor,
-      // default styles
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      flex: 1,
-      borderRadius: 10,
-      padding: 10,
     },
-    containerStyle,
   ]);
 };

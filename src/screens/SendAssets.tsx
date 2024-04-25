@@ -16,7 +16,7 @@ import { Text, TextInput, View } from "react-native";
 type SendAssetsProps = NativeStackScreenProps<ConnectedStackParamList, "Send">;
 
 export default ({ navigation }: SendAssetsProps) => {
-  const { activeAccount, getBalance } = useAccountsStore();
+  const { activeAccount } = useAccountsStore();
   const { addressBook } = useContext(
     AddressBookContext
   ) as AddressBookContextType;
@@ -28,57 +28,11 @@ export default ({ navigation }: SendAssetsProps) => {
   const [amountInput, setAmountInput] = useState("");
 
   async function onMax() {
-    // amountInput.onChangeText!('Calculating...');
-    // const balance = getBalance();
-    // const fee = await estimateFee(balance);
-    // amountInput.onChangeText!(
-    //   D.max(new D(balance).minus(fee).minus(1e-12), 0).toString(),
-    // );
-    // HANDLE WHEN CONNECTED
+    // TODO: handle max am ount
   }
 
   async function onSend() {
-    // setError(null);
-    // if (!receiverInput.value || !amountInput.value) {
-    //   setError('All inputs need to be filled');
-    //   return;
-    // }
-    // if (receiverInput.value === activeAccount) {
-    //   setError('You cannot send funds to your own address');
-    //   return;
-    // }
-    // try {
-    //   validateAddress(receiverInput.value);
-    // } catch (e) {
-    //   setError('Invalid receiver address');
-    //   return;
-    // }
-    // const amount = Number(amountInput.value.replaceAll(',', '.'));
-    // if (Number.isNaN(amount) || amount === 0) {
-    //   setError('Invalid amount entered');
-    //   return;
-    // }
-    // const fee = await estimateFee(amount);
-    // if (amount > getBalance() - fee) {
-    //   setError('Insufficient funds');
-    //   return;
-    // }
-    // setLoading(true);
-    // try {
-    //   const txnHash = await transferAsset(
-    //     receiverInput.value,
-    //     Number(amountInput.value),
-    //   );
-    //   console.log(`Submitted with hash ${txnHash}`);
-    //   onAfterSubmit();
-    //   setModalVisible(true);
-    // } catch (e: any) {
-    //   console.log('Error while submitting:', e);
-    //   setError(e.message);
-    // } finally {
-    //   setLoading(false);
-    // }
-    // HANDLE SEND WHEN CONNECTED
+    // TODO: handle send
   }
 
   function goBack() {
@@ -90,9 +44,7 @@ export default ({ navigation }: SendAssetsProps) => {
     <SafeLayout>
       <BackButton />
       <View style={tw`items-center`}>
-        <Text style={tw`text-4xl font-black text-white mb-8 mt-12`}>
-          SEND ASSETS
-        </Text>
+        <Text style={tw`title`}>SEND ASSETS</Text>
 
         <Text style={tw`text-white`}>Provide address of the receiver</Text>
         <TextInput
@@ -124,7 +76,7 @@ export default ({ navigation }: SendAssetsProps) => {
       <Modal
         isVisible={modalVisible}
         title="Transfer successful!"
-        description={`You successfully transfered ${amountInput} TZERO to ${receiverInput}`}
+        description={`You successfully transfered ${amountInput} SEI to ${receiverInput}`}
         buttonTxt="Back to Overview"
         onConfirm={goBack}
       />

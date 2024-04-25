@@ -32,9 +32,7 @@ export default ({}: ReceiveAssetsProps) => {
     <SafeLayout>
       <BackButton />
       <View style={tw`items-center`}>
-        <Text style={tw`mt-12 mb-8 text-white text-4xl font-black`}>
-          RECEIVE ASSETS
-        </Text>
+        <Text style={tw`title`}>RECEIVE ASSETS</Text>
 
         <View style={tw`items-center bg-white p-5`}>
           <QRCode value={activeAccount?.address!} size={200} />

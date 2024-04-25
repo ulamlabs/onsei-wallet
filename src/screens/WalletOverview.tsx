@@ -8,12 +8,8 @@ import { MainStackParamList } from "@/navigation/MainScreenNavigation";
 import { useAccountsStore } from "@/store";
 import { formatTokenAmount } from "@/utils/formatAmount";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import {
-  DirectboxReceive,
-  DirectboxSend,
-  Notification,
-} from "iconsax-react-native";
-import React, { useEffect } from "react";
+import { DirectboxReceive, DirectboxSend } from "iconsax-react-native";
+import React from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 
 type WalletOverviewProps = NativeStackScreenProps<
@@ -22,14 +18,7 @@ type WalletOverviewProps = NativeStackScreenProps<
 >;
 
 export default ({ navigation }: WalletOverviewProps) => {
-  const {
-    activeAccount,
-    node,
-    getRawBalance,
-    getUSDBalance,
-    currentBalance,
-    usdBalance,
-  } = useAccountsStore();
+  const { activeAccount, node } = useAccountsStore();
 
   function onNotification() {
     //navigation.push('Notifications');
@@ -42,11 +31,6 @@ export default ({ navigation }: WalletOverviewProps) => {
     navigation.push("Send");
   }
 
-  useEffect(() => {
-    getRawBalance();
-    getUSDBalance();
-  }, []);
-
   return (
     <SafeLayout>
       <View style={tw`items-center`}>
@@ -57,11 +41,6 @@ export default ({ navigation }: WalletOverviewProps) => {
             <Text style={tw`text-xs`}>TestNet</Text>
           </View>
         )}
-        <Button
-          styles={tw`absolute right-0 bg-background`}
-          onPress={onNotification}
-          icon={<Notification />}
-        />
         <Text style={tw`title`}>PORTFOLIO</Text>
         {activeAccount ? (
           <>
@@ -69,10 +48,10 @@ export default ({ navigation }: WalletOverviewProps) => {
               {activeAccount.address}
             </Text>
             <Text style={tw`text-white text-2xl font-bold`}>
-              {formatTokenAmount(currentBalance)} SEI
+              {formatTokenAmount(activeAccount.balance)} SEI
             </Text>
             <Text style={tw`text-basic-600 text-xs`}>
-              ${formatTokenAmount(usdBalance)}
+              ${formatTokenAmount(activeAccount.usdBalance)}
             </Text>
             <View style={tw`w-full my-8 justify-around items-center flex-row`}>
               <View style={tw`flex-col items-center`}>

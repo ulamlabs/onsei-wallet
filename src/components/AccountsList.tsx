@@ -1,5 +1,5 @@
 import tw from "@/lib/tailwind";
-import { useAccountsStore } from "@/store";
+import { Account, useAccountsStore } from "@/store";
 import { formatTokenAmount } from "@/utils/formatAmount";
 import { trimAddress } from "@/utils/trimAddress";
 import { useNavigation } from "@react-navigation/native";
@@ -9,6 +9,7 @@ import {
   Clipboard as ClipboardCopy,
   Lock1,
   More,
+  Trash,
 } from "iconsax-react-native";
 import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
@@ -17,47 +18,31 @@ import MnemonicWords from "./MnemonicWords";
 import Modal from "./Modal";
 import Tooltip from "./Tooltip";
 
-type accountsSort = {
-  address: string;
-  balance: number;
-};
-
 export default () => {
   const navigation = useNavigation();
   const {
     activeAccount,
     node,
-    getRawBalance,
     accounts,
     getMnemonic,
     deleteAccount,
+    setActiveAccount,
   } = useAccountsStore();
-  const [accountsSorted, setAccountsSorted] = useState<accountsSort[]>([]);
+  const [accountsSorted, setAccountsSorted] = useState<Account[]>([]);
   const [visibleTooltip, setVisibleTooltip] = useState<string | null>(null);
   const [mnemoToShow, setMnemoToShow] = useState<string[] | null>(null);
   const [addressToRemove, setAddressToRemove] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchBalances = async () => {
-      const balances = await Promise.all(
-        accounts.map(async (acc) => ({
-          address: acc.address,
-          balance: (await getRawBalance(acc.address)) || 0,
-        }))
-      );
-      // Sort accounts by balance
-      setAccountsSorted(balances.sort((a, b) => b.balance - a.balance));
-    };
-
-    fetchBalances();
-  }, [accounts, getRawBalance]);
+    setAccountsSorted(accounts.sort((a, b) => b.balance - a.balance));
+  }, [accounts]);
 
   function onAddNew() {
     (navigation as any).push("Init");
   }
 
   function onSelect(address: string) {
-    //changeActiveAccount(address);
+    setActiveAccount(address);
   }
 
   function onCopy(address: string) {
@@ -81,13 +66,12 @@ export default () => {
   }
 
   function onRemoveConfirm() {
-    // TODO: remove address from address book
     deleteAccount(addressToRemove!);
     setAddressToRemove(null);
   }
 
   return (
-    <View style={tw`w-full`}>
+    <View style={tw`w-full gap-2`}>
       <View style={tw`flex-row justify-between items-center mb-2`}>
         <Text style={tw`text-2xl text-white font-bold`}>Accounts</Text>
         <Button
@@ -100,9 +84,7 @@ export default () => {
         <View key={address} style={tw`p-4 rounded-xl bg-black bg-opacity-20`}>
           <View style={tw`flex-row justify-between items-center`}>
             <Text style={tw`text-white`}>{trimAddress(address)}</Text>
-            <Text style={tw`text-white`}>
-              {formatTokenAmount(balance || 0)}
-            </Text>
+            <Text style={tw`text-white`}>{formatTokenAmount(balance)}</Text>
           </View>
           <View style={tw`flex-row justify-between items-center mt-3`}>
             {address === activeAccount?.address ? (
@@ -112,6 +94,7 @@ export default () => {
                 type="ghost"
                 onPress={() => onSelect(address)}
                 label="Select"
+                styles={tw`p-0`}
               />
             )}
 
@@ -120,39 +103,43 @@ export default () => {
               toggleElement={<More />}
               isVisible={visibleTooltip === address}
               onBackdropPress={() => setVisibleTooltip(null)}
-              backgroundColor="#212B46"
               width={200}
-              height={130}
+              height={activeAccount?.address !== address ? 160 : 130}
             >
               <Button
                 type="ghost"
                 onPress={() => onCopy(address)}
                 textStyles={`text-primary-500`}
                 label="Copy Address"
-                icon={<ClipboardCopy color="#00C9BD" size={16} />}
+                icon={
+                  <ClipboardCopy color={tw.color("primary-500")} size={16} />
+                }
               />
               <Button
                 type="ghost"
                 onPress={() => onMnemoShow(address)}
                 textStyles={`text-primary-500`}
                 label="View Passphrase"
-                icon={<Lock1 color="#00C9BD" size={16} />}
+                icon={<Lock1 color={tw.color("primary-500")} size={16} />}
               />
-              {/* API for transactions works only on MainNet, so there's no point in showing this on TestNet */}
-              {node === "MainNet" && (
-                <Button
-                  type="ghost"
-                  onPress={() => onTxnsShow(address)}
-                  label="View Transactions"
-                  textStyles={`text-primary-500`}
-                  icon={<ArrangeHorizontal color="#00C9BD" size={16} />}
-                />
-              )}
+              <Button
+                type="ghost"
+                onPress={() => onTxnsShow(address)}
+                label="View Transactions"
+                textStyles={`text-primary-500`}
+                icon={
+                  <ArrangeHorizontal
+                    color={tw.color("primary-500")}
+                    size={16}
+                  />
+                }
+              />
               {activeAccount?.address !== address && (
                 <Button
                   type="ghost"
                   onPress={() => onRemove(address)}
-                  textStyles={`text-primary-500`}
+                  textStyles={`text-danger-500`}
+                  icon={<Trash color={tw.color("danger-500")} size={16} />}
                   label="Remove Account"
                 />
               )}
