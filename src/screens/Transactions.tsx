@@ -1,4 +1,3 @@
-import BackButton from "@/components/BackButton";
 import Divider from "@/components/Divider";
 import SafeLayout from "@/components/SafeLayout";
 import tw from "@/lib/tailwind";
@@ -90,7 +89,6 @@ export default ({
 
   return (
     <SafeLayout noScroll={true}>
-      <BackButton />
       <View style={tw`items-center`}>
         <Text style={tw`text-3xl mt-12 mb-8 text-white font-bold`}>
           TRANSACTIONS
