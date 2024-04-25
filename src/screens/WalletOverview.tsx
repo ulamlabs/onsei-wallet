@@ -52,7 +52,7 @@ export default ({ navigation }: WalletOverviewProps) => {
       <View style={tw`items-center`}>
         {node === "TestNet" && (
           <View
-            style={tw`absolute inset-x-0 mx-auto rounded-2xl bg-warning-500 py-2 px-4`}
+            style={tw`inset-x-0 mx-auto rounded-2xl w-auto bg-warning-500 py-2 px-4`}
           >
             <Text style={tw`text-xs`}>TestNet</Text>
           </View>

@@ -52,7 +52,7 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
   accounts: [],
   activeAccount: null,
   tokenPrice: 0,
-  node: "MainNet",
+  node: "TestNet",
   currentBalance: 0,
   usdBalance: 0,
   init: async () => {
