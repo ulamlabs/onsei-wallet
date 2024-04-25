@@ -12,6 +12,7 @@ import SwitchWithLabel from "./SwitchWithLabel";
 import Tooltip from "./Tooltip";
 import { Pin } from "./pin";
 
+export * from "./pin";
 export {
   AccountListItem,
   AccountsList,

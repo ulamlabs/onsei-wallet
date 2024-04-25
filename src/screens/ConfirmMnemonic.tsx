@@ -1,11 +1,12 @@
 import BackButton from "@/components/BackButton";
 import Button from "@/components/Button";
 import SafeLayout from "@/components/SafeLayout";
+import { MNEMONIC_WORDS_COUNT } from "@/const";
 import { useInputState } from "@/hooks";
 import tw from "@/lib/tailwind";
 import { MainStackParamList } from "@/navigation/MainScreenNavigation";
 import { useAccountsStore } from "@/store/account";
-import { MNEMONIC_WORDS_COUNT, resetNavigationStack } from "@/utils";
+import { resetNavigationStack } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import { FlatList, Text, TextInput, View } from "react-native";

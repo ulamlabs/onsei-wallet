@@ -1,3 +1,4 @@
 import Pin from "./Pin";
+import PinWithTimeout from "./PinWithTimeout";
 
-export { Pin };
+export { Pin, PinWithTimeout };

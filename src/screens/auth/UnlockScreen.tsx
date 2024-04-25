@@ -1,4 +1,4 @@
-import { Pin } from "@/components";
+import { PinWithTimeout } from "@/components";
 import { useAuthStore } from "@/store";
 import { useRef } from "react";
 
@@ -13,7 +13,7 @@ export default () => {
   }
 
   return (
-    <Pin
+    <PinWithTimeout
       label="Enter your PIN"
       compareToHash={pinHash.current}
       onPinHash={() => authStore.unlock()}
