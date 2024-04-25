@@ -12,21 +12,19 @@ import MainScreenNavigation from "@/navigation/MainScreenNavigation";
 export default function App() {
   useDeviceContext(tw);
   const accountsStore = useAccountsStore();
+  const authStore = useAuthStore();
 
   useEffect(() => {
     accountsStore.init();
+    authStore.init();
   }, []);
-
-  const authStore = useAuthStore();
 
   return (
     <SafeAreaProvider>
       <AddressBookProvider>
-        {authStore.state === "locked" ? (
-          <UnlockScreen />
-        ) : (
-          <MainScreenNavigation />
-        )}
+        {authStore.state === "locked" && <UnlockScreen />}
+        {authStore.state === "noPin" ||
+          (authStore.state === "unlocked" && <MainScreenNavigation />)}
       </AddressBookProvider>
     </SafeAreaProvider>
   );

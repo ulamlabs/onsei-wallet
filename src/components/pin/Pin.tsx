@@ -10,13 +10,14 @@ export type PinProps = {
   label: string;
   compareToHash?: string;
   onPinHash: (pinHash: string) => void;
+  onFail?: () => void;
 };
 
 function hashPin(pin: string): Promise<string> {
   return Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, pin);
 }
 
-export default ({ label, compareToHash, onPinHash }: PinProps) => {
+export default ({ label, compareToHash, onPinHash, onFail }: PinProps) => {
   const [pin, setPin] = useState("");
   const [error, setError] = useState(false);
   const [errorDelay, setErrorDelay] = useState(false);
@@ -44,6 +45,9 @@ export default ({ label, compareToHash, onPinHash }: PinProps) => {
       return;
     }
 
+    if (onFail) {
+      onFail();
+    }
     setError(true);
     setErrorDelay(true);
     setTimeout(() => {

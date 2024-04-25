@@ -38,7 +38,8 @@ export const useAccountsStore = create<AccountsStore>((set) => ({
   accounts: [],
   activeAccount: null,
   init: async () => {
-    const accounts = await loadFromStorage("accounts", []);
+    const accounts = await loadFromStorage<Account[]>("accounts", []);
+    // TODO handle corrupted file
     set({ accounts, activeAccount: accounts[0] });
   },
   setActiveAccount: (address: string | null) => {
