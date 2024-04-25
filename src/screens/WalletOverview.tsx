@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, View } from "react-native";
-import SafeLayout from "@/components/SafeLayout";
+import { SafeLayout } from "@/components";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { BottomTabsParamList } from "@/navigation/BottomBarsNavigation";
 import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";

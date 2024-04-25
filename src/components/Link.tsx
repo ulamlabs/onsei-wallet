@@ -1,25 +1,23 @@
 import { Pressable, Text, View } from "react-native";
 import { ArrowRight2 } from "iconsax-react-native";
 import { ReactElement } from "react";
+import { useNavigation } from "@react-navigation/core";
+import { NavigationProp, NavigatorParamsList } from "@/types";
 
 export type LinkProps = {
   label: string;
   icon?: ReactElement;
-  navigateTo: string;
-  navigation: any;
+  navigateTo: keyof NavigatorParamsList;
   disabled?: boolean;
 };
 
-export default ({
-  icon,
-  label,
-  navigation,
-  navigateTo,
-  disabled,
-}: LinkProps) => {
+export default ({ icon, label, navigateTo, disabled }: LinkProps) => {
+  const navigation = useNavigation<NavigationProp>();
+
   function onPress() {
     if (!disabled) {
-      navigation.push(navigateTo);
+      // TODO typing fails because some routes require params
+      navigation.navigate(navigateTo as any);
     }
   }
   return (

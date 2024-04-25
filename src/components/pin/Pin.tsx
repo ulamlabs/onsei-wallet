@@ -39,6 +39,7 @@ export default ({ label, compareToHash, onPinHash }: PinProps) => {
     const pinHash = await hashPin(pin);
 
     if (!compareToHash || pinHash === compareToHash) {
+      setPin(""); // remove the pin from memory in case the component is cached somewhere
       onPinHash(pinHash);
       return;
     }

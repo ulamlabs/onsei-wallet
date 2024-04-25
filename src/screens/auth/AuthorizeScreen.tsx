@@ -1,5 +1,5 @@
 import { Pin } from "@/components";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useRef } from "react";
@@ -20,6 +20,7 @@ export default ({ route, navigation }: DisablePinScreenProps) => {
   }
 
   function authorize() {
+    navigation.goBack(); // Remove this view from history
     navigation.navigate(route.params.nextRoute, route.params.nextParams);
   }
 

@@ -1,6 +1,6 @@
 import { Pin } from "@/components";
 import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useRef } from "react";
 

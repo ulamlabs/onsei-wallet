@@ -1,5 +1,5 @@
 import { Pin } from "@/components";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store";
 import { useRef } from "react";
 
 export default () => {

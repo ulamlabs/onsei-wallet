@@ -1,5 +1,5 @@
 import { Pin } from "@/components";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useState } from "react";

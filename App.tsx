@@ -4,10 +4,8 @@ import "fastestsmallesttextencoderdecoder";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useDeviceContext } from "twrnc";
 import tw from "@/lib/tailwind";
-import { useAccountsStore } from "@/store";
+import { useAccountsStore, useAuthStore, AddressBookProvider } from "@/store";
 import { useEffect } from "react";
-import AddressBookProvider from "@/store/addressBook";
-import { useAuthStore } from "@/store/authStore";
 import { UnlockScreen } from "@/screens/auth";
 import MainScreenNavigation from "@/navigation/MainScreenNavigation";
 

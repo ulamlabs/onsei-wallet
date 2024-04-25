@@ -1,18 +1,18 @@
 import React from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import SafeLayout from "@/components/SafeLayout";
+import { SafeLayout } from "@/components";
 import { BottomTabsParamList } from "@/navigation/BottomBarsNavigation";
 import { MainStackParamList } from "@/navigation/MainScreenNavigation";
 import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";
 import { useAccountsStore } from "@/store";
 import { resetNavigationStack } from "@/utils";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store";
 import { Button, Text, View } from "react-native";
 import tw from "@/lib/tailwind";
 
 type SettingsProps = NativeStackScreenProps<
   BottomTabsParamList & MainStackParamList & ConnectedStackParamList,
-  "Remove all accounts and logout"
+  "Clear app data"
 >;
 
 export default ({ navigation }: SettingsProps) => {
@@ -32,7 +32,8 @@ export default ({ navigation }: SettingsProps) => {
     <SafeLayout>
       <View style={{ gap: 10 }}>
         <Text style={{ color: "white" }}>
-          This will remove all application data. Are you sure?
+          This will remove all application data including your accounts. Are you
+          sure?
         </Text>
 
         <Button
@@ -40,7 +41,7 @@ export default ({ navigation }: SettingsProps) => {
           onPress={() => navigation.navigate("Home")}
         />
         <Button
-          title="Yes, remove all accounts and logout"
+          title="Yes, clear all app data"
           color={tw.color("danger-400")}
           onPress={onRemove}
         />

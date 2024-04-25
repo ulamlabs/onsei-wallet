@@ -3,8 +3,7 @@ import { Animated, View, Text } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useAccountsStore } from "@/store";
 import { MainStackParamList } from "@/navigation/MainScreenNavigation";
-import SafeLayout from "@/components/SafeLayout";
-import PrimaryButton from "@/components/PrimaryButton";
+import { SafeLayout, PrimaryButton } from "@/components";
 import tw from "@/lib/tailwind";
 
 type NewWalletProps = NativeStackScreenProps<MainStackParamList, "Init">;

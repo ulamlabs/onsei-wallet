@@ -16,7 +16,7 @@ export type ConnectedStackParamList = {
   "Enable PIN": { nextRoute: keyof NavigatorParamsList };
   "Disable PIN": undefined;
   "Change PIN": undefined;
-  "Remove all accounts and logout": undefined;
+  "Clear app data": undefined;
   Authorize: { nextRoute: keyof NavigatorParamsList; nextParams?: any };
 };
 
@@ -39,30 +39,11 @@ export default () => {
         options={{ headerShown: false }}
       />
       <Screen name="Security" component={SecuritySettingsScreen} />
-      <Screen
-        name="Remove all accounts and logout"
-        component={ResetAppScreen}
-      />
-      <Screen
-        name="Enable PIN"
-        component={PinEnableScreen}
-        options={{ headerShown: false }}
-      />
-      <Screen
-        name="Disable PIN"
-        component={PinDisableScreen}
-        options={{ headerShown: false }}
-      />
-      <Screen
-        name="Change PIN"
-        component={PinChangeScreen}
-        options={{ headerShown: false }}
-      />
-      <Screen
-        name="Authorize"
-        component={AuthorizeScreen}
-        options={{ headerShown: false }}
-      />
+      <Screen name="Clear app data" component={ResetAppScreen} />
+      <Screen name="Enable PIN" component={PinEnableScreen} />
+      <Screen name="Disable PIN" component={PinDisableScreen} />
+      <Screen name="Change PIN" component={PinChangeScreen} />
+      <Screen name="Authorize" component={AuthorizeScreen} />
     </Navigator>
   );
 };

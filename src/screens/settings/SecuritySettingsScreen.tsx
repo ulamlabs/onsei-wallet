@@ -1,5 +1,5 @@
-import { useAuthStore } from "@/store/authStore";
-import SafeLayout from "@/components/SafeLayout";
+import { useAuthStore } from "@/store";
+import { SafeLayout } from "@/components";
 import { useMemo } from "react";
 import { Link, SwitchWithLabel } from "@/components";
 import { Strongbox, Strongbox2 } from "iconsax-react-native";
@@ -37,7 +37,6 @@ export function SecuritySettingsScreen({
       <Link
         icon={<Strongbox2 color="white" />}
         label="Change PIN code"
-        navigation={navigation}
         navigateTo="Change PIN"
         disabled={!pinEnabled}
       />
