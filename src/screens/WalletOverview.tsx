@@ -13,7 +13,7 @@ import {
   DirectboxSend,
   Notification,
 } from "iconsax-react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 
 type WalletOverviewProps = NativeStackScreenProps<
@@ -22,7 +22,14 @@ type WalletOverviewProps = NativeStackScreenProps<
 >;
 
 export default ({ navigation }: WalletOverviewProps) => {
-  const { activeAccount, node, getBalance, getUSDBalance } = useAccountsStore();
+  const {
+    activeAccount,
+    node,
+    getRawBalance,
+    getUSDBalance,
+    currentBalance,
+    usdBalance,
+  } = useAccountsStore();
 
   function onNotification() {
     //navigation.push('Notifications');
@@ -34,6 +41,11 @@ export default ({ navigation }: WalletOverviewProps) => {
   function onSend() {
     navigation.push("Send");
   }
+
+  useEffect(() => {
+    getRawBalance();
+    getUSDBalance();
+  }, []);
 
   return (
     <SafeLayout>
@@ -57,10 +69,10 @@ export default ({ navigation }: WalletOverviewProps) => {
               {activeAccount.address}
             </Text>
             <Text style={tw`text-white text-2xl font-bold`}>
-              {formatTokenAmount(getBalance())} SEI
+              {formatTokenAmount(currentBalance)} SEI
             </Text>
             <Text style={tw`text-basic-600 text-xs`}>
-              ${formatTokenAmount(getUSDBalance())}
+              ${formatTokenAmount(usdBalance)}
             </Text>
             <View style={tw`w-full my-8 justify-around items-center flex-row`}>
               <View style={tw`flex-col items-center`}>

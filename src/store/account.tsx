@@ -6,13 +6,13 @@ import {
   saveToSecureStorage,
   saveToStorage,
 } from "@/utils";
-import { generateWallet, restoreWallet } from "@sei-js/cosmjs";
+import { generateWallet, getQueryClient, restoreWallet } from "@sei-js/cosmjs";
 import { create } from "zustand";
 
 const NODE_KEY = "NETWORK";
 const nodes: Record<Node, string> = {
-  MainNet: "https://rpc.wallet.pacific-1.sei.io",
-  TestNet: "https://rpc.wallet.atlantic-2.sei.io",
+  MainNet: "https://rest.sei-apis.com",
+  TestNet: "https://rest.atlantic-2.seinetwork.io",
 };
 
 export type Node = "MainNet" | "TestNet";
@@ -32,6 +32,8 @@ type AccountsStore = {
   activeAccount: Account | null;
   tokenPrice: number;
   node: Node;
+  currentBalance: number;
+  usdBalance: number;
   init: () => Promise<void>;
   setActiveAccount: (address: string | null) => void;
   generateWallet: () => Promise<Wallet>;
@@ -42,9 +44,8 @@ type AccountsStore = {
   clearStore: () => void;
   getMnemonic: (name: string) => string;
   subscribeToAccounts: () => void;
-  getRawBalance: (address?: string) => number;
-  getBalance: (address?: string) => number;
-  getUSDBalance: (address?: string) => number;
+  getRawBalance: (address?: string) => Promise<number>;
+  getUSDBalance: (address?: string) => void;
 };
 
 export const useAccountsStore = create<AccountsStore>((set, get) => ({
@@ -52,6 +53,8 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
   activeAccount: null,
   tokenPrice: 0,
   node: "MainNet",
+  currentBalance: 0,
+  usdBalance: 0,
   init: async () => {
     const accounts = await loadFromStorage("accounts", []);
     set({ accounts, activeAccount: accounts[0] });
@@ -134,17 +137,25 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
   subscribeToAccounts: () => {
     // TODO: a function that observes balance changes on accounts and updates them
   },
-  getRawBalance: (address: string = get().activeAccount!.address) => {
-    if (!address || false) return 0.0;
-    // TODO: handle fetching acount balance
-    return 0.0;
+  getRawBalance: async (
+    address: string | undefined = get().activeAccount?.address
+  ) => {
+    if (!address) {
+      return 0;
+    }
+    const queryClient = await getQueryClient(nodes[get().node]);
+    await queryClient.cosmos.bank.v1beta1
+      .allBalances({
+        address,
+      })
+      .then((resp) => set({ currentBalance: +resp.balances[0]?.amount || 0 }))
+      .catch((err) => console.log(err));
+
+    return get().currentBalance;
   },
-  getBalance: (address: string = get().activeAccount!.address) => {
-    if (!address) return 0;
-    return get().getRawBalance(address) / 10;
-  },
-  getUSDBalance: (address: string = get().activeAccount!.address) => {
-    return get().getBalance(address) * get().tokenPrice;
+  getUSDBalance: () => {
+    // TODO: handle get token price
+    set({ usdBalance: get().currentBalance * get().tokenPrice });
   },
 }));
 

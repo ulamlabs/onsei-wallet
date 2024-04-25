@@ -1,5 +1,5 @@
 import tw from "@/lib/tailwind";
-import { Account, useAccountsStore } from "@/store";
+import { useAccountsStore } from "@/store";
 import { formatTokenAmount } from "@/utils/formatAmount";
 import { trimAddress } from "@/utils/trimAddress";
 import { useNavigation } from "@react-navigation/native";
@@ -17,26 +17,40 @@ import MnemonicWords from "./MnemonicWords";
 import Modal from "./Modal";
 import Tooltip from "./Tooltip";
 
+type accountsSort = {
+  address: string;
+  balance: number;
+};
+
 export default () => {
   const navigation = useNavigation();
   const {
     activeAccount,
     node,
-    getBalance,
+    getRawBalance,
     accounts,
     getMnemonic,
     deleteAccount,
   } = useAccountsStore();
-  const [accountsSorted, setAccountsSorted] = useState<Account[]>([]);
+  const [accountsSorted, setAccountsSorted] = useState<accountsSort[]>([]);
   const [visibleTooltip, setVisibleTooltip] = useState<string | null>(null);
   const [mnemoToShow, setMnemoToShow] = useState<string[] | null>(null);
   const [addressToRemove, setAddressToRemove] = useState<string | null>(null);
 
   useEffect(() => {
-    setAccountsSorted(
-      accounts.sort((a, b) => getBalance(b.address) - getBalance(a.address))
-    );
-  }, [accounts, getBalance]);
+    const fetchBalances = async () => {
+      const balances = await Promise.all(
+        accounts.map(async (acc) => ({
+          address: acc.address,
+          balance: (await getRawBalance(acc.address)) || 0,
+        }))
+      );
+      // Sort accounts by balance
+      setAccountsSorted(balances.sort((a, b) => b.balance - a.balance));
+    };
+
+    fetchBalances();
+  }, [accounts, getRawBalance]);
 
   function onAddNew() {
     (navigation as any).push("Init");
@@ -82,12 +96,12 @@ export default () => {
           label="+"
         />
       </View>
-      {accountsSorted.map(({ address }) => (
+      {accountsSorted.map(({ address, balance }) => (
         <View key={address} style={tw`p-4 rounded-xl bg-black bg-opacity-20`}>
           <View style={tw`flex-row justify-between items-center`}>
             <Text style={tw`text-white`}>{trimAddress(address)}</Text>
             <Text style={tw`text-white`}>
-              {formatTokenAmount(getBalance(address))}
+              {formatTokenAmount(balance || 0)}
             </Text>
           </View>
           <View style={tw`flex-row justify-between items-center mt-3`}>
