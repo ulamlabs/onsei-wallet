@@ -10,6 +10,7 @@ import {
   AddressBookContext,
   AddressBookContextType,
 } from "@/store/addressBook";
+import { NavigationContainer } from "@react-navigation/native";
 
 export type MainStackParamList = {
   Init: undefined;
@@ -32,15 +33,17 @@ export default () => {
   }, []);
 
   return (
-    <Navigator
-      screenOptions={{ headerShown: false }}
-      initialRouteName={accountsStore.activeAccount ? "Connected" : "Init"}
-    >
-      <Screen name="Init" component={InitScreen} />
-      <Screen name="New Wallet" component={NewWallet} />
-      <Screen name="Confirm Mnemonic" component={ConfirmMnemonic} />
-      <Screen name="Import Wallet" component={ImportWallet} />
-      <Screen name="Connected" component={ConnectedScreenNavigation} />
-    </Navigator>
+    <NavigationContainer>
+      <Navigator
+        screenOptions={{ headerShown: false }}
+        initialRouteName={accountsStore.activeAccount ? "Connected" : "Init"}
+      >
+        <Screen name="Init" component={InitScreen} />
+        <Screen name="New Wallet" component={NewWallet} />
+        <Screen name="Confirm Mnemonic" component={ConfirmMnemonic} />
+        <Screen name="Import Wallet" component={ImportWallet} />
+        <Screen name="Connected" component={ConnectedScreenNavigation} />
+      </Navigator>
+    </NavigationContainer>
   );
 };

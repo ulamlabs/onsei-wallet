@@ -8,6 +8,7 @@ import PinDisableScreen from "@/screens/auth/PinDisableScreen";
 import PinChangeScreen from "@/screens/auth/PinChangeScreen";
 import ResetAppScreen from "@/screens/settings/ResetAppScreen";
 import { NavigatorParamsList } from "@/types";
+import { AuthorizeScreen } from "@/screens/auth";
 
 export type ConnectedStackParamList = {
   Home: undefined;
@@ -16,6 +17,7 @@ export type ConnectedStackParamList = {
   "Disable PIN": undefined;
   "Change PIN": undefined;
   "Remove all accounts and logout": undefined;
+  Authorize: { nextRoute: keyof NavigatorParamsList; nextParams?: any };
 };
 
 const { Navigator, Screen } =
@@ -54,6 +56,11 @@ export default () => {
       <Screen
         name="Change PIN"
         component={PinChangeScreen}
+        options={{ headerShown: false }}
+      />
+      <Screen
+        name="Authorize"
+        component={AuthorizeScreen}
         options={{ headerShown: false }}
       />
     </Navigator>

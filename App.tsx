@@ -7,9 +7,9 @@ import tw from "@/lib/tailwind";
 import { useAccountsStore } from "@/store";
 import { useEffect } from "react";
 import AddressBookProvider from "@/store/addressBook";
-import RootScreenNavigation from "@/navigation/RootScreenNavigation";
 import { useAuthStore } from "@/store/authStore";
 import { UnlockScreen } from "@/screens/auth";
+import MainScreenNavigation from "@/navigation/MainScreenNavigation";
 
 export default function App() {
   useDeviceContext(tw);
@@ -23,13 +23,13 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-        <AddressBookProvider>
-          {authStore.state === "locked" ? (
-            <UnlockScreen />
-          ) : (
-            <RootScreenNavigation />
-          )}
-        </AddressBookProvider>
+      <AddressBookProvider>
+        {authStore.state === "locked" ? (
+          <UnlockScreen />
+        ) : (
+          <MainScreenNavigation />
+        )}
+      </AddressBookProvider>
     </SafeAreaProvider>
   );
 }
