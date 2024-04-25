@@ -1,6 +1,7 @@
 import tw from "@/lib/tailwind";
 import ReceiveAssets from "@/screens/ReceiveAssets";
 import SendAssets from "@/screens/SendAssets";
+import Transactions from "@/screens/Transactions";
 import { AuthorizeScreen } from "@/screens/auth";
 import PinChangeScreen from "@/screens/auth/PinChangeScreen";
 import PinDisableScreen from "@/screens/auth/PinDisableScreen";

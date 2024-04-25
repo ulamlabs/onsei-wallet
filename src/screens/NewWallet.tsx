@@ -1,4 +1,4 @@
-import { BackButton, MnemonicWords, SafeLayout } from "@/components";
+import { BackButton, Button, MnemonicWords, SafeLayout } from "@/components";
 import tw from "@/lib/tailwind";
 import { MainStackParamList } from "@/navigation/MainScreenNavigation";
 import { Wallet, useAccountsStore } from "@/store";

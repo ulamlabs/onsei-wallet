@@ -1,4 +1,3 @@
-import BackButton from "@/components/BackButton";
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
 import SafeLayout from "@/components/SafeLayout";
@@ -42,7 +41,6 @@ export default ({ navigation }: SendAssetsProps) => {
 
   return (
     <SafeLayout>
-      <BackButton />
       <View style={tw`items-center`}>
         <Text style={tw`title`}>SEND ASSETS</Text>
 

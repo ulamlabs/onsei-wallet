@@ -1,4 +1,3 @@
-import BackButton from "@/components/BackButton";
 import Button from "@/components/Button";
 import SafeLayout from "@/components/SafeLayout";
 import tw from "@/lib/tailwind";
@@ -30,7 +29,6 @@ export default ({}: ReceiveAssetsProps) => {
   }
   return (
     <SafeLayout>
-      <BackButton />
       <View style={tw`items-center`}>
         <Text style={tw`title`}>RECEIVE ASSETS</Text>
 
