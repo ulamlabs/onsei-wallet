@@ -56,13 +56,16 @@ module.exports = {
       "danger-700": "#B72244",
       "danger-800": "#93153E",
       "danger-900": "#7A0D39",
+      basic: {
+        600: "#8F9BB3",
+      },
     },
   },
   plugins: [
     plugin(({ addUtilities }) => {
       addUtilities({
         // Global classes
-        ".title": `mb-20 mt-10 text-3xl font-bold text-white`,
+        ".title": `mb-5 mt-4 text-3xl font-bold text-white`,
         ".input": `border border-primary-400 rounded-1 bg-black/15 px-4 py-3 text-white`,
       });
     }),

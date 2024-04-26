@@ -1,15 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useAccountsStore, Wallet } from "@/store";
-import { MainStackParamList } from "@/navigation/MainScreenNavigation";
-import {
-  SafeLayout,
-  BackButton,
-  MnemonicWords,
-  PrimaryButton,
-} from "@/components";
+import { BackButton, Button, MnemonicWords, SafeLayout } from "@/components";
 import tw from "@/lib/tailwind";
+import { MainStackParamList } from "@/navigation/MainScreenNavigation";
+import { Wallet, useAccountsStore } from "@/store";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { default as React, useEffect, useState } from "react";
+import { ActivityIndicator, Text, View } from "react-native";
 
 type NewWalletProps = NativeStackScreenProps<MainStackParamList, "New Wallet">;
 
@@ -42,7 +37,7 @@ export default ({ navigation }: NewWalletProps) => {
 
             <MnemonicWords mnemonic={wallet.mnemonic.split(" ")} />
 
-            <PrimaryButton label="Next" styles={tw`mt-5`} onPress={onNext} />
+            <Button label="Next" styles={tw`mt-5`} onPress={onNext} />
           </>
         ) : (
           <ActivityIndicator size="large" color="#fff" style={tw`mt-20`} />

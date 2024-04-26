@@ -1,8 +1,8 @@
-import React from "react";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { SafeLayout, PrimaryButton, Link } from "@/components";
+import { Button, Link, SafeLayout } from "@/components";
 import { useAuthStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import React from "react";
 
 type SettingsProps = NativeStackScreenProps<NavigatorParamsList, "Settings">;
 
@@ -16,7 +16,7 @@ export default ({ navigation }: SettingsProps) => {
   return (
     <SafeLayout>
       <Link label="Security" navigateTo="Security" />
-      <PrimaryButton label="Clear app data" onPress={onRemove} />
+      <Button label="Clear app data" onPress={onRemove} />
     </SafeLayout>
   );
 };

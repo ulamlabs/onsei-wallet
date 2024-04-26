@@ -1,14 +1,18 @@
-import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import BottomBarsNavigation from "./BottomBarsNavigation";
-import { SecuritySettingsScreen } from "@/screens/settings/SecuritySettingsScreen";
+import { MnemonicScreen } from "@/components";
 import tw from "@/lib/tailwind";
-import PinEnableScreen from "@/screens/auth/PinEnableScreen";
-import PinDisableScreen from "@/screens/auth/PinDisableScreen";
-import PinChangeScreen from "@/screens/auth/PinChangeScreen";
-import ResetAppScreen from "@/screens/settings/ResetAppScreen";
-import { NavigatorParamsList } from "@/types";
+import ReceiveAssets from "@/screens/ReceiveAssets";
+import SendAssets from "@/screens/SendAssets";
+import Transactions from "@/screens/Transactions";
 import { AuthorizeScreen } from "@/screens/auth";
+import PinChangeScreen from "@/screens/auth/PinChangeScreen";
+import PinDisableScreen from "@/screens/auth/PinDisableScreen";
+import PinEnableScreen from "@/screens/auth/PinEnableScreen";
+import ResetAppScreen from "@/screens/settings/ResetAppScreen";
+import { SecuritySettingsScreen } from "@/screens/settings/SecuritySettingsScreen";
+import { NavigatorParamsList } from "@/types";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React from "react";
+import BottomBarsNavigation from "./BottomBarsNavigation";
 
 export type ConnectedStackParamList = {
   Home: undefined;
@@ -18,6 +22,10 @@ export type ConnectedStackParamList = {
   "Change PIN": undefined;
   "Clear app data": undefined;
   Authorize: { nextRoute: keyof NavigatorParamsList; nextParams?: any };
+  Receive: undefined;
+  Send: undefined;
+  Transactions: { address: string };
+  "Your Mnemonic": { address: string };
 };
 
 const { Navigator, Screen } =
@@ -44,6 +52,10 @@ export default () => {
       <Screen name="Disable PIN" component={PinDisableScreen} />
       <Screen name="Change PIN" component={PinChangeScreen} />
       <Screen name="Authorize" component={AuthorizeScreen} />
+      <Screen name="Send" component={SendAssets} />
+      <Screen name="Receive" component={ReceiveAssets} />
+      <Screen name="Transactions" component={Transactions} />
+      <Screen name="Your Mnemonic" component={MnemonicScreen} />
     </Navigator>
   );
 };

@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { Text, TextInput, View } from "react-native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import BackButton from "@/components/BackButton";
+import Button from "@/components/Button";
+import SafeLayout from "@/components/SafeLayout";
+import { useInputState } from "@/hooks";
+import tw from "@/lib/tailwind";
 import { MainStackParamList } from "@/navigation/MainScreenNavigation";
 import { useAccountsStore } from "@/store";
-import { SafeLayout, BackButton, PrimaryButton } from "@/components";
-import { useInputState } from "@/hooks";
 import { resetNavigationStack } from "@/utils";
-import tw from "@/lib/tailwind";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import React, { useEffect, useState } from "react";
+import { Text, TextInput, View } from "react-native";
 
 type NewWalletProps = NativeStackScreenProps<
   MainStackParamList,
@@ -71,7 +73,7 @@ export default ({ navigation }: NewWalletProps) => {
           autoCorrect={false}
           {...mnemoInput}
         />
-        <PrimaryButton
+        <Button
           label="Import"
           styles={tw`mt-5`}
           isLoading={loading}

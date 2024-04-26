@@ -1,5 +1,3 @@
-import { generateWallet, restoreWallet } from "@sei-js/cosmjs";
-import { create } from "zustand";
 import {
   loadFromSecureStorage,
   loadFromStorage,
@@ -8,10 +6,22 @@ import {
   saveToSecureStorage,
   saveToStorage,
 } from "@/utils";
+import { generateWallet, getQueryClient, restoreWallet } from "@sei-js/cosmjs";
+import { create } from "zustand";
+
+const NODE_KEY = "NETWORK";
+const nodes: Record<Node, string> = {
+  MainNet: "https://rest.sei-apis.com",
+  TestNet: "https://rest.atlantic-2.seinetwork.io",
+};
+
+export type Node = "MainNet" | "TestNet";
 
 export type Account = {
   name: string;
   address: string;
+  balance: number;
+  usdBalance: number;
 };
 
 export type Wallet = {
@@ -22,6 +32,8 @@ export type Wallet = {
 type AccountsStore = {
   accounts: Account[];
   activeAccount: Account | null;
+  tokenPrice: number;
+  node: Node;
   init: () => Promise<void>;
   setActiveAccount: (address: string | null) => void;
   generateWallet: () => Promise<Wallet>;
@@ -32,11 +44,15 @@ type AccountsStore = {
   clearStore: () => void;
   getMnemonic: (name: string) => string;
   subscribeToAccounts: () => void;
+  getRawBalance: (address: string) => Promise<number>;
+  getUSDBalance: (balance: number) => number;
 };
 
-export const useAccountsStore = create<AccountsStore>((set) => ({
+export const useAccountsStore = create<AccountsStore>((set, get) => ({
   accounts: [],
   activeAccount: null,
+  tokenPrice: 0,
+  node: "TestNet",
   init: async () => {
     const accounts = await loadFromStorage("accounts", []);
     set({ accounts, activeAccount: accounts[0] });
@@ -62,6 +78,8 @@ export const useAccountsStore = create<AccountsStore>((set) => ({
     const account: Account = {
       name,
       address: wallet.address,
+      balance: 0,
+      usdBalance: 0,
     };
     set((state) => {
       const accounts = [...state.accounts, account];
@@ -76,9 +94,12 @@ export const useAccountsStore = create<AccountsStore>((set) => ({
     saveToSecureStorage(getMnenomicKey(address), wallet.mnemonic);
 
     const seiAccount = (await wallet.getAccounts())[0];
+    const balance = await get().getRawBalance(seiAccount.address);
     const newAccount: Account = {
       name,
       address: seiAccount.address,
+      balance,
+      usdBalance: get().getUSDBalance(balance),
     };
 
     set((state) => {
@@ -118,6 +139,26 @@ export const useAccountsStore = create<AccountsStore>((set) => ({
   },
   subscribeToAccounts: () => {
     // TODO: a function that observes balance changes on accounts and updates them
+  },
+  getRawBalance: async (address: string) => {
+    try {
+      if (!address) {
+        return 0;
+      }
+      const queryClient = await getQueryClient(nodes[get().node]);
+      const balance = await queryClient.cosmos.bank.v1beta1.allBalances({
+        address,
+      });
+      const amount = +balance.balances[0]?.amount || 0;
+      return amount;
+    } catch (error) {
+      console.log(error);
+      return 0;
+    }
+  },
+  getUSDBalance: (balance) => {
+    // TODO: handle get token price
+    return balance * get().tokenPrice;
   },
 }));
 
