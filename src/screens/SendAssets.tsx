@@ -1,6 +1,7 @@
 import { Modal } from "@/components";
 import Button from "@/components/Button";
 import SafeLayout from "@/components/SafeLayout";
+import { useInputState } from "@/hooks";
 import tw from "@/lib/tailwind";
 import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";
 import { useAccountsStore } from "@/store";
@@ -23,8 +24,8 @@ export default ({ navigation }: SendAssetsProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [receiverInput, setReceiverInput] = useState("");
-  const [amountInput, setAmountInput] = useState("");
+  const amountInput = useInputState();
+  const receiverInput = useInputState();
 
   async function onMax() {
     // TODO: handle max am ount
@@ -47,9 +48,8 @@ export default ({ navigation }: SendAssetsProps) => {
         <Text style={tw`text-white`}>Provide address of the receiver</Text>
         <TextInput
           style={tw`input w-full mt-2`}
-          value={receiverInput}
           placeholder="Receiver address"
-          onChangeText={setReceiverInput}
+          {...receiverInput}
         />
 
         <Text style={tw`text-white mt-5`}>Amount to send</Text>
@@ -58,8 +58,7 @@ export default ({ navigation }: SendAssetsProps) => {
             style={tw`input flex-6 mr-2`}
             placeholder="Amount"
             keyboardType="decimal-pad"
-            value={amountInput}
-            onChangeText={setAmountInput}
+            {...amountInput}
           />
           <Button label="MAX" onPress={onMax} />
         </View>

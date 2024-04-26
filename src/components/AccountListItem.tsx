@@ -65,7 +65,7 @@ export default ({ account, onRemove }: Props) => {
         ) : (
           <Button
             type="ghost"
-            onPress={() => onSelect()}
+            onPress={onSelect}
             label="Select"
             styles={tw`p-0`}
           />
@@ -81,21 +81,21 @@ export default ({ account, onRemove }: Props) => {
         >
           <Button
             type="ghost"
-            onPress={() => onCopy()}
+            onPress={onCopy}
             textStyles={`text-primary-500`}
             label="Copy Address"
             icon={<ClipboardCopy color={tw.color("primary-500")} size={16} />}
           />
           <Button
             type="ghost"
-            onPress={() => onMnemoShow()}
+            onPress={onMnemoShow}
             textStyles={`text-primary-500`}
             label="View Passphrase"
             icon={<Lock1 color={tw.color("primary-500")} size={16} />}
           />
           <Button
             type="ghost"
-            onPress={() => onTxnsShow()}
+            onPress={onTxnsShow}
             label="View Transactions"
             textStyles={`text-primary-500`}
             icon={
@@ -105,7 +105,7 @@ export default ({ account, onRemove }: Props) => {
           {activeAccount?.address !== address && (
             <Button
               type="ghost"
-              onPress={() => onRemoveHandle()}
+              onPress={onRemoveHandle}
               textStyles={`text-danger-500`}
               icon={<Trash color={tw.color("danger-500")} size={16} />}
               label="Remove Account"

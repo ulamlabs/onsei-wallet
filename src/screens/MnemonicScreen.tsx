@@ -3,6 +3,7 @@ import tw from "@/lib/tailwind";
 import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";
 import { useAccountsStore } from "@/store";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 
 type Props = NativeStackScreenProps<ConnectedStackParamList, "Your Mnemonic">;
@@ -13,8 +14,12 @@ export default ({
   },
 }: Props) => {
   const { getMnemonic } = useAccountsStore();
+  const [mnemonic, setMnemonic] = useState<string[]>([]);
 
-  const mnemonic = getMnemonic(address).split(" ");
+  useEffect(() => {
+    setMnemonic(getMnemonic(address).split(" "));
+    return () => setMnemonic([]);
+  }, []);
 
   return (
     <SafeLayout>
