@@ -3,17 +3,17 @@ import Button from "@/components/Button";
 import SafeLayout from "@/components/SafeLayout";
 import { useInputState } from "@/hooks";
 import tw from "@/lib/tailwind";
-import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";
 import { useAccountsStore } from "@/store";
 import {
   AddressBookContext,
   AddressBookContextType,
 } from "@/store/addressBook";
+import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useContext, useState } from "react";
 import { Text, TextInput, View } from "react-native";
 
-type SendAssetsProps = NativeStackScreenProps<ConnectedStackParamList, "Send">;
+type SendAssetsProps = NativeStackScreenProps<NavigatorParamsList, "Send">;
 
 export default ({ navigation }: SendAssetsProps) => {
   const { activeAccount } = useAccountsStore();

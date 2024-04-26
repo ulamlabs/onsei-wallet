@@ -4,10 +4,10 @@ import { useMemo } from "react";
 import { Link, SwitchWithLabel } from "@/components";
 import { Strongbox, Strongbox2 } from "iconsax-react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";
+import { NavigatorParamsList } from "@/types";
 
 type SecuritySettingsScreenProps = NativeStackScreenProps<
-  ConnectedStackParamList,
+  NavigatorParamsList,
   "Security"
 >;
 

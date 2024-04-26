@@ -1,11 +1,11 @@
 import { PinWithTimeout } from "@/components";
-import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";
 import { useAuthStore } from "@/store";
+import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useRef } from "react";
 
 type DisablePinScreenProps = NativeStackScreenProps<
-  ConnectedStackParamList,
+  NavigatorParamsList,
   "Disable PIN"
 >;
 

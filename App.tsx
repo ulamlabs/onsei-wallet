@@ -4,29 +4,71 @@ import "fastestsmallesttextencoderdecoder";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useDeviceContext } from "twrnc";
 import tw from "@/lib/tailwind";
-import { useAccountsStore, useAuthStore, AddressBookProvider } from "@/store";
-import { useEffect } from "react";
-import { UnlockScreen } from "@/screens/auth";
-import MainScreenNavigation from "@/navigation/MainScreenNavigation";
+import {
+  useAccountsStore,
+  useAuthStore,
+  AddressBookProvider,
+  useOnboardingStore,
+} from "@/store";
+import { useEffect, useMemo, useState } from "react";
+import LockNavigation from "@/navigation/LockNavigation";
+import OnboardingNavigation from "@/navigation/OnboardingNavigation";
+import HomeNavigation from "@/navigation/HomeNavigation";
+import { NavigationContainer } from "@react-navigation/native";
 
 export default function App() {
+  const [ready, setReady] = useState(false);
+
   useDeviceContext(tw);
   const accountsStore = useAccountsStore();
   const authStore = useAuthStore();
+  const onboardingStore = useOnboardingStore();
 
   useEffect(() => {
-    accountsStore.init();
-    authStore.init();
+    init();
   }, []);
 
+  const hasAccounts = useMemo(
+    () => accountsStore.accounts.length > 0,
+    [accountsStore.accounts]
+  );
+
+  useEffect(() => {
+    if (ready && onboardingStore.state === "notReady" && !hasAccounts) {
+      onboardingStore.startOnboarding();
+    }
+  }, [ready, onboardingStore, hasAccounts]);
+
+  async function init() {
+    await Promise.all([accountsStore.init(), authStore.init()]);
+    setReady(true);
+  }
+
+  function getContent() {
+    if (!ready) {
+      return <></>;
+    }
+
+    if (onboardingStore.state === "onboarding") {
+      return <OnboardingNavigation />;
+    }
+
+    if (authStore.state === "locked") {
+      return <LockNavigation />;
+    }
+
+    if (authStore.state === "noPin" || authStore.state === "unlocked") {
+      return <HomeNavigation />;
+    }
+
+    return <></>;
+  }
+
   return (
-    <SafeAreaProvider>
-      <AddressBookProvider>
-        {authStore.state === "locked" && <UnlockScreen />}
-        {(authStore.state === "noPin" || authStore.state === "unlocked") && (
-          <MainScreenNavigation />
-        )}
-      </AddressBookProvider>
-    </SafeAreaProvider>
+    <NavigationContainer>
+      <SafeAreaProvider>
+        <AddressBookProvider>{getContent()}</AddressBookProvider>
+      </SafeAreaProvider>
+    </NavigationContainer>
   );
 }

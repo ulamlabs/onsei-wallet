@@ -27,7 +27,7 @@ export default ({
       disabled={disabled}
       style={tw.style(
         "items-center px-6 py-3 rounded-1 flex flex-row",
-        type === "primary" && "bg-primary-400",
+        type === "primary" && "bg-primary-700",
         type === "danger" && "bg-danger-600",
         icon && label && "gap-3",
         styles

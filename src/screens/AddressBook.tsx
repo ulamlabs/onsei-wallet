@@ -1,13 +1,12 @@
 import React from "react";
 import { Text, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ConnectedStackParamList } from "../navigation/ConnectedScreenNavigation";
-import { BottomTabsParamList } from "../navigation/BottomBarsNavigation";
 import SafeLayout from "../components/SafeLayout";
 import tw from "@/lib/tailwind";
+import { NavigatorParamsList } from "@/types";
 
 type AddressBookProps = NativeStackScreenProps<
-  BottomTabsParamList & ConnectedStackParamList,
+  NavigatorParamsList,
   "Address Book"
 >;
 

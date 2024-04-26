@@ -1,8 +1,8 @@
 import Button from "@/components/Button";
 import SafeLayout from "@/components/SafeLayout";
 import tw from "@/lib/tailwind";
-import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";
 import { useAccountsStore } from "@/store";
+import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as Clipboard from "expo-clipboard";
 import { Clipboard as ClipboardImg, ClipboardTick } from "iconsax-react-native";
@@ -11,7 +11,7 @@ import { Text, View } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 
 type ReceiveAssetsProps = NativeStackScreenProps<
-  ConnectedStackParamList,
+  NavigatorParamsList,
   "Receive"
 >;
 

@@ -6,10 +6,11 @@ import { Text, View } from "react-native";
 import AccountListItem from "./AccountListItem";
 import Button from "./Button";
 import Modal from "./Modal";
+import { NavigationProp } from "@/types";
 
 export default () => {
-  const navigation = useNavigation();
-  const { accounts, deleteAccount, getMnemonic } = useAccountsStore();
+  const navigation = useNavigation<NavigationProp>();
+  const { accounts, deleteAccount } = useAccountsStore();
   const [accountsSorted, setAccountsSorted] = useState<Account[]>([]);
   const [addressToRemove, setAddressToRemove] = useState<string | null>(null);
 
@@ -18,7 +19,7 @@ export default () => {
   }, [accounts]);
 
   function onAddNew() {
-    (navigation as any).push("Init");
+    navigation.push("Add Wallet");
   }
 
   function onRemoveConfirm() {

@@ -1,14 +1,17 @@
-import { BackButton, Button, MnemonicWords, SafeLayout } from "@/components";
+import { Button, MnemonicWords, SafeLayout } from "@/components";
 import tw from "@/lib/tailwind";
-import { MainStackParamList } from "@/navigation/MainScreenNavigation";
 import { Wallet, useAccountsStore } from "@/store";
+import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { default as React, useEffect, useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 
-type NewWalletProps = NativeStackScreenProps<MainStackParamList, "New Wallet">;
+type GenerateWalletProps = NativeStackScreenProps<
+  NavigatorParamsList,
+  "Generate Wallet"
+>;
 
-export default ({ navigation }: NewWalletProps) => {
+export default ({ navigation }: GenerateWalletProps) => {
   const accountsStore = useAccountsStore();
   const [wallet, setWallet] = useState<Wallet | null>(null);
 
@@ -22,10 +25,7 @@ export default ({ navigation }: NewWalletProps) => {
 
   return (
     <SafeLayout>
-      <BackButton />
       <View style={tw`items-center`}>
-        <Text style={tw`title mb-10`}>NEW ACCOUNT</Text>
-
         {wallet ? (
           <>
             <Text style={tw`mb-10 text-white px-3`}>
