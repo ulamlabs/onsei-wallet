@@ -8,6 +8,15 @@ const customConfig = {
       crypto: require.resolve("crypto-browserify"),
     },
   },
+  transformer: {
+    assetPlugins: ["expo-asset/tools/hashAssetFiles"],
+    getTransformOptions: async () => ({
+      transform: {
+        experimentalImportSupport: false,
+        inlineRequires: false,
+      },
+    }),
+  },
 };
 
 module.exports = mergeConfig(defaultConfig, customConfig);
