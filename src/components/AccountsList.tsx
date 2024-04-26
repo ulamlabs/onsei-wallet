@@ -26,12 +26,6 @@ export default () => {
     setAddressToRemove(null);
   }
 
-  function onMnemoShow(address: string) {
-    (navigation as any).push("MnemonicScreen", {
-      mnemonic: getMnemonic(address).split(" "),
-    });
-  }
-
   return (
     <View style={tw`w-full gap-2`}>
       <View style={tw`flex-row justify-between items-center mb-2`}>
@@ -46,7 +40,6 @@ export default () => {
         <AccountListItem
           key={account.address}
           onRemove={() => setAddressToRemove(account.address)}
-          showMnemo={() => onMnemoShow(account.address)}
           account={account}
         />
       ))}

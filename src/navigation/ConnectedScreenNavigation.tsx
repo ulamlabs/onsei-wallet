@@ -1,5 +1,5 @@
+import { MnemonicScreen } from "@/components";
 import tw from "@/lib/tailwind";
-import MnemonicScreen from "@/screens/MnemonicScreen";
 import ReceiveAssets from "@/screens/ReceiveAssets";
 import SendAssets from "@/screens/SendAssets";
 import Transactions from "@/screens/Transactions";
@@ -25,7 +25,7 @@ export type ConnectedStackParamList = {
   Receive: undefined;
   Send: undefined;
   Transactions: { address: string };
-  MnemonicScreen: { mnemonic: string[] };
+  "Your Mnemonic": { address: string };
 };
 
 const { Navigator, Screen } =
@@ -55,7 +55,7 @@ export default () => {
       <Screen name="Send" component={SendAssets} />
       <Screen name="Receive" component={ReceiveAssets} />
       <Screen name="Transactions" component={Transactions} />
-      <Screen name="MnemonicScreen" component={MnemonicScreen} />
+      <Screen name="Your Mnemonic" component={MnemonicScreen} />
     </Navigator>
   );
 };

@@ -1,4 +1,4 @@
-import Divider from "@/components/Divider";
+import { Divider } from "@/components";
 import SafeLayout from "@/components/SafeLayout";
 import tw from "@/lib/tailwind";
 import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";

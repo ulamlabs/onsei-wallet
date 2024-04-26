@@ -1,4 +1,4 @@
-import AccountsList from "@/components/AccountsList";
+import { AccountsList } from "@/components";
 import Button from "@/components/Button";
 import SafeLayout from "@/components/SafeLayout";
 import tw from "@/lib/tailwind";
@@ -19,10 +19,6 @@ type WalletOverviewProps = NativeStackScreenProps<
 
 export default ({ navigation }: WalletOverviewProps) => {
   const { activeAccount, node } = useAccountsStore();
-
-  function onNotification() {
-    //navigation.push('Notifications');
-  }
 
   function onReceive() {
     navigation.push("Receive");

@@ -1,5 +1,5 @@
 import tw from "@/lib/tailwind";
-import { useAccountsStore } from "@/store";
+import { Account, useAccountsStore } from "@/store";
 import { formatTokenAmount } from "@/utils/formatAmount";
 import { trimAddress } from "@/utils/trimAddress";
 import { useNavigation } from "@react-navigation/native";
@@ -17,39 +17,40 @@ import Button from "./Button";
 import Tooltip from "./Tooltip";
 
 type Props = {
-  account: { address: string; balance: number };
+  account: Account;
   onRemove: () => void;
-  showMnemo: () => void;
 };
 
-export default ({ account, onRemove, showMnemo }: Props) => {
+export default ({ account, onRemove }: Props) => {
   const { address, balance } = account;
-  const { activeAccount, setActiveAccount, getMnemonic } = useAccountsStore();
-  const [visibleTooltip, setVisibleTooltip] = useState<string | null>(null);
+  const { activeAccount, setActiveAccount } = useAccountsStore();
+  const [visibleTooltip, setVisibleTooltip] = useState<boolean>(false);
   const navigation = useNavigation();
 
-  function onSelect(address: string) {
+  function onSelect() {
     setActiveAccount(address);
   }
 
-  function onCopy(address: string) {
+  function onCopy() {
     Clipboard.setStringAsync(address);
-    setVisibleTooltip(null);
+    setVisibleTooltip(false);
   }
 
-  function onMnemoShow() {
-    setVisibleTooltip(null);
-    showMnemo();
-  }
-
-  function onTxnsShow(address: string) {
-    setVisibleTooltip(null);
+  function onTxnsShow() {
+    setVisibleTooltip(false);
     (navigation as any).push("Transactions", { address });
   }
 
   function onRemoveHandle() {
-    setVisibleTooltip(null);
+    setVisibleTooltip(false);
     onRemove();
+  }
+
+  function onMnemoShow() {
+    setVisibleTooltip(false);
+    (navigation as any).push("Your Mnemonic", {
+      address,
+    });
   }
 
   return (
@@ -64,23 +65,23 @@ export default ({ account, onRemove, showMnemo }: Props) => {
         ) : (
           <Button
             type="ghost"
-            onPress={() => onSelect(address)}
+            onPress={() => onSelect()}
             label="Select"
             styles={tw`p-0`}
           />
         )}
 
         <Tooltip
-          onPress={() => setVisibleTooltip(address)}
+          onPress={() => setVisibleTooltip(true)}
           toggleElement={<More />}
-          isVisible={visibleTooltip === address}
-          onBackdropPress={() => setVisibleTooltip(null)}
+          isVisible={visibleTooltip}
+          onBackdropPress={() => setVisibleTooltip(false)}
           width={200}
           height={activeAccount?.address !== address ? 160 : 130}
         >
           <Button
             type="ghost"
-            onPress={() => onCopy(address)}
+            onPress={() => onCopy()}
             textStyles={`text-primary-500`}
             label="Copy Address"
             icon={<ClipboardCopy color={tw.color("primary-500")} size={16} />}
@@ -94,7 +95,7 @@ export default ({ account, onRemove, showMnemo }: Props) => {
           />
           <Button
             type="ghost"
-            onPress={() => onTxnsShow(address)}
+            onPress={() => onTxnsShow()}
             label="View Transactions"
             textStyles={`text-primary-500`}
             icon={

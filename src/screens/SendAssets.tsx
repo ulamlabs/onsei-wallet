@@ -1,5 +1,5 @@
+import { Modal } from "@/components";
 import Button from "@/components/Button";
-import Modal from "@/components/Modal";
 import SafeLayout from "@/components/SafeLayout";
 import tw from "@/lib/tailwind";
 import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";
@@ -49,6 +49,7 @@ export default ({ navigation }: SendAssetsProps) => {
           style={tw`input w-full mt-2`}
           value={receiverInput}
           placeholder="Receiver address"
+          onChangeText={setReceiverInput}
         />
 
         <Text style={tw`text-white mt-5`}>Amount to send</Text>
@@ -58,6 +59,7 @@ export default ({ navigation }: SendAssetsProps) => {
             placeholder="Amount"
             keyboardType="decimal-pad"
             value={amountInput}
+            onChangeText={setAmountInput}
           />
           <Button label="MAX" onPress={onMax} />
         </View>

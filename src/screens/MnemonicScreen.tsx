@@ -1,21 +1,24 @@
 import { MnemonicWords, SafeLayout } from "@/components";
 import tw from "@/lib/tailwind";
 import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";
+import { useAccountsStore } from "@/store";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ActivityIndicator, Text, View } from "react-native";
 
-type Props = NativeStackScreenProps<ConnectedStackParamList, "MnemonicScreen">;
+type Props = NativeStackScreenProps<ConnectedStackParamList, "Your Mnemonic">;
 
 export default ({
   route: {
-    params: { mnemonic },
+    params: { address },
   },
 }: Props) => {
+  const { getMnemonic } = useAccountsStore();
+
+  const mnemonic = getMnemonic(address).split(" ");
+
   return (
     <SafeLayout>
       <View style={tw`items-center`}>
-        <Text style={tw`title mb-10`}>Your PassPhrase</Text>
-
         {mnemonic?.length > 0 ? (
           <>
             <Text style={tw`mb-10 text-white px-3`}>

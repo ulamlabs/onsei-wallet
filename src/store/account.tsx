@@ -44,7 +44,7 @@ type AccountsStore = {
   clearStore: () => void;
   getMnemonic: (name: string) => string;
   subscribeToAccounts: () => void;
-  getRawBalance: (address?: string) => Promise<number>;
+  getRawBalance: (address: string) => Promise<number>;
   getUSDBalance: (balance: number) => number;
 };
 
@@ -75,13 +75,11 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
     useAccountsStore.getState().checkDuplicate(name, wallet.address);
     saveToSecureStorage(getMnenomicKey(wallet.address), wallet.mnemonic);
 
-    const balance = await get().getRawBalance(wallet.address);
-
     const account: Account = {
       name,
       address: wallet.address,
-      balance,
-      usdBalance: get().getUSDBalance(balance),
+      balance: 0,
+      usdBalance: 0,
     };
     set((state) => {
       const accounts = [...state.accounts, account];
@@ -142,9 +140,7 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
   subscribeToAccounts: () => {
     // TODO: a function that observes balance changes on accounts and updates them
   },
-  getRawBalance: async (
-    address: string | undefined = get().activeAccount?.address
-  ) => {
+  getRawBalance: async (address: string) => {
     try {
       if (!address) {
         return 0;

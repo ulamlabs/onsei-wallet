@@ -6,5 +6,5 @@ type Props = {
 };
 
 export default ({ styles }: Props) => {
-  return <View style={tw`w-full h-[1px] bg-basic-600 ${styles || ""}`} />;
+  return <View style={tw.style("w-full h-[1px] bg-basic-600", styles)} />;
 };
