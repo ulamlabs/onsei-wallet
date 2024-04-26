@@ -31,3 +31,123 @@ OR
 ```
 npm run ios
 ```
+
+## Build application
+
+### iOS
+
+Make sure to have eas installed and logged in
+
+```
+npm install -g eas-cli
+eas login
+```
+
+Then run those commands
+
+```
+eas build --platform ios
+eas submit
+```
+
+In the menu that appears choose the latest build and confirm. This process takes a few minutes.
+
+### Android
+
+Due to some issues with certain expo modules and 8th version of Gradle, the path for building Android is more complicated.
+
+First, you need to head over to `node_modules/expo-application/android/build.gradle` and apply this diff:
+
+```diff
+--- a/node_modules/expo-application/android/build.gradle
++++ b/node_modules/expo-application/android/build.gradle
+@@ -35,19 +35,11 @@ buildscript {
+   }
+ }
+
+-// Creating sources with comments
+-task androidSourcesJar(type: Jar) {
+-  classifier = 'sources'
+-  from android.sourceSets.main.java.srcDirs
+-}
+-
+ afterEvaluate {
+   publishing {
+     publications {
+       release(MavenPublication) {
+         from components.release
+-        // Add additional sourcesJar to artifacts
+-        artifact(androidSourcesJar)
+       }
+     }
+   }
+ }
+
+ android {
+   compileSdkVersion safeExtGet("compileSdkVersion", 33)
+
+   compileOptions {
+-    sourceCompatibility JavaVersion.VERSION_11
+-    targetCompatibility JavaVersion.VERSION_11
++    sourceCompatibility JavaVersion.VERSION_17
++    targetCompatibility JavaVersion.VERSION_17
+   }
+
+   kotlinOptions {
+-    jvmTarget = JavaVersion.VERSION_11.majorVersion
++    jvmTarget = JavaVersion.VERSION_17.majorVersion
+   }
+
+   defaultConfig {
+     minSdkVersion safeExtGet("minSdkVersion", 21)
+     targetSdkVersion safeExtGet("targetSdkVersion", 33)
+     versionCode 12
+     versionName '5.1.1'
+   }
+   lintOptions {
+     abortOnError false
+   }
++  publishing {
++    singleVariant("release") {
++      withSourcesJar()
++    }
++  }
+ }
+
+```
+
+Then, make sure that you have the newest version of the app in `/android` folder
+
+```
+expo run:android
+```
+
+Finally, in the created `android` directory run:
+
+```
+./gradlew assembleRelease
+```
+
+The newly generated `.apk` file will be located in `/android/app/build/outputs/apk/release/app-release.apk`. It can be directly copied and installed on an Android device.
+
+#### Troubleshooting
+
+If you're still getting errors while building android `.apk`, check
+
+```
+cd android
+./gradlew --version
+```
+
+And make sure that Java version is set to 17.0.11. It should appear like this
+
+```
+JVM:          17.0.11 (Azul Systems, Inc. 17.0.11+9-LTS)
+```
+
+If your version doesn't match, the easiest way to change it is to install -> https://sdkman.io/install
+and then run
+
+```
+sdk install java 17.0.11-zulu
+```
