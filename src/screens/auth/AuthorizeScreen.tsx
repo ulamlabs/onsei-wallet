@@ -1,4 +1,4 @@
-import { Pin } from "@/components";
+import { PinWithTimeout } from "@/components";
 import { useAuthStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -25,7 +25,7 @@ export default ({ route, navigation }: DisablePinScreenProps) => {
   }
 
   return (
-    <Pin
+    <PinWithTimeout
       label="Enter your PIN"
       compareToHash={pinHash.current}
       onPinHash={authorize}

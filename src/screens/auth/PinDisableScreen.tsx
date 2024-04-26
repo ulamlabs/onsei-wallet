@@ -1,11 +1,11 @@
-import { Pin } from "@/components";
-import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";
+import { PinWithTimeout } from "@/components";
 import { useAuthStore } from "@/store";
+import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useRef } from "react";
 
 type DisablePinScreenProps = NativeStackScreenProps<
-  ConnectedStackParamList,
+  NavigatorParamsList,
   "Disable PIN"
 >;
 
@@ -25,7 +25,7 @@ export default ({ navigation }: DisablePinScreenProps) => {
   }
 
   return (
-    <Pin
+    <PinWithTimeout
       label="Enter your PIN"
       compareToHash={pinHash.current}
       onPinHash={resetPin}

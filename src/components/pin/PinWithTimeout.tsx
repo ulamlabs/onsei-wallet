@@ -2,14 +2,22 @@ import { computeAuthorizationTimeout, useAuthStore } from "@/store";
 import Pin, { PinProps } from "./Pin";
 import { useEffect, useState } from "react";
 import AuthorizationTimeout from "./AuthorizationTimeout";
-import { useInterval } from "@/hooks";
+import { useAppIsActive, useInterval } from "@/hooks";
 
 export default ({ onPinHash, ...props }: PinProps) => {
+  const appIsActive = useAppIsActive();
   const authStore = useAuthStore();
 
   const [seconds, setSeconds] = useState(() =>
     computeAuthorizationTimeout(authStore.fails)
   );
+
+  useEffect(() => {
+    if (appIsActive) {
+      // Recompute timeout when app is back to active
+      setSeconds(computeAuthorizationTimeout(authStore.fails));
+    }
+  }, [appIsActive]);
 
   useEffect(() => {
     setSeconds(computeAuthorizationTimeout(authStore.fails));

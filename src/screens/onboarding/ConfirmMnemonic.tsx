@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import { FlatList, Text, TextInput, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useAccountsStore } from "@/store/account";
-import { MainStackParamList } from "@/navigation/MainScreenNavigation";
 import { BackButton, SafeLayout, PrimaryButton } from "@/components";
 import { MNEMONIC_WORDS_COUNT, resetNavigationStack } from "@/utils";
 import { useInputState } from "@/hooks";
 import tw from "@/lib/tailwind";
+import { OnboardingParamList } from "@/navigation/OnboardingNavigation";
 
 type ConfirmMnemoProps = NativeStackScreenProps<
-  MainStackParamList,
+  OnboardingParamList,
   "Confirm Mnemonic"
 >;
 
@@ -74,7 +74,7 @@ export default ({
       accountsStore.setActiveAccount(wallet.address);
       accountsStore.subscribeToAccounts();
 
-      navigation.navigate("Connected");
+      navigation.navigate("Finish onboarding");
       resetNavigationStack(navigation);
     } catch (e: any) {
       console.log("Error on wallet import:", e);

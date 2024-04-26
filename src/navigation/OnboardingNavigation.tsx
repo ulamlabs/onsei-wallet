@@ -1,29 +1,28 @@
 import React, { useContext, useEffect } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import InitScreen from "@/screens/InitScreen";
-import NewWallet from "@/screens/NewWallet";
-import ConfirmMnemonic from "@/screens/ConfirmMnemonic";
-import ImportWallet from "@/screens/ImportWallet";
-import ConnectedScreenNavigation from "./ConnectedScreenNavigation";
-import { useAccountsStore, Wallet } from "@/store";
+import { Wallet } from "@/store";
 import {
   AddressBookContext,
   AddressBookContextType,
 } from "@/store/addressBook";
 import { NavigationContainer } from "@react-navigation/native";
+import WelcomeScreen from "@/screens/onboarding/WelcomeScreen";
+import NewWallet from "@/screens/onboarding/NewWallet";
+import ConfirmMnemonic from "@/screens/onboarding/ConfirmMnemonic";
+import ImportWallet from "@/screens/onboarding/ImportWallet";
+import FinishOnboardingScreen from "@/screens/onboarding/FinishOnboardingScreen";
 
-export type MainStackParamList = {
-  Init: undefined;
+export type OnboardingParamList = {
+  Welcome: undefined;
   "New Wallet": undefined;
   "Import Wallet": undefined;
   "Confirm Mnemonic": { wallet: Wallet };
-  Connected: undefined;
+  "Finish onboarding": undefined;
 };
 
-const { Navigator, Screen } = createNativeStackNavigator<MainStackParamList>();
+const { Navigator, Screen } = createNativeStackNavigator<OnboardingParamList>();
 
 export default () => {
-  const accountsStore = useAccountsStore();
   const { initStore: initBookStore } = useContext(
     AddressBookContext
   ) as AddressBookContextType;
@@ -34,15 +33,12 @@ export default () => {
 
   return (
     <NavigationContainer>
-      <Navigator
-        screenOptions={{ headerShown: false }}
-        initialRouteName={accountsStore.activeAccount ? "Connected" : "Init"}
-      >
-        <Screen name="Init" component={InitScreen} />
+      <Navigator screenOptions={{ headerShown: false }}>
+        <Screen name="Welcome" component={WelcomeScreen} />
         <Screen name="New Wallet" component={NewWallet} />
         <Screen name="Confirm Mnemonic" component={ConfirmMnemonic} />
         <Screen name="Import Wallet" component={ImportWallet} />
-        <Screen name="Connected" component={ConnectedScreenNavigation} />
+        <Screen name="Finish onboarding" component={FinishOnboardingScreen} />
       </Navigator>
     </NavigationContainer>
   );

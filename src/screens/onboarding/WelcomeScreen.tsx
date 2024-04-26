@@ -1,15 +1,13 @@
 import React, { useEffect, useRef } from "react";
 import { Animated, View, Text } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useAccountsStore } from "@/store";
-import { MainStackParamList } from "@/navigation/MainScreenNavigation";
 import { SafeLayout, PrimaryButton } from "@/components";
 import tw from "@/lib/tailwind";
+import { OnboardingParamList } from "@/navigation/OnboardingNavigation";
 
-type NewWalletProps = NativeStackScreenProps<MainStackParamList, "Init">;
+type NewWalletProps = NativeStackScreenProps<OnboardingParamList, "Welcome">;
 
 export default ({ navigation }: NewWalletProps) => {
-  const accountsStore = useAccountsStore();
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const fadeIn = (duration = 1500) => {
@@ -20,12 +18,6 @@ export default ({ navigation }: NewWalletProps) => {
       useNativeDriver: true,
     }).start();
   };
-
-  useEffect(() => {
-    if (!navigation.canGoBack() && accountsStore.activeAccount) {
-      navigation.navigate("Connected");
-    }
-  }, [accountsStore.activeAccount, navigation]);
 
   useEffect(() => {
     fadeIn();

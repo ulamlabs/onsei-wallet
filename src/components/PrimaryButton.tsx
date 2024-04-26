@@ -12,7 +12,7 @@ export default ({ label, isLoading, styles, onPress }: PrimaryButtonProps) => {
   return (
     <Pressable
       style={[
-        tw`bg-primary-400 items-center px-6 py-3 rounded-1 flex flex-row`,
+        tw`bg-primary-700 items-center px-6 py-3 rounded-1 flex flex-row`,
         styles,
       ]}
       onPress={onPress}

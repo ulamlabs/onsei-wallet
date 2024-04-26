@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Text, TextInput, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { MainStackParamList } from "@/navigation/MainScreenNavigation";
 import { useAccountsStore } from "@/store";
 import { SafeLayout, BackButton, PrimaryButton } from "@/components";
 import { useInputState } from "@/hooks";
 import { resetNavigationStack } from "@/utils";
 import tw from "@/lib/tailwind";
+import { OnboardingParamList } from "@/navigation/OnboardingNavigation";
 
 type NewWalletProps = NativeStackScreenProps<
-  MainStackParamList,
+  OnboardingParamList,
   "Import Wallet"
 >;
 
@@ -40,7 +40,7 @@ export default ({ navigation }: NewWalletProps) => {
       accountsStore.setActiveAccount(newAccount.address);
       accountsStore.subscribeToAccounts();
 
-      navigation.navigate("Connected");
+      navigation.navigate("Finish onboarding");
       resetNavigationStack(navigation);
     } catch (e: any) {
       console.log("Error on wallet import:", e);
