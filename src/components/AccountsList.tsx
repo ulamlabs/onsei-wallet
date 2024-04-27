@@ -1,8 +1,8 @@
 import { Account, useAccountsStore } from "@/store";
+import { NavigationProp } from "@/types";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import AccountListItem from "./AccountListItem";
-import { NavigationProp } from "@/types";
 import { PrimaryButton } from "./buttons";
 import { Column, Row } from "./layout";
 import { Headline } from "./typography";

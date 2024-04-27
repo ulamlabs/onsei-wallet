@@ -6,7 +6,13 @@ import {
   saveToSecureStorage,
   saveToStorage,
 } from "@/utils";
-import { generateWallet, getQueryClient, restoreWallet } from "@sei-js/cosmjs";
+import { calculateFee } from "@cosmjs/stargate";
+import {
+  generateWallet,
+  getQueryClient,
+  getSigningStargateClient,
+  restoreWallet,
+} from "@sei-js/cosmjs";
 import { create } from "zustand";
 
 const nodes: Record<Node, string> = {
@@ -45,6 +51,7 @@ type AccountsStore = {
   subscribeToAccounts: () => void;
   getRawBalance: (address: string) => Promise<number>;
   getUSDBalance: (balance: number) => number;
+  transferAsset: (receiver: string, amount: number) => Promise<string>;
 };
 
 export const useAccountsStore = create<AccountsStore>((set, get) => ({
@@ -166,6 +173,55 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
   getUSDBalance: (balance) => {
     // TODO: handle get token price
     return balance * get().tokenPrice;
+  },
+  transferAsset: async (receiver: string, amount: number) => {
+    try {
+      const {
+        getMnemonic,
+        activeAccount,
+        accounts,
+        getRawBalance,
+        setActiveAccount,
+      } = get();
+
+      const wallet = await restoreWallet(getMnemonic(activeAccount?.address!));
+
+      const signingClient = await getSigningStargateClient(
+        "https://rpc.atlantic-2.seinetwork.io",
+        wallet as any
+      );
+
+      const fee = calculateFee(activeAccount?.balance! - amount, "0.1usei");
+      const sendAmount = { amount: `${amount}`, denom: "usei" };
+      const send = await signingClient.sendTokens(
+        activeAccount?.address!,
+        receiver,
+        [sendAmount],
+        fee
+      );
+
+      const udpatedAcc = await Promise.all(
+        accounts.map(async (acc) => {
+          const bal = await getRawBalance(acc.address);
+          return { ...acc, balance: bal };
+        })
+      );
+
+      set((state) => {
+        saveToStorage("accounts", udpatedAcc);
+        return { ...state, accounts: udpatedAcc };
+      });
+
+      setActiveAccount(
+        udpatedAcc.find((acc) => acc.address === activeAccount?.address!)
+          ?.address!
+      );
+
+      return send.transactionHash;
+    } catch (error: any) {
+      console.log(error);
+      throw new Error(error);
+    }
   },
 }));
 

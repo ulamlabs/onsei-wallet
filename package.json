@@ -11,6 +11,7 @@
     "format": "prettier . --write"
   },
   "dependencies": {
+    "@cosmjs/stargate": "^0.32.3",
     "@craftzdog/react-native-buffer": "^6.0.5",
     "@expo/metro-config": "~0.17.1",
     "@react-native/metro-config": "^0.74.81",

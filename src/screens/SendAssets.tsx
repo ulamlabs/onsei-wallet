@@ -2,18 +2,20 @@ import {
   Headline,
   Loader,
   PrimaryButton,
-  SafeLayout,
   Row,
+  SafeLayout,
   Text,
   TextInput,
 } from "@/components";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useInputState } from "@/hooks";
 import { useModalStore } from "@/store";
 import { Colors } from "@/styles";
-import { View } from "react-native";
 import { NavigatorParamsList } from "@/types";
+import { calculateFee } from "@cosmjs/stargate";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
 import { useEffect } from "react";
+import { View } from "react-native";
 
 type SendAssetsProps = NativeStackScreenProps<NavigatorParamsList, "Send">;
 
@@ -39,7 +41,47 @@ export default function SendAssets({
   }
 
   async function onSend() {
-    // TODO: handle send
+    setError(null);
+    if (!receiverInput.value || !amountInput.value) {
+      setError("All inputs need to be filled");
+      return;
+    }
+    if (receiverInput.value === activeAccount?.address) {
+      setError("You cannot send funds to your own address");
+      return;
+    }
+    try {
+      isValidSeiCosmosAddress(receiverInput.value);
+    } catch (e) {
+      setError("Invalid receiver address");
+      return;
+    }
+    const amount = Number(amountInput.value.replaceAll(",", "."));
+    if (Number.isNaN(amount) || amount === 0) {
+      setError("Invalid amount entered");
+      return;
+    }
+    const fee = +calculateFee(amount, "0.1usei").amount[0].amount;
+    if (amount > activeAccount?.balance! - fee) {
+      setError("Insufficient funds");
+      return;
+    }
+    setLoading(true);
+    try {
+      const txnHash = await transferAsset(receiverInput.value, amount);
+      console.log(`Submitted with hash ${txnHash}`);
+      onAfterSubmit();
+      setModalVisible(true);
+    } catch (error: any) {
+      console.log("Error while submitting:", error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function onAfterSubmit() {
+    // TODO Handle adding to notifications
     alert({
       title: "Transfer successful!",
       description: `You successfully transfered ${amountInput.value} SEI to ${receiverInput.value}`,
