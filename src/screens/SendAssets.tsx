@@ -37,7 +37,11 @@ export default function SendAssets({
   }, []);
 
   async function onMax() {
-    // TODO: handle max am ount
+    amountInput.onChangeText!("Calculating...");
+    const balance = await getRawBalance(activeAccount?.address!);
+    const fee = calculateFee(balance, "0.1usei");
+
+    amountInput.onChangeText!((balance - +fee.amount[0].amount).toString());
   }
 
   async function onSend() {
