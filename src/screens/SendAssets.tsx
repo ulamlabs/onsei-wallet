@@ -44,7 +44,18 @@ export default function SendAssets({
     amountInput.onChangeText!((balance - +fee.amount[0].amount).toString());
   }
 
+  useEffect(() => {
+    if (verified) {
+      onSend();
+    }
+  }, [verified]);
+
   async function onSend() {
+    if (state !== "noPin" && !verified) {
+      authorize(navigation, "Send", { verified: true });
+      return;
+    }
+
     setError(null);
     if (!receiverInput.value || !amountInput.value) {
       setError("All inputs need to be filled");
@@ -54,12 +65,12 @@ export default function SendAssets({
       setError("You cannot send funds to your own address");
       return;
     }
-    try {
-      isValidSeiCosmosAddress(receiverInput.value);
-    } catch (e) {
+
+    if (!isValidSeiCosmosAddress(receiverInput.value)) {
       setError("Invalid receiver address");
       return;
     }
+
     const amount = Number(amountInput.value.replaceAll(",", "."));
     if (Number.isNaN(amount) || amount === 0) {
       setError("Invalid amount entered");

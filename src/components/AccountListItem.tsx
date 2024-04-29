@@ -1,4 +1,11 @@
-import { Account, useAccountsStore, useModalStore } from "@/store";
+import {
+  Account,
+  useAccountsStore,
+  useAuthStore,
+  useModalStore,
+} from "@/store";
+import { Colors } from "@/styles";
+import { NavigationProp } from "@/types";
 import { formatTokenAmount } from "@/utils/formatAmount";
 import { trimAddress } from "@/utils/trimAddress";
 import { useNavigation } from "@react-navigation/native";
@@ -13,9 +20,7 @@ import {
 import { useState } from "react";
 import { Pressable, View } from "react-native";
 import Tooltip from "./Tooltip";
-import { Colors } from "@/styles";
 import { TertiaryButton } from "./buttons";
-import { NavigationProp } from "@/types";
 import { Row } from "./layout";
 import { Text } from "./typography";
 
@@ -27,6 +32,7 @@ export default function AccountListItem({ account }: Props) {
   const { address, balance } = account;
   const { activeAccount, setActiveAccount, deleteAccount } = useAccountsStore();
   const { ask, alert } = useModalStore();
+  const { state, authorize } = useAuthStore();
   const [visibleTooltip, setVisibleTooltip] = useState<boolean>(false);
   const navigation = useNavigation<NavigationProp>();
 
@@ -66,6 +72,11 @@ export default function AccountListItem({ account }: Props) {
 
   function onMnemonicShow() {
     setVisibleTooltip(false);
+    if (state !== "noPin") {
+      authorize(navigation as any, "Your Mnemonic", { address });
+      return;
+    }
+
     navigation.push("Authorize", {
       nextRoute: "Your Mnemonic",
       nextParams: { address },
