@@ -21,7 +21,7 @@ type Props = {
   onRemove: () => void;
 };
 
-export default ({ account, onRemove }: Props) => {
+export default function AccountListItem({ account, onRemove }: Props) {
   const { address, balance } = account;
   const { activeAccount, setActiveAccount } = useAccountsStore();
   const [visibleTooltip, setVisibleTooltip] = useState<boolean>(false);
@@ -115,4 +115,4 @@ export default ({ account, onRemove }: Props) => {
       </View>
     </View>
   );
-};
+}

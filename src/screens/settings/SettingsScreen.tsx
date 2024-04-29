@@ -6,7 +6,7 @@ import React from "react";
 
 type SettingsProps = NativeStackScreenProps<NavigatorParamsList, "Settings">;
 
-export default ({ navigation }: SettingsProps) => {
+export default function SettingsScreen({ navigation }: SettingsProps) {
   const authStore = useAuthStore();
 
   async function onRemove() {
@@ -19,4 +19,4 @@ export default ({ navigation }: SettingsProps) => {
       <Button label="Clear app data" onPress={onRemove} />
     </SafeLayout>
   );
-};
+}

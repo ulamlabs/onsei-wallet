@@ -3,26 +3,16 @@ import Button from "@/components/Button";
 import SafeLayout from "@/components/SafeLayout";
 import { useInputState } from "@/hooks";
 import tw from "@/lib/tailwind";
-import { useAccountsStore } from "@/store";
-import {
-  AddressBookContext,
-  AddressBookContextType,
-} from "@/store/addressBook";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Text, TextInput, View } from "react-native";
 
 type SendAssetsProps = NativeStackScreenProps<NavigatorParamsList, "Send">;
 
-export default ({ navigation }: SendAssetsProps) => {
-  const { activeAccount } = useAccountsStore();
-  const { addressBook } = useContext(
-    AddressBookContext
-  ) as AddressBookContextType;
-
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export default function SendAssets({ navigation }: SendAssetsProps) {
+  const loading = false;
+  const error: string | null = null;
   const [modalVisible, setModalVisible] = useState(false);
   const amountInput = useInputState();
   const receiverInput = useInputState();
@@ -81,4 +71,4 @@ export default ({ navigation }: SendAssetsProps) => {
       />
     </SafeLayout>
   );
-};
+}

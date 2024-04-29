@@ -1,16 +1,8 @@
 import { Divider } from "@/components";
 import SafeLayout from "@/components/SafeLayout";
 import tw from "@/lib/tailwind";
-import { AddressBookContext, AddressBookContextType } from "@/store";
-import { NavigatorParamsList } from "@/types";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useContext, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
-
-type TransactionsProps = NativeStackScreenProps<
-  NavigatorParamsList,
-  "Transactions"
->;
 
 type Transaction = {
   type: "Send" | "Receive";
@@ -26,26 +18,18 @@ type TransactionRenderProps = {
   index: number;
 };
 
-export default ({
-  route: {
-    params: { address },
-  },
-}: TransactionsProps) => {
-  const [loading, setLoading] = useState(true);
-  const [isMore, setIsMore] = useState(true);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-
-  const { addressBook } = useContext(
-    AddressBookContext
-  ) as AddressBookContextType;
+export default function Transactions() {
+  const loading = true;
+  const isMore = true;
+  const transactions: Transaction[] = [];
 
   useEffect(() => {
     fetchTxns(0);
     // If there's any notification about balance change, remove it, because user will now see it on txs list
     // cancelNotification(address); TODO: cancel notification
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // eslint-disable-next-line
   async function fetchTxns(page: number) {
     // TODO: handle fetching transactions
   }
@@ -129,4 +113,4 @@ export default ({
       </View>
     </SafeLayout>
   );
-};
+}

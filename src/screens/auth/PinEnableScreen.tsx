@@ -9,7 +9,10 @@ type EnablePinScreenProps = NativeStackScreenProps<
   "Enable PIN"
 >;
 
-export default ({ route, navigation }: EnablePinScreenProps) => {
+export default function PinEnableScreen({
+  route,
+  navigation,
+}: EnablePinScreenProps) {
   const [pinHash, setPinHash] = useState("");
 
   const authStore = useAuthStore();
@@ -33,4 +36,4 @@ export default ({ route, navigation }: EnablePinScreenProps) => {
       )}
     </>
   );
-};
+}

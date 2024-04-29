@@ -28,7 +28,7 @@ type Props = PropsWithChildren & {
   onPress: () => void;
 };
 
-export default ({
+export default function Tooltip({
   children,
   toggleElement,
   isVisible,
@@ -37,7 +37,7 @@ export default ({
   width = 150,
   styles,
   onPress,
-}: Props) => {
+}: Props) {
   const isIOS = Platform.OS === "ios";
   const renderedElement = useRef<View>(null);
   const isMounted = useRef(false);
@@ -57,7 +57,7 @@ export default ({
         _width = 0,
         _height = 0,
         pageOffsetX = 0,
-        pageOffsetY = 0
+        pageOffsetY = 0,
       ) => {
         isMounted.current &&
           setDimensions({
@@ -73,13 +73,13 @@ export default ({
             elementWidth: _width,
             elementHeight: _height,
           });
-      }
+      },
     );
-  }, []);
+  }, [isIOS]);
 
   const handleOnPress = useCallback(() => {
     getElementPosition();
-  }, [getElementPosition, isVisible]);
+  }, [getElementPosition]);
 
   useEffect(() => {
     isMounted.current = true;
@@ -87,7 +87,7 @@ export default ({
     requestAnimationFrame(getElementPosition);
     const dimensionsListener = Dimensions.addEventListener(
       "change",
-      getElementPosition
+      getElementPosition,
     );
 
     return () => {
@@ -103,7 +103,7 @@ export default ({
         height,
         width,
       }),
-    [dimensions, height, width]
+    [dimensions, height, width],
   );
 
   return (
@@ -128,7 +128,7 @@ export default ({
               tooltipStyle,
               tw.style(
                 `border-black border-opacity-40 border-2 absolute items-center justify-center flex-1 p-2 rounded-lg bg-background`,
-                styles
+                styles,
               ),
             ]}
           >
@@ -138,4 +138,4 @@ export default ({
       </Modal>
     </View>
   );
-};
+}

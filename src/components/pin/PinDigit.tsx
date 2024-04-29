@@ -10,7 +10,7 @@ export type PinDigitProps = {
 const NOT_FILLED_SIZE = 8;
 const FILLED_SIZE = 20;
 
-export default ({ filled, error }: PinDigitProps) => {
+export default function PinDigit({ filled, error }: PinDigitProps) {
   const animation = useRef(new Animated.Value(NOT_FILLED_SIZE)).current;
 
   useEffect(() => {
@@ -41,4 +41,4 @@ export default ({ filled, error }: PinDigitProps) => {
       />
     </View>
   );
-};
+}

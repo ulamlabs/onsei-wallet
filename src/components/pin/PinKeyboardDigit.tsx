@@ -6,7 +6,10 @@ export type PinKeyboardDigitProps = {
   onPress: (digit: string) => void;
 };
 
-export default ({ digit, onPress }: PinKeyboardDigitProps) => {
+export default function PinKeyboardDigit({
+  digit,
+  onPress,
+}: PinKeyboardDigitProps) {
   if (!digit) {
     return <View style={styles.digit} />;
   }
@@ -24,7 +27,7 @@ export default ({ digit, onPress }: PinKeyboardDigitProps) => {
       )}
     </TouchableHighlight>
   );
-};
+}
 
 const styles = StyleSheet.create({
   digit: {

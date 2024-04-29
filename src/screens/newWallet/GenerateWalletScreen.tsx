@@ -11,13 +11,15 @@ type GenerateWalletProps = NativeStackScreenProps<
   "Generate Wallet"
 >;
 
-export default ({ navigation }: GenerateWalletProps) => {
+export default function GenerateWalletScreen({
+  navigation,
+}: GenerateWalletProps) {
   const accountsStore = useAccountsStore();
   const [wallet, setWallet] = useState<Wallet | null>(null);
 
   useEffect(() => {
     accountsStore.generateWallet().then(setWallet);
-  }, []);
+  }, [accountsStore]);
 
   function onNext() {
     navigation.push("Confirm Mnemonic", { wallet: wallet! });
@@ -45,4 +47,4 @@ export default ({ navigation }: GenerateWalletProps) => {
       </View>
     </SafeLayout>
   );
-};
+}

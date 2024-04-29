@@ -4,7 +4,7 @@ import { NavigationProp } from "@/types";
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "@/components";
 
-export default () => {
+export default function AddWallet() {
   const navigation = useNavigation<NavigationProp>();
 
   function onCreateNew() {
@@ -23,4 +23,4 @@ export default () => {
       </Animated.View>
     </View>
   );
-};
+}

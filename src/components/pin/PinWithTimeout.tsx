@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import AuthorizationTimeout from "./AuthorizationTimeout";
 import { useAppIsActive, useInterval } from "@/hooks";
 
-export default ({ onPinHash, ...props }: PinProps) => {
+export default function PinKeyboardTimeout({ onPinHash, ...props }: PinProps) {
   const appIsActive = useAppIsActive();
   const authStore = useAuthStore();
 
   const [seconds, setSeconds] = useState(() =>
-    computeAuthorizationTimeout(authStore.fails)
+    computeAuthorizationTimeout(authStore.fails),
   );
 
   useEffect(() => {
@@ -17,7 +17,7 @@ export default ({ onPinHash, ...props }: PinProps) => {
       // Recompute timeout when app is back to active
       setSeconds(computeAuthorizationTimeout(authStore.fails));
     }
-  }, [appIsActive]);
+  }, [appIsActive, authStore]);
 
   useEffect(() => {
     setSeconds(computeAuthorizationTimeout(authStore.fails));
@@ -47,4 +47,4 @@ export default ({ onPinHash, ...props }: PinProps) => {
       )}
     </>
   );
-};
+}

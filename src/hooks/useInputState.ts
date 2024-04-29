@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useCallback, useState } from 'react';
+import { useCallback, useState } from "react";
 
 export type DropdownItem = {
   label: string;
@@ -19,7 +19,7 @@ export type InputHookResponse = {
 };
 
 export const useInputState = (props: InputProps = {}): InputHookResponse => {
-  const [value, setValue] = useState(props.initialValue ?? '');
+  const [value, setValue] = useState(props.initialValue ?? "");
   const [suggestions, setSuggestions] = useState(
     props.autoCompleteData ?? null,
   );
@@ -29,7 +29,7 @@ export const useInputState = (props: InputProps = {}): InputHookResponse => {
     if (props.autoCompleteData) {
       setSuggestions(
         props.autoCompleteData.filter(
-          data =>
+          (data) =>
             data.label.toLowerCase().includes(query.toLowerCase()) ||
             data.value.toLowerCase().includes(query.toLowerCase()),
         ),

@@ -11,7 +11,7 @@ type SecuritySettingsScreenProps = NativeStackScreenProps<
   "Security"
 >;
 
-export function SecuritySettingsScreen({
+export default function SecuritySettingsScreen({
   navigation,
 }: SecuritySettingsScreenProps) {
   const authStore = useAuthStore();

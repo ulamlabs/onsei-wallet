@@ -9,7 +9,10 @@ type DisablePinScreenProps = NativeStackScreenProps<
   "Authorize"
 >;
 
-export default ({ route, navigation }: DisablePinScreenProps) => {
+export default function AuthorizeScreen({
+  route,
+  navigation,
+}: DisablePinScreenProps) {
   const authStore = useAuthStore();
 
   const pinHash = useRef(authStore.getPinHash());
@@ -31,4 +34,4 @@ export default ({ route, navigation }: DisablePinScreenProps) => {
       onPinHash={authorize}
     />
   );
-};
+}

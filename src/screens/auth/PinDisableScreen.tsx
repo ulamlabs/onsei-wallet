@@ -9,7 +9,9 @@ type DisablePinScreenProps = NativeStackScreenProps<
   "Disable PIN"
 >;
 
-export default ({ navigation }: DisablePinScreenProps) => {
+export default function PinDisableScreen({
+  navigation,
+}: DisablePinScreenProps) {
   const authStore = useAuthStore();
 
   const pinHash = useRef(authStore.getPinHash());
@@ -31,4 +33,4 @@ export default ({ navigation }: DisablePinScreenProps) => {
       onPinHash={resetPin}
     />
   );
-};
+}

@@ -1,7 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import BottomBarsNavigation from "./BottomBarsNavigation";
-import { SecuritySettingsScreen } from "@/screens/settings/SecuritySettingsScreen";
 import PinEnableScreen from "@/screens/auth/PinEnableScreen";
 import PinDisableScreen from "@/screens/auth/PinDisableScreen";
 import PinChangeScreen from "@/screens/auth/PinChangeScreen";
@@ -15,7 +14,6 @@ import {
 import SendAssets from "@/screens/SendAssets";
 import ReceiveAssets from "@/screens/ReceiveAssets";
 import Transactions from "@/screens/Transactions";
-import { MnemonicScreen } from "@/components";
 import {
   AddWalletScreen,
   ConfirmMnemonicScreen,
@@ -24,6 +22,8 @@ import {
 } from "@/screens/newWallet";
 import { Wallet } from "@/store";
 import { navigatorScreenOptions } from "./const";
+import SecuritySettingsScreen from "@/screens/settings/SecuritySettingsScreen";
+import MnemonicScreen from "@/screens/MnemonicScreen";
 
 export type HomeParamList = {
   Home: undefined;
@@ -45,14 +45,14 @@ export type HomeParamList = {
 
 const { Navigator, Screen } = createNativeStackNavigator<HomeParamList>();
 
-export default () => {
+export default function HomeNavigation() {
   const { initStore: initBookStore } = useContext(
-    AddressBookContext
+    AddressBookContext,
   ) as AddressBookContextType;
 
   useEffect(() => {
     initBookStore();
-  }, []);
+  }, [initBookStore]);
 
   return (
     <Navigator id="home" screenOptions={navigatorScreenOptions}>
@@ -77,4 +77,4 @@ export default () => {
       <Screen name="Import Wallet" component={ImportWalletScreen} />
     </Navigator>
   );
-};
+}

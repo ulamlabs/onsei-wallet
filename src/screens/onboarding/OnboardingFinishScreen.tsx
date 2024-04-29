@@ -11,12 +11,14 @@ type OnboardingFinishScreenProps = NativeStackScreenProps<
   "Finish Onboarding"
 >;
 
-export default ({ navigation }: OnboardingFinishScreenProps) => {
+export default function OnboardingFinishScreen({
+  navigation,
+}: OnboardingFinishScreenProps) {
   const onboardingStore = useOnboardingStore();
 
   useEffect(() => {
     resetNavigationStack(navigation);
-  }, []);
+  }, [navigation]);
 
   return (
     <SafeLayout>
@@ -33,4 +35,4 @@ export default ({ navigation }: OnboardingFinishScreenProps) => {
       </View>
     </SafeLayout>
   );
-};
+}

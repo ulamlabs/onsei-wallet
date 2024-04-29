@@ -13,7 +13,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 type LayoutProps = PropsWithChildren & { noScroll?: boolean };
 
 // Layout with safe paddings that ensure that content won't be hidden behind phone elements (like front camera)
-export default ({ children, noScroll }: LayoutProps) => {
+export default function SafeLayout({ children, noScroll }: LayoutProps) {
   const insets = useSafeAreaInsets();
   const layoutStyle: ViewStyle = {
     flex: 1,
@@ -41,4 +41,4 @@ export default ({ children, noScroll }: LayoutProps) => {
       )}
     </KeyboardAvoidingView>
   );
-};
+}

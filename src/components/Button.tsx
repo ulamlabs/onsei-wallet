@@ -12,7 +12,7 @@ type ButtonProps = {
   textStyles?: string;
 };
 
-export default ({
+export default function Button({
   label,
   isLoading,
   styles,
@@ -21,7 +21,7 @@ export default ({
   icon,
   type = "primary",
   disabled = false,
-}: ButtonProps) => {
+}: ButtonProps) {
   return (
     <Pressable
       disabled={disabled}
@@ -30,7 +30,7 @@ export default ({
         type === "primary" && "bg-primary-700",
         type === "danger" && "bg-danger-600",
         icon && label && "gap-3",
-        styles
+        styles,
       )}
       onPress={onPress}
     >
@@ -45,4 +45,4 @@ export default ({
       )}
     </Pressable>
   );
-};
+}
