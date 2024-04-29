@@ -1,4 +1,4 @@
-import { Pin } from "@/components";
+import { Pin, PinWithTimeout } from "@/components";
 import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";
 import { useAuthStore } from "@/store";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -29,7 +29,7 @@ export default ({ navigation }: ChangePinScreenProps) => {
 
   if (!authorized) {
     return (
-      <Pin
+      <PinWithTimeout
         label="Enter your old PIN"
         compareToHash={oldPinHash.current}
         onPinHash={() => setAuthorized(true)}

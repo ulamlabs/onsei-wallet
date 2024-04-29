@@ -1,7 +1,7 @@
+import { MNEMONIC_WORDS_COUNT } from "@/const";
 import {
   loadFromSecureStorage,
   loadFromStorage,
-  MNEMONIC_WORDS_COUNT,
   removeFromSecureStorage,
   saveToSecureStorage,
   saveToStorage,
@@ -54,7 +54,7 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
   tokenPrice: 0,
   node: "TestNet",
   init: async () => {
-    const accounts = await loadFromStorage("accounts", []);
+    const accounts = await loadFromStorage<Account[]>("accounts", []);
     set({ accounts, activeAccount: accounts[0] });
   },
   setActiveAccount: (address: string | null) => {
