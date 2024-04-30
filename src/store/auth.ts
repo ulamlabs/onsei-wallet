@@ -21,6 +21,7 @@ type AuthStore = {
   init: () => Promise<void>;
   setPinHash: (pinHash: string) => void;
   getPinHash: () => string | null;
+  lock: () => void;
   unlock: () => void;
   authorize: <RouteName extends keyof NavigatorParamsList>(
     navigation: NavigationProp,
@@ -56,6 +57,11 @@ export const useAuthStore = create<AuthStore>((set) => ({
   },
   getPinHash: () => {
     return SecureStore.getItem(PIN_KEY);
+  },
+  lock: () => {
+    if (SecureStore.getItem(PIN_KEY)) {
+      set({ state: "locked" });
+    }
   },
   unlock: () => {
     set({ state: "unlocked" });

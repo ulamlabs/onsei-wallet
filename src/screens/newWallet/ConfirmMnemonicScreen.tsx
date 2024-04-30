@@ -48,14 +48,12 @@ export default function ConfirmMnemonicScreen({
       wordsChosen.push({ word: mnemonic[wordId], wordLabel: wordId + 1 });
     }
     setToConfirm(wordsChosen);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wallet.mnemonic]);
 
   useEffect(() => {
     if (loading) {
       onConfirm();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
 
   async function onConfirm() {

@@ -15,11 +15,15 @@ import LockNavigation from "@/navigation/LockNavigation";
 import OnboardingNavigation from "@/navigation/OnboardingNavigation";
 import HomeNavigation from "@/navigation/HomeNavigation";
 import { NavigationContainer } from "@react-navigation/native";
+import { useInactivityLock } from "@/hooks";
 
 export default function App() {
   const [ready, setReady] = useState(false);
 
   useDeviceContext(tw);
+
+  useInactivityLock();
+
   const accountsStore = useAccountsStore();
   const authStore = useAuthStore();
   const onboardingStore = useOnboardingStore();
@@ -31,7 +35,6 @@ export default function App() {
     }
 
     init();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const hasAccounts = useMemo(
