@@ -19,7 +19,7 @@ export default function PinEnableScreen({
 
   function savePin(pinHash: string) {
     authStore.setPinHash(pinHash);
-    navigation.navigate(route.params.nextRoute as any);
+    navigation.navigate(route.params.nextRoute, undefined as any);
   }
 
   return (

@@ -8,9 +8,10 @@ import {
 import OnboardingWelcomeScreen from "@/screens/onboarding/OnboardingWelcomeScreen";
 import OnboardingFinishScreen from "@/screens/onboarding/OnboardingFinishScreen";
 import OnboardingProtectionScreen from "@/screens/onboarding/OnboardingProtectionScreen";
-import { NavigatorParamsList } from "@/types";
 import { PinEnableScreen } from "@/screens/auth";
 import { navigatorScreenOptions } from "./const";
+import { NavigatorParamsList } from "@/types";
+import { OnboardingEnableBiometricsScreen } from "@/screens/onboarding/OnboardingEnableBiometricsScreen";
 
 export type OnboardingParamList = {
   Welcome: undefined;
@@ -18,6 +19,7 @@ export type OnboardingParamList = {
   "Import Wallet": undefined;
   "Confirm Mnemonic": { wallet: Wallet };
   "Protect Your Wallet": undefined;
+  "Enable Biometrics": undefined;
   "Finish Onboarding": undefined;
   "Enable PIN": { nextRoute: keyof NavigatorParamsList };
 };
@@ -38,6 +40,10 @@ export default function OnboardingNavigation() {
       <Screen
         name="Protect Your Wallet"
         component={OnboardingProtectionScreen}
+      />
+      <Screen
+        name="Enable Biometrics"
+        component={OnboardingEnableBiometricsScreen}
       />
       <Screen name="Finish Onboarding" component={OnboardingFinishScreen} />
       <Screen name="Enable PIN" component={PinEnableScreen} />

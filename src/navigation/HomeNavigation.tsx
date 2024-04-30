@@ -6,7 +6,7 @@ import PinDisableScreen from "@/screens/auth/PinDisableScreen";
 import PinChangeScreen from "@/screens/auth/PinChangeScreen";
 import ResetAppScreen from "@/screens/settings/ResetAppScreen";
 import { NavigatorParamsList } from "@/types";
-import { AuthorizeScreen } from "@/screens/auth";
+import { AuthorizeScreen, BiometricsDisableScreen } from "@/screens/auth";
 import {
   AddressBookContext,
   AddressBookContextType,
@@ -31,6 +31,7 @@ export type HomeParamList = {
   "Enable PIN": { nextRoute: keyof NavigatorParamsList };
   "Disable PIN": undefined;
   "Change PIN": undefined;
+  "Disable Face ID / Touch ID": undefined;
   "Clear app data": undefined;
   Authorize: { nextRoute: keyof NavigatorParamsList; nextParams?: any };
   Receive: undefined;
@@ -66,6 +67,10 @@ export default function HomeNavigation() {
       <Screen name="Enable PIN" component={PinEnableScreen} />
       <Screen name="Disable PIN" component={PinDisableScreen} />
       <Screen name="Change PIN" component={PinChangeScreen} />
+      <Screen
+        name="Disable Face ID / Touch ID"
+        component={BiometricsDisableScreen}
+      />
       <Screen name="Authorize" component={AuthorizeScreen} />
       <Screen name="Send" component={SendAssets} />
       <Screen name="Receive" component={ReceiveAssets} />

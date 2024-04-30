@@ -3,6 +3,7 @@ import { Animated, View, Text } from "react-native";
 import { SafeLayout } from "@/components";
 import tw from "@/lib/tailwind";
 import { AddWallet } from "@/screens/newWallet";
+import { APP_NAME } from "@/const";
 
 export default function OnboardingWelcomeScreen() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -24,7 +25,7 @@ export default function OnboardingWelcomeScreen() {
     <SafeLayout>
       <View style={tw`items-center`}>
         <Text style={tw`mb-30 mt-10 text-3xl font-bold text-white`}>
-          Welcome to Sei Wallet
+          Welcome to {APP_NAME}
         </Text>
 
         <Animated.View style={{ opacity: fadeAnim, alignItems: "center" }}>

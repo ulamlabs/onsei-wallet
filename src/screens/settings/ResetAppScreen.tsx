@@ -1,5 +1,9 @@
 import { SafeLayout } from "@/components";
-import { useAccountsStore, useOnboardingStore } from "@/store";
+import {
+  useAccountsStore,
+  useOnboardingStore,
+  useSettingsStore,
+} from "@/store";
 import { useAuthStore } from "@/store";
 import { Button, Text, View } from "react-native";
 import tw from "@/lib/tailwind";
@@ -15,10 +19,15 @@ export default function ResetAppScreen({ navigation }: ResetAppScreenProps) {
   const accountsStore = useAccountsStore();
   const authStore = useAuthStore();
   const onboardingStore = useOnboardingStore();
+  const settingsStore = useSettingsStore();
 
   async function onRemove() {
     // TODO clear address book
-    await Promise.all([accountsStore.clearStore(), authStore.resetPin()]);
+    await Promise.all([
+      accountsStore.clearStore(),
+      authStore.resetPin(),
+      settingsStore.reset(),
+    ]);
     onboardingStore.startOnboarding();
   }
 

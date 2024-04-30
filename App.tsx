@@ -9,6 +9,7 @@ import {
   useAuthStore,
   AddressBookProvider,
   useOnboardingStore,
+  useSettingsStore,
 } from "@/store";
 import { useEffect, useMemo, useState } from "react";
 import LockNavigation from "@/navigation/LockNavigation";
@@ -27,10 +28,15 @@ export default function App() {
   const accountsStore = useAccountsStore();
   const authStore = useAuthStore();
   const onboardingStore = useOnboardingStore();
+  const settingsStore = useSettingsStore();
 
   useEffect(() => {
     async function init() {
-      await Promise.all([accountsStore.init(), authStore.init()]);
+      await Promise.all([
+        accountsStore.init(),
+        authStore.init(),
+        settingsStore.init(),
+      ]);
       setReady(true);
     }
 

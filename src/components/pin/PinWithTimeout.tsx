@@ -17,7 +17,7 @@ export default function PinKeyboardTimeout({ onPinHash, ...props }: PinProps) {
       // Recompute timeout when app is back to active
       setSeconds(computeAuthorizationTimeout(authStore.fails));
     }
-  }, [appIsActive, authStore]);
+  }, [appIsActive]);
 
   useEffect(() => {
     setSeconds(computeAuthorizationTimeout(authStore.fails));

@@ -9,8 +9,16 @@ export type SwithWithLabelProps = SwitchProps & {
 export default function SwitchWithLabel({
   label,
   icon,
+  disabled,
+  onValueChange,
   ...props
 }: SwithWithLabelProps) {
+  function onValueChangeWrapped(value: boolean) {
+    if (!disabled && onValueChange) {
+      onValueChange(value);
+    }
+  }
+
   return (
     <View
       style={{
@@ -18,13 +26,14 @@ export default function SwitchWithLabel({
         gap: 10,
         alignItems: "center",
         justifyContent: "space-between",
+        ...(disabled ? { opacity: 0.3 } : {}),
       }}
     >
       <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
         {icon}
         <Text style={{ color: "white", fontSize: 16 }}>{label}</Text>
       </View>
-      <Switch {...props} />
+      <Switch onValueChange={onValueChangeWrapped} {...props} />
     </View>
   );
 }

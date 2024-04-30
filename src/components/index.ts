@@ -9,6 +9,7 @@ import SafeLayout from "./SafeLayout";
 import SwitchWithLabel from "./SwitchWithLabel";
 import Tooltip from "./Tooltip";
 import { Pin } from "./pin";
+import Biometrics from "./Biometrics";
 
 export * from "./pin";
 export {
@@ -23,4 +24,5 @@ export {
   SafeLayout,
   SwitchWithLabel,
   Tooltip,
+  Biometrics,
 };

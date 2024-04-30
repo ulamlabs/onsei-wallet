@@ -17,6 +17,9 @@
       "bundleIdentifier": "com.ulamlabs.seiwallet",
       "config": {
         "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "This app stores users's private keys and the access should be Face ID protected."
       }
     },
     "android": {
@@ -35,6 +38,12 @@
       }
     },
     "owner": "ulam-labs",
-    "plugins": ["expo-secure-store"]
+    "plugins": [
+      "expo-secure-store",
+      [
+        "expo-local-authentication",
+        { "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID." }
+      ]
+    ]
   }
 }

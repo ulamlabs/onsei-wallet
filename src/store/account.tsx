@@ -152,7 +152,7 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
       const amount = +balance.balances[0]?.amount || 0;
       return amount;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return 0;
     }
   },
