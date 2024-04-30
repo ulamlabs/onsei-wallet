@@ -4,13 +4,19 @@ import {
   VALID_ACCOUNT_NAME_REGEX,
 } from "@/const";
 import {
+  fetchData,
   loadFromSecureStorage,
   loadFromStorage,
   removeFromSecureStorage,
   saveToSecureStorage,
   saveToStorage,
 } from "@/utils";
-import { generateWallet, getQueryClient, restoreWallet } from "@sei-js/cosmjs";
+import {
+  Coin,
+  generateWallet,
+  getQueryClient,
+  restoreWallet,
+} from "@sei-js/cosmjs";
 import { create } from "zustand";
 import { useSettingsStore } from "./settings";
 
@@ -24,6 +30,35 @@ export type Account = {
 export type Wallet = {
   address: string;
   mnemonic: string;
+};
+
+type ResponseAmount = {
+  address: string;
+  coins: Coin[];
+};
+
+type TxResponse = {
+  txhash: string;
+  tx: {
+    body: {
+      messages: {
+        type: string;
+        inputs: ResponseAmount[];
+        outputs: ResponseAmount[];
+      }[];
+    };
+  };
+  timestamp: string;
+};
+
+type Pagination = {
+  next_key: string;
+  total: string;
+};
+
+type TransactionData = {
+  tx_responses: TxResponse[];
+  pagination: Pagination;
 };
 
 type AccountsStore = {
@@ -211,6 +246,21 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
       udpatedAcc.find((acc) => acc.address === activeAccount?.address)
         ?.address || activeAccount.address,
     );
+  },
+  fetchTxns: async () => {
+    try {
+      const { node } = get();
+      const send = `${nodes[node]}/cosmos/tx/v1beta1/txs?pagination.limit=10&pagination.reverse=true&events=transfer.sender='sei16hh9vgk2w9stn6vemapuzqw3qk8wc70q8y9wf9'`;
+      const received = `${nodes[node]}/cosmos/tx/v1beta1/txs?pagination.limit=10&pagination.reverse=true&events=transfer.recipient='sei16hh9vgk2w9stn6vemapuzqw3qk8wc70q8y9wf9'`;
+
+      const sendData: TransactionData = await fetchData(send);
+      const receivedData: TransactionData = await fetchData(received);
+      console.log(sendData.pagination.next_key);
+      console.log("Send data:", sendData);
+      console.log("Received data:", receivedData);
+    } catch (error) {
+      throw Error(error as any);
+    }
   },
 }));
 

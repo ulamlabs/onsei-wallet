@@ -1,6 +1,11 @@
 import { Loader, Paragraph, Row, SafeLayout, Text } from "@/components";
+import {
+  AddressBookContext,
+  AddressBookContextType,
+  useAccountsStore,
+} from "@/store";
 import { Colors } from "@/styles";
-import { useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FlatList, View } from "react-native";
 
 type Transaction = {
@@ -17,10 +22,19 @@ type TransactionRenderProps = {
   index: number;
 };
 
-export default function Transactions() {
-  const loading = false;
-  const isMore = false;
-  const transactions: Transaction[] = [];
+export default ({
+  route: {
+    params: { address },
+  },
+}: TransactionsProps) => {
+  const [loading, setLoading] = useState(false);
+  const [isMore, setIsMore] = useState(false);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const { fetchTxns } = useAccountsStore();
+
+  const { addressBook } = useContext(
+    AddressBookContext,
+  ) as AddressBookContextType;
   // const transactions: Transaction[] = [
   //   {
   //     amount: "0",
@@ -49,21 +63,20 @@ export default function Transactions() {
   // ];
 
   useEffect(() => {
-    fetchTxns(0);
+    fetchTxns();
     // If there's any notification about balance change, remove it, because user will now see it on txs list
     // cancelNotification(address); TODO: cancel notification
   }, []);
 
-  // eslint-disable-next-line
-  async function fetchTxns(page: number) {
-    // TODO: handle fetching transactions
-  }
+  // async function fetchTxns(page: number) {
+  //   // TODO: handle fetching transactions
+  // }
 
-  function fetchNextPage() {
-    if (isMore) {
-      fetchTxns(transactions.length / 20);
-    }
-  }
+  // function fetchNextPage() {
+  //   if (isMore) {
+  //     fetchTxns(transactions.length / 20);
+  //   }
+  // }
 
   const renderTxn = ({ item, index }: TransactionRenderProps) => {
     return (
@@ -124,4 +137,4 @@ export default function Transactions() {
       </View>
     </SafeLayout>
   );
-}
+};
