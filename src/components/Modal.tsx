@@ -1,6 +1,6 @@
 import tw from "@/lib/tailwind";
 import { PropsWithChildren } from "react";
-import { Modal, Text, View } from "react-native";
+import { Modal as ReactModal, Text, View } from "react-native";
 import Button from "./Button";
 import SafeLayout from "./SafeLayout";
 
@@ -14,7 +14,7 @@ type ModalProps = PropsWithChildren & {
   onCancel?: () => void;
 };
 
-export default ({
+export default function Modal({
   isVisible,
   title,
   description,
@@ -23,9 +23,9 @@ export default ({
   onConfirm,
   onCancel,
   children,
-}: ModalProps) => {
+}: ModalProps) {
   return (
-    <Modal
+    <ReactModal
       visible={isVisible}
       supportedOrientations={["landscape", "portrait"]}
       animationType="fade"
@@ -49,6 +49,6 @@ export default ({
           </View>
         </View>
       </SafeLayout>
-    </Modal>
+    </ReactModal>
   );
-};
+}

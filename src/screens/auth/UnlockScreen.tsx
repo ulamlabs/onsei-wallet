@@ -2,7 +2,7 @@ import { PinWithTimeout } from "@/components";
 import { useAuthStore } from "@/store";
 import { useRef } from "react";
 
-export default () => {
+export default function UnlockScreen() {
   const authStore = useAuthStore();
 
   const pinHash = useRef(authStore.getPinHash());
@@ -19,4 +19,4 @@ export default () => {
       onPinHash={() => authStore.unlock()}
     />
   );
-};
+}

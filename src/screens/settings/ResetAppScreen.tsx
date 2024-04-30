@@ -6,12 +6,12 @@ import tw from "@/lib/tailwind";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-type SettingsProps = NativeStackScreenProps<
+type ResetAppScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
   "Clear app data"
 >;
 
-export default ({ navigation }: SettingsProps) => {
+export default function ResetAppScreen({ navigation }: ResetAppScreenProps) {
   const accountsStore = useAccountsStore();
   const authStore = useAuthStore();
   const onboardingStore = useOnboardingStore();
@@ -42,4 +42,4 @@ export default ({ navigation }: SettingsProps) => {
       </View>
     </SafeLayout>
   );
-};
+}

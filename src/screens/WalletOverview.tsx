@@ -15,7 +15,7 @@ type WalletOverviewProps = NativeStackScreenProps<
   "My wallet"
 >;
 
-export default ({ navigation }: WalletOverviewProps) => {
+export default function WalletOverview({ navigation }: WalletOverviewProps) {
   const { activeAccount, node } = useAccountsStore();
 
   function onReceive() {
@@ -73,4 +73,4 @@ export default ({ navigation }: WalletOverviewProps) => {
       </View>
     </SafeLayout>
   );
-};
+}

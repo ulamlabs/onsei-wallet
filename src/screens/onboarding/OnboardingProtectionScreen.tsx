@@ -8,7 +8,9 @@ type OnboardingProtectionScreenProps = NativeStackScreenProps<
   "Protect Your Wallet"
 >;
 
-export default ({ navigation }: OnboardingProtectionScreenProps) => {
+export default function OnboardingProtectionScreen({
+  navigation,
+}: OnboardingProtectionScreenProps) {
   function enablePin() {
     navigation.navigate("Enable PIN", { nextRoute: "Finish Onboarding" });
   }
@@ -35,4 +37,4 @@ export default ({ navigation }: OnboardingProtectionScreenProps) => {
       </View>
     </SafeLayout>
   );
-};
+}

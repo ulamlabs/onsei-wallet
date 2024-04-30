@@ -25,7 +25,7 @@ type AuthStore = {
   authorize: <RouteName extends keyof NavigatorParamsList>(
     navigation: NavigationProp,
     nextRoute: RouteName,
-    nextParams: NavigatorParamsList[RouteName]
+    nextParams: NavigatorParamsList[RouteName],
   ) => void;
   resetPin: () => Promise<void>;
   registerFail: () => void;

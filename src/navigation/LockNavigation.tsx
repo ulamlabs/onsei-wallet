@@ -11,7 +11,7 @@ export type LockParamList = {
 
 const { Navigator, Screen } = createNativeStackNavigator<LockParamList>();
 
-export default () => {
+export default function LockNavigation() {
   return (
     <Navigator id="lock" screenOptions={navigatorScreenOptions}>
       <Screen
@@ -22,4 +22,4 @@ export default () => {
       <Screen name="Clear app data" component={ResetAppScreen} />
     </Navigator>
   );
-};
+}

@@ -9,7 +9,9 @@ export type AuthorizationTimeoutProps = {
   timeout: number;
 };
 
-export default ({ timeout }: AuthorizationTimeoutProps) => {
+export default function AuthorizationTimeout({
+  timeout,
+}: AuthorizationTimeoutProps) {
   const navigation = useNavigation<NavigationProp>();
 
   return (
@@ -44,4 +46,4 @@ export default ({ timeout }: AuthorizationTimeoutProps) => {
       />
     </View>
   );
-};
+}

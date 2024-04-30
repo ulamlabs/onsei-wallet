@@ -9,7 +9,6 @@ import {
 import { generateWallet, getQueryClient, restoreWallet } from "@sei-js/cosmjs";
 import { create } from "zustand";
 
-const NODE_KEY = "NETWORK";
 const nodes: Record<Node, string> = {
   MainNet: "https://rest.sei-apis.com",
   TestNet: "https://rest.atlantic-2.seinetwork.io",
@@ -131,7 +130,7 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
   clearStore: async () => {
     const state = useAccountsStore.getState();
     await Promise.all(
-      state.accounts.map((account) => state.deleteAccount(account.address))
+      state.accounts.map((account) => state.deleteAccount(account.address)),
     );
     state.setActiveAccount(null);
   },

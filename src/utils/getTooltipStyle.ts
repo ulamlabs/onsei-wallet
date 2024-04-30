@@ -30,7 +30,7 @@ export const getTooltipStyle = ({
     ScreenWidth,
     ScreenHeight,
     width,
-    height
+    height,
   );
   return StyleSheet.flatten([
     {

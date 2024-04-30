@@ -9,7 +9,7 @@ type ChangePinScreenProps = NativeStackScreenProps<
   "Change PIN"
 >;
 
-export default ({ navigation }: ChangePinScreenProps) => {
+export default function PinChangeScreen({ navigation }: ChangePinScreenProps) {
   const [authorized, setAuthorized] = useState(false);
   const [newPinHash, setNewPinHash] = useState("");
 
@@ -52,4 +52,4 @@ export default ({ navigation }: ChangePinScreenProps) => {
       )}
     </>
   );
-};
+}

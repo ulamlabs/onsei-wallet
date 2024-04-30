@@ -23,14 +23,17 @@ export type AddressBookContextType = {
 };
 
 export const AddressBookContext = createContext<AddressBookContextType | null>(
-  null
+  null,
 );
 
 const AddressBookProvider: React.FC<Props> = ({ children }) => {
   const [addressBook, setAddressBook] = useState<SavedAddress[]>([]);
 
   async function initStore() {
-    const loadedAddresses = await loadFromStorage(ADDRESSBOOK_KEY);
+    const loadedAddresses = await loadFromStorage<SavedAddress[]>(
+      ADDRESSBOOK_KEY,
+      [],
+    );
     if (loadedAddresses) {
       setAddressBook(loadedAddresses);
     }
@@ -43,17 +46,19 @@ const AddressBookProvider: React.FC<Props> = ({ children }) => {
     if (name.length > 20) {
       throw new Error("Name cannot be longer than 20 chars");
     }
-    try {
-      // TODO: find equivalent in SEI
-      // if (address) validateAddress(address);
-    } catch (e) {
+    if (address && !validateAddress(address)) {
       throw new Error("Provided address is invalid");
     }
     if (addressBook.find((data) => data.name === name)) {
       throw new Error(
-        "An entry with given name already exist in your address book"
+        "An entry with given name already exist in your address book",
       );
     }
+  }
+
+  function validateAddress(address: string) {
+    // TODO: find equivalent in SEI
+    return address.length === 42;
   }
 
   function addNewAddress(name: string, address: string) {

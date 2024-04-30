@@ -20,7 +20,7 @@ const ListItem = ({ title, id }: ListItemProps) => (
   </View>
 );
 
-export default ({ mnemonic }: MnemonicWordsProps) => {
+export default function MnemonicWords({ mnemonic }: MnemonicWordsProps) {
   return (
     <FlatList
       data={mnemonic}
@@ -30,4 +30,4 @@ export default ({ mnemonic }: MnemonicWordsProps) => {
       keyExtractor={(item) => item}
     />
   );
-};
+}

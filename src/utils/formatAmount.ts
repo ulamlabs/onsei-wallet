@@ -30,7 +30,7 @@ export function formatTokenAmount(value: string | number) {
       amount.toLocaleString("en-US", {
         minimumFractionDigits: 2,
         maximumFractionDigits: maxDigits,
-      })
+      }),
     );
   }
 }

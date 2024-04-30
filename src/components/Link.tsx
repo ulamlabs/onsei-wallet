@@ -11,7 +11,7 @@ export type LinkProps = {
   disabled?: boolean;
 };
 
-export default ({ icon, label, navigateTo, disabled }: LinkProps) => {
+export default function Link({ icon, label, navigateTo, disabled }: LinkProps) {
   const navigation = useNavigation<NavigationProp>();
 
   function onPress() {
@@ -37,4 +37,4 @@ export default ({ icon, label, navigateTo, disabled }: LinkProps) => {
       <ArrowRight2 color="white" />
     </Pressable>
   );
-};
+}

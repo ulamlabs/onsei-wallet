@@ -8,7 +8,7 @@ import Button from "./Button";
 import Modal from "./Modal";
 import { NavigationProp } from "@/types";
 
-export default () => {
+export default function AccountsList() {
   const navigation = useNavigation<NavigationProp>();
   const { accounts, deleteAccount } = useAccountsStore();
   const [accountsSorted, setAccountsSorted] = useState<Account[]>([]);
@@ -56,4 +56,4 @@ export default () => {
       />
     </View>
   );
-};
+}

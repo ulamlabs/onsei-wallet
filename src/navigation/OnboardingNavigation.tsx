@@ -24,7 +24,7 @@ export type OnboardingParamList = {
 
 const { Navigator, Screen } = createNativeStackNavigator<OnboardingParamList>();
 
-export default () => {
+export default function OnboardingNavigation() {
   return (
     <Navigator id="onboarding" screenOptions={navigatorScreenOptions}>
       <Screen
@@ -43,4 +43,4 @@ export default () => {
       <Screen name="Enable PIN" component={PinEnableScreen} />
     </Navigator>
   );
-};
+}

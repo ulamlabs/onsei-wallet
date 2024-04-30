@@ -1,5 +1,5 @@
-import { Dimensions } from 'react-native';
-const { width, height } = Dimensions.get('window');
+import { Dimensions } from "react-native";
+const { width, height } = Dimensions.get("window");
 
 //Guideline sizes are based on iPhone 14, which was used as a simulator during development
 const guidelineBaseWidth = 390;

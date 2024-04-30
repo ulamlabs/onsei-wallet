@@ -1,16 +1,9 @@
 import React from "react";
 import { Text, View } from "react-native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import SafeLayout from "../components/SafeLayout";
 import tw from "@/lib/tailwind";
-import { NavigatorParamsList } from "@/types";
 
-type AddressBookProps = NativeStackScreenProps<
-  NavigatorParamsList,
-  "Address Book"
->;
-
-export default ({ navigation }: AddressBookProps) => {
+export default function AddressBook() {
   return (
     <SafeLayout>
       <View style={tw`items-center`}>
@@ -18,4 +11,4 @@ export default ({ navigation }: AddressBookProps) => {
       </View>
     </SafeLayout>
   );
-};
+}

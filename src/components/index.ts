@@ -1,4 +1,3 @@
-import MnemonicScreen from "@/screens/MnemonicScreen";
 import AccountListItem from "./AccountListItem";
 import AccountsList from "./AccountsList";
 import Button from "./Button";
@@ -18,7 +17,6 @@ export {
   Button,
   Divider,
   Link,
-  MnemonicScreen,
   MnemonicWords,
   Modal,
   Pin,

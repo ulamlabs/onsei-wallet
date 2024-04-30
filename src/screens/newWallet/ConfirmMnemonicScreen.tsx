@@ -19,12 +19,12 @@ type WordDict = {
   wordLabel: number;
 };
 
-export default ({
+export default function ConfirmMnemonicScreen({
   navigation,
   route: {
     params: { wallet },
   },
-}: ConfirmMnemoProps) => {
+}: ConfirmMnemoProps) {
   const accountsStore = useAccountsStore();
   const [toConfirm, setToConfirm] = useState<WordDict[]>([]);
   const [loading, setLoading] = useState(false);
@@ -48,18 +48,15 @@ export default ({
       wordsChosen.push({ word: mnemonic[wordId], wordLabel: wordId + 1 });
     }
     setToConfirm(wordsChosen);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wallet.mnemonic]);
 
   useEffect(() => {
     if (loading) {
       onConfirm();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
-
-  function onButtonPress() {
-    setError(null);
-    setLoading(true);
-  }
 
   async function onConfirm() {
     for (let i = 0; i < 4; i++) {
@@ -87,6 +84,11 @@ export default ({
     }
   }
 
+  function onButtonPress() {
+    setError(null);
+    setLoading(true);
+  }
+
   return (
     <SafeLayout>
       <View style={tw`items-center`}>
@@ -107,7 +109,7 @@ export default ({
             <View
               style={tw.style(
                 "w-[48%]",
-                index % 2 === 0 ? "mr-[2%]" : "ml-[2%]"
+                index % 2 === 0 ? "mr-[2%]" : "ml-[2%]",
               )}
             >
               <Text style={tw`text-white opacity-90`}>
@@ -134,4 +136,4 @@ export default ({
       </View>
     </SafeLayout>
   );
-};
+}

@@ -8,18 +8,18 @@ import { ActivityIndicator, Text, View } from "react-native";
 
 type Props = NativeStackScreenProps<NavigatorParamsList, "Your Mnemonic">;
 
-export default ({
+export default function MnemonicScreen({
   route: {
     params: { address },
   },
-}: Props) => {
+}: Props) {
   const { getMnemonic } = useAccountsStore();
   const [mnemonic, setMnemonic] = useState<string[]>([]);
 
   useEffect(() => {
     setMnemonic(getMnemonic(address).split(" "));
     return () => setMnemonic([]);
-  }, []);
+  }, [address, getMnemonic]);
 
   return (
     <SafeLayout>
@@ -41,4 +41,4 @@ export default ({
       </View>
     </SafeLayout>
   );
-};
+}

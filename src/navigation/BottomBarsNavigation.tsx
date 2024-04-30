@@ -15,7 +15,7 @@ export type BottomTabsParamList = {
 
 const { Navigator, Screen } = createBottomTabNavigator<BottomTabsParamList>();
 
-export default () => {
+export default function BottomBarsNavigation() {
   const primaryColor = tw.color("primary-400");
   const inactiveColor = tw.color("grey");
 
@@ -35,7 +35,7 @@ export default () => {
             <View
               style={tw.style(
                 "border-t-2 w-[100%] items-center -mt-1 pt-2",
-                focused ? "border-primary-400" : "border-grey"
+                focused ? "border-primary-400" : "border-grey",
               )}
             >
               {icon}
@@ -56,4 +56,4 @@ export default () => {
       <Screen name="Settings" component={SettingsScreen} />
     </Navigator>
   );
-};
+}

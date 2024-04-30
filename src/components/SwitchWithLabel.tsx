@@ -6,7 +6,11 @@ export type SwithWithLabelProps = SwitchProps & {
   icon?: ReactElement;
 };
 
-export default ({ label, icon, ...props }: SwithWithLabelProps) => {
+export default function SwitchWithLabel({
+  label,
+  icon,
+  ...props
+}: SwithWithLabelProps) {
   return (
     <View
       style={{
@@ -23,4 +27,4 @@ export default ({ label, icon, ...props }: SwithWithLabelProps) => {
       <Switch {...props} />
     </View>
   );
-};
+}

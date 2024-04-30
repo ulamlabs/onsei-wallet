@@ -17,7 +17,7 @@ export async function saveToStorage(key: string, data: any) {
 
 export async function loadFromStorage<T>(
   key: string,
-  defaultValue: T
+  defaultValue: T,
 ): Promise<T> {
   try {
     const data = await Storage.getItem({ key });

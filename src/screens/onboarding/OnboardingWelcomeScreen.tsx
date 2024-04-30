@@ -4,21 +4,21 @@ import { SafeLayout } from "@/components";
 import tw from "@/lib/tailwind";
 import { AddWallet } from "@/screens/newWallet";
 
-export default () => {
+export default function OnboardingWelcomeScreen() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
-  const fadeIn = (duration = 1500) => {
-    // Will change fadeAnim value to 1 in one second
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration,
-      useNativeDriver: true,
-    }).start();
-  };
-
   useEffect(() => {
+    const fadeIn = (duration = 1500) => {
+      // Will change fadeAnim value to 1 in one second
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration,
+        useNativeDriver: true,
+      }).start();
+    };
+
     fadeIn();
-  }, []);
+  }, [fadeAnim]);
 
   return (
     <SafeLayout>
@@ -33,4 +33,4 @@ export default () => {
       </View>
     </SafeLayout>
   );
-};
+}

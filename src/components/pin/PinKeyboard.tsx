@@ -13,7 +13,7 @@ export type PinKeyboardProps = {
   onDelete: () => void;
 };
 
-export default ({ onDigit, onDelete }: PinKeyboardProps) => {
+export default function PinKeyboard({ onDigit, onDelete }: PinKeyboardProps) {
   function onPress(symbol: string) {
     if (symbol === "") {
       return;
@@ -36,4 +36,4 @@ export default ({ onDigit, onDelete }: PinKeyboardProps) => {
       ))}
     </View>
   );
-};
+}

@@ -1,10 +1,10 @@
 import { SafeLayout } from "@/components";
 import AddWallet from "./AddWallet";
 
-export default () => {
+export default function AddWalletScreen() {
   return (
     <SafeLayout>
       <AddWallet />
     </SafeLayout>
   );
-};
+}

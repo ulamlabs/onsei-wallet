@@ -25,12 +25,18 @@ export default function App() {
   const onboardingStore = useOnboardingStore();
 
   useEffect(() => {
+    async function init() {
+      await Promise.all([accountsStore.init(), authStore.init()]);
+      setReady(true);
+    }
+
     init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const hasAccounts = useMemo(
     () => accountsStore.accounts.length > 0,
-    [accountsStore.accounts]
+    [accountsStore.accounts],
   );
 
   useEffect(() => {
@@ -38,11 +44,6 @@ export default function App() {
       onboardingStore.startOnboarding();
     }
   }, [ready, onboardingStore, hasAccounts]);
-
-  async function init() {
-    await Promise.all([accountsStore.init(), authStore.init()]);
-    setReady(true);
-  }
 
   function getContent() {
     if (!ready) {

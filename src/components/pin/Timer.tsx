@@ -9,7 +9,7 @@ function padLeft(value: number) {
   return value.toString().padStart(2, "0");
 }
 
-export default ({ seconds: totalSeconds }: TimerProps) => {
+export default function Timer({ seconds: totalSeconds }: TimerProps) {
   const timeFormatted = useMemo(() => {
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds - hours * 3600) / 60);
@@ -33,4 +33,4 @@ export default ({ seconds: totalSeconds }: TimerProps) => {
       {timeFormatted}
     </Text>
   );
-};
+}

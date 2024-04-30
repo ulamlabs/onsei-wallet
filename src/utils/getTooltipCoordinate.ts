@@ -6,7 +6,7 @@ const getPointDistance = (a: number[], b: number[]) =>
 export const getElementVisibleWidth = (
   elementWidth: number,
   xOffset: number,
-  ScreenWidth: number
+  ScreenWidth: number,
 ) => {
   // Element is fully visible OR scrolled right
   if (xOffset >= 0) {
@@ -47,7 +47,7 @@ const getTooltipCoordinate = (
   ScreenWidth: number,
   ScreenHeight: number,
   tooltipWidth: number,
-  tooltipHeight: number
+  tooltipHeight: number,
 ) => {
   // The following are point coordinates: [x, y]
   const center = [
@@ -111,7 +111,7 @@ const constraintX = (
   qIndex: number,
   x: number,
   ScreenWidth: number,
-  tooltipWidth: number
+  tooltipWidth: number,
 ) => {
   switch (qIndex) {
     // 0 and 3 are the left side quadrants.

@@ -17,12 +17,36 @@ function hashPin(pin: string): Promise<string> {
   return Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, pin);
 }
 
-export default ({ label, compareToHash, onPinHash, onFail }: PinProps) => {
+export default function Pin({
+  label,
+  compareToHash,
+  onPinHash,
+  onFail,
+}: PinProps) {
   const [pin, setPin] = useState("");
   const [error, setError] = useState(false);
   const [errorDelay, setErrorDelay] = useState(false);
 
   useEffect(() => {
+    async function validatePin() {
+      const pinHash = await hashPin(pin);
+
+      if (!compareToHash || pinHash === compareToHash) {
+        setPin(""); // remove the pin from memory in case the component is cached somewhere
+        onPinHash(pinHash);
+        return;
+      }
+
+      if (onFail) {
+        onFail();
+      }
+      setError(true);
+      setErrorDelay(true);
+      setTimeout(() => {
+        setPin("");
+      }, SHAKE_ANIMATION_DURATION);
+    }
+
     if (errorDelay) {
       setErrorDelay(false);
     } else {
@@ -34,26 +58,7 @@ export default ({ label, compareToHash, onPinHash, onFail }: PinProps) => {
     }
 
     validatePin();
-  }, [pin]);
-
-  async function validatePin() {
-    const pinHash = await hashPin(pin);
-
-    if (!compareToHash || pinHash === compareToHash) {
-      setPin(""); // remove the pin from memory in case the component is cached somewhere
-      onPinHash(pinHash);
-      return;
-    }
-
-    if (onFail) {
-      onFail();
-    }
-    setError(true);
-    setErrorDelay(true);
-    setTimeout(() => {
-      setPin("");
-    }, SHAKE_ANIMATION_DURATION);
-  }
+  }, [pin, errorDelay, compareToHash, onFail, onPinHash]);
 
   function onDigit(digit: string) {
     if (pin.length < PIN_LENGTH) {
@@ -91,4 +96,4 @@ export default ({ label, compareToHash, onPinHash, onFail }: PinProps) => {
       </View>
     </View>
   );
-};
+}

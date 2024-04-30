@@ -13,7 +13,7 @@ export type PinDigitsProps = {
 const shakeSize = 20;
 const animationSteps = [-shakeSize, shakeSize, -shakeSize, 0];
 
-export default ({ pin, error }: PinDigitsProps) => {
+export default function PinDigits({ pin, error }: PinDigitsProps) {
   const translateX = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -24,11 +24,11 @@ export default ({ pin, error }: PinDigitsProps) => {
             toValue: toValue,
             duration: SHAKE_ANIMATION_DURATION / animationSteps.length,
             useNativeDriver: true,
-          })
-        )
+          }),
+        ),
       ).start();
     }
-  }, [error]);
+  }, [error, translateX]);
 
   return (
     <Animated.View
@@ -44,4 +44,4 @@ export default ({ pin, error }: PinDigitsProps) => {
       ))}
     </Animated.View>
   );
-};
+}

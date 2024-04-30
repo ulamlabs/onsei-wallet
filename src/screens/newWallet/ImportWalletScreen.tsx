@@ -13,7 +13,7 @@ type NewWalletProps = NativeStackScreenProps<
   "Import Wallet"
 >;
 
-export default ({ navigation }: NewWalletProps) => {
+export default function ImportWalletScreen({ navigation }: NewWalletProps) {
   const accountsStore = useAccountsStore();
   const nameInput = useInputState();
   const mnemoInput = useInputState();
@@ -21,35 +21,35 @@ export default ({ navigation }: NewWalletProps) => {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    async function onImport() {
+      try {
+        const newAccount = await accountsStore.importAccount(
+          nameInput.value.trim(),
+          mnemoInput.value.trim(),
+        );
+        accountsStore.setActiveAccount(newAccount.address);
+        accountsStore.subscribeToAccounts();
+
+        const nextRoute: keyof NavigatorParamsList =
+          navigation.getId() === "onboarding" ? "Protect Your Wallet" : "Home";
+        navigation.navigate(nextRoute);
+        resetNavigationStack(navigation);
+      } catch (e: any) {
+        console.log("Error on wallet import:", e);
+        setError(e.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
     if (loading) {
       onImport();
     }
-  }, [loading]);
+  }, [loading, accountsStore, mnemoInput, nameInput, navigation]);
 
   function onButtonPress() {
     setError("");
     setLoading(true);
-  }
-
-  async function onImport() {
-    try {
-      const newAccount = await accountsStore.importAccount(
-        nameInput.value.trim(),
-        mnemoInput.value.trim()
-      );
-      accountsStore.setActiveAccount(newAccount.address);
-      accountsStore.subscribeToAccounts();
-
-      const nextRoute: keyof NavigatorParamsList =
-        navigation.getId() === "onboarding" ? "Protect Your Wallet" : "Home";
-      navigation.navigate(nextRoute);
-      resetNavigationStack(navigation);
-    } catch (e: any) {
-      console.log("Error on wallet import:", e);
-      setError(e.message);
-    } finally {
-      setLoading(false);
-    }
   }
 
   return (
@@ -81,4 +81,4 @@ export default ({ navigation }: NewWalletProps) => {
       </View>
     </SafeLayout>
   );
-};
+}
