@@ -13,7 +13,6 @@ import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { calculateFee } from "@cosmjs/stargate";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
 import { useEffect } from "react";
 import { View } from "react-native";
 
@@ -51,39 +50,22 @@ export default function SendAssets({
   }, [verified]);
 
   async function onSend() {
-    if (state !== "noPin" && !verified) {
-      authorize(navigation, "Send", { verified: true });
-      return;
-    }
-
-    setError(null);
-    if (!receiverInput.value || !amountInput.value) {
-      setError("All inputs need to be filled");
-      return;
-    }
-    if (receiverInput.value === activeAccount?.address) {
-      setError("You cannot send funds to your own address");
-      return;
-    }
-
-    if (!isValidSeiCosmosAddress(receiverInput.value)) {
-      setError("Invalid receiver address");
-      return;
-    }
-
-    const amount = Number(amountInput.value.replaceAll(",", "."));
-    if (Number.isNaN(amount) || amount === 0) {
-      setError("Invalid amount entered");
-      return;
-    }
-    const fee = +calculateFee(amount, "0.1usei").amount[0].amount;
-    if (amount > activeAccount?.balance! - fee) {
-      setError("Insufficient funds");
-      return;
-    }
-    setLoading(true);
     try {
-      const txnHash = await transferAsset(receiverInput.value, amount);
+      setError(null);
+      const amount = Number(amountInput.value.replaceAll(",", "."));
+      validateTxnData(receiverInput.value, amount);
+
+      if (state !== "noPin" && !verified) {
+        authorize(navigation, "Send", { verified: true });
+        return;
+      }
+
+      setLoading(true);
+
+      const txnHash = await transferAsset(
+        receiverInput.value,
+        +amountInput.value,
+      );
       console.log(`Submitted with hash ${txnHash}`);
       onAfterSubmit();
       setModalVisible(true);

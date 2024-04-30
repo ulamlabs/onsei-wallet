@@ -11,6 +11,7 @@ import {
   generateWallet,
   getQueryClient,
   getSigningStargateClient,
+  isValidSeiCosmosAddress,
   restoreWallet,
 } from "@sei-js/cosmjs";
 import { create } from "zustand";
@@ -52,6 +53,7 @@ type AccountsStore = {
   getRawBalance: (address: string) => Promise<number>;
   getUSDBalance: (balance: number) => number;
   transferAsset: (receiver: string, amount: number) => Promise<string>;
+  validateTxnData: (receiverInput: string, amountInput: number) => void;
 };
 
 export const useAccountsStore = create<AccountsStore>((set, get) => ({
@@ -61,7 +63,14 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
   node: "TestNet",
   init: async () => {
     const accounts = await loadFromStorage<Account[]>("accounts", []);
-    set({ accounts, activeAccount: accounts[0] });
+    const balances = await Promise.all(
+      accounts.map((acc) => get().getRawBalance(acc.address))
+    );
+    const updatedAccounts = accounts.map((acc, index) => ({
+      ...acc,
+      balance: balances[index],
+    }));
+    set({ accounts: updatedAccounts, activeAccount: updatedAccounts[0] });
   },
   setActiveAccount: (address: string | null) => {
     set((state) => ({
@@ -221,6 +230,28 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
     } catch (error: any) {
       console.log(error);
       throw new Error(error);
+    }
+  },
+  validateTxnData: (receiverInput, amountInput) => {
+    const { activeAccount } = get();
+
+    if (!receiverInput || !amountInput) {
+      throw Error("All inputs need to be filled");
+    }
+    if (receiverInput === activeAccount?.address) {
+      throw Error("You cannot send funds to your own address");
+    }
+
+    if (!isValidSeiCosmosAddress(receiverInput)) {
+      throw Error("Invalid receiver address");
+    }
+
+    if (Number.isNaN(amountInput) || amountInput === 0) {
+      throw Error("Invalid amount entered");
+    }
+    const fee = +calculateFee(amountInput, "0.1usei").amount[0].amount;
+    if (amountInput > activeAccount?.balance! - fee) {
+      throw Error("Insufficient funds");
     }
   },
 }));
