@@ -2,10 +2,8 @@ import { AccountsList } from "@/components";
 import Button from "@/components/Button";
 import SafeLayout from "@/components/SafeLayout";
 import tw from "@/lib/tailwind";
-import { BottomTabsParamList } from "@/navigation/BottomBarsNavigation";
-import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";
-import { MainStackParamList } from "@/navigation/MainScreenNavigation";
 import { useAccountsStore } from "@/store";
+import { NavigatorParamsList } from "@/types";
 import { formatTokenAmount } from "@/utils/formatAmount";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { DirectboxReceive, DirectboxSend } from "iconsax-react-native";
@@ -13,7 +11,7 @@ import React from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 
 type WalletOverviewProps = NativeStackScreenProps<
-  MainStackParamList & BottomTabsParamList & ConnectedStackParamList,
+  NavigatorParamsList,
   "My wallet"
 >;
 

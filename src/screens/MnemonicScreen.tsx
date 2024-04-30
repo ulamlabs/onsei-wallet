@@ -1,12 +1,12 @@
 import { MnemonicWords, SafeLayout } from "@/components";
 import tw from "@/lib/tailwind";
-import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";
 import { useAccountsStore } from "@/store";
+import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 
-type Props = NativeStackScreenProps<ConnectedStackParamList, "Your Mnemonic">;
+type Props = NativeStackScreenProps<NavigatorParamsList, "Your Mnemonic">;
 
 export default ({
   route: {

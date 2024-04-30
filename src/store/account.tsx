@@ -41,7 +41,7 @@ type AccountsStore = {
   importAccount: (name: string, mnemonic: string) => Promise<Account>;
   checkDuplicate: (name: string, address: string) => void;
   deleteAccount: (name: string) => Promise<void>;
-  clearStore: () => void;
+  clearStore: () => Promise<void>;
   getMnemonic: (name: string) => string;
   subscribeToAccounts: () => void;
   getRawBalance: (address: string) => Promise<number>;
@@ -128,11 +128,12 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
       return { ...state, accounts };
     });
   },
-  clearStore: () => {
-    for (const account of useAccountsStore.getState().accounts) {
-      useAccountsStore.getState().deleteAccount(account.address);
-    }
-    useAccountsStore.getState().setActiveAccount(null);
+  clearStore: async () => {
+    const state = useAccountsStore.getState();
+    await Promise.all(
+      state.accounts.map((account) => state.deleteAccount(account.address))
+    );
+    state.setActiveAccount(null);
   },
   getMnemonic: (address: string) => {
     return loadFromSecureStorage(getMnenomicKey(address));

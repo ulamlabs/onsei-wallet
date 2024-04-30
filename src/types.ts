@@ -1,11 +1,14 @@
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BottomTabsParamList } from "./navigation/BottomBarsNavigation";
-import { ConnectedStackParamList } from "./navigation/ConnectedScreenNavigation";
-import { MainStackParamList } from "./navigation/MainScreenNavigation";
+import { HomeParamList } from "./navigation/HomeNavigation";
+import { OnboardingParamList } from "./navigation/OnboardingNavigation";
+import { LockParamList } from "./navigation/LockNavigation";
 
 export type NavigatorParamsList = BottomTabsParamList &
-  MainStackParamList &
-  ConnectedStackParamList;
+  OnboardingParamList &
+  LockParamList &
+  HomeParamList &
+  BottomTabsParamList;
 
 export type NavigationProp = NativeStackNavigationProp<
   NavigatorParamsList,

@@ -1,17 +1,15 @@
-import BackButton from "@/components/BackButton";
-import Button from "@/components/Button";
-import SafeLayout from "@/components/SafeLayout";
-import { useInputState } from "@/hooks";
-import tw from "@/lib/tailwind";
-import { MainStackParamList } from "@/navigation/MainScreenNavigation";
-import { useAccountsStore } from "@/store";
-import { resetNavigationStack } from "@/utils";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import { Text, TextInput, View } from "react-native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useAccountsStore } from "@/store";
+import { resetNavigationStack } from "@/utils";
+import tw from "@/lib/tailwind";
+import { useInputState } from "@/hooks";
+import { SafeLayout, Button } from "@/components";
+import { NavigatorParamsList } from "@/types";
 
 type NewWalletProps = NativeStackScreenProps<
-  MainStackParamList,
+  NavigatorParamsList,
   "Import Wallet"
 >;
 
@@ -42,7 +40,9 @@ export default ({ navigation }: NewWalletProps) => {
       accountsStore.setActiveAccount(newAccount.address);
       accountsStore.subscribeToAccounts();
 
-      navigation.navigate("Connected");
+      const nextRoute: keyof NavigatorParamsList =
+        navigation.getId() === "onboarding" ? "Protect Your Wallet" : "Home";
+      navigation.navigate(nextRoute);
       resetNavigationStack(navigation);
     } catch (e: any) {
       console.log("Error on wallet import:", e);
@@ -54,9 +54,7 @@ export default ({ navigation }: NewWalletProps) => {
 
   return (
     <SafeLayout>
-      <BackButton />
       <View style={tw`items-center`}>
-        <Text style={tw`title`}>IMPORT ACCOUNT</Text>
         <Text style={tw`text-white`}>Name of your wallet</Text>
         <TextInput
           style={tw`input mt-2 w-[90%]`}

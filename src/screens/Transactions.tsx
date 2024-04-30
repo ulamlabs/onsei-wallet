@@ -1,14 +1,14 @@
 import { Divider } from "@/components";
 import SafeLayout from "@/components/SafeLayout";
 import tw from "@/lib/tailwind";
-import { ConnectedStackParamList } from "@/navigation/ConnectedScreenNavigation";
 import { AddressBookContext, AddressBookContextType } from "@/store";
+import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useContext, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
 
 type TransactionsProps = NativeStackScreenProps<
-  ConnectedStackParamList,
+  NavigatorParamsList,
   "Transactions"
 >;
 
