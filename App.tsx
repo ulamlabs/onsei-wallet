@@ -4,8 +4,8 @@ import "fastestsmallesttextencoderdecoder";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import {
   useAccountsStore,
+  useAddressBookStore,
   useAuthStore,
-  AddressBookProvider,
   useOnboardingStore,
   useSettingsStore,
 } from "@/store";
@@ -24,6 +24,7 @@ export default function App() {
 
   const accountsStore = useAccountsStore();
   const authStore = useAuthStore();
+  const addressStore = useAddressBookStore();
   const onboardingStore = useOnboardingStore();
   const settingsStore = useSettingsStore();
 
@@ -33,6 +34,7 @@ export default function App() {
         accountsStore.init(),
         authStore.init(),
         settingsStore.init(),
+        addressStore.init(),
       ]);
       setReady(true);
     }
@@ -74,10 +76,8 @@ export default function App() {
   return (
     <NavigationContainer>
       <SafeAreaProvider>
-        <AddressBookProvider>
-          {getContent()}
-          <Modals />
-        </AddressBookProvider>
+        {getContent()}
+        <Modals />
       </SafeAreaProvider>
     </NavigationContainer>
   );

@@ -1,4 +1,4 @@
-import { MNEMONIC_WORDS_COUNT } from "@/const";
+import { MNEMONIC_WORDS_COUNT, VALID_ACCOUNT_NAME_REGEX } from "@/const";
 import {
   loadFromSecureStorage,
   loadFromStorage,
@@ -38,7 +38,7 @@ type AccountsStore = {
   generateWallet: () => Promise<Wallet>;
   storeAccount: (name: string, wallet: Wallet) => Promise<void>;
   importAccount: (name: string, mnemonic: string) => Promise<Account>;
-  checkDuplicate: (name: string, address: string) => void;
+  validateEntry: (name: string, address: string) => void;
   deleteAccount: (name: string) => Promise<void>;
   clearStore: () => Promise<void>;
   getMnemonic: (name: string) => string;
@@ -71,7 +71,7 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
     };
   },
   storeAccount: async (name: string, wallet: Wallet) => {
-    useAccountsStore.getState().checkDuplicate(name, wallet.address);
+    get().validateEntry(name, wallet.address);
     saveToSecureStorage(getMnenomicKey(wallet.address), wallet.mnemonic);
 
     const account: Account = {
@@ -89,7 +89,7 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
   importAccount: async (name: string, mnemonic: string) => {
     const wallet = await restoreWallet(mnemonic);
     const address = (await wallet.getAccounts())[0].address;
-    useAccountsStore.getState().checkDuplicate(name, address);
+    get().validateEntry(name, address);
     saveToSecureStorage(getMnenomicKey(address), wallet.mnemonic);
 
     const seiAccount = (await wallet.getAccounts())[0];
@@ -109,8 +109,16 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
 
     return newAccount;
   },
-  checkDuplicate: (name: string, address: string) => {
-    const accounts = useAccountsStore.getState().accounts;
+  validateEntry: (name: string, address: string) => {
+    const accounts = get().accounts;
+    if (name.length > 20) {
+      throw new Error("Name cannot be longer than 20 chars");
+    }
+    if (!VALID_ACCOUNT_NAME_REGEX.test(name)) {
+      throw new Error(
+        'Name cannot have any special characters except for "_" and "-"',
+      );
+    }
     if (accounts.find((a) => a.name === name)) {
       throw Error("An account with given name already exists");
     }
@@ -128,11 +136,10 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
     });
   },
   clearStore: async () => {
-    const state = useAccountsStore.getState();
     await Promise.all(
-      state.accounts.map((account) => state.deleteAccount(account.address)),
+      get().accounts.map((account) => get().deleteAccount(account.address)),
     );
-    state.setActiveAccount(null);
+    get().setActiveAccount(null);
   },
   getMnemonic: (address: string) => {
     return loadFromSecureStorage(getMnenomicKey(address));
