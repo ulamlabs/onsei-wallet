@@ -1,10 +1,10 @@
-import { SafeLayout } from "@/components";
+import { SafeLayoutBottom } from "@/components";
 import AddWallet from "./AddWallet";
 
 export default function AddWalletScreen() {
   return (
-    <SafeLayout>
+    <SafeLayoutBottom>
       <AddWallet />
-    </SafeLayout>
+    </SafeLayoutBottom>
   );
 }

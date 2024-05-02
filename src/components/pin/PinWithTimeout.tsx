@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import AuthorizationTimeout from "./AuthorizationTimeout";
 import { useAppIsActive, useInterval } from "@/hooks";
 
-export default function PinKeyboardTimeout({ onPinHash, ...props }: PinProps) {
+export default function PinWithTimeout({ onPinHash, ...props }: PinProps) {
   const appIsActive = useAppIsActive();
   const authStore = useAuthStore();
 

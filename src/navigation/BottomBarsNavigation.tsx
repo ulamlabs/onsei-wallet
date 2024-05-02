@@ -3,9 +3,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import WalletOverview from "@/screens/WalletOverview";
 import AddressBook from "@/screens/AddressBook";
 import { User, Book1, Setting2 } from "iconsax-react-native";
-import tw from "@/lib/tailwind";
 import { View } from "react-native";
 import SettingsScreen from "@/screens/settings/SettingsScreen";
+import { Colors } from "@/styles";
 
 export type BottomTabsParamList = {
   "My wallet": undefined;
@@ -16,15 +16,12 @@ export type BottomTabsParamList = {
 const { Navigator, Screen } = createBottomTabNavigator<BottomTabsParamList>();
 
 export default function BottomBarsNavigation() {
-  const primaryColor = tw.color("primary-400");
-  const inactiveColor = tw.color("grey");
-
   return (
     <Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused }) => {
           let icon;
-          const iconColor = focused ? primaryColor : inactiveColor;
+          const iconColor = focused ? Colors.text : Colors.text100;
           if (route.name === "My wallet") icon = <User color={iconColor} />;
           else if (route.name === "Address Book")
             icon = <Book1 color={iconColor} />;
@@ -33,22 +30,28 @@ export default function BottomBarsNavigation() {
 
           return (
             <View
-              style={tw.style(
-                "border-t-2 w-[100%] items-center -mt-1 pt-2",
-                focused ? "border-primary-400" : "border-grey",
-              )}
+              style={[
+                {
+                  borderTopWidth: 2,
+                  borderColor: focused ? Colors.text : Colors.text100,
+                  flex: 1,
+                  width: "100%",
+                  alignItems: "center",
+                  paddingVertical: 5,
+                },
+              ]}
             >
               {icon}
             </View>
           );
         },
-        tabBarActiveTintColor: primaryColor,
-        tabBarInactiveTintColor: inactiveColor,
+        tabBarActiveTintColor: Colors.text,
+        tabBarInactiveTintColor: Colors.text100,
         tabBarLabel: route.name.toUpperCase(),
-        tabBarLabelStyle: tw`font-bold`,
-        tabBarStyle: tw`bg-background`,
-        headerStyle: { backgroundColor: tw.color("header-background") },
-        headerTintColor: "white",
+        tabBarLabelStyle: { fontWeight: "bold" },
+        tabBarStyle: { backgroundColor: Colors.background },
+        headerStyle: { backgroundColor: Colors.background },
+        headerTintColor: Colors.text,
       })}
     >
       <Screen name="My wallet" component={WalletOverview} />

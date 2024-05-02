@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { FlatList, Text, TextInput, View } from "react-native";
+import { FlatList, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useAccountsStore } from "@/store/account";
-import { Button, SafeLayout } from "@/components";
+import {
+  Column,
+  Loader,
+  PrimaryButton,
+  SafeLayout,
+  Text,
+  TextInput,
+} from "@/components";
 import { resetNavigationStack } from "@/utils";
 import { useInputState } from "@/hooks";
-import tw from "@/lib/tailwind";
 import { MNEMONIC_WORDS_COUNT } from "@/const";
 import { NavigatorParamsList } from "@/types";
+import { Colors } from "@/styles";
 
 type ConfirmMnemoProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -89,32 +96,25 @@ export default function ConfirmMnemonicScreen({
 
   return (
     <SafeLayout>
-      <View style={tw`items-center`}>
-        <Text style={tw`text-white`}>Name of your wallet</Text>
-        <TextInput
-          style={tw`input mt-2 w-[90%]`}
-          placeholder="Name"
-          autoCorrect={false}
-          {...nameInput}
-        />
+      <Column>
+        <Text>Name of your wallet</Text>
+        <TextInput placeholder="Name" autoCorrect={false} {...nameInput} />
 
-        <Text style={tw`mt-10 mb-5 text-white`}>Verify your passphrase</Text>
+        <Text style={{ marginTop: 40 }}>Verify your passphrase</Text>
         <FlatList
           data={toConfirm}
           numColumns={2}
           scrollEnabled={false}
           renderItem={({ item, index }) => (
             <View
-              style={tw.style(
-                "w-[48%]",
-                index % 2 === 0 ? "mr-[2%]" : "ml-[2%]",
-              )}
+              style={[
+                { width: "48%" },
+                index % 2 === 0 ? { marginRight: "2%" } : { marginLeft: "2%" },
+              ]}
             >
-              <Text style={tw`text-white opacity-90`}>
-                Word #{item.wordLabel}
-              </Text>
+              <Text>Word #{item.wordLabel}</Text>
               <TextInput
-                style={tw`input flex-1 my-2 w-[100%]`}
+                style={{ marginTop: 5, marginBottom: 20 }}
                 autoCapitalize="none"
                 autoCorrect={false}
                 {...mnemoInputs[index]}
@@ -124,14 +124,23 @@ export default function ConfirmMnemonicScreen({
           keyExtractor={(item) => item.word}
         />
 
-        <Button
-          label="Confirm"
-          styles={tw`mt-5`}
-          isLoading={loading}
-          onPress={onButtonPress}
-        />
-        {error && <Text style={tw`mt-2 text-sm text-danger-500`}>{error}</Text>}
-      </View>
+        {loading ? (
+          <Loader />
+        ) : (
+          <PrimaryButton title="Confirm" onPress={onButtonPress} />
+        )}
+
+        {error && (
+          <Text
+            style={{
+              marginTop: 10,
+              color: Colors.danger,
+            }}
+          >
+            {error}
+          </Text>
+        )}
+      </Column>
     </SafeLayout>
   );
 }

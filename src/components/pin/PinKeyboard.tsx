@@ -28,7 +28,14 @@ export default function PinKeyboard({ onDigit, onDelete }: PinKeyboardProps) {
   return (
     <View style={{ gap: 30 }}>
       {DIGITS_ROWS.map((digits, index) => (
-        <View style={{ flexDirection: "row", gap: 40 }} key={index}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-around",
+            width: "100%",
+          }}
+          key={index}
+        >
           {digits.map((digit) => (
             <PinKeyboardDigit digit={digit} onPress={onPress} key={digit} />
           ))}

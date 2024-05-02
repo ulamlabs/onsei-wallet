@@ -1,7 +1,7 @@
-import tw from "@/lib/tailwind";
+import { Colors } from "@/styles";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 
 export const navigatorScreenOptions: NativeStackNavigationOptions = {
-  headerStyle: { backgroundColor: tw.color("header-background") },
-  headerTintColor: "white",
+  headerStyle: { backgroundColor: Colors.background },
+  headerTintColor: Colors.text,
 };

@@ -21,7 +21,7 @@ export type OnboardingParamList = {
   "Protect Your Wallet": undefined;
   "Enable Biometrics": undefined;
   "Finish Onboarding": undefined;
-  "Enable PIN": { nextRoute: keyof NavigatorParamsList };
+  "Enable Passcode": { nextRoute: keyof NavigatorParamsList };
 };
 
 const { Navigator, Screen } = createNativeStackNavigator<OnboardingParamList>();
@@ -46,7 +46,11 @@ export default function OnboardingNavigation() {
         component={OnboardingEnableBiometricsScreen}
       />
       <Screen name="Finish Onboarding" component={OnboardingFinishScreen} />
-      <Screen name="Enable PIN" component={PinEnableScreen} />
+      <Screen
+        name="Enable Passcode"
+        component={PinEnableScreen}
+        options={{ title: "" }}
+      />
     </Navigator>
   );
 }

@@ -1,3 +1,4 @@
+import { Colors } from "@/styles";
 import { useMemo } from "react";
 import { Text } from "react-native";
 
@@ -25,7 +26,7 @@ export default function Timer({ seconds: totalSeconds }: TimerProps) {
   return (
     <Text
       style={{
-        color: "white",
+        color: Colors.text,
         fontSize: 30,
         fontWeight: "bold",
       }}

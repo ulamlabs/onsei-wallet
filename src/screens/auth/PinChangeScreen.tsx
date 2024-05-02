@@ -6,7 +6,7 @@ import { useRef, useState } from "react";
 
 type ChangePinScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
-  "Change PIN"
+  "Change Passcode"
 >;
 
 export default function PinChangeScreen({ navigation }: ChangePinScreenProps) {
@@ -30,7 +30,7 @@ export default function PinChangeScreen({ navigation }: ChangePinScreenProps) {
   if (!authorized) {
     return (
       <PinWithTimeout
-        label="Enter your old PIN"
+        label="Enter your old passcode"
         compareToHash={oldPinHash.current}
         onPinHash={() => setAuthorized(true)}
         key="old"
@@ -41,13 +41,14 @@ export default function PinChangeScreen({ navigation }: ChangePinScreenProps) {
   return (
     <>
       {!newPinHash ? (
-        <Pin label="Enter your new PIN" onPinHash={setNewPinHash} key="new" />
+        <Pin label="Create passcode" onPinHash={setNewPinHash} key="create" />
       ) : (
         <Pin
-          label="Confirm your new PIN"
+          label="Create passcode"
+          extraInfo="Re-type your passcode"
           compareToHash={newPinHash}
           onPinHash={saveNewPin}
-          key="confirm"
+          key="retype"
         />
       )}
     </>

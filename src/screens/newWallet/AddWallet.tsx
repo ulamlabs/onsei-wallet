@@ -1,8 +1,6 @@
-import { Animated, View, Text } from "react-native";
-import tw from "@/lib/tailwind";
 import { NavigationProp } from "@/types";
 import { useNavigation } from "@react-navigation/native";
-import { Button } from "@/components";
+import { PrimaryButton, TertiaryButton, Column } from "@/components";
 
 export default function AddWallet() {
   const navigation = useNavigation<NavigationProp>();
@@ -15,12 +13,9 @@ export default function AddWallet() {
   }
 
   return (
-    <View style={tw`items-center`}>
-      <Animated.View style={{ alignItems: "center" }}>
-        <Button label="Create new Account" onPress={onCreateNew} />
-        <Text style={tw`my-10 text-white font-bold text-lg`}>OR</Text>
-        <Button label="Import existing Account" onPress={onImport} />
-      </Animated.View>
-    </View>
+    <Column>
+      <PrimaryButton title="Create new Account" onPress={onCreateNew} />
+      <TertiaryButton title="I already have a wallet" onPress={onImport} />
+    </Column>
   );
 }

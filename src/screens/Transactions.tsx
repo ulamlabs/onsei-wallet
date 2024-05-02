@@ -1,8 +1,7 @@
-import { Divider } from "@/components";
-import SafeLayout from "@/components/SafeLayout";
-import tw from "@/lib/tailwind";
+import { Loader, Paragraph, Row, SafeLayout, Text } from "@/components";
+import { Colors } from "@/styles";
 import { useEffect } from "react";
-import { ActivityIndicator, FlatList, Text, View } from "react-native";
+import { FlatList, View } from "react-native";
 
 type Transaction = {
   type: "Send" | "Receive";
@@ -19,9 +18,35 @@ type TransactionRenderProps = {
 };
 
 export default function Transactions() {
-  const loading = true;
-  const isMore = true;
+  const loading = false;
+  const isMore = false;
   const transactions: Transaction[] = [];
+  // const transactions: Transaction[] = [
+  //   {
+  //     amount: "0",
+  //     asset: "213",
+  //     date: "1123",
+  //     from: "123",
+  //     to: "123",
+  //     type: "Receive",
+  //   },
+  //   {
+  //     amount: "0",
+  //     asset: "213",
+  //     date: "1123",
+  //     from: "123",
+  //     to: "123",
+  //     type: "Receive",
+  //   },
+  //   {
+  //     amount: "0",
+  //     asset: "213",
+  //     date: "1123",
+  //     from: "123",
+  //     to: "123",
+  //     type: "Send",
+  //   },
+  // ];
 
   useEffect(() => {
     fetchTxns(0);
@@ -42,46 +67,44 @@ export default function Transactions() {
 
   const renderTxn = ({ item, index }: TransactionRenderProps) => {
     return (
-      <View key={index} style={tw`my-3`}>
+      <View key={index} style={{ marginTop: 5, gap: 15 }}>
         {(index === 0 || item.date !== transactions[index - 1].date) && (
-          <View style={tw`flex-row items-start mt-3`}>
-            <Divider styles="opacity-80 flex-1 self-stretch mt-2" />
-            <Text style={tw`my-3`}>{item.date}</Text>
-            <Divider styles="opacity-80 flex-1 self-stretch mt-2" />
-          </View>
+          <Text>{item.date}</Text>
         )}
-        <View style={tw`flex-row justify-between items-center my-3`}>
+
+        <Row
+          style={{
+            backgroundColor: Colors.background200,
+            padding: 15,
+          }}
+        >
           <View>
             <Text>{item.type}</Text>
-            <Text style={tw`text-basic-600 text-xs`}>
+            <Text style={{ color: Colors.text100 }}>
               {item.type === "Send" ? item.to : item.from}
             </Text>
           </View>
 
           <Text
-            style={tw`${
-              item.type === "Send" ? "text-danger-600" : "text-success-600"
-            }`}
+            style={{
+              color: item.type === "Send" ? Colors.danger : Colors.success,
+            }}
           >
             {item.type === "Send" ? "-" : "+"}
             {item.amount} {item.asset}
           </Text>
-        </View>
+        </Row>
       </View>
     );
   };
 
   return (
     <SafeLayout noScroll={true}>
-      <View style={tw`items-center`}>
-        <Text style={tw`text-3xl mt-12 mb-8 text-white font-bold`}>
-          TRANSACTIONS
-        </Text>
-
+      <View>
         {loading ? (
-          <ActivityIndicator size="large" />
+          <Loader />
         ) : (
-          <View style={{ width: "100%", height: "85%" }}>
+          <View>
             {transactions.length > 0 ? (
               <FlatList
                 data={transactions}
@@ -89,24 +112,12 @@ export default function Transactions() {
                 renderItem={renderTxn}
                 onEndReached={fetchNextPage}
                 onEndReachedThreshold={0.3}
-                ListFooterComponent={
-                  isMore ? (
-                    <View
-                      style={{
-                        width: "100%",
-                        alignItems: "center",
-                        marginTop: 5,
-                      }}
-                    >
-                      <ActivityIndicator />
-                    </View>
-                  ) : (
-                    <></>
-                  )
-                } // Loader when loading next page.
+                ListFooterComponent={isMore ? <Loader /> : <></>} // Loader when loading next page.
               />
             ) : (
-              <Text style={{ textAlign: "center" }}>No transactions yet</Text>
+              <Paragraph style={{ textAlign: "center" }}>
+                No transactions yet
+              </Paragraph>
             )}
           </View>
         )}

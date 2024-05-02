@@ -1,21 +1,23 @@
-import { Modal } from "@/components";
-import Button from "@/components/Button";
-import SafeLayout from "@/components/SafeLayout";
+import {
+  Headline,
+  Loader,
+  PrimaryButton,
+  TextInput,
+  SafeLayout,
+  Row,
+  Text,
+} from "@/components";
 import { useInputState } from "@/hooks";
-import tw from "@/lib/tailwind";
-import { NavigatorParamsList } from "@/types";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useState } from "react";
-import { Text, TextInput, View } from "react-native";
+import { useModalStore } from "@/store";
+import { Colors } from "@/styles";
+import { View } from "react-native";
 
-type SendAssetsProps = NativeStackScreenProps<NavigatorParamsList, "Send">;
-
-export default function SendAssets({ navigation }: SendAssetsProps) {
+export default function SendAssets() {
   const loading = false;
   const error: string | null = null;
-  const [modalVisible, setModalVisible] = useState(false);
   const amountInput = useInputState();
   const receiverInput = useInputState();
+  const { alert } = useModalStore();
 
   async function onMax() {
     // TODO: handle max am ount
@@ -23,52 +25,41 @@ export default function SendAssets({ navigation }: SendAssetsProps) {
 
   async function onSend() {
     // TODO: handle send
-  }
-
-  function goBack() {
-    setModalVisible(false);
-    navigation.goBack();
+    alert({
+      title: "Transfer successful!",
+      description: `You successfully transfered ${amountInput.value} SEI to ${receiverInput.value}`,
+    });
   }
 
   return (
-    <SafeLayout>
-      <View style={tw`items-center`}>
-        <Text style={tw`title`}>SEND ASSETS</Text>
+    <SafeLayout style={{ gap: 50 }}>
+      <Headline>Send Assets</Headline>
 
-        <Text style={tw`text-white`}>Provide address of the receiver</Text>
-        <TextInput
-          style={tw`input w-full mt-2`}
-          placeholder="Receiver address"
-          {...receiverInput}
-        />
-
-        <Text style={tw`text-white mt-5`}>Amount to send</Text>
-        <View style={tw`w-full items-center flex-row mt-2`}>
-          <TextInput
-            style={tw`input flex-6 mr-2`}
-            placeholder="Amount"
-            keyboardType="decimal-pad"
-            {...amountInput}
-          />
-          <Button label="MAX" onPress={onMax} />
-        </View>
-
-        <Button
-          label="Sign and Send"
-          isLoading={loading}
-          styles={tw`mt-8 mb-3`}
-          onPress={onSend}
-        />
-        {error && <Text style={tw`text-danger-600`}>{error}</Text>}
+      <View style={{ gap: 10 }}>
+        <Text>Provide address of the receiver</Text>
+        <TextInput placeholder="Receiver address" {...receiverInput} />
       </View>
 
-      <Modal
-        isVisible={modalVisible}
-        title="Transfer successful!"
-        description={`You successfully transfered ${amountInput} SEI to ${receiverInput}`}
-        buttonTxt="Back to Overview"
-        onConfirm={goBack}
-      />
+      <View style={{ gap: 10 }}>
+        <Text>Amount to send</Text>
+        <Row>
+          <TextInput
+            placeholder="Amount"
+            keyboardType="decimal-pad"
+            style={{ flex: 1 }}
+            {...amountInput}
+          />
+          <PrimaryButton title="MAX" onPress={onMax} />
+        </Row>
+      </View>
+
+      {loading ? (
+        <Loader />
+      ) : (
+        <PrimaryButton title="Sign and Send" onPress={onSend} />
+      )}
+
+      {error && <Text style={{ color: Colors.danger }}>{error}</Text>}
     </SafeLayout>
   );
 }

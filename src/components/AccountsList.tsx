@@ -1,18 +1,16 @@
-import tw from "@/lib/tailwind";
 import { Account, useAccountsStore } from "@/store";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { Text, View } from "react-native";
 import AccountListItem from "./AccountListItem";
-import Button from "./Button";
-import Modal from "./Modal";
 import { NavigationProp } from "@/types";
+import { PrimaryButton } from "./buttons";
+import { Column, Row } from "./layout";
+import { Headline } from "./typography";
 
 export default function AccountsList() {
   const navigation = useNavigation<NavigationProp>();
-  const { accounts, deleteAccount } = useAccountsStore();
+  const { accounts } = useAccountsStore();
   const [accountsSorted, setAccountsSorted] = useState<Account[]>([]);
-  const [addressToRemove, setAddressToRemove] = useState<string | null>(null);
 
   useEffect(() => {
     setAccountsSorted(accounts.sort((a, b) => b.balance - a.balance));
@@ -22,38 +20,19 @@ export default function AccountsList() {
     navigation.push("Add Wallet");
   }
 
-  function onRemoveConfirm() {
-    deleteAccount(addressToRemove!);
-    setAddressToRemove(null);
-  }
-
   return (
-    <View style={tw`w-full gap-2`}>
-      <View style={tw`flex-row justify-between items-center mb-2`}>
-        <Text style={tw`text-2xl text-white font-bold`}>Accounts</Text>
-        <Button
+    <Column>
+      <Row>
+        <Headline>Accounts</Headline>
+        <PrimaryButton
           onPress={onAddNew}
-          styles={tw`rounded-full h-7 w-7 p-0 justify-center items-center`}
-          label="+"
+          style={{ paddingVertical: 10 }}
+          title="+"
         />
-      </View>
+      </Row>
       {accountsSorted.map((account) => (
-        <AccountListItem
-          key={account.address}
-          onRemove={() => setAddressToRemove(account.address)}
-          account={account}
-        />
+        <AccountListItem key={account.address} account={account} />
       ))}
-      <Modal
-        isVisible={!!addressToRemove}
-        title="Remove account?"
-        description={
-          "Are you sure you want to remove this account?\nThis action cannot be reversed."
-        }
-        buttonTxt="Confirm"
-        onConfirm={onRemoveConfirm}
-        onCancel={() => setAddressToRemove(null)}
-      />
-    </View>
+    </Column>
   );
 }

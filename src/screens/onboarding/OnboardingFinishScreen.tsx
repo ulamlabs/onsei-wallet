@@ -1,10 +1,15 @@
-import { Button, SafeLayout } from "@/components";
+import {
+  Headline,
+  Paragraph,
+  PrimaryButton,
+  SafeLayoutBottom,
+} from "@/components";
 import { OnboardingParamList } from "@/navigation/OnboardingNavigation";
 import { useOnboardingStore } from "@/store";
 import { resetNavigationStack } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 
 type OnboardingFinishScreenProps = NativeStackScreenProps<
   OnboardingParamList,
@@ -21,18 +26,19 @@ export default function OnboardingFinishScreen({
   }, [navigation]);
 
   return (
-    <SafeLayout>
-      <View style={{ gap: 25 }}>
-        <Text style={{ color: "white", textAlign: "center", fontSize: 20 }}>
-          You have successfully setup your wallet!
-        </Text>
+    <SafeLayoutBottom>
+      <View style={{ flex: 1, justifyContent: "center" }}>
+        <Headline>You’re all done!</Headline>
 
-        <Button
-          label="Start using the wallet"
-          onPress={() => onboardingStore.finishOnboarding()}
-          styles={{ justifyContent: "center" }}
-        />
+        <Paragraph style={{ textAlign: "center" }}>
+          You can now fully enjoy your wallet.
+        </Paragraph>
       </View>
-    </SafeLayout>
+
+      <PrimaryButton
+        title="Confirm"
+        onPress={() => onboardingStore.finishOnboarding()}
+      />
+    </SafeLayoutBottom>
   );
 }

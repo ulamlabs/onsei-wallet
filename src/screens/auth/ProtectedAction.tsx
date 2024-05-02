@@ -27,7 +27,7 @@ export default function ProtectedAction({
         <Biometrics onSuccess={action} />
       )}
       <PinWithTimeout
-        label="Enter your PIN"
+        label="Enter your passcode"
         compareToHash={pinHash.current}
         onPinHash={action}
       />

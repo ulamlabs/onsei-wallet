@@ -1,12 +1,16 @@
-import { SafeLayout } from "@/components";
+import {
+  Column,
+  DangerButton,
+  Paragraph,
+  SafeLayout,
+  TertiaryButton,
+} from "@/components";
 import {
   useAccountsStore,
   useOnboardingStore,
   useSettingsStore,
 } from "@/store";
 import { useAuthStore } from "@/store";
-import { Button, Text, View } from "react-native";
-import tw from "@/lib/tailwind";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
@@ -33,22 +37,19 @@ export default function ResetAppScreen({ navigation }: ResetAppScreenProps) {
 
   return (
     <SafeLayout>
-      <View style={{ gap: 10 }}>
-        <Text style={{ color: "white" }}>
-          This will remove all application data including your accounts. Are you
-          sure?
-        </Text>
+      <Column>
+        <Paragraph>
+          This will remove all application data including your accounts and
+          settings. Are you sure?
+        </Paragraph>
 
-        <Button
+        <TertiaryButton
           title="No, take me from here"
           onPress={() => navigation.goBack()}
         />
-        <Button
-          title="Yes, clear all app data"
-          color={tw.color("danger-400")}
-          onPress={onRemove}
-        />
-      </View>
+
+        <DangerButton title="Yes, clear all app data" onPress={onRemove} />
+      </Column>
     </SafeLayout>
   );
 }

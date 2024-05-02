@@ -1,5 +1,7 @@
-import { Back } from "iconsax-react-native";
-import { Text, StyleSheet, TouchableHighlight, View } from "react-native";
+import { Colors } from "@/styles";
+import { TagCross } from "iconsax-react-native";
+import { StyleSheet, TouchableHighlight, View } from "react-native";
+import { Text } from "../typography";
 
 export type PinKeyboardDigitProps = {
   digit: string;
@@ -18,12 +20,12 @@ export default function PinKeyboardDigit({
     <TouchableHighlight
       onPress={() => onPress(digit)}
       style={styles.digit}
-      underlayColor="#888"
+      underlayColor="black"
     >
       {digit === "X" ? (
-        <Back color="white" />
+        <TagCross color={Colors.text} />
       ) : (
-        <Text style={{ fontSize: 30, color: "white" }}>{digit}</Text>
+        <Text style={{ fontSize: 30 }}>{digit}</Text>
       )}
     </TouchableHighlight>
   );

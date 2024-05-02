@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { PIN_LENGTH, SHAKE_ANIMATION_DURATION } from "./const";
 import PinDigits from "./PinDigits";
 import PinKeyboard from "./PinKeyboard";
-import tw from "@/lib/tailwind";
 import * as Crypto from "expo-crypto";
+import { Colors } from "@/styles";
+import { Headline, Paragraph, Text } from "../typography";
 
 export type PinProps = {
   label: string;
+  description?: string;
+  extraInfo?: string;
   compareToHash?: string;
   onPinHash: (pinHash: string) => void;
   onFail?: () => void;
@@ -19,6 +22,8 @@ function hashPin(pin: string): Promise<string> {
 
 export default function Pin({
   label,
+  description,
+  extraInfo,
   compareToHash,
   onPinHash,
   onFail,
@@ -57,7 +62,7 @@ export default function Pin({
     setErrorDelay(true);
     setTimeout(() => {
       setPin("");
-    }, SHAKE_ANIMATION_DURATION);
+    }, SHAKE_ANIMATION_DURATION * 2);
   }
 
   function onDigit(digit: string) {
@@ -75,21 +80,25 @@ export default function Pin({
       style={{
         flex: 1,
         alignItems: "center",
-        backgroundColor: tw.color("background"),
+        justifyContent: "space-between",
+        backgroundColor: Colors.background,
       }}
     >
-      <Text style={{ fontSize: 30, flex: 1, marginTop: 40, color: "white" }}>
-        {label}
-      </Text>
+      <View>
+        <Headline style={{ marginTop: 40 }}>{label}</Headline>
+        <Paragraph style={{ textAlign: "center" }}>{description}</Paragraph>
+      </View>
 
-      <View style={{ flex: 1, alignItems: "center" }}>
+      <View style={{ alignItems: "center", minHeight: 70 }}>
         <PinDigits pin={pin} error={errorDelay} />
         {error && (
-          <Text style={{ color: tw.color("danger-400"), marginTop: 20 }}>
-            PIN code did not match. Try again.
+          <Text style={{ color: Colors.danger, marginTop: 20 }}>
+            Passcode did not match. Try again.
           </Text>
         )}
       </View>
+
+      <Text style={{ fontWeight: "bold" }}>{extraInfo}</Text>
 
       <View style={{ marginBottom: 20 }}>
         <PinKeyboard onDelete={onDelete} onDigit={onDigit} />

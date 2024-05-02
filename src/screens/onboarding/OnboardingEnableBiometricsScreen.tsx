@@ -1,11 +1,17 @@
-import { Biometrics, Button, SafeLayout } from "@/components";
-import { useSettingsStore } from "@/store";
+import {
+  Biometrics,
+  Column,
+  PrimaryButton,
+  SafeLayoutBottom,
+  TertiaryButton,
+} from "@/components";
+import { useModalStore, useSettingsStore } from "@/store";
+import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { resetNavigationStack } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { EmojiHappy } from "iconsax-react-native";
 import { useEffect, useState } from "react";
-import { Text, View } from "react-native";
 
 type OnboardingEnableBiometricsScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -16,9 +22,9 @@ export function OnboardingEnableBiometricsScreen({
   navigation,
 }: OnboardingEnableBiometricsScreenProps) {
   const [enablingBiometrics, setEnablingBiometrics] = useState(false);
-  const [biometricsNotEnrolled, setBiometricsNotEnrolled] = useState(false);
 
   const { setSetting } = useSettingsStore();
+  const { alert } = useModalStore();
 
   useEffect(() => {
     resetNavigationStack(navigation);
@@ -29,36 +35,36 @@ export function OnboardingEnableBiometricsScreen({
     navigation.navigate("Finish Onboarding");
   }
 
+  async function onNotEnrolled() {
+    await alert({
+      title: "Biometrics failed",
+      description:
+        "Face ID / Touch ID not enabled in the system.\nYou can enable it later in the security settings.",
+    });
+    navigation.navigate("Finish Onboarding");
+  }
+
   return (
-    <SafeLayout>
-      <View style={{ gap: 20 }}>
-        <Button
-          label="Enable Biometrics"
+    <SafeLayoutBottom>
+      <Column>
+        <PrimaryButton
+          title="Enable Biometrics"
           onPress={() => setEnablingBiometrics(true)}
-          icon={<EmojiHappy color="white" />}
-          styles={{ justifyContent: "center" }}
+          icon={<EmojiHappy color={Colors.background} />}
         />
 
         {enablingBiometrics && (
           <Biometrics
             onSuccess={enableBiometrics}
-            onNotEnrolled={() => setBiometricsNotEnrolled(true)}
+            onNotEnrolled={onNotEnrolled}
           />
         )}
 
-        {biometricsNotEnrolled && (
-          <Text style={{ color: "red" }}>
-            Face ID / Touch ID not enabled in the system.
-          </Text>
-        )}
-
-        <Button
-          label="Skip biometrics protection"
-          styles={{ justifyContent: "center", backgroundColor: "transparent" }}
-          textStyles={`font-normal`}
+        <TertiaryButton
+          title="Skip biometrics protection"
           onPress={() => navigation.push("Finish Onboarding")}
         />
-      </View>
-    </SafeLayout>
+      </Column>
+    </SafeLayoutBottom>
   );
 }

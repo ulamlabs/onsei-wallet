@@ -1,5 +1,4 @@
-import tw from "@/lib/tailwind";
-import { Account, useAccountsStore } from "@/store";
+import { Account, useAccountsStore, useModalStore } from "@/store";
 import { formatTokenAmount } from "@/utils/formatAmount";
 import { trimAddress } from "@/utils/trimAddress";
 import { useNavigation } from "@react-navigation/native";
@@ -12,20 +11,24 @@ import {
   Trash,
 } from "iconsax-react-native";
 import { useState } from "react";
-import { Text, View } from "react-native";
-import Button from "./Button";
+import { Pressable, View } from "react-native";
 import Tooltip from "./Tooltip";
+import { Colors } from "@/styles";
+import { TertiaryButton } from "./buttons";
+import { NavigationProp } from "@/types";
+import { Row } from "./layout";
+import { Text } from "./typography";
 
 type Props = {
   account: Account;
-  onRemove: () => void;
 };
 
-export default function AccountListItem({ account, onRemove }: Props) {
+export default function AccountListItem({ account }: Props) {
   const { address, balance } = account;
-  const { activeAccount, setActiveAccount } = useAccountsStore();
+  const { activeAccount, setActiveAccount, deleteAccount } = useAccountsStore();
+  const { ask, alert } = useModalStore();
   const [visibleTooltip, setVisibleTooltip] = useState<boolean>(false);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
 
   function onSelect() {
     setActiveAccount(address);
@@ -38,81 +41,91 @@ export default function AccountListItem({ account, onRemove }: Props) {
 
   function onTxnsShow() {
     setVisibleTooltip(false);
-    (navigation as any).push("Transactions", { address });
+    navigation.push("Transactions", { address });
   }
 
-  function onRemoveHandle() {
+  async function onRemove() {
     setVisibleTooltip(false);
-    onRemove();
+    const yesno = await ask({
+      title: "Remove account?",
+      question:
+        "Are you sure you want to remove this account?\nThis action cannot be reversed.",
+      yes: "Yes, remove the account",
+      no: "No, keep the account",
+      primary: "yes",
+      danger: true,
+    });
+    if (yesno) {
+      await deleteAccount(account.address!);
+      alert({
+        title: "Account removed",
+        description: `Account ${account.name} (${account.address}) removed.`,
+      });
+    }
   }
 
-  function onMnemoShow() {
+  function onMnemonicShow() {
     setVisibleTooltip(false);
-    (navigation as any).push("Your Mnemonic", {
-      address,
+    navigation.push("Authorize", {
+      nextRoute: "Your Mnemonic",
+      nextParams: { address },
     });
   }
 
   return (
-    <View style={tw`p-4 rounded-xl bg-black bg-opacity-20`}>
-      <View style={tw`flex-row justify-between items-center`}>
-        <Text style={tw`text-white`}>{trimAddress(address)}</Text>
-        <Text style={tw`text-white`}>{formatTokenAmount(balance)}</Text>
-      </View>
-      <View style={tw`flex-row justify-between items-center mt-3`}>
+    <View
+      style={{
+        padding: 15,
+        backgroundColor: "black",
+        borderRadius: 16,
+        gap: 15,
+      }}
+    >
+      <Row>
+        <Text>{trimAddress(address)}</Text>
+        <Text>{formatTokenAmount(balance)}</Text>
+      </Row>
+
+      <Row>
         {address === activeAccount?.address ? (
-          <Text style={tw`text-success-500`}>Active</Text>
+          <Text style={{ color: Colors.success }}>Active</Text>
         ) : (
-          <Button
-            type="ghost"
-            onPress={onSelect}
-            label="Select"
-            styles={tw`p-0`}
-          />
+          <Pressable onPress={onSelect}>
+            <Text>Select</Text>
+          </Pressable>
         )}
 
         <Tooltip
           onPress={() => setVisibleTooltip(true)}
-          toggleElement={<More />}
+          toggleElement={<More color={Colors.text} />}
           isVisible={visibleTooltip}
           onBackdropPress={() => setVisibleTooltip(false)}
-          width={200}
-          height={activeAccount?.address !== address ? 160 : 130}
         >
-          <Button
-            type="ghost"
+          <TertiaryButton
             onPress={onCopy}
-            textStyles={`text-primary-500`}
-            label="Copy Address"
-            icon={<ClipboardCopy color={tw.color("primary-500")} size={16} />}
+            title="Copy Address"
+            icon={<ClipboardCopy color={Colors.text} size={16} />}
           />
-          <Button
-            type="ghost"
-            onPress={onMnemoShow}
-            textStyles={`text-primary-500`}
-            label="View Passphrase"
-            icon={<Lock1 color={tw.color("primary-500")} size={16} />}
+          <TertiaryButton
+            onPress={onMnemonicShow}
+            title="View Passphrase"
+            icon={<Lock1 color={Colors.text} size={16} />}
           />
-          <Button
-            type="ghost"
+          <TertiaryButton
             onPress={onTxnsShow}
-            label="View Transactions"
-            textStyles={`text-primary-500`}
-            icon={
-              <ArrangeHorizontal color={tw.color("primary-500")} size={16} />
-            }
+            title="View Transactions"
+            icon={<ArrangeHorizontal color={Colors.text} size={16} />}
           />
           {activeAccount?.address !== address && (
-            <Button
-              type="ghost"
-              onPress={onRemoveHandle}
-              textStyles={`text-danger-500`}
-              icon={<Trash color={tw.color("danger-500")} size={16} />}
-              label="Remove Account"
+            <TertiaryButton
+              onPress={onRemove}
+              title="Remove Account"
+              textStyle={{ color: Colors.danger }}
+              icon={<Trash color={Colors.danger} size={16} />}
             />
           )}
         </Tooltip>
-      </View>
+      </Row>
     </View>
   );
 }

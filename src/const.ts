@@ -1,4 +1,4 @@
-export const APP_NAME = "Sei Wallet";
+export const APP_NAME = "SEI Wallet";
 
 export const AUTH_MAX_ATTEMPTS = 5;
 export const AUTH_TIMEOUT_SECONDS = 30;
