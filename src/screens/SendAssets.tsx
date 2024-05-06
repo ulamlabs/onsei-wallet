@@ -63,11 +63,6 @@ export default function SendAssets({
 
       validateTxnData(receiverInput.value, amount, fee);
 
-      if (state !== "noPin" && !verified) {
-        authorize(navigation, "Send", { verified: true });
-        return;
-      }
-
       setLoading(true);
 
       await transferAsset(receiverInput.value, +amountInput.value, fee);
