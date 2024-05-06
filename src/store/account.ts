@@ -64,7 +64,7 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
   init: async () => {
     const accounts = await loadFromStorage<Account[]>("accounts", []);
     const balances = await Promise.all(
-      accounts.map((acc) => get().getRawBalance(acc.address))
+      accounts.map((acc) => get().getRawBalance(acc.address)),
     );
     const updatedAccounts = accounts.map((acc, index) => ({
       ...acc,
@@ -197,7 +197,7 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
 
       const signingClient = await getSigningStargateClient(
         "https://rpc.atlantic-2.seinetwork.io",
-        wallet as any
+        wallet as any,
       );
 
       const fee = calculateFee(activeAccount?.balance! - amount, "0.1usei");
@@ -206,14 +206,14 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
         activeAccount?.address!,
         receiver,
         [sendAmount],
-        fee
+        fee,
       );
 
       const udpatedAcc = await Promise.all(
         accounts.map(async (acc) => {
           const bal = await getRawBalance(acc.address);
           return { ...acc, balance: bal };
-        })
+        }),
       );
 
       set((state) => {
@@ -223,7 +223,7 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
 
       setActiveAccount(
         udpatedAcc.find((acc) => acc.address === activeAccount?.address!)
-          ?.address!
+          ?.address!,
       );
 
       return send.transactionHash;

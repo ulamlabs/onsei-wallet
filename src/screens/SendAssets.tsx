@@ -36,11 +36,11 @@ export default function SendAssets({
   }, []);
 
   async function onMax() {
-    amountInput.onChangeText!("Calculating...");
-    const balance = await getRawBalance(activeAccount?.address!);
-    const fee = calculateFee(balance, "0.1usei");
+    amountInput.onChangeText("Calculating...");
+    const balance = activeAccount?.balance || 0;
+    const fee = calculateFee(balance, "0.1usei"); // gas price hardcoded for now
 
-    amountInput.onChangeText!((balance - +fee.amount[0].amount).toString());
+    amountInput.onChangeText((balance - +fee.amount[0].amount).toString());
   }
 
   useEffect(() => {
@@ -53,7 +53,15 @@ export default function SendAssets({
     try {
       setError(null);
       const amount = Number(amountInput.value.replaceAll(",", "."));
-      validateTxnData(receiverInput.value, amount);
+      if (!activeAccount?.balance) {
+        throw Error("Cannot get balance");
+      }
+      const fee = calculateFee(
+        (activeAccount?.balance - amount) * 10 ** exponent,
+        "0.1usei",
+      );
+
+      validateTxnData(receiverInput.value, amount, fee);
 
       if (state !== "noPin" && !verified) {
         authorize(navigation, "Send", { verified: true });
@@ -62,15 +70,11 @@ export default function SendAssets({
 
       setLoading(true);
 
-      const txnHash = await transferAsset(
-        receiverInput.value,
-        +amountInput.value,
-      );
-      console.log(`Submitted with hash ${txnHash}`);
+      await transferAsset(receiverInput.value, +amountInput.value, fee);
       onAfterSubmit();
       setModalVisible(true);
     } catch (error: any) {
-      console.log("Error while submitting:", error);
+      console.error("Error while submitting:", error);
       setError(error.message);
     } finally {
       setLoading(false);

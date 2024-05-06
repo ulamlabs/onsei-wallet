@@ -11,7 +11,7 @@ export function formatTokenAmount(value: string | number) {
   } else if (Math.abs(amount) >= 0.01) {
     return amount.toLocaleString("en-US", {
       minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
+      maximumFractionDigits: 6,
     });
   } else {
     let maxDigits;
