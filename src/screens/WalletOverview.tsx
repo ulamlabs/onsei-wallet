@@ -19,7 +19,7 @@ import { Text, View } from "react-native";
 
 type WalletOverviewProps = NativeStackScreenProps<
   NavigatorParamsList,
-  "My wallet"
+  "Wallet"
 >;
 
 export default function WalletOverview({ navigation }: WalletOverviewProps) {

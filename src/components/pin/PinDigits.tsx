@@ -28,7 +28,7 @@ export default function PinDigits({ pin, error }: PinDigitsProps) {
         ),
       ).start();
     }
-  }, [error, translateX]);
+  }, [error]);
 
   return (
     <Animated.View

@@ -20,7 +20,7 @@ export default function Modal({
       duration: 300,
       useNativeDriver: true,
     }).start();
-  }, [isVisible, translateY]);
+  }, [isVisible]);
 
   return (
     <ReactModal
