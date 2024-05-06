@@ -250,8 +250,9 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
   fetchTxns: async () => {
     try {
       const { node } = get();
-      const send = `${nodes[node]}/cosmos/tx/v1beta1/txs?pagination.limit=10&pagination.reverse=true&events=transfer.sender='sei16hh9vgk2w9stn6vemapuzqw3qk8wc70q8y9wf9'`;
-      const received = `${nodes[node]}/cosmos/tx/v1beta1/txs?pagination.limit=10&pagination.reverse=true&events=transfer.recipient='sei16hh9vgk2w9stn6vemapuzqw3qk8wc70q8y9wf9'`;
+      //https://rest.wallet.atlantic-2.sei.io/cosmos/tx/v1beta1/txs?pagination.limit=1&events=transfer.sender%3D%27sei16hh9vgk2w9stn6vemapuzqw3qk8wc70q8y9wf9%27&pagination.offset=100
+      const send = `${nodes[node]}/cosmos/tx/v1beta1/txs?pagination.limit=10&pagination.reverse=true&events=transfer.sender='sei16hh9vgk2w9stn6vemapuzqw3qk8wc70q8y9wf9'&pagination.offset=100`;
+      const received = `${nodes[node]}/cosmos/tx/v1beta1/txs?pagination.limit=10&pagination.reverse=true&events=transfer.recipient='sei16hh9vgk2w9stn6vemapuzqw3qk8wc70q8y9wf9'&pagination.offset=100`;
 
       const sendData: TransactionData = await fetchData(send);
       const receivedData: TransactionData = await fetchData(received);

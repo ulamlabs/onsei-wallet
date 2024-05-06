@@ -1,12 +1,15 @@
 import { Loader, Paragraph, Row, SafeLayout, Text } from "@/components";
-import {
-  AddressBookContext,
-  AddressBookContextType,
-  useAccountsStore,
-} from "@/store";
+import { useAccountsStore } from "@/store";
 import { Colors } from "@/styles";
-import { useContext, useEffect, useState } from "react";
+import { NavigatorParamsList } from "@/types";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useEffect, useState } from "react";
 import { FlatList, View } from "react-native";
+
+type TransactionsProps = NativeStackScreenProps<
+  NavigatorParamsList,
+  "Transactions"
+>;
 
 type Transaction = {
   type: "Send" | "Receive";
@@ -22,7 +25,7 @@ type TransactionRenderProps = {
   index: number;
 };
 
-export default ({
+const Transactions = ({
   route: {
     params: { address },
   },
@@ -31,10 +34,6 @@ export default ({
   const [isMore, setIsMore] = useState(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const { fetchTxns } = useAccountsStore();
-
-  const { addressBook } = useContext(
-    AddressBookContext,
-  ) as AddressBookContextType;
   // const transactions: Transaction[] = [
   //   {
   //     amount: "0",
@@ -80,7 +79,7 @@ export default ({
 
   const renderTxn = ({ item, index }: TransactionRenderProps) => {
     return (
-      <View key={index} style={{ marginTop: 5, gap: 15 }}>
+      <View style={{ marginTop: 5, gap: 15 }}>
         {(index === 0 || item.date !== transactions[index - 1].date) && (
           <Text>{item.date}</Text>
         )}
@@ -138,3 +137,5 @@ export default ({
     </SafeLayout>
   );
 };
+
+export default Transactions;
