@@ -1,14 +1,21 @@
-import { AccountsList } from "@/components";
-import Button from "@/components/Button";
-import SafeLayout from "@/components/SafeLayout";
-import tw from "@/lib/tailwind";
+import {
+  AccountsList,
+  Column,
+  Headline,
+  Loader,
+  Paragraph,
+  Row,
+  SafeLayout,
+  SecondaryButton,
+} from "@/components";
 import { useAccountsStore } from "@/store";
+import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { formatTokenAmount } from "@/utils/formatAmount";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { DirectboxReceive, DirectboxSend } from "iconsax-react-native";
 import React from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 type WalletOverviewProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -27,50 +34,55 @@ export default function WalletOverview({ navigation }: WalletOverviewProps) {
 
   return (
     <SafeLayout>
-      <View style={tw`items-center`}>
+      <Column style={{ alignItems: "center" }}>
         {node === "TestNet" && (
           <View
-            style={tw`inset-x-0 mx-auto rounded-2xl w-auto bg-warning-500 py-2 px-4`}
+            style={{
+              borderRadius: 50,
+              backgroundColor: Colors.warning,
+              paddingHorizontal: 20,
+              paddingVertical: 8,
+            }}
           >
-            <Text style={tw`text-xs`}>TestNet</Text>
+            <Text>TestNet</Text>
           </View>
         )}
-        <Text style={tw`title`}>PORTFOLIO</Text>
+        <Headline>PORTFOLIO</Headline>
+
         {activeAccount ? (
           <>
-            <Text style={tw`text-basic-600 text-xs mb-5`}>
+            <Paragraph style={{ marginBottom: 16 }}>
               {activeAccount.address}
-            </Text>
-            <Text style={tw`text-white text-2xl font-bold`}>
-              {formatTokenAmount(activeAccount.balance)} SEI
-            </Text>
-            <Text style={tw`text-basic-600 text-xs`}>
+            </Paragraph>
+            <Headline>{formatTokenAmount(activeAccount.balance)} SEI</Headline>
+            <Paragraph>
               ${formatTokenAmount(activeAccount.usdBalance)}
-            </Text>
-            <View style={tw`w-full my-8 justify-around items-center flex-row`}>
-              <View style={tw`flex-col items-center`}>
-                <Button
-                  onPress={onReceive}
-                  icon={<DirectboxReceive size={20} color="white" />}
-                  styles={tw`rounded-full w-12 h-12 justify-center mb-2 p-0`}
-                />
-                <Text style={tw`text-white text-base`}>Receive</Text>
-              </View>
-              <View style={tw`flex-col items-center`}>
-                <Button
-                  onPress={onSend}
-                  icon={<DirectboxSend size={20} color="white" />}
-                  styles={tw`rounded-full w-12 h-12 justify-center mb-2 p-0`}
-                />
-                <Text style={tw`text-white text-base`}>Send</Text>
-              </View>
-            </View>
-            <AccountsList />
+            </Paragraph>
           </>
         ) : (
-          <ActivityIndicator size="large" />
+          <Loader />
         )}
-      </View>
+      </Column>
+
+      <Row
+        style={{
+          justifyContent: "space-around",
+          marginVertical: 30,
+        }}
+      >
+        <SecondaryButton
+          title="Receive"
+          onPress={onReceive}
+          icon={<DirectboxReceive size={20} color="white" />}
+        />
+        <SecondaryButton
+          title="Send"
+          onPress={onSend}
+          icon={<DirectboxSend size={20} color="white" />}
+        />
+      </Row>
+
+      <AccountsList />
     </SafeLayout>
   );
 }

@@ -1,4 +1,5 @@
 import { Pin } from "@/components";
+import { PIN_LENGTH } from "@/components/pin/const";
 import { useAuthStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -6,8 +7,10 @@ import { useState } from "react";
 
 type EnablePinScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
-  "Enable PIN"
+  "Enable Passcode"
 >;
+
+const description = `Set a ${PIN_LENGTH}-digit passcode to secure your wallet on this device. This passcode can’t be used to recover your wallet.`;
 
 export default function PinEnableScreen({
   route,
@@ -25,13 +28,20 @@ export default function PinEnableScreen({
   return (
     <>
       {!pinHash ? (
-        <Pin label="Setup your PIN" onPinHash={setPinHash} key="setup" />
+        <Pin
+          label="Create passcode"
+          description={description}
+          onPinHash={setPinHash}
+          key="create"
+        />
       ) : (
         <Pin
-          label="Confirm your PIN"
+          label="Create passcode"
+          description={description}
+          extraInfo="Re-type your passcode"
           compareToHash={pinHash}
           onPinHash={savePin}
-          key="confirm"
+          key="retype"
         />
       )}
     </>

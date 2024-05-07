@@ -1,7 +1,8 @@
-import tw from "@/lib/tailwind";
 import React from "react";
-import { Text, View, FlatList } from "react-native";
+import { View, FlatList } from "react-native";
 import { scale, verticalScale } from "../utils";
+import { Colors } from "@/styles";
+import { Text } from "./typography";
 
 type ListItemProps = { title: string; id: number };
 type MnemonicWordsProps = { mnemonic: string[] };
@@ -15,8 +16,8 @@ const ListItem = ({ title, id }: ListItemProps) => (
       width: scale(100),
     }}
   >
-    <Text style={tw`mr-2 opacity-50 text-white`}>{id}.</Text>
-    <Text style={tw`text-white`}>{title}</Text>
+    <Text style={{ color: Colors.text100, marginRight: 8 }}>{id}.</Text>
+    <Text>{title}</Text>
   </View>
 );
 

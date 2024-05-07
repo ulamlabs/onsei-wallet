@@ -2,8 +2,6 @@ import "globals";
 import "react-native-get-random-values";
 import "fastestsmallesttextencoderdecoder";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { useDeviceContext } from "twrnc";
-import tw from "@/lib/tailwind";
 import {
   useAccountsStore,
   useAuthStore,
@@ -17,11 +15,10 @@ import OnboardingNavigation from "@/navigation/OnboardingNavigation";
 import HomeNavigation from "@/navigation/HomeNavigation";
 import { NavigationContainer } from "@react-navigation/native";
 import { useInactivityLock } from "@/hooks";
+import { Modals } from "@/components";
 
 export default function App() {
   const [ready, setReady] = useState(false);
-
-  useDeviceContext(tw);
 
   useInactivityLock();
 
@@ -77,7 +74,10 @@ export default function App() {
   return (
     <NavigationContainer>
       <SafeAreaProvider>
-        <AddressBookProvider>{getContent()}</AddressBookProvider>
+        <AddressBookProvider>
+          {getContent()}
+          <Modals />
+        </AddressBookProvider>
       </SafeAreaProvider>
     </NavigationContainer>
   );

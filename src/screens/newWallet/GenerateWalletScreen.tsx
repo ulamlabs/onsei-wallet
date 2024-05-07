@@ -1,10 +1,15 @@
-import { Button, MnemonicWords, SafeLayout } from "@/components";
-import tw from "@/lib/tailwind";
+import {
+  Column,
+  Loader,
+  MnemonicWords,
+  Paragraph,
+  PrimaryButton,
+  SafeLayout,
+} from "@/components";
 import { Wallet, useAccountsStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { default as React, useEffect, useState } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { default as React, ReactElement, useEffect, useState } from "react";
 
 type GenerateWalletProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -25,26 +30,29 @@ export default function GenerateWalletScreen({
     navigation.push("Confirm Mnemonic", { wallet: wallet! });
   }
 
+  function getContent(): ReactElement {
+    if (!wallet) {
+      return <Loader />;
+    }
+
+    return (
+      <>
+        <Paragraph>
+          This is your recovery passphrase. Make sure to record these words in
+          the correct order, using the corresponding numbers and do not share
+          this passphrase with anyone, as it grants full access to your account.
+        </Paragraph>
+
+        <MnemonicWords mnemonic={wallet.mnemonic.split(" ")} />
+
+        <PrimaryButton title="Next" onPress={onNext} />
+      </>
+    );
+  }
+
   return (
     <SafeLayout>
-      <View style={tw`items-center`}>
-        {wallet ? (
-          <>
-            <Text style={tw`mb-10 text-white px-3`}>
-              This is your recovery passphrase. Make sure to record these words
-              in the correct order, using the corresponding numbers and do not
-              share this passphrase with anyone, as it grants full access to
-              your account.
-            </Text>
-
-            <MnemonicWords mnemonic={wallet.mnemonic.split(" ")} />
-
-            <Button label="Next" styles={tw`mt-5`} onPress={onNext} />
-          </>
-        ) : (
-          <ActivityIndicator size="large" color="#fff" style={tw`mt-20`} />
-        )}
-      </View>
+      <Column style={{ alignItems: "center" }}>{getContent()}</Column>
     </SafeLayout>
   );
 }

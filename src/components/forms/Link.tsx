@@ -1,8 +1,9 @@
-import { Pressable, Text, View } from "react-native";
+import { Pressable } from "react-native";
 import { ArrowRight2 } from "iconsax-react-native";
 import { ReactElement } from "react";
 import { useNavigation } from "@react-navigation/core";
 import { NavigationProp, NavigatorParamsList } from "@/types";
+import Option from "./Option";
 
 export type LinkProps = {
   label: string;
@@ -16,25 +17,14 @@ export default function Link({ icon, label, navigateTo, disabled }: LinkProps) {
 
   function onPress() {
     if (!disabled) {
-      // TODO typing fails because some routes require params
-      navigation.navigate(navigateTo as any);
+      navigation.navigate(navigateTo, undefined as any);
     }
   }
   return (
-    <Pressable
-      onPress={onPress}
-      style={{
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginVertical: 15,
-        ...(disabled ? { opacity: 0.3 } : {}),
-      }}
-    >
-      <View style={{ flexDirection: "row", gap: 10 }}>
-        {icon}
-        <Text style={{ color: "white", fontSize: 16 }}>{label}</Text>
-      </View>
-      <ArrowRight2 color="white" />
+    <Pressable onPress={onPress}>
+      <Option label={label} icon={icon} disabled={disabled}>
+        <ArrowRight2 color="white" />
+      </Option>
     </Pressable>
   );
 }

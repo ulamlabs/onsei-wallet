@@ -5,7 +5,7 @@ import ProtectedAction from "./ProtectedAction";
 
 type DisablePinScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
-  "Disable PIN"
+  "Disable Passcode"
 >;
 
 export default function PinDisableScreen({

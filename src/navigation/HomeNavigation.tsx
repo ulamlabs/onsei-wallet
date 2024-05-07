@@ -28,9 +28,9 @@ import MnemonicScreen from "@/screens/MnemonicScreen";
 export type HomeParamList = {
   Home: undefined;
   Security: undefined;
-  "Enable PIN": { nextRoute: keyof NavigatorParamsList };
-  "Disable PIN": undefined;
-  "Change PIN": undefined;
+  "Enable Passcode": { nextRoute: keyof NavigatorParamsList };
+  "Disable Passcode": undefined;
+  "Change Passcode": undefined;
   "Disable Face ID / Touch ID": undefined;
   "Clear app data": undefined;
   Authorize: { nextRoute: keyof NavigatorParamsList; nextParams?: any };
@@ -64,9 +64,13 @@ export default function HomeNavigation() {
       />
       <Screen name="Security" component={SecuritySettingsScreen} />
       <Screen name="Clear app data" component={ResetAppScreen} />
-      <Screen name="Enable PIN" component={PinEnableScreen} />
-      <Screen name="Disable PIN" component={PinDisableScreen} />
-      <Screen name="Change PIN" component={PinChangeScreen} />
+      <Screen
+        name="Enable Passcode"
+        component={PinEnableScreen}
+        options={{ title: "" }}
+      />
+      <Screen name="Disable Passcode" component={PinDisableScreen} />
+      <Screen name="Change Passcode" component={PinChangeScreen} />
       <Screen
         name="Disable Face ID / Touch ID"
         component={BiometricsDisableScreen}

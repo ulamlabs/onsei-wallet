@@ -1,0 +1,71 @@
+import { create } from "zustand";
+
+export type AlertOptions = {
+  title: string;
+  description: string;
+  ok?: string;
+};
+
+export type AskOptions = {
+  title: string;
+  question: string;
+  yes: string;
+  no: string;
+  primary: "yes" | "no";
+  danger?: boolean;
+};
+
+export type Question = {
+  type: "question";
+  options: AskOptions;
+  resolve: (result: boolean) => void;
+};
+export type Alert = {
+  type: "alert";
+  options: AlertOptions;
+  resolve: () => void;
+};
+export type ModalInfo = Question | Alert;
+
+export type ModalStore = {
+  modals: ModalInfo[];
+  ask: (options: AskOptions) => Promise<boolean>;
+  alert: (options: AlertOptions) => Promise<void>;
+  _pushModal: (modal: ModalInfo) => void;
+};
+
+export const useModalStore = create<ModalStore>((set, get) => ({
+  modals: [],
+  ask: (options: AskOptions) => {
+    return new Promise((resolve) => {
+      const question: Question = {
+        type: "question",
+        options,
+        resolve: (result: boolean) => {
+          resolve(result);
+          // TODO make removing a modal more sophisticated. Instead of just removing the first item, make sure to remove the correct modal.
+          set({ modals: get().modals.slice(1) });
+        },
+      };
+      get()._pushModal(question);
+    });
+  },
+  alert: (options: AlertOptions) => {
+    return new Promise((resolve) => {
+      const alert: Alert = {
+        type: "alert",
+        options,
+        resolve: () => {
+          resolve();
+          set({ modals: get().modals.slice(1) });
+        },
+      };
+      get()._pushModal(alert);
+    });
+  },
+  _pushModal: (modal: ModalInfo) => {
+    set((state) => {
+      return { modals: [...state.modals, modal] };
+    });
+  },
+}));

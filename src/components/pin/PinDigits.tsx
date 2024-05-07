@@ -10,7 +10,7 @@ export type PinDigitsProps = {
   error: boolean;
 };
 
-const shakeSize = 20;
+const shakeSize = 15;
 const animationSteps = [-shakeSize, shakeSize, -shakeSize, 0];
 
 export default function PinDigits({ pin, error }: PinDigitsProps) {

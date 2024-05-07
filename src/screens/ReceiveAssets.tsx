@@ -1,11 +1,16 @@
-import Button from "@/components/Button";
-import SafeLayout from "@/components/SafeLayout";
-import tw from "@/lib/tailwind";
+import {
+  Column,
+  Headline,
+  Paragraph,
+  PrimaryButton,
+  SafeLayout,
+} from "@/components";
 import { useAccountsStore } from "@/store";
+import { Colors } from "@/styles";
 import * as Clipboard from "expo-clipboard";
 import { Clipboard as ClipboardImg, ClipboardTick } from "iconsax-react-native";
 import { useState } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 
 export default function ReceiveAssets() {
@@ -27,29 +32,27 @@ export default function ReceiveAssets() {
 
   return (
     <SafeLayout>
-      <View style={tw`items-center`}>
-        <Text style={tw`title`}>RECEIVE ASSETS</Text>
+      <Column style={{ alignItems: "center" }}>
+        <Headline>Receive Assets</Headline>
 
-        <View style={tw`items-center bg-white p-5`}>
+        <View style={{ padding: 30, margin: 30, backgroundColor: "white" }}>
           <QRCode value={activeAccount.address} size={200} />
         </View>
 
-        <Text style={tw`text-basic-600 text-xs mt-4 mb-5`}>
-          {activeAccount.address}
-        </Text>
+        <Paragraph>{activeAccount.address}</Paragraph>
 
-        <Button
+        <PrimaryButton
+          title={addressCopied ? "Copied successfully" : "Copy address"}
           onPress={onCopy}
           icon={
             addressCopied ? (
-              <ClipboardTick style={tw`mr-3`} color="white" />
+              <ClipboardTick color={Colors.background} />
             ) : (
-              <ClipboardImg style={tw`mr-3`} color="white" />
+              <ClipboardImg color={Colors.background} />
             )
           }
-          label={addressCopied ? "Copied successfully" : "Copy address"}
         />
-      </View>
+      </Column>
     </SafeLayout>
   );
 }

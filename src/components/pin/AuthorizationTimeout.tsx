@@ -1,9 +1,11 @@
-import tw from "@/lib/tailwind";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import Timer from "./Timer";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "@/types";
-import Button from "../Button";
+import { Colors } from "@/styles";
+import { PrimaryButton } from "../buttons";
+import { Headline, Text } from "../typography";
+import { Column } from "../layout";
 
 export type AuthorizationTimeoutProps = {
   timeout: number;
@@ -19,7 +21,7 @@ export default function AuthorizationTimeout({
       style={{
         flex: 1,
         padding: 10,
-        backgroundColor: tw.color("background"),
+        backgroundColor: Colors.background,
       }}
     >
       <View
@@ -30,19 +32,18 @@ export default function AuthorizationTimeout({
           gap: 50,
         }}
       >
-        <Text style={{ color: "white", fontSize: 32 }}>Wallet is locked</Text>
-        <Text style={{ color: "white" }}>Too many PIN attemps</Text>
+        <Headline>Wallet is locked</Headline>
+        <Text>Too many passcode attemps</Text>
 
-        <View style={{ gap: 5, alignItems: "center" }}>
-          <Text style={{ color: "white" }}>Try again in</Text>
+        <Column style={{ alignItems: "center" }}>
+          <Text>Try again in</Text>
           <Timer seconds={timeout} />
-        </View>
+        </Column>
       </View>
 
-      <Button
-        label="Clear app data"
+      <PrimaryButton
+        title="Clear app data"
         onPress={() => navigation.navigate("Clear app data")}
-        styles={{ justifyContent: "center" }}
       />
     </View>
   );

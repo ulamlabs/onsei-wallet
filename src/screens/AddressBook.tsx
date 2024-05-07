@@ -1,14 +1,10 @@
 import React from "react";
-import { Text, View } from "react-native";
-import SafeLayout from "../components/SafeLayout";
-import tw from "@/lib/tailwind";
+import { Headline, SafeLayout } from "@/components";
 
 export default function AddressBook() {
   return (
     <SafeLayout>
-      <View style={tw`items-center`}>
-        <Text style={tw`text-white`}>TODO</Text>
-      </View>
+      <Headline>TODO</Headline>
     </SafeLayout>
   );
 }
