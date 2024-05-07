@@ -1,25 +1,26 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import AddOrEditAddress from "@/screens/addressBook/AddOrEditAddress";
-import BottomBarsNavigation from "./BottomBarsNavigation";
-import PinEnableScreen from "@/screens/auth/PinEnableScreen";
-import PinDisableScreen from "@/screens/auth/PinDisableScreen";
-import PinChangeScreen from "@/screens/auth/PinChangeScreen";
-import ResetAppScreen from "@/screens/settings/ResetAppScreen";
-import { NavigatorParamsList } from "@/types";
-import { AuthorizeScreen, BiometricsDisableScreen } from "@/screens/auth";
-import SendAssets from "@/screens/SendAssets";
+import MnemonicScreen from "@/screens/MnemonicScreen";
 import ReceiveAssets from "@/screens/ReceiveAssets";
+import SendAssets from "@/screens/SendAssets";
 import Transactions from "@/screens/Transactions";
+import AddOrEditAddress from "@/screens/addressBook/AddOrEditAddress";
+import { AuthorizeScreen, BiometricsDisableScreen } from "@/screens/auth";
+import PinChangeScreen from "@/screens/auth/PinChangeScreen";
+import PinDisableScreen from "@/screens/auth/PinDisableScreen";
+import PinEnableScreen from "@/screens/auth/PinEnableScreen";
 import {
   AddWalletScreen,
   ConfirmMnemonicScreen,
   GenerateWalletScreen,
   ImportWalletScreen,
 } from "@/screens/newWallet";
-import { SavedAddress, Wallet } from "@/store";
-import { navigatorScreenOptions } from "./const";
+import ResetAppScreen from "@/screens/settings/ResetAppScreen";
 import SecuritySettingsScreen from "@/screens/settings/SecuritySettingsScreen";
-import MnemonicScreen from "@/screens/MnemonicScreen";
+import { SavedAddress, Wallet } from "@/store";
+import { NavigatorParamsList } from "@/types";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React from "react";
+import BottomBarsNavigation from "./BottomBarsNavigation";
+import { navigatorScreenOptions } from "./const";
 
 export type HomeParamList = {
   Home: undefined;

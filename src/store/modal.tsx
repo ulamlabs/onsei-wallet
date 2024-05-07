@@ -1,8 +1,9 @@
+import { ReactElement } from "react";
 import { create } from "zustand";
 
 export type AlertOptions = {
   title: string;
-  description: string;
+  description: ReactElement | string;
   ok?: string;
 };
 

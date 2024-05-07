@@ -1,19 +1,26 @@
 import {
   Headline,
   Loader,
+  Paragraph,
   PrimaryButton,
-  SafeLayout,
   Row,
+  SafeLayout,
   Text,
   TextInput,
 } from "@/components";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useInputState } from "@/hooks";
-import { useModalStore } from "@/store";
+import { TransactionsService } from "@/services";
+import { useAccountsStore, useModalStore } from "@/store";
 import { Colors } from "@/styles";
-import { View } from "react-native";
 import { NavigatorParamsList } from "@/types";
-import { useEffect } from "react";
+import { trimAddress } from "@/utils/trimAddress";
+import { calculateFee } from "@cosmjs/stargate";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import D from "decimal.js";
+import * as Clipboard from "expo-clipboard";
+import { Clipboard as ClipboardCopy } from "iconsax-react-native";
+import { useEffect, useState } from "react";
+import { TouchableOpacity, View } from "react-native";
 
 type SendAssetsProps = NativeStackScreenProps<NavigatorParamsList, "Send">;
 
@@ -22,11 +29,14 @@ export default function SendAssets({
     params: { address },
   },
 }: SendAssetsProps) {
-  const loading = false;
-  const error: string | null = null;
+  const { activeAccount } = useAccountsStore();
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const amountInput = useInputState();
   const receiverInput = useInputState();
   const { alert } = useModalStore();
+  const transactionsService = new TransactionsService();
 
   useEffect(() => {
     if (address) {
@@ -35,14 +45,75 @@ export default function SendAssets({
   }, []);
 
   async function onMax() {
-    // TODO: handle max am ount
+    try {
+      amountInput.onChangeText("Calculating...");
+      const balance = (activeAccount?.balance || 0) * 10 ** 6;
+      const fee = calculateFee(balance, "0.1usei"); // gas price hardcoded for now
+      const maxValue = (balance - +fee.amount[0].amount) / 10 ** 6;
+
+      amountInput.onChangeText(maxValue.toString());
+    } catch (error: any) {
+      console.error("Error while calculating:", error);
+      setError(error.message);
+    }
   }
 
   async function onSend() {
-    // TODO: handle send
+    try {
+      setError(null);
+      const amount = Number(amountInput.value.replaceAll(",", "."));
+      if (!activeAccount?.balance) {
+        throw Error("Cannot get balance");
+      }
+      const rawAmount = new D(amount).mul(10 ** 6);
+      const rawBalance = new D(activeAccount.balance).mul(10 ** 6);
+      const fee = calculateFee(rawBalance.sub(rawAmount).toNumber(), "0.1usei");
+
+      transactionsService.validateTxnData(
+        receiverInput.value,
+        rawAmount.toNumber(),
+        fee,
+      );
+
+      setLoading(true);
+
+      const transaction = await transactionsService.transferAsset(
+        receiverInput.value,
+        rawAmount.toNumber(),
+        fee,
+      );
+      onAfterSubmit(transaction);
+    } catch (error: any) {
+      console.error("Error while submitting:", error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function onAfterSubmit(transaction: string) {
+    // TODO Handle adding to notifications
+    amountInput.onChangeText("");
+    receiverInput.onChangeText("");
     alert({
       title: "Transfer successful!",
-      description: `You successfully transfered ${amountInput.value} SEI to ${receiverInput.value}`,
+      description: (
+        <View style={{ flexDirection: "column" }}>
+          <TouchableOpacity
+            onPress={() => Clipboard.setStringAsync(transaction)}
+            style={{ flexDirection: "row", gap: 6, alignItems: "center" }}
+          >
+            <Paragraph style={{ fontSize: 12 }}>
+              ID: {trimAddress(transaction)}
+            </Paragraph>
+            <ClipboardCopy color={Colors.text} size={16} />
+          </TouchableOpacity>
+          <Paragraph>
+            You successfully transfered {amountInput.value} SEI to{" "}
+            {receiverInput.value}
+          </Paragraph>
+        </View>
+      ),
     });
   }
 

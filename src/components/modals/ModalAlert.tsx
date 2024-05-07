@@ -1,9 +1,9 @@
-import { PropsWithChildren } from "react";
-import Modal from "./Modal";
 import { Alert } from "@/store";
+import { PropsWithChildren } from "react";
+import { SecondaryButton } from "../buttons";
 import { Column } from "../layout";
 import { Headline, Paragraph } from "../typography";
-import { SecondaryButton } from "../buttons";
+import Modal from "./Modal";
 
 type ModalProps = PropsWithChildren & {
   isVisible: boolean;

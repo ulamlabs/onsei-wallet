@@ -45,6 +45,8 @@ type AccountsStore = {
   subscribeToAccounts: () => void;
   getRawBalance: (address: string) => Promise<number>;
   getUSDBalance: (balance: number) => number;
+  getBalance: (address: string) => Promise<number>;
+  updateAccounts: (addresses: string[]) => void;
 };
 
 export const useAccountsStore = create<AccountsStore>((set, get) => ({
@@ -54,9 +56,17 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
   node: "TestNet",
   init: async () => {
     const accounts = await loadFromStorage<Account[]>("accounts", []);
-    set({ accounts, activeAccount: accounts[0] });
+    const balances = await Promise.all(
+      accounts.map((acc) => get().getBalance(acc.address)),
+    );
+
+    const updatedAccounts = accounts.map((acc, index) => ({
+      ...acc,
+      balance: balances[index],
+    }));
+    set({ accounts: updatedAccounts, activeAccount: updatedAccounts[0] });
   },
-  setActiveAccount: (address: string | null) => {
+  setActiveAccount: (address) => {
     set((state) => ({
       ...state,
       activeAccount: state.accounts.find((a) => a.address === address),
@@ -93,7 +103,7 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
     saveToSecureStorage(getMnenomicKey(address), wallet.mnemonic);
 
     const seiAccount = (await wallet.getAccounts())[0];
-    const balance = await get().getRawBalance(seiAccount.address);
+    const balance = await get().getBalance(seiAccount.address);
     const newAccount: Account = {
       name,
       address: seiAccount.address,
@@ -163,9 +173,45 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
       return 0;
     }
   },
+  getBalance: async (address) => {
+    try {
+      const rawBalance = await get().getRawBalance(address);
+
+      return rawBalance / 10 ** 6;
+    } catch (error) {
+      console.error(error);
+      return 0;
+    }
+  },
   getUSDBalance: (balance) => {
     // TODO: handle get token price
     return balance * get().tokenPrice;
+  },
+  updateAccounts: async (addresses) => {
+    const { getBalance, accounts, setActiveAccount, activeAccount } = get();
+    const udpatedAcc = await Promise.all(
+      accounts.map(async (acc) => {
+        if (addresses.some((address) => address === acc.address)) {
+          const bal = await getBalance(acc.address);
+          return { ...acc, balance: bal };
+        }
+        return acc;
+      }),
+    );
+
+    set((state) => {
+      saveToStorage("accounts", udpatedAcc);
+      return { ...state, accounts: udpatedAcc };
+    });
+
+    if (!activeAccount) {
+      return;
+    }
+
+    setActiveAccount(
+      udpatedAcc.find((acc) => acc.address === activeAccount?.address)
+        ?.address || activeAccount.address,
+    );
   },
 }));
 
