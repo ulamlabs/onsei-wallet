@@ -11,9 +11,7 @@ import { useInputState } from "@/hooks";
 import { TransactionsService } from "@/services";
 import { useModalStore } from "@/store";
 import { Colors } from "@/styles";
-import { NavigatorParamsList } from "@/types";
 import { calculateFee } from "@cosmjs/stargate";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import D from "decimal.js";
 import { useEffect } from "react";
 import { View } from "react-native";
@@ -71,7 +69,6 @@ export default function SendAssets({
         fee,
       );
       onAfterSubmit();
-      setModalVisible(true);
     } catch (error: any) {
       console.error("Error while submitting:", error);
       setError(error.message);
@@ -82,6 +79,8 @@ export default function SendAssets({
 
   function onAfterSubmit() {
     // TODO Handle adding to notifications
+    amountInput.onChangeText("");
+    receiverInput.onChangeText("");
     alert({
       title: "Transfer successful!",
       description: `You successfully transfered ${amountInput.value} SEI to ${receiverInput.value}`,
