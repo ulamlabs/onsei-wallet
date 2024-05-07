@@ -32,7 +32,7 @@ export default function AccountListItem({ account }: Props) {
   const { address, balance } = account;
   const { activeAccount, setActiveAccount, deleteAccount } = useAccountsStore();
   const { ask, alert } = useModalStore();
-  const { authorize } = useAuthStore();
+  const { authorize, state } = useAuthStore();
   const [visibleTooltip, setVisibleTooltip] = useState<boolean>(false);
   const navigation = useNavigation<NavigationProp>();
 
