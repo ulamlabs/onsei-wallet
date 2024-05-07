@@ -8,11 +8,13 @@ import {
   TextInput,
 } from "@/components";
 import { useInputState } from "@/hooks";
+import { TransactionsService } from "@/services";
 import { useModalStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { calculateFee } from "@cosmjs/stargate";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import D from "decimal.js";
 import { useEffect } from "react";
 import { View } from "react-native";
 
@@ -34,6 +36,7 @@ export default function SendAssets({
       receiverInput.onChangeText(address);
     }
   }, []);
+  const transactionsService = new TransactionsService();
 
   async function onMax() {
     amountInput.onChangeText("Calculating...");
@@ -43,12 +46,6 @@ export default function SendAssets({
     amountInput.onChangeText((balance - +fee.amount[0].amount).toString());
   }
 
-  useEffect(() => {
-    if (verified) {
-      onSend();
-    }
-  }, [verified]);
-
   async function onSend() {
     try {
       setError(null);
@@ -56,16 +53,23 @@ export default function SendAssets({
       if (!activeAccount?.balance) {
         throw Error("Cannot get balance");
       }
-      const fee = calculateFee(
-        (activeAccount?.balance - amount) * 10 ** exponent,
-        "0.1usei",
-      );
+      const rawAmount = new D(amount).mul(10 ** 6);
+      const rawBalance = new D(activeAccount.balance).mul(10 ** 6);
+      const fee = calculateFee(rawBalance.sub(rawAmount).toNumber(), "0.1usei");
 
-      validateTxnData(receiverInput.value, amount, fee);
+      transactionsService.validateTxnData(
+        receiverInput.value,
+        rawAmount.toNumber(),
+        fee,
+      );
 
       setLoading(true);
 
-      await transferAsset(receiverInput.value, +amountInput.value, fee);
+      await transactionsService.transferAsset(
+        receiverInput.value,
+        rawAmount.toNumber(),
+        fee,
+      );
       onAfterSubmit();
       setModalVisible(true);
     } catch (error: any) {
