@@ -2,22 +2,37 @@ import {
   Headline,
   Loader,
   PrimaryButton,
-  TextInput,
   SafeLayout,
   Row,
   Text,
+  TextInput,
 } from "@/components";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useInputState } from "@/hooks";
 import { useModalStore } from "@/store";
 import { Colors } from "@/styles";
 import { View } from "react-native";
+import { NavigatorParamsList } from "@/types";
+import { useEffect } from "react";
 
-export default function SendAssets() {
+type SendAssetsProps = NativeStackScreenProps<NavigatorParamsList, "Send">;
+
+export default function SendAssets({
+  route: {
+    params: { address },
+  },
+}: SendAssetsProps) {
   const loading = false;
   const error: string | null = null;
   const amountInput = useInputState();
   const receiverInput = useInputState();
   const { alert } = useModalStore();
+
+  useEffect(() => {
+    if (address) {
+      receiverInput.onChangeText(address);
+    }
+  }, []);
 
   async function onMax() {
     // TODO: handle max am ount

@@ -29,7 +29,7 @@ export default function WalletOverview({ navigation }: WalletOverviewProps) {
     navigation.push("Receive");
   }
   function onSend() {
-    navigation.push("Send");
+    navigation.push("Send", {});
   }
 
   return (

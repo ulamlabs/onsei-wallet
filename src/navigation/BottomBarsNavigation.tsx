@@ -1,7 +1,7 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import WalletOverview from "@/screens/WalletOverview";
-import AddressBook from "@/screens/AddressBook";
+import AddressBook from "@/screens/addressBook/AddressBookScreen";
 import { User, Book1, Setting2 } from "iconsax-react-native";
 import { View } from "react-native";
 import SettingsScreen from "@/screens/settings/SettingsScreen";

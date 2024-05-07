@@ -6,3 +6,5 @@ export const AUTH_MAX_TIMEOUT_SECONDS = 3600 * 24; // one day
 export const AUTH_INACTIVITY_LOCK_TIMEOUT = 60 * 2;
 
 export const MNEMONIC_WORDS_COUNT = 24;
+
+export const VALID_ACCOUNT_NAME_REGEX = /^[a-zA-Z0-9 _-]+$/; // Allows only letters, numbers, spaces, hyphens and underscores

@@ -1,5 +1,5 @@
-import React, { useContext, useEffect } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import AddOrEditAddress from "@/screens/addressBook/AddOrEditAddress";
 import BottomBarsNavigation from "./BottomBarsNavigation";
 import PinEnableScreen from "@/screens/auth/PinEnableScreen";
 import PinDisableScreen from "@/screens/auth/PinDisableScreen";
@@ -7,10 +7,6 @@ import PinChangeScreen from "@/screens/auth/PinChangeScreen";
 import ResetAppScreen from "@/screens/settings/ResetAppScreen";
 import { NavigatorParamsList } from "@/types";
 import { AuthorizeScreen, BiometricsDisableScreen } from "@/screens/auth";
-import {
-  AddressBookContext,
-  AddressBookContextType,
-} from "@/store/addressBook";
 import SendAssets from "@/screens/SendAssets";
 import ReceiveAssets from "@/screens/ReceiveAssets";
 import Transactions from "@/screens/Transactions";
@@ -20,7 +16,7 @@ import {
   GenerateWalletScreen,
   ImportWalletScreen,
 } from "@/screens/newWallet";
-import { Wallet } from "@/store";
+import { SavedAddress, Wallet } from "@/store";
 import { navigatorScreenOptions } from "./const";
 import SecuritySettingsScreen from "@/screens/settings/SecuritySettingsScreen";
 import MnemonicScreen from "@/screens/MnemonicScreen";
@@ -35,8 +31,9 @@ export type HomeParamList = {
   "Clear app data": undefined;
   Authorize: { nextRoute: keyof NavigatorParamsList; nextParams?: any };
   Receive: undefined;
-  Send: undefined;
+  Send: { address?: string };
   Transactions: { address: string };
+  "Saved Address": { action: "ADD" | "EDIT"; addressData?: SavedAddress };
   "Your Mnemonic": { address: string };
   "Add Wallet": undefined;
   "Generate Wallet": undefined;
@@ -47,14 +44,6 @@ export type HomeParamList = {
 const { Navigator, Screen } = createNativeStackNavigator<HomeParamList>();
 
 export default function HomeNavigation() {
-  const { initStore: initBookStore } = useContext(
-    AddressBookContext,
-  ) as AddressBookContextType;
-
-  useEffect(() => {
-    initBookStore();
-  }, [initBookStore]);
-
   return (
     <Navigator id="home" screenOptions={navigatorScreenOptions}>
       <Screen
@@ -78,6 +67,7 @@ export default function HomeNavigation() {
       <Screen name="Authorize" component={AuthorizeScreen} />
       <Screen name="Send" component={SendAssets} />
       <Screen name="Receive" component={ReceiveAssets} />
+      <Screen name="Saved Address" component={AddOrEditAddress} />
       <Screen name="Transactions" component={Transactions} />
       <Screen name="Your Mnemonic" component={MnemonicScreen} />
       <Screen name="Add Wallet" component={AddWalletScreen} />

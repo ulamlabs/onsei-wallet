@@ -1,5 +1,6 @@
 import AccountListItem from "./AccountListItem";
 import AccountsList from "./AccountsList";
+import AddressBookEntry from "./AddressBookEntry";
 import MnemonicWords from "./MnemonicWords";
 import Modal from "./modals/Modal";
 import Tooltip from "./Tooltip";
@@ -16,6 +17,7 @@ export * from "./pin";
 export {
   AccountListItem,
   AccountsList,
+  AddressBookEntry,
   MnemonicWords,
   Modal,
   Pin,
