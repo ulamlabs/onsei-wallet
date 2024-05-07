@@ -1,6 +1,7 @@
 import {
   Headline,
   Loader,
+  Paragraph,
   PrimaryButton,
   Row,
   SafeLayout,
@@ -11,10 +12,13 @@ import { useInputState } from "@/hooks";
 import { TransactionsService } from "@/services";
 import { useModalStore } from "@/store";
 import { Colors } from "@/styles";
+import { trimAddress } from "@/utils/trimAddress";
 import { calculateFee } from "@cosmjs/stargate";
 import D from "decimal.js";
+import * as Clipboard from "expo-clipboard";
+import { Clipboard as ClipboardCopy } from "iconsax-react-native";
 import { useEffect } from "react";
-import { View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 
 type SendAssetsProps = NativeStackScreenProps<NavigatorParamsList, "Send">;
 
@@ -37,11 +41,17 @@ export default function SendAssets({
   const transactionsService = new TransactionsService();
 
   async function onMax() {
-    amountInput.onChangeText("Calculating...");
-    const balance = activeAccount?.balance || 0;
-    const fee = calculateFee(balance, "0.1usei"); // gas price hardcoded for now
+    try {
+      amountInput.onChangeText("Calculating...");
+      const balance = (activeAccount?.balance || 0) * 10 ** 6;
+      const fee = calculateFee(balance, "0.1usei"); // gas price hardcoded for now
+      const maxValue = (balance - +fee.amount[0].amount) / 10 ** 6;
 
-    amountInput.onChangeText((balance - +fee.amount[0].amount).toString());
+      amountInput.onChangeText(maxValue.toString());
+    } catch (error: any) {
+      console.error("Error while calculating:", error);
+      setError(error.message);
+    }
   }
 
   async function onSend() {
@@ -63,12 +73,12 @@ export default function SendAssets({
 
       setLoading(true);
 
-      await transactionsService.transferAsset(
+      const transaction = await transactionsService.transferAsset(
         receiverInput.value,
         rawAmount.toNumber(),
         fee,
       );
-      onAfterSubmit();
+      onAfterSubmit(transaction);
     } catch (error: any) {
       console.error("Error while submitting:", error);
       setError(error.message);
@@ -77,13 +87,29 @@ export default function SendAssets({
     }
   }
 
-  function onAfterSubmit() {
+  function onAfterSubmit(transaction: string) {
     // TODO Handle adding to notifications
     amountInput.onChangeText("");
     receiverInput.onChangeText("");
     alert({
       title: "Transfer successful!",
-      description: `You successfully transfered ${amountInput.value} SEI to ${receiverInput.value}`,
+      description: (
+        <View style={{ flexDirection: "column" }}>
+          <TouchableOpacity
+            onPress={() => Clipboard.setStringAsync(transaction)}
+            style={{ flexDirection: "row", gap: 6, alignItems: "center" }}
+          >
+            <Paragraph style={{ fontSize: 12 }}>
+              ID: {trimAddress(transaction)}
+            </Paragraph>
+            <ClipboardCopy color={Colors.text} size={16} />
+          </TouchableOpacity>
+          <Paragraph>
+            You successfully transfered {amountInput.value} SEI to{" "}
+            {receiverInput.value}
+          </Paragraph>
+        </View>
+      ),
     });
   }
 
