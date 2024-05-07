@@ -62,7 +62,7 @@ const Transactions = ({
   // ];
 
   useEffect(() => {
-    fetchTxns();
+    fetchTxns(address);
     // If there's any notification about balance change, remove it, because user will now see it on txs list
     // cancelNotification(address); TODO: cancel notification
   }, []);

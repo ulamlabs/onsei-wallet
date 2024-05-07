@@ -11,12 +11,8 @@ import {
   saveToSecureStorage,
   saveToStorage,
 } from "@/utils";
-import {
-  Coin,
-  generateWallet,
-  getQueryClient,
-  restoreWallet,
-} from "@sei-js/cosmjs";
+import { Coin } from "@cosmjs/stargate";
+import { generateWallet, getQueryClient, restoreWallet } from "@sei-js/cosmjs";
 import { create } from "zustand";
 import { useSettingsStore } from "./settings";
 
@@ -247,16 +243,14 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
         ?.address || activeAccount.address,
     );
   },
-  fetchTxns: async () => {
+  fetchTxns: async (address) => {
     try {
       const { node } = get();
-      //https://rest.wallet.atlantic-2.sei.io/cosmos/tx/v1beta1/txs?pagination.limit=1&events=transfer.sender%3D%27sei16hh9vgk2w9stn6vemapuzqw3qk8wc70q8y9wf9%27&pagination.offset=100
-      const send = `${nodes[node]}/cosmos/tx/v1beta1/txs?pagination.limit=10&pagination.reverse=true&events=transfer.sender='sei16hh9vgk2w9stn6vemapuzqw3qk8wc70q8y9wf9'&pagination.offset=100`;
-      const received = `${nodes[node]}/cosmos/tx/v1beta1/txs?pagination.limit=10&pagination.reverse=true&events=transfer.recipient='sei16hh9vgk2w9stn6vemapuzqw3qk8wc70q8y9wf9'&pagination.offset=100`;
+      const send = `${nodes[node]}/cosmos/tx/v1beta1/txs?events=transfer.sender%3D%27${address}%27`;
+      const received = `${nodes[node]}/cosmos/tx/v1beta1/txs?events=transfer.recipient%3D%27${address}%27`;
 
       const sendData: TransactionData = await fetchData(send);
       const receivedData: TransactionData = await fetchData(received);
-      console.log(sendData.pagination.next_key);
       console.log("Send data:", sendData);
       console.log("Received data:", receivedData);
     } catch (error) {
