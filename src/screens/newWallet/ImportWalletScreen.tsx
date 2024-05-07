@@ -21,31 +21,31 @@ export default function ImportWalletScreen({ navigation }: NewWalletProps) {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function onImport() {
-      try {
-        const newAccount = await accountsStore.importAccount(
-          nameInput.value.trim(),
-          mnemoInput.value.trim(),
-        );
-        accountsStore.setActiveAccount(newAccount.address);
-        accountsStore.subscribeToAccounts();
-
-        const nextRoute: keyof NavigatorParamsList =
-          navigation.getId() === "onboarding" ? "Protect Your Wallet" : "Home";
-        navigation.navigate(nextRoute);
-        resetNavigationStack(navigation);
-      } catch (e: any) {
-        console.log("Error on wallet import:", e);
-        setError(e.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-
     if (loading) {
       onImport();
     }
-  }, [loading, accountsStore, mnemoInput, nameInput, navigation]);
+  }, [loading]);
+
+  async function onImport() {
+    try {
+      const newAccount = await accountsStore.importAccount(
+        nameInput.value.trim(),
+        mnemoInput.value.trim(),
+      );
+      accountsStore.setActiveAccount(newAccount.address);
+      accountsStore.subscribeToAccounts();
+
+      const nextRoute: keyof NavigatorParamsList =
+        navigation.getId() === "onboarding" ? "Protect Your Wallet" : "Home";
+      navigation.navigate(nextRoute);
+      resetNavigationStack(navigation);
+    } catch (e: any) {
+      console.error("Error on wallet import:", e);
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   function onButtonPress() {
     setError("");

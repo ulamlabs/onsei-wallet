@@ -1,22 +1,13 @@
-import { PinWithTimeout } from "@/components";
 import { useAuthStore } from "@/store";
-import { useRef } from "react";
+import ProtectedAction from "./ProtectedAction";
 
 export default function UnlockScreen() {
   const authStore = useAuthStore();
 
-  const pinHash = useRef(authStore.getPinHash());
-
-  if (!pinHash.current) {
+  function unlock() {
+    authStore.resetFails();
     authStore.unlock();
-    return <></>;
   }
 
-  return (
-    <PinWithTimeout
-      label="Enter your PIN"
-      compareToHash={pinHash.current}
-      onPinHash={() => authStore.unlock()}
-    />
-  );
+  return <ProtectedAction action={unlock} />;
 }

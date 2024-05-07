@@ -38,7 +38,8 @@
     "react-native-svg": "14.1.0",
     "readable-stream": "^4.5.2",
     "twrnc": "^4.2.0",
-    "zustand": "^4.5.2"
+    "zustand": "^4.5.2",
+    "expo-local-authentication": "~13.8.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

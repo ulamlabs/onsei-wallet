@@ -1,6 +1,7 @@
 import { Button, SafeLayout } from "@/components";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Strongbox } from "iconsax-react-native";
 import { Text, View } from "react-native";
 
 type OnboardingProtectionScreenProps = NativeStackScreenProps<
@@ -12,7 +13,7 @@ export default function OnboardingProtectionScreen({
   navigation,
 }: OnboardingProtectionScreenProps) {
   function enablePin() {
-    navigation.navigate("Enable PIN", { nextRoute: "Finish Onboarding" });
+    navigation.navigate("Enable PIN", { nextRoute: "Enable Biometrics" });
   }
 
   return (
@@ -25,6 +26,7 @@ export default function OnboardingProtectionScreen({
         <Button
           label="Enable Pin protection"
           onPress={enablePin}
+          icon={<Strongbox color="white" />}
           styles={{ justifyContent: "center" }}
         />
 

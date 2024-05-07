@@ -75,7 +75,7 @@ export default function ConfirmMnemonicScreen({
       navigation.navigate(nextRoute);
       resetNavigationStack(navigation);
     } catch (e: any) {
-      console.log("Error on wallet import:", e);
+      console.error("Error on wallet import:", e);
       setError(e.message);
     } finally {
       setLoading(false);

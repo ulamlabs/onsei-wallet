@@ -1,10 +1,11 @@
-import { useAuthStore } from "@/store";
-import { SafeLayout } from "@/components";
-import { useMemo } from "react";
+import { useAuthStore, useSettingsStore } from "@/store";
+import { Biometrics, SafeLayout } from "@/components";
+import { useMemo, useState } from "react";
 import { Link, SwitchWithLabel } from "@/components";
-import { Strongbox, Strongbox2 } from "iconsax-react-native";
+import { Strongbox, Strongbox2, EmojiHappy } from "iconsax-react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamsList } from "@/types";
+import { Text, View } from "react-native";
 
 type SecuritySettingsScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -14,7 +15,10 @@ type SecuritySettingsScreenProps = NativeStackScreenProps<
 export default function SecuritySettingsScreen({
   navigation,
 }: SecuritySettingsScreenProps) {
+  const [enablingBiometrics, setEnablingBiometrics] = useState(false);
+  const [biometricsNotEnrolled, setBiometricsNotEnrolled] = useState(false);
   const authStore = useAuthStore();
+  const { settings, setSetting } = useSettingsStore();
 
   const pinEnabled = useMemo(() => authStore.state !== "noPin", [authStore]);
 
@@ -24,6 +28,19 @@ export default function SecuritySettingsScreen({
     } else {
       navigation.navigate("Disable PIN");
     }
+  }
+
+  function toggleBiometrics() {
+    if (settings["auth.biometricsEnabled"]) {
+      navigation.navigate("Disable Face ID / Touch ID");
+    } else {
+      setEnablingBiometrics(true);
+    }
+  }
+
+  function enableBiometrics() {
+    setSetting("auth.biometricsEnabled", true);
+    setEnablingBiometrics(false);
   }
 
   return (
@@ -40,6 +57,26 @@ export default function SecuritySettingsScreen({
         navigateTo="Change PIN"
         disabled={!pinEnabled}
       />
+      <View>
+        <SwitchWithLabel
+          label="Enable Face ID / Touch ID"
+          icon={<EmojiHappy color="white" />}
+          onValueChange={toggleBiometrics}
+          value={pinEnabled && settings["auth.biometricsEnabled"]}
+          disabled={!pinEnabled}
+        />
+        {enablingBiometrics && (
+          <Biometrics
+            onSuccess={enableBiometrics}
+            onNotEnrolled={() => setBiometricsNotEnrolled(true)}
+          />
+        )}
+        {biometricsNotEnrolled && (
+          <Text style={{ color: "red" }}>
+            Face ID / Touch ID not enabled in the system.
+          </Text>
+        )}
+      </View>
     </SafeLayout>
   );
 }
