@@ -73,7 +73,7 @@ export default function AccountListItem({ account }: Props) {
   function onMnemonicShow() {
     setVisibleTooltip(false);
     if (state !== "noPin") {
-      authorize(navigation as any, "Your Mnemonic", { address });
+      authorize(navigation, "Your Mnemonic", { address });
       return;
     }
 
