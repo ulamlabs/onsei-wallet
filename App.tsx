@@ -16,6 +16,7 @@ import HomeNavigation from "@/navigation/HomeNavigation";
 import { NavigationContainer } from "@react-navigation/native";
 import { useInactivityLock } from "@/hooks";
 import { Modals } from "@/components";
+import { StatusBar } from "expo-status-bar";
 
 export default function App() {
   const [ready, setReady] = useState(false);
@@ -76,6 +77,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <SafeAreaProvider>
+        <StatusBar style="light" />
         {getContent()}
         <Modals />
       </SafeAreaProvider>
