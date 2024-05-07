@@ -1,7 +1,8 @@
 import { Loader, Paragraph, Row, SafeLayout, Text } from "@/components";
-import { useAccountsStore } from "@/store";
+import { AccountTransaction, useAccountsStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
+import { trimAddress } from "@/utils/trimAddress";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
 import { FlatList, View } from "react-native";
@@ -11,17 +12,8 @@ type TransactionsProps = NativeStackScreenProps<
   "Transactions"
 >;
 
-type Transaction = {
-  type: "Send" | "Receive";
-  from: string;
-  to: string;
-  amount: string;
-  asset: string;
-  date: string;
-};
-
 type TransactionRenderProps = {
-  item: Transaction;
+  item: AccountTransaction;
   index: number;
 };
 
@@ -31,56 +23,30 @@ const Transactions = ({
   },
 }: TransactionsProps) => {
   const [loading, setLoading] = useState(false);
-  const [isMore, setIsMore] = useState(false);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const { fetchTxns } = useAccountsStore();
-  // const transactions: Transaction[] = [
-  //   {
-  //     amount: "0",
-  //     asset: "213",
-  //     date: "1123",
-  //     from: "123",
-  //     to: "123",
-  //     type: "Receive",
-  //   },
-  //   {
-  //     amount: "0",
-  //     asset: "213",
-  //     date: "1123",
-  //     from: "123",
-  //     to: "123",
-  //     type: "Receive",
-  //   },
-  //   {
-  //     amount: "0",
-  //     asset: "213",
-  //     date: "1123",
-  //     from: "123",
-  //     to: "123",
-  //     type: "Send",
-  //   },
-  // ];
+  const { fetchTxns, accounts } = useAccountsStore();
+  const transactions = accounts.find(
+    (acc) => acc.address === address,
+  )?.transactions;
+
+  const fetchTransactions = async () => {
+    try {
+      setLoading(true);
+      await fetchTxns(address);
+    } catch (error: any) {
+      console.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    fetchTxns(address);
-    // If there's any notification about balance change, remove it, because user will now see it on txs list
-    // cancelNotification(address); TODO: cancel notification
+    fetchTransactions();
   }, []);
-
-  // async function fetchTxns(page: number) {
-  //   // TODO: handle fetching transactions
-  // }
-
-  // function fetchNextPage() {
-  //   if (isMore) {
-  //     fetchTxns(transactions.length / 20);
-  //   }
-  // }
 
   const renderTxn = ({ item, index }: TransactionRenderProps) => {
     return (
-      <View style={{ marginTop: 5, gap: 15 }}>
-        {(index === 0 || item.date !== transactions[index - 1].date) && (
+      <View style={{ marginTop: 20, gap: 10 }}>
+        {(index === 0 || item.date !== transactions![index - 1].date) && (
           <Text>{item.date}</Text>
         )}
 
@@ -88,12 +54,13 @@ const Transactions = ({
           style={{
             backgroundColor: Colors.background200,
             padding: 15,
+            borderRadius: 10,
           }}
         >
           <View>
             <Text>{item.type}</Text>
             <Text style={{ color: Colors.text100 }}>
-              {item.type === "Send" ? item.to : item.from}
+              {trimAddress(item.type === "Send" ? item.to : item.from)}
             </Text>
           </View>
 
@@ -117,14 +84,11 @@ const Transactions = ({
           <Loader />
         ) : (
           <View>
-            {transactions.length > 0 ? (
+            {transactions && transactions?.length > 0 ? (
               <FlatList
                 data={transactions}
                 nestedScrollEnabled={true}
                 renderItem={renderTxn}
-                onEndReached={fetchNextPage}
-                onEndReachedThreshold={0.3}
-                ListFooterComponent={isMore ? <Loader /> : <></>} // Loader when loading next page.
               />
             ) : (
               <Paragraph style={{ textAlign: "center" }}>
