@@ -6,14 +6,7 @@ import {
   saveToSecureStorage,
   saveToStorage,
 } from "@/utils";
-import { calculateFee } from "@cosmjs/stargate";
-import {
-  generateWallet,
-  getQueryClient,
-  getSigningStargateClient,
-  isValidSeiCosmosAddress,
-  restoreWallet,
-} from "@sei-js/cosmjs";
+import { generateWallet, getQueryClient, restoreWallet } from "@sei-js/cosmjs";
 import { create } from "zustand";
 
 const nodes: Record<Node, string> = {
@@ -52,8 +45,8 @@ type AccountsStore = {
   subscribeToAccounts: () => void;
   getRawBalance: (address: string) => Promise<number>;
   getUSDBalance: (balance: number) => number;
-  transferAsset: (receiver: string, amount: number) => Promise<string>;
-  validateTxnData: (receiverInput: string, amountInput: number) => void;
+  getBalance: (address: string) => Promise<number>;
+  updateAccounts: (addresses: string[]) => void;
 };
 
 export const useAccountsStore = create<AccountsStore>((set, get) => ({
@@ -64,15 +57,16 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
   init: async () => {
     const accounts = await loadFromStorage<Account[]>("accounts", []);
     const balances = await Promise.all(
-      accounts.map((acc) => get().getRawBalance(acc.address)),
+      accounts.map((acc) => get().getBalance(acc.address)),
     );
+
     const updatedAccounts = accounts.map((acc, index) => ({
       ...acc,
       balance: balances[index],
     }));
     set({ accounts: updatedAccounts, activeAccount: updatedAccounts[0] });
   },
-  setActiveAccount: (address: string | null) => {
+  setActiveAccount: (address) => {
     set((state) => ({
       ...state,
       activeAccount: state.accounts.find((a) => a.address === address),
@@ -109,7 +103,7 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
     saveToSecureStorage(getMnenomicKey(address), wallet.mnemonic);
 
     const seiAccount = (await wallet.getAccounts())[0];
-    const balance = await get().getRawBalance(seiAccount.address);
+    const balance = await get().getBalance(seiAccount.address);
     const newAccount: Account = {
       name,
       address: seiAccount.address,
@@ -179,80 +173,45 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
       return 0;
     }
   },
+  getBalance: async (address) => {
+    try {
+      const rawBalance = await get().getRawBalance(address);
+
+      return rawBalance / 10 ** 6;
+    } catch (error) {
+      console.error(error);
+      return 0;
+    }
+  },
   getUSDBalance: (balance) => {
     // TODO: handle get token price
     return balance * get().tokenPrice;
   },
-  transferAsset: async (receiver: string, amount: number) => {
-    try {
-      const {
-        getMnemonic,
-        activeAccount,
-        accounts,
-        getRawBalance,
-        setActiveAccount,
-      } = get();
-
-      const wallet = await restoreWallet(getMnemonic(activeAccount?.address!));
-
-      const signingClient = await getSigningStargateClient(
-        "https://rpc.atlantic-2.seinetwork.io",
-        wallet as any,
-      );
-
-      const fee = calculateFee(activeAccount?.balance! - amount, "0.1usei");
-      const sendAmount = { amount: `${amount}`, denom: "usei" };
-      const send = await signingClient.sendTokens(
-        activeAccount?.address!,
-        receiver,
-        [sendAmount],
-        fee,
-      );
-
-      const udpatedAcc = await Promise.all(
-        accounts.map(async (acc) => {
-          const bal = await getRawBalance(acc.address);
+  updateAccounts: async (addresses) => {
+    const { getBalance, accounts, setActiveAccount, activeAccount } = get();
+    const udpatedAcc = await Promise.all(
+      accounts.map(async (acc) => {
+        if (addresses.some((address) => address === acc.address)) {
+          const bal = await getBalance(acc.address);
           return { ...acc, balance: bal };
-        }),
-      );
+        }
+        return acc;
+      }),
+    );
 
-      set((state) => {
-        saveToStorage("accounts", udpatedAcc);
-        return { ...state, accounts: udpatedAcc };
-      });
+    set((state) => {
+      saveToStorage("accounts", udpatedAcc);
+      return { ...state, accounts: udpatedAcc };
+    });
 
-      setActiveAccount(
-        udpatedAcc.find((acc) => acc.address === activeAccount?.address!)
-          ?.address!,
-      );
-
-      return send.transactionHash;
-    } catch (error: any) {
-      console.log(error);
-      throw new Error(error);
-    }
-  },
-  validateTxnData: (receiverInput, amountInput) => {
-    const { activeAccount } = get();
-
-    if (!receiverInput || !amountInput) {
-      throw Error("All inputs need to be filled");
-    }
-    if (receiverInput === activeAccount?.address) {
-      throw Error("You cannot send funds to your own address");
+    if (!activeAccount) {
+      return;
     }
 
-    if (!isValidSeiCosmosAddress(receiverInput)) {
-      throw Error("Invalid receiver address");
-    }
-
-    if (Number.isNaN(amountInput) || amountInput === 0) {
-      throw Error("Invalid amount entered");
-    }
-    const fee = +calculateFee(amountInput, "0.1usei").amount[0].amount;
-    if (amountInput > activeAccount?.balance! - fee) {
-      throw Error("Insufficient funds");
-    }
+    setActiveAccount(
+      udpatedAcc.find((acc) => acc.address === activeAccount?.address)
+        ?.address || activeAccount.address,
+    );
   },
 }));
 

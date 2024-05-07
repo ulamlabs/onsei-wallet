@@ -10,14 +10,16 @@ import {
 } from "@/components";
 import { useInputState } from "@/hooks";
 import { TransactionsService } from "@/services";
-import { useModalStore } from "@/store";
+import { useAccountsStore, useModalStore } from "@/store";
 import { Colors } from "@/styles";
+import { NavigatorParamsList } from "@/types";
 import { trimAddress } from "@/utils/trimAddress";
 import { calculateFee } from "@cosmjs/stargate";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import D from "decimal.js";
 import * as Clipboard from "expo-clipboard";
 import { Clipboard as ClipboardCopy } from "iconsax-react-native";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 
 type SendAssetsProps = NativeStackScreenProps<NavigatorParamsList, "Send">;
@@ -27,18 +29,20 @@ export default function SendAssets({
     params: { address },
   },
 }: SendAssetsProps) {
-  const loading = false;
-  const error: string | null = null;
+  const { activeAccount } = useAccountsStore();
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const amountInput = useInputState();
   const receiverInput = useInputState();
   const { alert } = useModalStore();
+  const transactionsService = new TransactionsService();
 
   useEffect(() => {
     if (address) {
       receiverInput.onChangeText(address);
     }
   }, []);
-  const transactionsService = new TransactionsService();
 
   async function onMax() {
     try {
