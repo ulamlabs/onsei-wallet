@@ -1,4 +1,8 @@
-import { MNEMONIC_WORDS_COUNT, VALID_ACCOUNT_NAME_REGEX } from "@/const";
+import {
+  MNEMONIC_WORDS_COUNT,
+  NODE_URL,
+  VALID_ACCOUNT_NAME_REGEX,
+} from "@/const";
 import {
   loadFromSecureStorage,
   loadFromStorage,
@@ -8,13 +12,7 @@ import {
 } from "@/utils";
 import { generateWallet, getQueryClient, restoreWallet } from "@sei-js/cosmjs";
 import { create } from "zustand";
-
-const nodes: Record<Node, string> = {
-  MainNet: "https://rest.sei-apis.com",
-  TestNet: "https://rest.atlantic-2.seinetwork.io",
-};
-
-export type Node = "MainNet" | "TestNet";
+import { useSettingsStore } from "./settings";
 
 export type Account = {
   name: string;
@@ -32,7 +30,6 @@ type AccountsStore = {
   accounts: Account[];
   activeAccount: Account | null;
   tokenPrice: number;
-  node: Node;
   init: () => Promise<void>;
   setActiveAccount: (address: string | null) => void;
   generateWallet: () => Promise<Wallet>;
@@ -46,14 +43,13 @@ type AccountsStore = {
   getRawBalance: (address: string) => Promise<number>;
   getUSDBalance: (balance: number) => number;
   getBalance: (address: string) => Promise<number>;
-  updateAccounts: (addresses: string[]) => void;
+  updateAccounts: (addresses?: string[]) => void;
 };
 
 export const useAccountsStore = create<AccountsStore>((set, get) => ({
   accounts: [],
   activeAccount: null,
   tokenPrice: 0,
-  node: "TestNet",
   init: async () => {
     const accounts = await loadFromStorage<Account[]>("accounts", []);
     const balances = await Promise.all(
@@ -162,7 +158,9 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
       if (!address) {
         return 0;
       }
-      const queryClient = await getQueryClient(nodes[get().node]);
+      const queryClient = await getQueryClient(
+        "https://rest." + NODE_URL[useSettingsStore.getState().settings.node],
+      );
       const balance = await queryClient.cosmos.bank.v1beta1.allBalances({
         address,
       });
@@ -189,9 +187,10 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
   },
   updateAccounts: async (addresses) => {
     const { getBalance, accounts, setActiveAccount, activeAccount } = get();
+    if (!addresses) addresses = accounts.map((a) => a.address);
     const udpatedAcc = await Promise.all(
       accounts.map(async (acc) => {
-        if (addresses.some((address) => address === acc.address)) {
+        if (addresses!.includes(acc.address)) {
           const bal = await getBalance(acc.address);
           return { ...acc, balance: bal };
         }

@@ -8,7 +8,7 @@ import {
   SafeLayout,
   SecondaryButton,
 } from "@/components";
-import { useAccountsStore } from "@/store";
+import { useAccountsStore, useSettingsStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { formatTokenAmount } from "@/utils/formatAmount";
@@ -23,7 +23,10 @@ type WalletOverviewProps = NativeStackScreenProps<
 >;
 
 export default function WalletOverview({ navigation }: WalletOverviewProps) {
-  const { activeAccount, node } = useAccountsStore();
+  const { activeAccount } = useAccountsStore();
+  const {
+    settings: { node },
+  } = useSettingsStore();
 
   function onReceive() {
     navigation.push("Receive");

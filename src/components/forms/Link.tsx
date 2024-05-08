@@ -17,7 +17,7 @@ export default function Link({ icon, label, navigateTo, disabled }: LinkProps) {
 
   function onPress() {
     if (!disabled) {
-      navigation.navigate(navigateTo, undefined as any);
+      navigation.navigate(navigateTo as any);
     }
   }
   return (

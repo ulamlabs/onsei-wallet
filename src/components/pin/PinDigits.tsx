@@ -40,7 +40,7 @@ export default function PinDigits({ pin, error }: PinDigitsProps) {
       }}
     >
       {digits.map((_, index) => (
-        <PinDigit filled={index >= pin.length} key={index} error={error} />
+        <PinDigit filled={index < pin.length} key={index} error={error} />
       ))}
     </Animated.View>
   );

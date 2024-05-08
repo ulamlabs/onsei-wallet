@@ -1,4 +1,5 @@
-import { useAccountsStore } from "@/store";
+import { NODE_URL } from "@/const";
+import { useAccountsStore, useSettingsStore } from "@/store";
 import { StdFee } from "@cosmjs/stargate";
 import {
   getSigningStargateClient,
@@ -8,6 +9,7 @@ import {
 
 export class TransactionsService {
   private accountsStore = useAccountsStore();
+  private settingsStore = useSettingsStore();
 
   async transferAsset(
     receiver: string,
@@ -23,7 +25,7 @@ export class TransactionsService {
 
       const wallet = await restoreWallet(getMnemonic(activeAccount.address));
       const signingClient = await getSigningStargateClient(
-        "https://rpc.atlantic-2.seinetwork.io",
+        "https://rpc." + NODE_URL[this.settingsStore.settings.node],
         wallet,
       );
 

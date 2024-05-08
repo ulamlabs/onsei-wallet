@@ -13,7 +13,7 @@ export default function AuthorizeScreen({
 }: DisablePinScreenProps) {
   function authorize() {
     navigation.goBack(); // Remove this view from history
-    navigation.navigate(route.params.nextRoute, route.params.nextParams);
+    navigation.navigate(route.params.nextRoute as any, route.params.nextParams);
   }
 
   return <ProtectedAction action={authorize} />;
