@@ -1,10 +1,10 @@
 import { Loader, Paragraph, Row, SafeLayout, Text } from "@/components";
-import { AccountTransaction, useAccountsStore } from "@/store";
+import { Transaction, useTransactions } from "@/modules/transactions";
+import { nodes, useAccountsStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { trimAddress } from "@/utils/trimAddress";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useEffect, useState } from "react";
 import { FlatList, View } from "react-native";
 
 type TransactionsProps = NativeStackScreenProps<
@@ -13,7 +13,7 @@ type TransactionsProps = NativeStackScreenProps<
 >;
 
 type TransactionRenderProps = {
-  item: AccountTransaction;
+  item: Transaction;
   index: number;
 };
 
@@ -22,26 +22,13 @@ const Transactions = ({
     params: { address },
   },
 }: TransactionsProps) => {
-  const [loading, setLoading] = useState(false);
-  const { fetchTxns, accounts } = useAccountsStore();
-  const transactions = accounts.find(
-    (acc) => acc.address === address,
-  )?.transactions;
+  const { node } = useAccountsStore();
 
-  const fetchTransactions = async () => {
-    try {
-      setLoading(true);
-      await fetchTxns(address);
-    } catch (error: any) {
-      console.error(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchTransactions();
-  }, []);
+  const {
+    data: transactions,
+    error,
+    isLoading,
+  } = useTransactions(address, nodes[node]);
 
   const renderTxn = ({ item, index }: TransactionRenderProps) => {
     return (
@@ -80,16 +67,14 @@ const Transactions = ({
   return (
     <SafeLayout noScroll={true}>
       <View>
-        {loading ? (
+        {isLoading ? (
           <Loader />
+        ) : error ? (
+          <Paragraph>Somethinf went wrong</Paragraph>
         ) : (
           <View>
             {transactions && transactions?.length > 0 ? (
-              <FlatList
-                data={transactions}
-                nestedScrollEnabled={true}
-                renderItem={renderTxn}
-              />
+              <FlatList data={transactions} renderItem={renderTxn} />
             ) : (
               <Paragraph style={{ textAlign: "center" }}>
                 No transactions yet

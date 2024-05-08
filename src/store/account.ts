@@ -4,8 +4,6 @@ import {
   VALID_ACCOUNT_NAME_REGEX,
 } from "@/const";
 import {
-  fetchData,
-  formatDate,
   loadFromSecureStorage,
   loadFromStorage,
   removeFromSecureStorage,
@@ -21,30 +19,11 @@ export type Account = {
   address: string;
   balance: number;
   usdBalance: number;
-  transactions: AccountTransaction[];
 };
 
 export type Wallet = {
   address: string;
   mnemonic: string;
-};
-
-type TxResponse = {
-  txhash: string;
-  tx: {
-    body: {
-      messages: {
-        from_address: string;
-        to_address: string;
-        amount: { denom: "string"; amount: "string" }[];
-      }[];
-    };
-  };
-  timestamp: string;
-};
-
-type TransactionData = {
-  tx_responses: TxResponse[];
 };
 
 type AccountsStore = {
@@ -106,7 +85,6 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
       address: wallet.address,
       balance: 0,
       usdBalance: 0,
-      transactions: [],
     };
     set((state) => {
       const accounts = [...state.accounts, account];
@@ -127,7 +105,6 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
       address: seiAccount.address,
       balance,
       usdBalance: get().getUSDBalance(balance),
-      transactions: [],
     };
 
     set((state) => {
@@ -234,51 +211,6 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
       udpatedAcc.find((acc) => acc.address === activeAccount?.address)
         ?.address || activeAccount.address,
     );
-  },
-  fetchTxns: async (address) => {
-    try {
-      const { node } = get();
-      const send = `${nodes[node]}/cosmos/tx/v1beta1/txs?events=transfer.sender%3D%27${address}%27&limit=10`;
-      const received = `${nodes[node]}/cosmos/tx/v1beta1/txs?events=transfer.recipient%3D%27${address}%27&limit=10`;
-
-      const sendData: TransactionData = await fetchData(send);
-      const receivedData: TransactionData = await fetchData(received);
-      const response: AccountTransaction[] = [
-        ...sendData.tx_responses,
-        ...receivedData.tx_responses,
-      ]
-        .filter((resp) => resp.tx.body.messages[0]?.amount !== undefined)
-        .sort(
-          (a, b) =>
-            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
-        )
-        .map((resp) => {
-          return {
-            amount: +resp.tx.body.messages[0]?.amount[0]?.amount / 10 ** 6,
-            asset: "SEI",
-            date: formatDate(resp.timestamp),
-            from: resp.tx.body.messages[0]?.from_address,
-            to: resp.tx.body.messages[0]?.to_address,
-            type:
-              resp.tx.body.messages[0]?.from_address === address
-                ? "Send"
-                : "Receive",
-          };
-        });
-
-      set((state) => ({
-        accounts: state.accounts.map((account) => {
-          if (account.address === address) {
-            return { ...account, transactions: response };
-          }
-          return account;
-        }),
-      }));
-      return response;
-    } catch (error: any) {
-      console.error(error);
-      throw Error(error);
-    }
   },
 }));
 
