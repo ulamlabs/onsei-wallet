@@ -7,6 +7,7 @@ import Tooltip from "./Tooltip";
 import { Pin } from "./pin";
 import Biometrics from "./Biometrics";
 import Loader from "./Loader";
+import TokenIcon from "./TokenIcon";
 
 export * from "./typography";
 export * from "./buttons";
@@ -24,4 +25,5 @@ export {
   Tooltip,
   Biometrics,
   Loader,
+  TokenIcon,
 };

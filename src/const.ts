@@ -15,3 +15,5 @@ export const NODE_URL: Record<Node, string> = {
   MainNet: "sei-apis.com",
   TestNet: "atlantic-2.seinetwork.io",
 };
+
+export const NODES: Node[] = ["MainNet", "TestNet"];

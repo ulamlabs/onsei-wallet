@@ -22,6 +22,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import BottomBarsNavigation from "./BottomBarsNavigation";
 import { navigatorScreenOptions } from "./const";
+import { ManageTokensScreen } from "@/screens/account";
 
 export type HomeParamList = {
   Home: undefined;
@@ -42,6 +43,7 @@ export type HomeParamList = {
   "Generate Wallet": undefined;
   "Import Wallet": undefined;
   "Confirm Mnemonic": { wallet: Wallet };
+  "Manage Token List": undefined;
 };
 
 const { Navigator, Screen } = createNativeStackNavigator<HomeParamList>();
@@ -78,6 +80,7 @@ export default function HomeNavigation() {
       <Screen name="Generate Wallet" component={GenerateWalletScreen} />
       <Screen name="Confirm Mnemonic" component={ConfirmMnemonicScreen} />
       <Screen name="Import Wallet" component={ImportWalletScreen} />
+      <Screen name="Manage Token List" component={ManageTokensScreen} />
     </Navigator>
   );
 }

@@ -1,8 +1,7 @@
 import { Paragraph, RadioGroup, SafeLayout } from "@/components";
+import { NODES } from "@/const";
 import { useAccountsStore, useSettingsStore } from "@/store";
 import { Node } from "@/types";
-
-const nodes = ["MainNet", "TestNet"] as Node[];
 
 export default function NodeSettingsScreen() {
   const {
@@ -22,7 +21,7 @@ export default function NodeSettingsScreen() {
         Select active node in the wallet
       </Paragraph>
 
-      <RadioGroup options={nodes} activeOption={node} onChange={onNodeChange} />
+      <RadioGroup options={NODES} activeOption={node} onChange={onNodeChange} />
     </SafeLayout>
   );
 }

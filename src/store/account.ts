@@ -13,6 +13,7 @@ import {
 import { generateWallet, getQueryClient, restoreWallet } from "@sei-js/cosmjs";
 import { create } from "zustand";
 import { useSettingsStore } from "./settings";
+import { useTokensStore } from "./tokens";
 
 export type Account = {
   name: string;
@@ -60,13 +61,18 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
       ...acc,
       balance: balances[index],
     }));
-    set({ accounts: updatedAccounts, activeAccount: updatedAccounts[0] });
+    const activeAccount = updatedAccounts[0];
+    const node = useSettingsStore.getState().settings.node;
+    useTokensStore.getState().loadTokens(activeAccount.address, node);
+    set({ accounts: updatedAccounts, activeAccount });
   },
   setActiveAccount: (address) => {
     set((state) => ({
       ...state,
       activeAccount: state.accounts.find((a) => a.address === address),
     }));
+    const node = useSettingsStore.getState().settings.node;
+    useTokensStore.getState().loadTokens(address ?? "", node);
   },
   generateWallet: async () => {
     const wallet = await generateWallet(MNEMONIC_WORDS_COUNT);
@@ -134,6 +140,7 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
   },
   deleteAccount: async (address: string) => {
     removeFromSecureStorage(getMnenomicKey(address));
+    await useTokensStore.getState().clearAddress(address);
 
     set((state) => {
       const accounts = state.accounts.filter((a) => a.address !== address);
