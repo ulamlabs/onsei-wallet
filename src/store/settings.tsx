@@ -1,3 +1,4 @@
+import { Node } from "@/types";
 import { loadFromStorage, removeFromStorage, saveToStorage } from "@/utils";
 import { create } from "zustand";
 
@@ -5,6 +6,7 @@ const SETTINGS_KEY = "settings.json";
 
 const DEFAULT_SETTINGS = {
   "auth.biometricsEnabled": false,
+  node: "TestNet" as Node,
 };
 
 type Settings = typeof DEFAULT_SETTINGS;

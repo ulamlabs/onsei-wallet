@@ -15,6 +15,7 @@ import {
 } from "@/screens/newWallet";
 import ResetAppScreen from "@/screens/settings/ResetAppScreen";
 import SecuritySettingsScreen from "@/screens/settings/SecuritySettingsScreen";
+import NodeSettingsScreen from "@/screens/settings/NodeSettingsScreen";
 import { SavedAddress, Wallet } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -29,6 +30,7 @@ export type HomeParamList = {
   "Disable Passcode": undefined;
   "Change Passcode": undefined;
   "Disable Face ID / Touch ID": undefined;
+  "Change Node": undefined;
   "Clear app data": undefined;
   Authorize: { nextRoute: keyof NavigatorParamsList; nextParams?: any };
   Receive: undefined;
@@ -65,6 +67,7 @@ export default function HomeNavigation() {
         name="Disable Face ID / Touch ID"
         component={BiometricsDisableScreen}
       />
+      <Screen name="Change Node" component={NodeSettingsScreen} />
       <Screen name="Authorize" component={AuthorizeScreen} />
       <Screen name="Send" component={SendAssets} />
       <Screen name="Receive" component={ReceiveAssets} />

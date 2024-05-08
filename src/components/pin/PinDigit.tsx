@@ -14,7 +14,7 @@ export default function PinDigit({ filled, error }: PinDigitProps) {
 
   useEffect(() => {
     Animated.timing(scale, {
-      toValue: filled ? 0 : 1,
+      toValue: filled ? 1 : 0,
       duration: 150,
       useNativeDriver: true,
     }).start();

@@ -14,3 +14,5 @@ export type NavigationProp = NativeStackNavigationProp<
   NavigatorParamsList,
   any
 >;
+
+export type Node = "MainNet" | "TestNet";

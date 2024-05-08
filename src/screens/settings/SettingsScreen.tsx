@@ -23,6 +23,7 @@ export default function SettingsScreen({ navigation }: SettingsProps) {
       <Column>
         <OptionGroup>
           <Link label="Security" navigateTo="Security" />
+          <Link label="Node Settings" navigateTo="Change Node" />
         </OptionGroup>
 
         <DangerButton title="Clear app data" onPress={onRemove} />

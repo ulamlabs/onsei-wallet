@@ -31,10 +31,10 @@ export default function App() {
 
   useEffect(() => {
     async function init() {
+      await settingsStore.init(); // Settings must be initialized before everything else
       await Promise.all([
         accountsStore.init(),
         authStore.init(),
-        settingsStore.init(),
         addressStore.init(),
       ]);
       setReady(true);
