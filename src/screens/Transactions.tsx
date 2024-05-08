@@ -1,6 +1,5 @@
 import { Loader, Paragraph, Row, SafeLayout, Text } from "@/components";
 import { Transaction, useTransactions } from "@/modules/transactions";
-import { nodes, useAccountsStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { trimAddress } from "@/utils/trimAddress";
@@ -22,13 +21,7 @@ const Transactions = ({
     params: { address },
   },
 }: TransactionsProps) => {
-  const { node } = useAccountsStore();
-
-  const {
-    data: transactions,
-    error,
-    isLoading,
-  } = useTransactions(address, nodes[node]);
+  const { data: transactions, error, isLoading } = useTransactions(address);
 
   const renderTxn = ({ item, index }: TransactionRenderProps) => {
     return (

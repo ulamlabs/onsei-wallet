@@ -1,3 +1,5 @@
+import { NODE_URL } from "@/const";
+import { useSettingsStore } from "@/store";
 import { fetchData, formatDate } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
 
@@ -28,12 +30,9 @@ type TransactionData = {
   tx_responses: TxResponse[];
 };
 
-const getTransactions = async (
-  address: string,
-  restUrl: string,
-): Promise<Transaction[]> => {
-  const send = `${restUrl}/cosmos/tx/v1beta1/txs?events=transfer.sender%3D%27${address}%27&limit=10`;
-  const received = `${restUrl}/cosmos/tx/v1beta1/txs?events=transfer.recipient%3D%27${address}%27&limit=10`;
+const getTransactions = async (address: string): Promise<Transaction[]> => {
+  const send = `https://rest.${NODE_URL[useSettingsStore.getState().settings.node]}/cosmos/tx/v1beta1/txs?events=transfer.sender%3D%27${address}%27&limit=10`;
+  const received = `https://rest.${NODE_URL[useSettingsStore.getState().settings.node]}/cosmos/tx/v1beta1/txs?events=transfer.recipient%3D%27${address}%27&limit=10`;
   const sendData: TransactionData = await fetchData(send);
   const receivedData: TransactionData = await fetchData(received);
   const response: Transaction[] = [
@@ -61,8 +60,8 @@ const getTransactions = async (
   return response;
 };
 
-export const useTransactions = (address: string, restUrl: string) =>
+export const useTransactions = (address: string) =>
   useQuery({
     queryKey: ["GET", address],
-    queryFn: () => getTransactions(address, restUrl),
+    queryFn: () => getTransactions(address),
   });
