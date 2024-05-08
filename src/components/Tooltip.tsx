@@ -6,7 +6,7 @@ type Props = PropsWithChildren & {
   toggleElement: JSX.Element;
   isVisible: boolean;
   onBackdropPress: () => void;
-  onPress: () => void;
+  onPress?: () => void;
 };
 
 export default function Tooltip({

@@ -1,5 +1,4 @@
 import {
-  AccountsList,
   Column,
   Headline,
   Loader,
@@ -20,8 +19,9 @@ import {
   DirectboxSend,
   Setting2,
 } from "iconsax-react-native";
-import React from "react";
+import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import AccountsModal from "./AccountsModal";
 
 type WalletOverviewProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -30,6 +30,7 @@ type WalletOverviewProps = NativeStackScreenProps<
 
 export default function WalletOverview({ navigation }: WalletOverviewProps) {
   const { activeAccount } = useAccountsStore();
+  const [open, setOpen] = useState(false);
   const { sei } = useTokensStore();
   const {
     settings: { node },
@@ -46,6 +47,14 @@ export default function WalletOverview({ navigation }: WalletOverviewProps) {
     navigation.push("Settings");
   }
 
+  function openAccounts() {
+    setOpen(true);
+  }
+
+  function closeAccounts() {
+    setOpen(false);
+  }
+
   return (
     <SafeLayout style={{ paddingTop: 24 }}>
       <Column style={{ alignItems: "center" }}>
@@ -60,18 +69,23 @@ export default function WalletOverview({ navigation }: WalletOverviewProps) {
           <TouchableOpacity onPress={openSettings}>
             <Setting2 size={22} color={Colors.text100} />
           </TouchableOpacity>
-          <TouchableOpacity style={{ flexDirection: "row", gap: 4 }}>
-            <Paragraph
-              style={{
-                color: Colors.text,
-                fontSize: 18,
-                fontWeight: "700",
-              }}
+          <AccountsModal onBackdropPress={closeAccounts} open={open}>
+            <TouchableOpacity
+              onPress={openAccounts}
+              style={{ flexDirection: "row", gap: 4 }}
             >
-              {activeAccount?.name}
-            </Paragraph>
-            <ArrowDown2 color={Colors.text} />
-          </TouchableOpacity>
+              <Paragraph
+                style={{
+                  color: Colors.text,
+                  fontSize: 18,
+                  fontWeight: "700",
+                }}
+              >
+                {activeAccount?.name}
+              </Paragraph>
+              <ArrowDown2 color={Colors.text} />
+            </TouchableOpacity>
+          </AccountsModal>
           <TouchableOpacity>
             <Copy size={22} color={Colors.text100} />
           </TouchableOpacity>
@@ -102,7 +116,6 @@ export default function WalletOverview({ navigation }: WalletOverviewProps) {
           <Loader />
         )}
       </Column>
-
       <Row
         style={{
           justifyContent: "space-around",
@@ -116,7 +129,6 @@ export default function WalletOverview({ navigation }: WalletOverviewProps) {
         />
         <SecondaryButton title="Send" onPress={onSend} icon={DirectboxSend} />
       </Row>
-      <AccountsList />
     </SafeLayout>
   );
 }
