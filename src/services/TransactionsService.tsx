@@ -70,7 +70,6 @@ export class TransactionsService {
     if (Number.isNaN(amount) || amount === 0) {
       throw Error("Invalid amount entered");
     }
-
     const feeAmount = +fee.amount[0].amount;
 
     const funds = Number(sei.balance) ?? 0;

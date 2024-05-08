@@ -13,9 +13,15 @@ import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { formatTokenAmount } from "@/utils/formatAmount";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { DirectboxReceive, DirectboxSend } from "iconsax-react-native";
-import { Text, View } from "react-native";
-import { TokensList } from "./account";
+import {
+  ArrowDown2,
+  Copy,
+  DirectboxReceive,
+  DirectboxSend,
+  Setting2,
+} from "iconsax-react-native";
+import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 
 type WalletOverviewProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -36,22 +42,52 @@ export default function WalletOverview({ navigation }: WalletOverviewProps) {
     navigation.push("Send", {});
   }
 
+  function openSettings() {
+    navigation.push("Settings");
+  }
+
   return (
-    <SafeLayout>
+    <SafeLayout style={{ paddingTop: 24 }}>
       <Column style={{ alignItems: "center" }}>
+        <View
+          style={{
+            justifyContent: "space-between",
+            flexDirection: "row",
+            width: "100%",
+            alignItems: "center",
+          }}
+        >
+          <TouchableOpacity onPress={openSettings}>
+            <Setting2 size={22} color={Colors.text100} />
+          </TouchableOpacity>
+          <TouchableOpacity style={{ flexDirection: "row", gap: 4 }}>
+            <Paragraph
+              style={{
+                color: Colors.text,
+                fontSize: 18,
+                fontWeight: "700",
+              }}
+            >
+              {activeAccount?.name}
+            </Paragraph>
+            <ArrowDown2 color={Colors.text} />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Copy size={22} color={Colors.text100} />
+          </TouchableOpacity>
+        </View>
         {node === "TestNet" && (
           <View
             style={{
               borderRadius: 50,
               backgroundColor: Colors.warning,
               paddingHorizontal: 20,
-              paddingVertical: 8,
+              paddingVertical: 6,
             }}
           >
-            <Text>TestNet</Text>
+            <Text style={{ fontSize: 12 }}>TestNet</Text>
           </View>
         )}
-        <Headline>PORTFOLIO</Headline>
 
         {activeAccount ? (
           <>
@@ -80,10 +116,7 @@ export default function WalletOverview({ navigation }: WalletOverviewProps) {
         />
         <SecondaryButton title="Send" onPress={onSend} icon={DirectboxSend} />
       </Row>
-
       <AccountsList />
-
-      <TokensList />
     </SafeLayout>
   );
 }

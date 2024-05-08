@@ -1,14 +1,13 @@
-import React from "react";
 import WalletOverview from "@/screens/WalletOverview";
 import AddressBook from "@/screens/addressBook/AddressBookScreen";
-import { Book1, Setting2, Wallet2 } from "iconsax-react-native";
 import SettingsScreen from "@/screens/settings/SettingsScreen";
+import { Book1, Setting2, Wallet2 } from "iconsax-react-native";
+import React from "react";
 import { createBarNavigation } from "./bar";
 
 export type BottomTabsParamList = {
   Wallet: undefined;
   "Address Book": undefined;
-  Settings: undefined;
 };
 
 const { Navigator, Screen } = createBarNavigation<BottomTabsParamList>();

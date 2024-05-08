@@ -2,6 +2,7 @@ import MnemonicScreen from "@/screens/MnemonicScreen";
 import ReceiveAssets from "@/screens/ReceiveAssets";
 import SendAssets from "@/screens/SendAssets";
 import Transactions from "@/screens/Transactions";
+import { ManageTokensScreen } from "@/screens/account";
 import AddOrEditAddress from "@/screens/addressBook/AddOrEditAddress";
 import { AuthorizeScreen, BiometricsDisableScreen } from "@/screens/auth";
 import PinChangeScreen from "@/screens/auth/PinChangeScreen";
@@ -13,16 +14,16 @@ import {
   GenerateWalletScreen,
   ImportWalletScreen,
 } from "@/screens/newWallet";
+import NodeSettingsScreen from "@/screens/settings/NodeSettingsScreen";
 import ResetAppScreen from "@/screens/settings/ResetAppScreen";
 import SecuritySettingsScreen from "@/screens/settings/SecuritySettingsScreen";
-import NodeSettingsScreen from "@/screens/settings/NodeSettingsScreen";
+import SettingsScreen from "@/screens/settings/SettingsScreen";
 import { SavedAddress, Wallet } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import BottomBarsNavigation from "./BottomBarsNavigation";
 import { navigatorScreenOptions } from "./const";
-import { ManageTokensScreen } from "@/screens/account";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
 
 export type HomeParamList = {
@@ -44,6 +45,7 @@ export type HomeParamList = {
   "Generate Wallet": undefined;
   "Import Wallet": undefined;
   "Confirm Mnemonic": { wallet: Wallet };
+  Settings: undefined;
   "Manage Token List": undefined;
 };
 
@@ -89,6 +91,7 @@ export default function HomeNavigation() {
         component={ConfirmMnemonicScreen}
       />
       <Screen name="Import Wallet" component={ImportWalletScreen} />
+      <Screen name="Settings" component={SettingsScreen} />
       <Screen name="Manage Token List" component={ManageTokensScreen} />
     </Navigator>
   );
