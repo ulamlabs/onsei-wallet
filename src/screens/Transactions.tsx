@@ -1,74 +1,32 @@
 import { Loader, Paragraph, Row, SafeLayout, Text } from "@/components";
+import { Transaction, useTransactions } from "@/modules/transactions";
 import { Colors } from "@/styles";
-import { useEffect } from "react";
+import { NavigatorParamsList } from "@/types";
+import { trimAddress } from "@/utils/trimAddress";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { FlatList, View } from "react-native";
 
-type Transaction = {
-  type: "Send" | "Receive";
-  from: string;
-  to: string;
-  amount: string;
-  asset: string;
-  date: string;
-};
+type TransactionsProps = NativeStackScreenProps<
+  NavigatorParamsList,
+  "Transactions"
+>;
 
 type TransactionRenderProps = {
   item: Transaction;
   index: number;
 };
 
-export default function Transactions() {
-  const loading = false;
-  const isMore = false;
-  const transactions: Transaction[] = [];
-  // const transactions: Transaction[] = [
-  //   {
-  //     amount: "0",
-  //     asset: "213",
-  //     date: "1123",
-  //     from: "123",
-  //     to: "123",
-  //     type: "Receive",
-  //   },
-  //   {
-  //     amount: "0",
-  //     asset: "213",
-  //     date: "1123",
-  //     from: "123",
-  //     to: "123",
-  //     type: "Receive",
-  //   },
-  //   {
-  //     amount: "0",
-  //     asset: "213",
-  //     date: "1123",
-  //     from: "123",
-  //     to: "123",
-  //     type: "Send",
-  //   },
-  // ];
-
-  useEffect(() => {
-    fetchTxns(0);
-    // If there's any notification about balance change, remove it, because user will now see it on txs list
-    // cancelNotification(address); TODO: cancel notification
-  }, []);
-
-  // eslint-disable-next-line
-  async function fetchTxns(page: number) {
-    // TODO: handle fetching transactions
-  }
-
-  function fetchNextPage() {
-    if (isMore) {
-      fetchTxns(transactions.length / 20);
-    }
-  }
+const Transactions = ({
+  route: {
+    params: { address },
+  },
+}: TransactionsProps) => {
+  const { data: transactions, error, isLoading } = useTransactions(address);
 
   const renderTxn = ({ item, index }: TransactionRenderProps) => {
     return (
-      <View key={index} style={{ marginTop: 5, gap: 15 }}>
-        {(index === 0 || item.date !== transactions[index - 1].date) && (
+      <View style={{ marginTop: 20, gap: 10 }}>
+        {(index === 0 || item.date !== transactions![index - 1].date) && (
           <Text>{item.date}</Text>
         )}
 
@@ -76,12 +34,13 @@ export default function Transactions() {
           style={{
             backgroundColor: Colors.background200,
             padding: 15,
+            borderRadius: 10,
           }}
         >
           <View>
             <Text>{item.type}</Text>
             <Text style={{ color: Colors.text100 }}>
-              {item.type === "Send" ? item.to : item.from}
+              {trimAddress(item.type === "Send" ? item.to : item.from)}
             </Text>
           </View>
 
@@ -101,19 +60,14 @@ export default function Transactions() {
   return (
     <SafeLayout noScroll={true}>
       <View>
-        {loading ? (
+        {isLoading ? (
           <Loader />
+        ) : error ? (
+          <Paragraph>Something went wrong</Paragraph>
         ) : (
           <View>
-            {transactions.length > 0 ? (
-              <FlatList
-                data={transactions}
-                nestedScrollEnabled={true}
-                renderItem={renderTxn}
-                onEndReached={fetchNextPage}
-                onEndReachedThreshold={0.3}
-                ListFooterComponent={isMore ? <Loader /> : <></>} // Loader when loading next page.
-              />
+            {transactions && transactions?.length > 0 ? (
+              <FlatList data={transactions} renderItem={renderTxn} />
             ) : (
               <Paragraph style={{ textAlign: "center" }}>
                 No transactions yet
@@ -124,4 +78,6 @@ export default function Transactions() {
       </View>
     </SafeLayout>
   );
-}
+};
+
+export default Transactions;

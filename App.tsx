@@ -1,7 +1,9 @@
-import "globals";
-import "react-native-get-random-values";
-import "fastestsmallesttextencoderdecoder";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Modals } from "@/components";
+import { useInactivityLock } from "@/hooks";
+import { QueryClientProvider } from "@/modules/query";
+import HomeNavigation from "@/navigation/HomeNavigation";
+import LockNavigation from "@/navigation/LockNavigation";
+import OnboardingNavigation from "@/navigation/OnboardingNavigation";
 import {
   useAccountsStore,
   useAddressBookStore,
@@ -9,14 +11,13 @@ import {
   useOnboardingStore,
   useSettingsStore,
 } from "@/store";
-import { useEffect, useMemo, useState } from "react";
-import LockNavigation from "@/navigation/LockNavigation";
-import OnboardingNavigation from "@/navigation/OnboardingNavigation";
-import HomeNavigation from "@/navigation/HomeNavigation";
 import { NavigationContainer } from "@react-navigation/native";
-import { useInactivityLock } from "@/hooks";
-import { Modals } from "@/components";
 import { StatusBar } from "expo-status-bar";
+import "fastestsmallesttextencoderdecoder";
+import "globals";
+import { useEffect, useMemo, useState } from "react";
+import "react-native-get-random-values";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function App() {
   const [ready, setReady] = useState(false);
@@ -75,12 +76,14 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <SafeAreaProvider>
-        <StatusBar style="light" />
-        {getContent()}
-        <Modals />
-      </SafeAreaProvider>
-    </NavigationContainer>
+    <QueryClientProvider>
+      <NavigationContainer>
+        <SafeAreaProvider>
+          <StatusBar style="light" />
+          {getContent()}
+          <Modals />
+        </SafeAreaProvider>
+      </NavigationContainer>
+    </QueryClientProvider>
   );
 }

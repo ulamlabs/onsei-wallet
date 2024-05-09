@@ -20,7 +20,6 @@ type LayoutProps = PropsWithChildren & {
 export default function SafeLayout({ children, noScroll, style }: LayoutProps) {
   const insets = useSafeAreaInsets();
   const layoutStyle: ViewStyle = {
-    flex: 1,
     minHeight: "100%",
     paddingTop: Math.max(verticalScale(10), insets.top),
     paddingBottom: Math.max(verticalScale(50), insets.bottom),

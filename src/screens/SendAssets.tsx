@@ -66,8 +66,7 @@ export default function SendAssets({
         throw Error("Cannot get balance");
       }
       const rawAmount = new D(amount).mul(10 ** 6);
-      const rawBalance = new D(activeAccount.balance).mul(10 ** 6);
-      const fee = calculateFee(rawBalance.sub(rawAmount).toNumber(), "0.1usei");
+      const fee = calculateFee(rawAmount.toNumber(), "0.1usei");
 
       transactionsService.validateTxnData(
         receiverInput.value,
