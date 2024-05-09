@@ -2,6 +2,9 @@ import MnemonicScreen from "@/screens/MnemonicScreen";
 import ReceiveAssets from "@/screens/ReceiveAssets";
 import SendAssets from "@/screens/SendAssets";
 import Transactions from "@/screens/Transactions";
+import AccountSettings from "@/screens/WalletOverview/AccountSettings";
+import AccountsModal from "@/screens/WalletOverview/AccountsModal";
+import EditAccountName from "@/screens/WalletOverview/EditAccountName";
 import { ManageTokensScreen } from "@/screens/account";
 import AddOrEditAddress from "@/screens/addressBook/AddOrEditAddress";
 import { AuthorizeScreen, BiometricsDisableScreen } from "@/screens/auth";
@@ -18,7 +21,8 @@ import NodeSettingsScreen from "@/screens/settings/NodeSettingsScreen";
 import ResetAppScreen from "@/screens/settings/ResetAppScreen";
 import SecuritySettingsScreen from "@/screens/settings/SecuritySettingsScreen";
 import SettingsScreen from "@/screens/settings/SettingsScreen";
-import { SavedAddress, Wallet } from "@/store";
+import { Account, SavedAddress, Wallet } from "@/store";
+import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
@@ -46,6 +50,10 @@ export type HomeParamList = {
   "Import Wallet": undefined;
   "Confirm Mnemonic": { wallet: Wallet };
   Settings: undefined;
+  Accounts: undefined;
+  AccountsModal: undefined;
+  "Account settings": { address: string };
+  "Edit name": { account: Account };
   "Manage Token List": undefined;
 };
 
@@ -92,6 +100,33 @@ export default function HomeNavigation() {
       />
       <Screen name="Import Wallet" component={ImportWalletScreen} />
       <Screen name="Settings" component={SettingsScreen} />
+      <Screen
+        options={{ presentation: "modal", headerShown: false }}
+        name="AccountsModal"
+        component={AccountsModalNavigation}
+      />
+    </Navigator>
+  );
+}
+
+function AccountsModalNavigation() {
+  return (
+    <Navigator screenOptions={navigatorScreenOptions}>
+      <Screen
+        name="Accounts"
+        component={AccountsModal}
+        options={{ headerShown: false }}
+      />
+      <Screen
+        name="Account settings"
+        component={AccountSettings}
+        options={{ headerStyle: { backgroundColor: Colors.background100 } }}
+      />
+      <Screen
+        name="Edit name"
+        component={EditAccountName}
+        options={{ headerStyle: { backgroundColor: Colors.background100 } }}
+      />
       <Screen name="Manage Token List" component={ManageTokensScreen} />
     </Navigator>
   );

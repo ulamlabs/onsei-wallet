@@ -37,6 +37,7 @@ export type AccountsStore = {
   deleteAccount: (name: string) => Promise<void>;
   clearStore: () => Promise<void>;
   getMnemonic: (name: string) => string;
+  editAccountName: (address: string, newName: string) => void;
 };
 
 export const useAccountsStore = create<AccountsStore>((set, get) => ({
@@ -137,6 +138,23 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
   },
   getMnemonic: (address: string) => {
     return loadFromSecureStorage(getMnenomicKey(address));
+  },
+  editAccountName(address, newName) {
+    const { setActiveAccount, activeAccount } = get();
+    set((state) => {
+      const updatedAccounts = state.accounts.map((acc) => {
+        if (acc.address === address) {
+          return { ...acc, name: newName };
+        }
+        return acc;
+      });
+      saveToStorage("accounts", updatedAccounts);
+
+      return { ...state, accounts: updatedAccounts };
+    });
+    if (activeAccount?.address === address) {
+      setActiveAccount(address);
+    }
   },
 }));
 

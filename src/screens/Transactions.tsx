@@ -32,7 +32,7 @@ const Transactions = ({
 
         <Row
           style={{
-            backgroundColor: Colors.background200,
+            backgroundColor: Colors.background300,
             padding: 15,
             borderRadius: 10,
           }}
