@@ -6,7 +6,6 @@ import {
   TertiaryButton,
 } from "@/components";
 import { useModalStore, useSettingsStore } from "@/store";
-import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { resetNavigationStack } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -50,7 +49,7 @@ export function OnboardingEnableBiometricsScreen({
         <PrimaryButton
           title="Enable Biometrics"
           onPress={() => setEnablingBiometrics(true)}
-          icon={<EmojiHappy color={Colors.background} />}
+          icon={EmojiHappy}
         />
 
         {enablingBiometrics && (

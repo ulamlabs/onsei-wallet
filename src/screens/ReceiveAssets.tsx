@@ -6,7 +6,6 @@ import {
   SafeLayout,
 } from "@/components";
 import { useAccountsStore } from "@/store";
-import { Colors } from "@/styles";
 import * as Clipboard from "expo-clipboard";
 import { Clipboard as ClipboardImg, ClipboardTick } from "iconsax-react-native";
 import { useState } from "react";
@@ -44,13 +43,7 @@ export default function ReceiveAssets() {
         <PrimaryButton
           title={addressCopied ? "Copied successfully" : "Copy address"}
           onPress={onCopy}
-          icon={
-            addressCopied ? (
-              <ClipboardTick color={Colors.background} />
-            ) : (
-              <ClipboardImg color={Colors.background} />
-            )
-          }
+          icon={addressCopied ? ClipboardTick : ClipboardImg}
         />
       </Column>
     </SafeLayout>

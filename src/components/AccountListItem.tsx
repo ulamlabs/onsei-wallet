@@ -115,24 +115,24 @@ export default function AccountListItem({ account }: Props) {
           <TertiaryButton
             onPress={onCopy}
             title="Copy Address"
-            icon={<ClipboardCopy color={Colors.text} size={16} />}
+            icon={ClipboardCopy}
           />
           <TertiaryButton
             onPress={onMnemonicShow}
             title="View Passphrase"
-            icon={<Lock1 color={Colors.text} size={16} />}
+            icon={Lock1}
           />
           <TertiaryButton
             onPress={onTxnsShow}
             title="View Transactions"
-            icon={<ArrangeHorizontal color={Colors.text} size={16} />}
+            icon={ArrangeHorizontal}
           />
           {activeAccount?.address !== address && (
             <TertiaryButton
               onPress={onRemove}
               title="Remove Account"
-              textStyle={{ color: Colors.danger }}
-              icon={<Trash color={Colors.danger} size={16} />}
+              color={Colors.danger}
+              icon={Trash}
             />
           )}
         </Tooltip>

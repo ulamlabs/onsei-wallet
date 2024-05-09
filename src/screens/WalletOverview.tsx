@@ -76,13 +76,9 @@ export default function WalletOverview({ navigation }: WalletOverviewProps) {
         <SecondaryButton
           title="Receive"
           onPress={onReceive}
-          icon={<DirectboxReceive size={20} color="white" />}
+          icon={DirectboxReceive}
         />
-        <SecondaryButton
-          title="Send"
-          onPress={onSend}
-          icon={<DirectboxSend size={20} color="white" />}
-        />
+        <SecondaryButton title="Send" onPress={onSend} icon={DirectboxSend} />
       </Row>
 
       <AccountsList />
