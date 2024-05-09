@@ -30,11 +30,34 @@ type TransactionData = {
   tx_responses: TxResponse[];
 };
 
+const buildUrl = (queryParams: Record<string, string>): string => {
+  const baseUrl = `https://rest.${NODE_URL[useSettingsStore.getState().settings.node]}/cosmos/tx/v1beta1/txs`;
+  const queryString = Object.entries(queryParams)
+    .map(
+      ([key, value]) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
+    )
+    .join("&");
+  return `${baseUrl}?${queryString}`;
+};
+
 const getTransactions = async (address: string): Promise<Transaction[]> => {
-  const send = `https://rest.${NODE_URL[useSettingsStore.getState().settings.node]}/cosmos/tx/v1beta1/txs?events=transfer.sender%3D%27${address}%27&limit=10`;
-  const received = `https://rest.${NODE_URL[useSettingsStore.getState().settings.node]}/cosmos/tx/v1beta1/txs?events=transfer.recipient%3D%27${address}%27&limit=10`;
-  const sendData: TransactionData = await fetchData(send);
-  const receivedData: TransactionData = await fetchData(received);
+  const senderParams = {
+    events: `transfer.sender='${address}'`,
+    limit: "10",
+  };
+
+  const receiverParams = {
+    events: `transfer.recipient='${address}'`,
+    limit: "10",
+  };
+
+  const sendUrl = buildUrl(senderParams);
+  const receivedUrl = buildUrl(receiverParams);
+  const [sendData, receivedData]: TransactionData[] = await Promise.all([
+    fetchData(sendUrl),
+    fetchData(receivedUrl),
+  ]);
   const response: Transaction[] = [
     ...sendData.tx_responses,
     ...receivedData.tx_responses,

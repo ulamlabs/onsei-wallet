@@ -63,7 +63,7 @@ const Transactions = ({
         {isLoading ? (
           <Loader />
         ) : error ? (
-          <Paragraph>Somethinf went wrong</Paragraph>
+          <Paragraph>Something went wrong</Paragraph>
         ) : (
           <View>
             {transactions && transactions?.length > 0 ? (
