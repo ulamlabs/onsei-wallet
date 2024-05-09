@@ -1,13 +1,15 @@
 import { Colors } from "@/styles";
+import { Icon } from "iconsax-react-native";
 import { Pressable, StyleProp, Text, TextStyle, ViewStyle } from "react-native";
 
 export type BaseButtonProps = {
   title?: string;
   onPress: () => any;
   style?: StyleProp<ViewStyle>;
-  icon?: JSX.Element;
+  icon?: Icon;
   disabled?: boolean;
   textStyle?: StyleProp<TextStyle>;
+  color?: string;
 };
 
 export default function BaseButton({
@@ -15,8 +17,9 @@ export default function BaseButton({
   style,
   textStyle,
   onPress,
-  icon,
+  icon: Icon,
   disabled = false,
+  color = Colors.text,
 }: BaseButtonProps) {
   return (
     <Pressable
@@ -29,18 +32,16 @@ export default function BaseButton({
           paddingVertical: 18,
           borderRadius: 22,
           flexDirection: "row",
+          gap: 8,
         },
-        icon ? { gap: 8 } : {},
         disabled ? { opacity: 0.3 } : {},
         style,
       ]}
       onPress={onPress}
     >
-      {icon}
+      {Icon && <Icon color={color} size={20} />}
       {title && (
-        <Text style={[{ color: Colors.text, fontWeight: "bold" }, textStyle]}>
-          {title}
-        </Text>
+        <Text style={[{ color, fontWeight: "bold" }, textStyle]}>{title}</Text>
       )}
     </Pressable>
   );

@@ -82,23 +82,15 @@ export default function AddressBookEntry({ addressData }: Props) {
           <TertiaryButton
             onPress={onCopy}
             title="Copy Address"
-            icon={<ClipboardCopy color={Colors.text} size={16} />}
+            icon={ClipboardCopy}
           />
-          <TertiaryButton
-            onPress={onSend}
-            title="Send Assets"
-            icon={<Send2 color={Colors.text} size={16} />}
-          />
-          <TertiaryButton
-            onPress={onEdit}
-            title="Edit Entry"
-            icon={<Edit2 color={Colors.text} size={16} />}
-          />
+          <TertiaryButton onPress={onSend} title="Send Assets" icon={Send2} />
+          <TertiaryButton onPress={onEdit} title="Edit Entry" icon={Edit2} />
           <TertiaryButton
             onPress={onRemove}
             title="Remove Entry"
-            textStyle={{ color: Colors.danger }}
-            icon={<Trash color={Colors.danger} size={16} />}
+            color={Colors.danger}
+            icon={Trash}
           />
         </Tooltip>
       </Row>

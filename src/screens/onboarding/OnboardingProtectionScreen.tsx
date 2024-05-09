@@ -5,7 +5,6 @@ import {
   SafeLayoutBottom,
   TertiaryButton,
 } from "@/components";
-import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Strongbox } from "iconsax-react-native";
@@ -32,7 +31,7 @@ export default function OnboardingProtectionScreen({
         <PrimaryButton
           title="Enable Passcode protection"
           onPress={enablePin}
-          icon={<Strongbox color={Colors.background} />}
+          icon={Strongbox}
         />
 
         <TertiaryButton
