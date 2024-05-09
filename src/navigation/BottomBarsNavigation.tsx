@@ -1,7 +1,6 @@
-import WalletOverview from "@/screens/WalletOverview";
+import WalletOverview from "@/screens/WalletOverview/WalletOverview";
 import AddressBook from "@/screens/addressBook/AddressBookScreen";
-import SettingsScreen from "@/screens/settings/SettingsScreen";
-import { Book1, Setting2, Wallet2 } from "iconsax-react-native";
+import { Book1, Wallet2 } from "iconsax-react-native";
 import React from "react";
 import { createBarNavigation } from "./bar";
 
@@ -24,11 +23,6 @@ export default function BottomBarsNavigation() {
         name="Address Book"
         component={AddressBook}
         options={{ icon: Book1 }}
-      />
-      <Screen
-        name="Settings"
-        component={SettingsScreen}
-        options={{ icon: Setting2 }}
       />
     </Navigator>
   );

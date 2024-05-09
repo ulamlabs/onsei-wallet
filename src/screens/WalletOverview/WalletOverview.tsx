@@ -46,7 +46,7 @@ export default function WalletOverview({ navigation }: WalletOverviewProps) {
   }
 
   return (
-    <SafeLayout style={{ paddingTop: 24 }}>
+    <SafeLayout>
       <Column style={{ alignItems: "center" }}>
         <View
           style={{

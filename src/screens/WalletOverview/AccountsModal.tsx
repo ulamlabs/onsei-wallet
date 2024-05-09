@@ -130,7 +130,7 @@ export default function AccountsModal({ navigation }: AccountsModalProps) {
             navigation.goBack();
             navigation.navigate("Add Wallet");
           }}
-          icon={<Add size={20} color="white" />}
+          icon={Add}
         />
         <SecondaryButton
           title="Import an existing wallet"
@@ -138,7 +138,7 @@ export default function AccountsModal({ navigation }: AccountsModalProps) {
             navigation.goBack();
             navigation.navigate("Import Wallet");
           }}
-          icon={<Import size={20} color="white" />}
+          icon={Import}
         />
       </View>
     </SafeLayout>
