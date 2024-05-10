@@ -105,6 +105,16 @@ export default function WalletOverview({ navigation }: WalletOverviewProps) {
             <Headline>
               {formatTokenAmount(sei.balance, sei.decimals)} SEI
             </Headline>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("Transactions", {
+                  address: activeAccount.address,
+                })
+              }
+            >
+              <Paragraph>Transaction History</Paragraph>
+              {/* TO DELETE WHEN DESIGN FOR HISTORY IS READY */}
+            </TouchableOpacity>
           </>
         ) : (
           <Loader />
