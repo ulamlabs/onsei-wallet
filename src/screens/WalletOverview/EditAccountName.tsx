@@ -12,7 +12,6 @@ type EditAccountNameProps = NativeStackScreenProps<
 >;
 
 export default function EditAccountName({
-  navigation,
   route: {
     params: { account },
   },

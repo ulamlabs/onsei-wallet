@@ -12,15 +12,26 @@ export type Transaction = {
   type: string;
 };
 
+type Coin = { denom: string; amount: string };
+
+type MsgSend = {
+  "@type": "/cosmos.bank.v1beta1.MsgSend";
+  from_address: string;
+  to_address: string;
+  amount: Coin[];
+};
+
+type MsgMultiSend = {
+  "@type": "/cosmos.bank.v1beta1.MsgMultiSend";
+  inputs: { address: string; coins: Coin[] }[];
+  outputs: { address: string; coins: Coin[] }[];
+};
+
 type TxResponse = {
   txhash: string;
   tx: {
     body: {
-      messages: {
-        from_address: string;
-        to_address: string;
-        amount: { denom: "string"; amount: "string" }[];
-      }[];
+      messages: MsgSend[] | MsgMultiSend[];
     };
   };
   timestamp: string;
@@ -62,23 +73,40 @@ const getTransactions = async (address: string): Promise<Transaction[]> => {
     ...sendData.tx_responses,
     ...receivedData.tx_responses,
   ]
-    .filter((resp) => resp.tx.body.messages[0]?.amount !== undefined)
+    .filter((resp) => resp.tx.body.messages[0] !== undefined)
     .sort(
       (a, b) =>
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
     )
     .map((resp) => {
-      return {
-        amount: +resp.tx.body.messages[0]?.amount[0]?.amount / 10 ** 6,
-        asset: "SEI",
-        date: formatDate(resp.timestamp),
-        from: resp.tx.body.messages[0]?.from_address,
-        to: resp.tx.body.messages[0]?.to_address,
-        type:
-          resp.tx.body.messages[0]?.from_address === address
-            ? "Send"
-            : "Receive",
-      };
+      const commonPath = resp.tx.body.messages[0];
+      const isMultiSend =
+        commonPath["@type"] === "/cosmos.bank.v1beta1.MsgMultiSend";
+
+      const amount = isMultiSend
+        ? +commonPath?.inputs[0].coins[0].amount / 10 ** 6
+        : +commonPath?.amount[0]?.amount / 10 ** 6;
+
+      const asset = "SEI";
+      const date = formatDate(resp.timestamp);
+
+      const from = isMultiSend
+        ? commonPath.inputs[0].address
+        : commonPath?.from_address;
+
+      const to = isMultiSend
+        ? commonPath.outputs[0].address
+        : commonPath?.to_address;
+
+      const type = isMultiSend
+        ? commonPath.inputs[0].address === address
+          ? "Send"
+          : "Receive"
+        : commonPath?.from_address === address
+          ? "Send"
+          : "Receive";
+
+      return { amount, asset, date, from, to, type };
     });
   return response;
 };

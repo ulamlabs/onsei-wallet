@@ -17,6 +17,7 @@ import {
   Copy,
   DirectboxReceive,
   DirectboxSend,
+  Scan,
   Setting2,
 } from "iconsax-react-native";
 import React from "react";
@@ -45,6 +46,10 @@ export default function WalletOverview({ navigation }: WalletOverviewProps) {
     navigation.push("Settings");
   }
 
+  function onScan() {
+    navigation.push("ScanModal");
+  }
+
   return (
     <SafeLayout>
       <Column style={{ alignItems: "center" }}>
@@ -54,6 +59,7 @@ export default function WalletOverview({ navigation }: WalletOverviewProps) {
             flexDirection: "row",
             width: "100%",
             alignItems: "center",
+            marginBottom: 32,
           }}
         >
           <TouchableOpacity onPress={openSettings}>
@@ -116,7 +122,9 @@ export default function WalletOverview({ navigation }: WalletOverviewProps) {
           icon={DirectboxReceive}
         />
         <SecondaryButton title="Send" onPress={onSend} icon={DirectboxSend} />
+        <SecondaryButton title="Scan" onPress={onScan} icon={Scan} />
       </Row>
+      <Column></Column>
     </SafeLayout>
   );
 }

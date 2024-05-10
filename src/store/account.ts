@@ -38,6 +38,10 @@ export type AccountsStore = {
   clearStore: () => Promise<void>;
   getMnemonic: (name: string) => string;
   editAccountName: (address: string, newName: string) => void;
+  toggleAccountOption: (
+    option: "hideAssetsValue" | "allowNotifications",
+    address: string,
+  ) => void;
 };
 
 export const useAccountsStore = create<AccountsStore>((set, get) => ({
@@ -145,6 +149,23 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
       const updatedAccounts = state.accounts.map((acc) => {
         if (acc.address === address) {
           return { ...acc, name: newName };
+        }
+        return acc;
+      });
+      saveToStorage("accounts", updatedAccounts);
+
+      return { ...state, accounts: updatedAccounts };
+    });
+    if (activeAccount?.address === address) {
+      setActiveAccount(address);
+    }
+  },
+  toggleAccountOption(option, address) {
+    const { activeAccount, setActiveAccount } = get();
+    set((state) => {
+      const updatedAccounts = state.accounts.map((acc) => {
+        if (acc.address === address) {
+          return { ...acc, [option]: !acc[option] };
         }
         return acc;
       });

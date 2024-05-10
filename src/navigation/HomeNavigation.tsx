@@ -1,5 +1,6 @@
 import MnemonicScreen from "@/screens/MnemonicScreen";
 import ReceiveAssets from "@/screens/ReceiveAssets";
+import ScanModal from "@/screens/Scan/ScanModal";
 import SendAssets from "@/screens/SendAssets";
 import Transactions from "@/screens/Transactions";
 import AccountSettings from "@/screens/WalletOverview/AccountSettings";
@@ -54,6 +55,8 @@ export type HomeParamList = {
   AccountsModal: undefined;
   "Account settings": { address: string };
   "Edit name": { account: Account };
+  ScanModal: undefined;
+  Scan: undefined;
   "Manage Token List": undefined;
 };
 
@@ -104,6 +107,23 @@ export default function HomeNavigation() {
         options={{ presentation: "modal", headerShown: false }}
         name="AccountsModal"
         component={AccountsModalNavigation}
+      />
+      <Screen
+        options={{ presentation: "modal", headerShown: false }}
+        name="ScanModal"
+        component={ScanModalNavigation}
+      />
+    </Navigator>
+  );
+}
+
+function ScanModalNavigation() {
+  return (
+    <Navigator screenOptions={navigatorScreenOptions}>
+      <Screen
+        name="Scan"
+        component={ScanModal}
+        options={{ headerShown: false }}
       />
     </Navigator>
   );

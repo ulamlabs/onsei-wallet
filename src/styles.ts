@@ -17,4 +17,5 @@ export const Colors = {
   success: "#41D352",
   warning: "#FFEE0A",
   danger: "#FF444E",
+  switch: "#345DC7",
 };
