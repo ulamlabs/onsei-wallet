@@ -119,16 +119,65 @@ First, you need to head over to `node_modules/expo-application/android/build.gra
 Then, make sure that you have the newest version of the app in `/android` folder
 
 ```
-expo run:android
+npx expo run:android
 ```
 
-Finally, in the created `android` directory run:
+Then, there are two paths:
+
+If you want to create an `.apk` version that can be manually installed on your device, simply run:
 
 ```
+cd android
 ./gradlew assembleRelease
 ```
 
 The newly generated `.apk` file will be located in `/android/app/build/outputs/apk/release/app-release.apk`. It can be directly copied and installed on an Android device.
+
+However, if you want to upload the app in Google Store, the `.apk` file is not accepted and it needs to be signed, so the process is more complicated.
+Firstly, you need to get the upload key. Ask someone from your team for a `my-upload-key.keystore` file and the password. Place the mentioned file under the `android/app` directory.
+Secondly, edit the file `android/gradle.properties`, and add the following (replace \*\*\* with the correct keystore password).
+
+```
+MYAPP_UPLOAD_STORE_FILE=my-upload-key.keystore
+MYAPP_UPLOAD_KEY_ALIAS=my-key-alias
+MYAPP_UPLOAD_STORE_PASSWORD=***
+MYAPP_UPLOAD_KEY_PASSWORD=***
+```
+
+The last configuration step that needs to be done is to setup release builds to be signed using upload key. Edit the file `android/app/build.gradle`. Make sure the `versionName` matches version in `app.json`. Then make the following changes:
+
+```
+...
+android {
+    ...
+    defaultConfig { ... }
+    signingConfigs {
+        release {
+            if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
+                storeFile file(MYAPP_UPLOAD_STORE_FILE)
+                storePassword MYAPP_UPLOAD_STORE_PASSWORD
+                keyAlias MYAPP_UPLOAD_KEY_ALIAS
+                keyPassword MYAPP_UPLOAD_KEY_PASSWORD
+            }
+        }
+    }
+    buildTypes {
+        release {
+            ...
+            signingConfig signingConfigs.release
+        }
+    }
+}
+...
+```
+
+Finally, run the following command in the android directory:
+
+```
+./gradlew bundleRelease
+```
+
+The newly generated `.aab` file will be located in `/android/app/build/outputs/bundle/release/app-release.aab`. It can be uploaded into the Google Play Store.
 
 #### Troubleshooting
 
