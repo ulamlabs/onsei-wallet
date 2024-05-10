@@ -18,4 +18,6 @@ export const Colors = {
   warning: "#FFEE0A",
   danger: "#FF444E",
   switch: "#345DC7",
+  opacityBackground: "rgba(26,26,26,0.95)",
+  checkBackground: "#3E925A",
 };

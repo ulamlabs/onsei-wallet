@@ -1,5 +1,6 @@
 import {
   Column,
+  CopyAddress,
   Headline,
   Loader,
   Paragraph,
@@ -14,7 +15,6 @@ import { formatTokenAmount } from "@/utils/formatAmount";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
   ArrowDown2,
-  Copy,
   DirectboxReceive,
   DirectboxSend,
   Scan,
@@ -61,6 +61,7 @@ export default function WalletOverview({ navigation }: WalletOverviewProps) {
             width: "100%",
             alignItems: "center",
             marginBottom: 32,
+            zIndex: 1,
           }}
         >
           <TouchableOpacity onPress={openSettings}>
@@ -81,9 +82,7 @@ export default function WalletOverview({ navigation }: WalletOverviewProps) {
             </Paragraph>
             <ArrowDown2 color={Colors.text} />
           </TouchableOpacity>
-          <TouchableOpacity>
-            <Copy size={22} color={Colors.text100} />
-          </TouchableOpacity>
+          <CopyAddress address={activeAccount?.address || ""} />
         </View>
         {node === "TestNet" && (
           <View

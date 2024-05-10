@@ -3,6 +3,7 @@ import AccountOption from "./AccountOption";
 import AccountsList from "./AccountsList";
 import AddressBookEntry from "./AddressBookEntry";
 import Biometrics from "./Biometrics";
+import CopyAddress from "./CopyAddress";
 import Loader from "./Loader";
 import MnemonicWords from "./MnemonicWords";
 import TokenIcon from "./TokenIcon";
@@ -22,6 +23,7 @@ export {
   AccountsList,
   AddressBookEntry,
   Biometrics,
+  CopyAddress,
   Loader,
   MnemonicWords,
   Modal,
