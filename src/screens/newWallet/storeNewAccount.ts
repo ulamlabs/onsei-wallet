@@ -17,7 +17,6 @@ export async function storeNewAccount(
 
   await accountsStore.storeAccount(walletName, wallet, skipValidation);
   accountsStore.setActiveAccount(wallet.address);
-  accountsStore.subscribeToAccounts();
 
   const nextRoute: keyof NavigatorParamsList =
     navigation.getId() === "onboarding" ? "Protect Your Wallet" : "Home";

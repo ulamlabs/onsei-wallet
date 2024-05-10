@@ -42,7 +42,6 @@ export default function ImportWalletScreen({ navigation }: NewWalletProps) {
         mnemonicInput.value.trim(),
       );
       accountsStore.setActiveAccount(newAccount.address);
-      accountsStore.subscribeToAccounts();
 
       const nextRoute: keyof NavigatorParamsList =
         navigation.getId() === "onboarding" ? "Protect Your Wallet" : "Home";

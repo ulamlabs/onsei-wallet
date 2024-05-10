@@ -13,7 +13,7 @@ export default function AccountsList() {
   const [accountsSorted, setAccountsSorted] = useState<Account[]>([]);
 
   useEffect(() => {
-    setAccountsSorted(accounts.sort((a, b) => b.balance - a.balance));
+    setAccountsSorted(accounts.sort((a, b) => b.name.localeCompare(a.name)));
   }, [accounts]);
 
   function onAddNew() {

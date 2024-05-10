@@ -6,7 +6,6 @@ import {
 } from "@/store";
 import { Colors } from "@/styles";
 import { NavigationProp } from "@/types";
-import { formatTokenAmount } from "@/utils/formatAmount";
 import { trimAddress } from "@/utils/trimAddress";
 import { useNavigation } from "@react-navigation/native";
 import * as Clipboard from "expo-clipboard";
@@ -30,7 +29,7 @@ type Props = {
 };
 
 export default function AccountListItem({ account }: Props) {
-  const { address, balance, passphraseSkipped } = account;
+  const { address, passphraseSkipped } = account;
   const { activeAccount, setActiveAccount, deleteAccount } = useAccountsStore();
   const { ask, alert } = useModalStore();
   const { authorize, state } = useAuthStore();
@@ -99,7 +98,6 @@ export default function AccountListItem({ account }: Props) {
           {/* Temporary solution until we get designs */}
           {passphraseSkipped && <Warning2 size={16} color={Colors.warning} />}
         </Row>
-        <Text>{formatTokenAmount(balance)}</Text>
       </Row>
 
       <Row>

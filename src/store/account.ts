@@ -1,8 +1,4 @@
-import {
-  MNEMONIC_WORDS_COUNT,
-  NODE_URL,
-  VALID_ACCOUNT_NAME_REGEX,
-} from "@/const";
+import { MNEMONIC_WORDS_COUNT, VALID_ACCOUNT_NAME_REGEX } from "@/const";
 import {
   loadFromSecureStorage,
   loadFromStorage,
@@ -10,16 +6,13 @@ import {
   saveToSecureStorage,
   saveToStorage,
 } from "@/utils";
-import { generateWallet, getQueryClient, restoreWallet } from "@sei-js/cosmjs";
+import { generateWallet, restoreWallet } from "@sei-js/cosmjs";
 import { create } from "zustand";
-import { useSettingsStore } from "./settings";
 import { useTokensStore } from "./tokens";
 
 export type Account = {
   name: string;
   address: string;
-  balance: number;
-  usdBalance: number;
   passphraseSkipped: boolean;
 };
 
@@ -31,7 +24,6 @@ export type Wallet = {
 export type AccountsStore = {
   accounts: Account[];
   activeAccount: Account | null;
-  tokenPrice: number;
   init: () => Promise<void>;
   setActiveAccount: (address: string | null) => void;
   generateWallet: () => Promise<Wallet>;
@@ -45,11 +37,6 @@ export type AccountsStore = {
   deleteAccount: (name: string) => Promise<void>;
   clearStore: () => Promise<void>;
   getMnemonic: (name: string) => string;
-  subscribeToAccounts: () => void;
-  getRawBalance: (address: string) => Promise<number>;
-  getUSDBalance: (balance: number) => number;
-  getBalance: (address: string) => Promise<number>;
-  updateAccounts: (addresses?: string[]) => void;
 };
 
 export const useAccountsStore = create<AccountsStore>((set, get) => ({
@@ -58,28 +45,18 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
   tokenPrice: 0,
   init: async () => {
     const accounts = await loadFromStorage<Account[]>("accounts", []);
-    const balances = await Promise.all(
-      accounts.map((acc) => get().getBalance(acc.address)),
-    );
-
-    const updatedAccounts = accounts.map((acc, index) => ({
-      ...acc,
-      balance: balances[index],
-    }));
-    const activeAccount = updatedAccounts[0];
+    const activeAccount = accounts[0];
     if (activeAccount) {
-      const node = useSettingsStore.getState().settings.node;
-      useTokensStore.getState().loadTokens(activeAccount.address, node);
+      useTokensStore.getState().loadTokens(activeAccount.address);
     }
-    set({ accounts: updatedAccounts, activeAccount });
+    set({ accounts, activeAccount });
   },
   setActiveAccount: (address) => {
     set((state) => ({
       ...state,
       activeAccount: state.accounts.find((a) => a.address === address),
     }));
-    const node = useSettingsStore.getState().settings.node;
-    useTokensStore.getState().loadTokens(address ?? "", node);
+    useTokensStore.getState().loadTokens(address ?? "");
   },
   generateWallet: async () => {
     const wallet = await generateWallet(MNEMONIC_WORDS_COUNT);
@@ -96,8 +73,6 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
     const account: Account = {
       name,
       address: wallet.address,
-      balance: 0,
-      usdBalance: 0,
       passphraseSkipped,
     };
     set((state) => {
@@ -113,12 +88,9 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
     saveToSecureStorage(getMnenomicKey(address), wallet.mnemonic);
 
     const seiAccount = (await wallet.getAccounts())[0];
-    const balance = await get().getBalance(seiAccount.address);
     const newAccount: Account = {
       name,
       address: seiAccount.address,
-      balance,
-      usdBalance: get().getUSDBalance(balance),
       passphraseSkipped: false,
     };
 
@@ -165,70 +137,6 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
   },
   getMnemonic: (address: string) => {
     return loadFromSecureStorage(getMnenomicKey(address));
-  },
-  subscribeToAccounts: () => {
-    // TODO: a function that observes balance changes on accounts and updates them
-  },
-  getRawBalance: async (address: string) => {
-    try {
-      if (!address) {
-        return 0;
-      }
-      const queryClient = await getQueryClient(
-        "https://rest." + NODE_URL[useSettingsStore.getState().settings.node],
-      );
-      const balance = await queryClient.cosmos.bank.v1beta1.allBalances({
-        address,
-      });
-      const amount = +balance.balances[0]?.amount || 0;
-      return amount;
-    } catch (error) {
-      console.error(error);
-      return 0;
-    }
-  },
-  getBalance: async (address) => {
-    try {
-      const rawBalance = await get().getRawBalance(address);
-
-      return rawBalance / 10 ** 6;
-    } catch (error) {
-      console.error(error);
-      return 0;
-    }
-  },
-  getUSDBalance: (balance) => {
-    // TODO: handle get token price
-    return balance * get().tokenPrice;
-  },
-  updateAccounts: async (addresses) => {
-    const { getBalance, accounts, setActiveAccount, activeAccount } = get();
-    if (!addresses) {
-      addresses = accounts.map((a) => a.address);
-    }
-    const udpatedAcc = await Promise.all(
-      accounts.map(async (acc) => {
-        if (addresses!.includes(acc.address)) {
-          const bal = await getBalance(acc.address);
-          return { ...acc, balance: bal };
-        }
-        return acc;
-      }),
-    );
-
-    set((state) => {
-      saveToStorage("accounts", udpatedAcc);
-      return { ...state, accounts: udpatedAcc };
-    });
-
-    if (!activeAccount) {
-      return;
-    }
-
-    setActiveAccount(
-      udpatedAcc.find((acc) => acc.address === activeAccount?.address)
-        ?.address || activeAccount.address,
-    );
   },
 }));
 
