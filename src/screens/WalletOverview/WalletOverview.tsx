@@ -22,6 +22,7 @@ import {
 } from "iconsax-react-native";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import { TokensList } from "../account";
 
 type WalletOverviewProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -124,7 +125,7 @@ export default function WalletOverview({ navigation }: WalletOverviewProps) {
         <SecondaryButton title="Send" onPress={onSend} icon={DirectboxSend} />
         <SecondaryButton title="Scan" onPress={onScan} icon={Scan} />
       </Row>
-      <Column></Column>
+      <TokensList />
     </SafeLayout>
   );
 }

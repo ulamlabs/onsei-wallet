@@ -104,6 +104,11 @@ export default function HomeNavigation() {
       <Screen name="Import Wallet" component={ImportWalletScreen} />
       <Screen name="Settings" component={SettingsScreen} />
       <Screen
+        name="Manage Token List"
+        component={ManageTokensScreen}
+        options={{ presentation: "modal", headerShown: false }}
+      />
+      <Screen
         options={{ presentation: "modal", headerShown: false }}
         name="AccountsModal"
         component={AccountsModalNavigation}

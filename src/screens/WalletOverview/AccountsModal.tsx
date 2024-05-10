@@ -57,7 +57,7 @@ export default function AccountsModal({ navigation }: AccountsModalProps) {
           <Paragraph
             style={{ color: isActive ? Colors.text300 : Colors.text100 }}
           >
-            ${item.balance}
+            {item.balance} SEI
           </Paragraph>
         </View>
         <TouchableOpacity
@@ -116,7 +116,7 @@ export default function AccountsModal({ navigation }: AccountsModalProps) {
             </Paragraph>
           </TouchableOpacity>
           <Paragraph style={{ color: Colors.text }}>
-            Total: ${calculateTotalAmount()}
+            Total: {calculateTotalAmount()} SEI
           </Paragraph>
         </View>
         <View style={{ paddingTop: 14 }}>
