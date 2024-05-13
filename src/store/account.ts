@@ -42,6 +42,7 @@ export type AccountsStore = {
     option: "hideAssetsValue" | "allowNotifications",
     address: string,
   ) => void;
+  validateName: (name: string) => void;
 };
 
 export const useAccountsStore = create<AccountsStore>((set, get) => ({
@@ -108,7 +109,17 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
     return newAccount;
   },
   validateEntry: (name: string, address: string) => {
+    const { accounts, validateName } = get();
+    validateName(name);
+    if (accounts.find((a) => a.address === address)) {
+      throw Error("An account with this address already exists");
+    }
+  },
+  validateName: (name) => {
     const accounts = get().accounts;
+    if (!name) {
+      throw Error("Name cannot be empty");
+    }
     if (name.length > 20) {
       throw new Error("Name cannot be longer than 20 chars");
     }
@@ -119,9 +130,6 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
     }
     if (accounts.find((a) => a.name === name)) {
       throw Error("An account with given name already exists");
-    }
-    if (accounts.find((a) => a.address === address)) {
-      throw Error("An account with this address already exists");
     }
   },
   deleteAccount: async (address: string) => {
