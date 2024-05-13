@@ -67,8 +67,10 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
       balance: balances[index],
     }));
     const activeAccount = updatedAccounts[0];
-    const node = useSettingsStore.getState().settings.node;
-    useTokensStore.getState().loadTokens(activeAccount.address, node);
+    if (activeAccount) {
+      const node = useSettingsStore.getState().settings.node;
+      useTokensStore.getState().loadTokens(activeAccount.address, node);
+    }
     set({ accounts: updatedAccounts, activeAccount });
   },
   setActiveAccount: (address) => {
