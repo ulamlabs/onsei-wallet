@@ -85,6 +85,6 @@ const getTransactions = async (address: string): Promise<Transaction[]> => {
 
 export const useTransactions = (address: string) =>
   useQuery({
-    queryKey: ["GET", address],
+    queryKey: ["transactions", address],
     queryFn: () => getTransactions(address),
   });

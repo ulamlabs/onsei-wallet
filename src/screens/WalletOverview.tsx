@@ -14,8 +14,8 @@ import { NavigatorParamsList } from "@/types";
 import { formatTokenAmount } from "@/utils/formatAmount";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { DirectboxReceive, DirectboxSend } from "iconsax-react-native";
-import React from "react";
 import { Text, View } from "react-native";
+import { TokensList } from "./account";
 
 type WalletOverviewProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -82,6 +82,8 @@ export default function WalletOverview({ navigation }: WalletOverviewProps) {
       </Row>
 
       <AccountsList />
+
+      <TokensList />
     </SafeLayout>
   );
 }
