@@ -33,7 +33,7 @@ export type AccountsStore = {
     wallet: Wallet,
     passphraseSkipped: boolean,
   ) => Promise<void>;
-  importAccount: (name: string, mnemonic: string) => Promise<Account>;
+  importAccount: (mnemonic: string) => Promise<Account>;
   deleteAccount: (name: string) => Promise<void>;
   clearStore: () => Promise<void>;
   getMnemonic: (name: string) => string;
@@ -91,8 +91,9 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
     saveToSecureStorage(getMnenomicKey(address), wallet.mnemonic);
 
     const seiAccount = (await wallet.getAccounts())[0];
+    const accountNumber = accounts.length;
     const newAccount: Account = {
-      name,
+      name: `Wallet ${accountNumber + 1}`,
       address: seiAccount.address,
       passphraseSkipped: false,
     };
