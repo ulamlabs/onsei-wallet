@@ -1,5 +1,4 @@
 import AccountListItem from "./AccountListItem";
-import AccountOption from "./AccountOption";
 import AccountsList from "./AccountsList";
 import AddressBookEntry from "./AddressBookEntry";
 import Biometrics from "./Biometrics";
@@ -19,7 +18,6 @@ export * from "./pin";
 export * from "./typography";
 export {
   AccountListItem,
-  AccountOption,
   AccountsList,
   AddressBookEntry,
   Biometrics,

@@ -52,10 +52,8 @@ export type HomeParamList = {
   "Confirm Mnemonic": { wallet: Wallet };
   Settings: undefined;
   Accounts: undefined;
-  AccountsModal: undefined;
   "Account settings": { address: string };
   "Edit name": { account: Account };
-  ScanModal: undefined;
   Scan: undefined;
   "Manage Token List": undefined;
 };

@@ -1,4 +1,4 @@
-import { Paragraph, SafeLayout, SecondaryButton } from "@/components";
+import { Paragraph, Row, SafeLayout, SecondaryButton } from "@/components";
 import { Account, useAccountsStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
@@ -88,7 +88,7 @@ export default function AccountsScreen({ navigation }: AccountsScreenProps) {
   return (
     <SafeLayout style={{ justifyContent: "space-between" }} noScroll={true}>
       <View>
-        <View
+        <Row
           style={{
             paddingHorizontal: 16,
             paddingVertical: 24,
@@ -98,8 +98,6 @@ export default function AccountsScreen({ navigation }: AccountsScreenProps) {
             borderTopRightRadius: 12,
             marginLeft: -10,
             width: screenWidth,
-            justifyContent: "space-between",
-            flexDirection: "row",
           }}
         >
           <View style={{ flexDirection: "row" }}>
@@ -121,7 +119,7 @@ export default function AccountsScreen({ navigation }: AccountsScreenProps) {
           <Paragraph style={{ color: Colors.text }}>
             Total: {calculateTotalAmount()} SEI
           </Paragraph>
-        </View>
+        </Row>
         <View style={{ paddingTop: 14 }}>
           <FlatList data={accounts} renderItem={renderAccounts} />
         </View>
