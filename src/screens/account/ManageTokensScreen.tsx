@@ -6,7 +6,7 @@ import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
-import { Add } from "iconsax-react-native";
+import { ArrowLeft2 } from "iconsax-react-native";
 import { useEffect, useState } from "react";
 import { Dimensions, TouchableOpacity, View } from "react-native";
 import TokenToggle from "./TokenToggle";
@@ -92,11 +92,7 @@ export default function ManageTokensScreen({
           onPress={() => navigation.goBack()}
           style={{ flexDirection: "row", gap: 24 }}
         >
-          <Add
-            style={{ transform: [{ rotateZ: "45deg" }] }}
-            color={Colors.text}
-            size={24}
-          />
+          <ArrowLeft2 color={Colors.text} size={24} />
           <Paragraph
             style={{ color: Colors.text, fontSize: 18, fontWeight: "700" }}
           >

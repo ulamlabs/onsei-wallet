@@ -4,7 +4,7 @@ import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import D from "decimal.js";
-import { Add, Import, Setting2 } from "iconsax-react-native";
+import { Add, ArrowLeft2, Import, Setting2 } from "iconsax-react-native";
 import { Dimensions, FlatList, TouchableOpacity, View } from "react-native";
 
 type AccountsModalProps = NativeStackScreenProps<
@@ -28,6 +28,11 @@ export default function AccountsModal({ navigation }: AccountsModalProps) {
       .toString();
   };
 
+  const selectAccount = (address: string) => {
+    setActiveAccount(address);
+    navigation.goBack();
+  };
+
   const renderAccounts = ({ item }: AccountsRenderProps) => {
     const isActive = item.address === activeAccount?.address;
     return (
@@ -42,7 +47,7 @@ export default function AccountsModal({ navigation }: AccountsModalProps) {
           flexDirection: "row",
           alignItems: "center",
         }}
-        onPress={() => setActiveAccount(item.address)}
+        onPress={() => selectAccount(item.address)}
       >
         <View>
           <Paragraph
@@ -100,21 +105,22 @@ export default function AccountsModal({ navigation }: AccountsModalProps) {
             flexDirection: "row",
           }}
         >
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={{ flexDirection: "row", gap: 24 }}
-          >
-            <Add
-              style={{ transform: [{ rotateZ: "45deg" }] }}
-              color={Colors.text}
-              size={24}
-            />
-            <Paragraph
-              style={{ color: Colors.text, fontSize: 18, fontWeight: "700" }}
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={{ flexDirection: "row" }}
             >
-              Accounts
-            </Paragraph>
-          </TouchableOpacity>
+              <ArrowLeft2 color={Colors.text} size={24} />
+              <Paragraph style={{ color: Colors.text, fontSize: 18 }}>
+                Home
+              </Paragraph>
+            </TouchableOpacity>
+          </View>
+          <Paragraph
+            style={{ color: Colors.text, fontSize: 18, fontWeight: "700" }}
+          >
+            Accounts
+          </Paragraph>
           <Paragraph style={{ color: Colors.text }}>
             Total: {calculateTotalAmount()} SEI
           </Paragraph>

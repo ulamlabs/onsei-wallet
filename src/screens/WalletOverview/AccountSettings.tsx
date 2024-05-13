@@ -1,10 +1,18 @@
-import { AccountOption, Paragraph, SafeLayout } from "@/components";
-import { useAccountsStore } from "@/store";
-import { Colors } from "@/styles";
+import {
+  AccountOption,
+  DangerButton,
+  Headline,
+  IconButton,
+  Modals,
+  Paragraph,
+  Row,
+  SafeLayout,
+} from "@/components";
+import { useAccountsStore, useAuthStore, useModalStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Edit2 } from "iconsax-react-native";
-import { TouchableOpacity, View } from "react-native";
+import { Setting2 } from "iconsax-react-native";
+import { View } from "react-native";
 
 type AccountSettingsProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -17,66 +25,77 @@ export default function AccountSettings({
     params: { address },
   },
 }: AccountSettingsProps) {
-  const { accounts, toggleAccountOption } = useAccountsStore();
+  const { accounts, toggleAccountOption, deleteAccount, activeAccount } =
+    useAccountsStore();
+  const { authorize, state } = useAuthStore();
+  const { ask } = useModalStore();
   const selectedAccount = accounts.find(
     (account) => account.address === address,
   );
 
   const toggleAssets = () => {
-    toggleAccountOption("hideAssetsValue", address); // Doing nothing besides handling switch
+    toggleAccountOption("hideAssetsValue", address);
   };
 
   const toggleNotifications = () => {
-    toggleAccountOption("allowNotifications", address); // Doing nothing besides handling switch
-  };
-
-  const showPrivateKey = () => {
-    // navigate to private key
+    toggleAccountOption("allowNotifications", address);
   };
 
   const showRecoveryPhrase = () => {
-    navigation.getParent()?.goBack();
-    navigation.navigate("Your Mnemonic", { address: address });
+    if (state !== "noPin") {
+      authorize(navigation, "Your Mnemonic", { address });
+      return;
+    }
+
+    navigation.navigate("Your Mnemonic", { address });
   };
+
+  async function onRemove() {
+    if (!selectedAccount) {
+      return;
+    }
+    const yesno = await ask({
+      title: "Remove account?",
+      question:
+        "Are you sure you want to remove this account?\nThis action cannot be reversed.",
+      yes: "Yes, remove the account",
+      no: "No, keep the account",
+      primary: "yes",
+      danger: true,
+    });
+    if (yesno) {
+      await deleteAccount(selectedAccount.address);
+      navigation.goBack();
+    }
+  }
 
   return (
     <SafeLayout style={{ paddingTop: 24 }}>
       {selectedAccount ? (
         <>
-          <View
+          <Row
             style={{
               paddingHorizontal: 22,
               paddingVertical: 16,
               justifyContent: "space-between",
-              flexDirection: "row",
               alignItems: "center",
               marginBottom: 32,
             }}
           >
-            <Paragraph
+            <Headline
               style={{
-                color: Colors.text,
                 fontSize: 20,
-                fontWeight: "700",
               }}
             >
               {selectedAccount?.name}
-            </Paragraph>
-            <TouchableOpacity
-              style={{
-                height: 38,
-                width: 38,
-                padding: 8,
-                borderRadius: 14,
-                backgroundColor: Colors.background300,
-              }}
+            </Headline>
+            <IconButton
+              icon={Setting2}
               onPress={() =>
                 navigation.navigate("Edit name", { account: selectedAccount })
               }
-            >
-              <Edit2 color={Colors.text} size={22} />
-            </TouchableOpacity>
-          </View>
+            />
+          </Row>
           <View style={{ gap: 1 }}>
             <AccountOption
               title="Hide assets value"
@@ -92,21 +111,23 @@ export default function AccountSettings({
               value={selectedAccount.allowNotifications}
             />
             <AccountOption
-              title="Show private key"
-              onPress={showPrivateKey}
-              value={selectedAccount.allowNotifications}
-            />
-            <AccountOption
               title="Show recovery phrase"
               onPress={showRecoveryPhrase}
-              value={selectedAccount.allowNotifications}
               style={{ borderBottomStartRadius: 22, borderBottomEndRadius: 22 }}
             />
+            {activeAccount?.address !== address && (
+              <DangerButton
+                title="Remove Account"
+                onPress={onRemove}
+                style={{ marginTop: 20 }}
+              />
+            )}
           </View>
         </>
       ) : (
         <Paragraph>Something went wrong</Paragraph>
       )}
+      <Modals />
     </SafeLayout>
   );
 }

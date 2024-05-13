@@ -109,7 +109,10 @@ export default function HomeNavigation() {
         options={{ presentation: "modal", headerShown: false }}
       />
       <Screen
-        options={{ presentation: "modal", headerShown: false }}
+        options={{
+          presentation: "modal",
+          headerShown: false,
+        }}
         name="AccountsModal"
         component={AccountsModalNavigation}
       />
@@ -153,6 +156,7 @@ function AccountsModalNavigation() {
         options={{ headerStyle: { backgroundColor: Colors.background100 } }}
       />
       <Screen name="Manage Token List" component={ManageTokensScreen} />
+      <Screen name="Your Mnemonic" component={MnemonicScreen} />
     </Navigator>
   );
 }
