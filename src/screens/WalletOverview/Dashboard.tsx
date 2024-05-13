@@ -30,7 +30,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
     navigation.push("Receive");
   }
   function onSend() {
-    navigation.push("Send", {});
+    navigation.push("transferSelectToken");
   }
 
   function render() {

@@ -1,25 +1,19 @@
-import { Row, Text, TokenIcon } from "@/components";
 import { CosmToken } from "@/services/cosmos";
 import { Colors } from "@/styles";
 import { PropsWithChildren } from "react";
 import { View } from "react-native";
+import Box from "./Box";
+import { Row } from "./layout";
+import TokenIcon from "./TokenIcon";
+import { Text } from "./typography";
 
-type TokenInfoProps = PropsWithChildren & {
+type TokenBoxProps = PropsWithChildren & {
   token: CosmToken;
 };
 
-export default function Token({ token, children }: TokenInfoProps) {
+export default function TokenBox({ token, children }: TokenBoxProps) {
   return (
-    <Row
-      style={{
-        backgroundColor: Colors.background200,
-        padding: 5,
-        borderRadius: 22,
-        alignItems: "center",
-        paddingHorizontal: 22,
-        paddingVertical: 16,
-      }}
-    >
+    <Box>
       <Row style={{ alignItems: "center" }}>
         <TokenIcon token={token} />
         <View>
@@ -28,6 +22,6 @@ export default function Token({ token, children }: TokenInfoProps) {
         </View>
       </Row>
       {children}
-    </Row>
+    </Box>
   );
 }

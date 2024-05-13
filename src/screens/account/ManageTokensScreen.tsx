@@ -4,7 +4,8 @@ import { CosmToken, fetchCW20Token } from "@/services/cosmos";
 import { useSettingsStore, useTokensStore } from "@/store";
 import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
 import { useEffect, useState } from "react";
-import TokenToggle from "./TokenToggle";
+import TokenToggleBox from "./TokenToggleBox";
+import { searchTokens } from "@/utils";
 
 export default function ManageTokensScreen() {
   const searchInput = useInputState();
@@ -27,14 +28,7 @@ export default function ManageTokensScreen() {
       return;
     }
 
-    const textLowered = searchInput.value.toLowerCase();
-    setTokens(
-      tokensStore.cw20Tokens.filter(
-        (t) =>
-          t.name.toLowerCase().includes(textLowered) ||
-          t.symbol.toLowerCase().includes(textLowered),
-      ),
-    );
+    setTokens(searchTokens(tokensStore.cw20Tokens, searchInput.value));
   }
 
   async function fetchToken() {
@@ -51,7 +45,7 @@ export default function ManageTokensScreen() {
   }
 
   function onToggle(token: CosmToken) {
-    if (tokensStore.tokenMap.has(token.address)) {
+    if (tokensStore.tokenMap.has(token.id)) {
       tokensStore.removeToken(token);
     } else {
       tokensStore.addToken(token);
@@ -81,10 +75,10 @@ export default function ManageTokensScreen() {
         )}
 
         {tokens.map((token) => (
-          <TokenToggle
+          <TokenToggleBox
             token={token}
-            key={token.address}
-            selected={tokensStore.tokenMap.has(token.address)}
+            key={token.id}
+            selected={tokensStore.tokenMap.has(token.id)}
             onToggle={() => onToggle(token)}
           />
         ))}
