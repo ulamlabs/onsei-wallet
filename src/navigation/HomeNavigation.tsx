@@ -23,6 +23,7 @@ import React from "react";
 import BottomBarsNavigation from "./BottomBarsNavigation";
 import { navigatorScreenOptions } from "./const";
 import { ManageTokensScreen } from "@/screens/account";
+import { newWalletScreenOptions } from "./header/NewWalletHeader";
 
 export type HomeParamList = {
   Home: undefined;
@@ -77,8 +78,16 @@ export default function HomeNavigation() {
       <Screen name="Transactions" component={Transactions} />
       <Screen name="Your Mnemonic" component={MnemonicScreen} />
       <Screen name="Add Wallet" component={AddWalletScreen} />
-      <Screen name="Generate Wallet" component={GenerateWalletScreen} />
-      <Screen name="Confirm Mnemonic" component={ConfirmMnemonicScreen} />
+      <Screen
+        name="Generate Wallet"
+        options={() => newWalletScreenOptions({ step: 1 })}
+        component={GenerateWalletScreen}
+      />
+      <Screen
+        name="Confirm Mnemonic"
+        options={() => newWalletScreenOptions({ step: 2 })}
+        component={ConfirmMnemonicScreen}
+      />
       <Screen name="Import Wallet" component={ImportWalletScreen} />
       <Screen name="Manage Token List" component={ManageTokensScreen} />
     </Navigator>

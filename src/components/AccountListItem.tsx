@@ -16,6 +16,7 @@ import {
   Lock1,
   More,
   Trash,
+  Warning2,
 } from "iconsax-react-native";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
@@ -29,7 +30,7 @@ type Props = {
 };
 
 export default function AccountListItem({ account }: Props) {
-  const { address, balance } = account;
+  const { address, balance, passphraseSkipped } = account;
   const { activeAccount, setActiveAccount, deleteAccount } = useAccountsStore();
   const { ask, alert } = useModalStore();
   const { authorize, state } = useAuthStore();
@@ -93,7 +94,11 @@ export default function AccountListItem({ account }: Props) {
       }}
     >
       <Row>
-        <Text>{trimAddress(address)}</Text>
+        <Row>
+          <Text>{trimAddress(address)}</Text>
+          {/* Temporary solution until we get designs */}
+          {passphraseSkipped && <Warning2 size={16} color={Colors.warning} />}
+        </Row>
         <Text>{formatTokenAmount(balance)}</Text>
       </Row>
 

@@ -12,7 +12,9 @@ export function saveToSecureStorage(key: string, data: any) {
 export function loadFromSecureStorage(key: string, defaultValue: any = null) {
   try {
     const data = SecureStore.getItem(key);
-    if (!data) return defaultValue;
+    if (!data) {
+      return defaultValue;
+    }
     return JSON.parse(data);
   } catch (e) {
     // No data found in the storage

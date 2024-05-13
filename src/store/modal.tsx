@@ -1,3 +1,4 @@
+import { Icon } from "iconsax-react-native";
 import { ReactElement } from "react";
 import { create } from "zustand";
 
@@ -5,6 +6,7 @@ export type AlertOptions = {
   title: string;
   description: ReactElement | string;
   ok?: string;
+  icon?: Icon;
 };
 
 export type AskOptions = {

@@ -20,6 +20,7 @@ export type Account = {
   address: string;
   balance: number;
   usdBalance: number;
+  passphraseSkipped: boolean;
 };
 
 export type Wallet = {
@@ -27,14 +28,18 @@ export type Wallet = {
   mnemonic: string;
 };
 
-type AccountsStore = {
+export type AccountsStore = {
   accounts: Account[];
   activeAccount: Account | null;
   tokenPrice: number;
   init: () => Promise<void>;
   setActiveAccount: (address: string | null) => void;
   generateWallet: () => Promise<Wallet>;
-  storeAccount: (name: string, wallet: Wallet) => Promise<void>;
+  storeAccount: (
+    name: string,
+    wallet: Wallet,
+    passphraseSkipped: boolean,
+  ) => Promise<void>;
   importAccount: (name: string, mnemonic: string) => Promise<Account>;
   validateEntry: (name: string, address: string) => void;
   deleteAccount: (name: string) => Promise<void>;
@@ -82,7 +87,7 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
       mnemonic: wallet.mnemonic,
     };
   },
-  storeAccount: async (name: string, wallet: Wallet) => {
+  storeAccount: async (name, wallet, passphraseSkipped = false) => {
     get().validateEntry(name, wallet.address);
     saveToSecureStorage(getMnenomicKey(wallet.address), wallet.mnemonic);
 
@@ -91,6 +96,7 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
       address: wallet.address,
       balance: 0,
       usdBalance: 0,
+      passphraseSkipped,
     };
     set((state) => {
       const accounts = [...state.accounts, account];
@@ -111,6 +117,7 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
       address: seiAccount.address,
       balance,
       usdBalance: get().getUSDBalance(balance),
+      passphraseSkipped: false,
     };
 
     set((state) => {
@@ -194,7 +201,9 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
   },
   updateAccounts: async (addresses) => {
     const { getBalance, accounts, setActiveAccount, activeAccount } = get();
-    if (!addresses) addresses = accounts.map((a) => a.address);
+    if (!addresses) {
+      addresses = accounts.map((a) => a.address);
+    }
     const udpatedAcc = await Promise.all(
       accounts.map(async (acc) => {
         if (addresses!.includes(acc.address)) {

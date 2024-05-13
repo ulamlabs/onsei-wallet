@@ -20,7 +20,7 @@ export default function MnemonicScreen({
   }, [address, getMnemonic]);
 
   return (
-    <SafeLayout style={{ alignItems: "center" }}>
+    <SafeLayout>
       {mnemonic?.length > 0 ? (
         <>
           <Paragraph style={{ marginBottom: 30 }}>
