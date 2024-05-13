@@ -15,7 +15,9 @@ export default function Radio<T extends string>({
   onPress,
 }: RadioProps<T>) {
   function onRadioPress() {
-    if (isActive) return;
+    if (isActive) {
+      return;
+    }
     onPress(label);
   }
 

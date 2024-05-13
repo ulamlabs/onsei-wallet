@@ -22,7 +22,7 @@ export default function TextInput({
   return (
     <View style={{ justifyContent: "center" }}>
       <ReactNative.TextInput
-        placeholderTextColor={Colors.text200}
+        placeholderTextColor={Colors.text300}
         onChangeText={onChangeText}
         value={value}
         {...props}

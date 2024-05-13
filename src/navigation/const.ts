@@ -5,4 +5,5 @@ export const navigatorScreenOptions: NativeStackNavigationOptions = {
   headerStyle: { backgroundColor: Colors.background },
   headerTintColor: Colors.text,
   animation: "ios",
+  headerBackTitleVisible: false,
 };

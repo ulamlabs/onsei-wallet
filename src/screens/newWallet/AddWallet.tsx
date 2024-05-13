@@ -14,7 +14,7 @@ export default function AddWallet() {
 
   return (
     <Column>
-      <PrimaryButton title="Create new Account" onPress={onCreateNew} />
+      <PrimaryButton title="Create new wallet" onPress={onCreateNew} />
       <TertiaryButton title="I already have a wallet" onPress={onImport} />
     </Column>
   );

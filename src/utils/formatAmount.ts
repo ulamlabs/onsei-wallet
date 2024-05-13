@@ -1,6 +1,8 @@
 function cutTrailingZeros(amount: string) {
   const cutAmount = amount.replace(/\.?0+$/, "");
-  if (cutAmount.includes(".")) return cutAmount;
+  if (cutAmount.includes(".")) {
+    return cutAmount;
+  }
   return `${cutAmount}.00`;
 }
 

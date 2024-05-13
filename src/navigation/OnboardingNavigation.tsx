@@ -10,6 +10,7 @@ import OnboardingFinishScreen from "@/screens/onboarding/OnboardingFinishScreen"
 import OnboardingProtectionScreen from "@/screens/onboarding/OnboardingProtectionScreen";
 import { PinEnableScreen } from "@/screens/auth";
 import { navigatorScreenOptions } from "./const";
+import { newWalletScreenOptions } from "./header/NewWalletHeader";
 import { NavigatorParamsList } from "@/types";
 import { OnboardingEnableBiometricsScreen } from "@/screens/onboarding/OnboardingEnableBiometricsScreen";
 
@@ -34,8 +35,16 @@ export default function OnboardingNavigation() {
         component={OnboardingWelcomeScreen}
         options={{ headerShown: false }}
       />
-      <Screen name="Generate Wallet" component={GenerateWalletScreen} />
-      <Screen name="Confirm Mnemonic" component={ConfirmMnemonicScreen} />
+      <Screen
+        name="Generate Wallet"
+        options={() => newWalletScreenOptions({ step: 1 })}
+        component={GenerateWalletScreen}
+      />
+      <Screen
+        name="Confirm Mnemonic"
+        options={() => newWalletScreenOptions({ step: 2 })}
+        component={ConfirmMnemonicScreen}
+      />
       <Screen name="Import Wallet" component={ImportWalletScreen} />
       <Screen
         name="Protect Your Wallet"

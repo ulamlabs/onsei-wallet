@@ -1,30 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { FlatList, View } from "react-native";
+import { FlatList } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { EnglishMnemonic } from "@cosmjs/crypto";
 import { useAccountsStore } from "@/store/account";
 import {
-  Column,
-  Loader,
+  Headline,
+  Paragraph,
   PrimaryButton,
   SafeLayout,
   Text,
-  TextInput,
 } from "@/components";
-import { resetNavigationStack } from "@/utils";
-import { useInputState } from "@/hooks";
-import { MNEMONIC_WORDS_COUNT } from "@/const";
+import { getNumberName, shuffle } from "@/utils";
+import { MNEMONIC_WORDS_COUNT, MNEMONIC_WORDS_TO_CONFIRM } from "@/const";
 import { NavigatorParamsList } from "@/types";
 import { Colors } from "@/styles";
+import { addSkipButton } from "@/navigation/header/NewWalletHeader";
+import MnemonicButton from "./MnemonicButton";
+import { storeNewAccount } from "./storeNewAccount";
 
 type ConfirmMnemoProps = NativeStackScreenProps<
   NavigatorParamsList,
   "Confirm Mnemonic"
 >;
-
-type WordDict = {
-  word: string;
-  wordLabel: number;
-};
 
 export default function ConfirmMnemonicScreen({
   navigation,
@@ -33,28 +30,44 @@ export default function ConfirmMnemonicScreen({
   },
 }: ConfirmMnemoProps) {
   const accountsStore = useAccountsStore();
-  const [toConfirm, setToConfirm] = useState<WordDict[]>([]);
   const [loading, setLoading] = useState(false);
-  const nameInput = useInputState();
-  const mnemoInputs = [
-    useInputState(),
-    useInputState(),
-    useInputState(),
-    useInputState(),
-  ];
   const [error, setError] = useState<string | null>(null);
   const mnemonic = wallet.mnemonic.split(" ");
 
+  const [idsToSelect, setIdsToSelect] = useState<number[]>([]);
+  const [mnemonicCheck, setMnemonicCheck] = useState("");
+  const [words, setWords] = useState<string[]>([]);
+  const [selectedWords, setSelectedWords] = useState<string[]>([]);
+
   useEffect(() => {
-    const idsChosen: number[] = [];
-    const wordsChosen = [];
-    while (wordsChosen.length < 4) {
+    const mnemoIdsChosen: { word: string; wordId: number }[] = [];
+
+    while (mnemoIdsChosen.length < MNEMONIC_WORDS_TO_CONFIRM) {
       const wordId = Math.floor(Math.random() * MNEMONIC_WORDS_COUNT);
-      if (idsChosen.includes(wordId)) continue;
-      idsChosen.push(wordId);
-      wordsChosen.push({ word: mnemonic[wordId], wordLabel: wordId + 1 });
+      if (mnemoIdsChosen.find((m) => m.wordId === wordId)) {
+        continue;
+      }
+      mnemoIdsChosen.push({ word: mnemonic[wordId], wordId });
     }
-    setToConfirm(wordsChosen);
+
+    mnemoIdsChosen.sort((a, b) => a.wordId - b.wordId);
+
+    const wordsChosen = mnemoIdsChosen.map((m) => m.word);
+    setMnemonicCheck(wordsChosen.join(","));
+    setIdsToSelect(mnemoIdsChosen.map((m) => m.wordId + 1));
+
+    const wordList = EnglishMnemonic.wordlist;
+
+    while (wordsChosen.length < MNEMONIC_WORDS_COUNT) {
+      const wordId = Math.floor(Math.random() * wordList.length);
+      const word = wordList[wordId];
+      if (wordsChosen.includes(word)) {
+        continue;
+      }
+      wordsChosen.push(word);
+    }
+
+    setWords(shuffle(wordsChosen));
   }, [wallet.mnemonic]);
 
   useEffect(() => {
@@ -63,24 +76,25 @@ export default function ConfirmMnemonicScreen({
     }
   }, [loading]);
 
-  async function onConfirm() {
-    for (let i = 0; i < 4; i++) {
-      if (toConfirm[i].word !== mnemoInputs[i].value.toLowerCase()) {
-        setError("Provided words do not match passphrase");
+  useEffect(() => {
+    addSkipButton(navigation, onSkip);
+  }, [navigation]);
+
+  function onSkip() {
+    onConfirm(true);
+  }
+
+  async function onConfirm(skipValidation = false) {
+    if (!skipValidation) {
+      if (selectedWords.join(",") !== mnemonicCheck) {
+        setError("Selected words do not match passphrase");
         setLoading(false);
         return;
       }
     }
 
     try {
-      await accountsStore.storeAccount(nameInput.value, wallet);
-      accountsStore.setActiveAccount(wallet.address);
-      accountsStore.subscribeToAccounts();
-
-      const nextRoute: keyof NavigatorParamsList =
-        navigation.getId() === "onboarding" ? "Protect Your Wallet" : "Home";
-      navigation.navigate(nextRoute);
-      resetNavigationStack(navigation);
+      await storeNewAccount(accountsStore, navigation, wallet, skipValidation);
     } catch (e: any) {
       console.error("Error on wallet import:", e);
       setError(e.message);
@@ -89,58 +103,81 @@ export default function ConfirmMnemonicScreen({
     }
   }
 
-  function onButtonPress() {
+  function onWordPress(word: string) {
+    if (selectedWords.includes(word)) {
+      const updatedWords = [...selectedWords];
+      updatedWords.splice(selectedWords.indexOf(word), 1);
+      setSelectedWords(updatedWords);
+    } else if (selectedWords.length < MNEMONIC_WORDS_TO_CONFIRM) {
+      setSelectedWords([...selectedWords, word]);
+    }
+  }
+
+  function wordToMnemoId(word: string) {
+    const id = selectedWords.indexOf(word);
+    if (id === -1) {
+      return 0;
+    }
+    return idsToSelect[id];
+  }
+
+  function onConfirmButtonPress() {
     setError(null);
     setLoading(true);
   }
 
+  function getNumberLabel(id: number) {
+    return `${getNumberName(id).name} (${getNumberName(id).counter})`;
+  }
+
   return (
-    <SafeLayout>
-      <Column>
-        <Text>Name of your wallet</Text>
-        <TextInput placeholder="Name" autoCorrect={false} {...nameInput} />
+    <SafeLayout noScroll={true}>
+      <Headline>Confirm Recovery Phrase</Headline>
+      {idsToSelect.length === MNEMONIC_WORDS_TO_CONFIRM && (
+        <Paragraph style={{ textAlign: "center", marginBottom: 24 }}>
+          Tap the {getNumberLabel(idsToSelect[0])},{" "}
+          {getNumberLabel(idsToSelect[1])} and {getNumberLabel(idsToSelect[2])}{" "}
+          word to verify that you saved your recovery phrase.
+        </Paragraph>
+      )}
 
-        <Text style={{ marginTop: 40 }}>Verify your passphrase</Text>
-        <FlatList
-          data={toConfirm}
-          numColumns={2}
-          scrollEnabled={false}
-          renderItem={({ item, index }) => (
-            <View
-              style={[
-                { width: "48%" },
-                index % 2 === 0 ? { marginRight: "2%" } : { marginLeft: "2%" },
-              ]}
-            >
-              <Text>Word #{item.wordLabel}</Text>
-              <TextInput
-                style={{ marginTop: 5, marginBottom: 20 }}
-                autoCapitalize="none"
-                autoCorrect={false}
-                {...mnemoInputs[index]}
-              />
-            </View>
-          )}
-          keyExtractor={(item) => item.word}
-        />
-
-        {loading ? (
-          <Loader />
-        ) : (
-          <PrimaryButton title="Confirm" onPress={onButtonPress} />
+      <FlatList
+        data={words}
+        style={{
+          paddingTop: 10,
+          maxHeight: 400,
+          overflow: "visible",
+        }}
+        numColumns={2}
+        scrollEnabled={false}
+        renderItem={({ item, index }) => (
+          <MnemonicButton
+            key={index}
+            title={item}
+            selectedAs={wordToMnemoId(item)}
+            onPress={onWordPress}
+          />
         )}
+        keyExtractor={(item) => item}
+      />
 
-        {error && (
-          <Text
-            style={{
-              marginTop: 10,
-              color: Colors.danger,
-            }}
-          >
-            {error}
-          </Text>
-        )}
-      </Column>
+      {error && (
+        <Text
+          style={{
+            marginTop: 10,
+            color: Colors.danger,
+            textAlign: "center",
+          }}
+        >
+          {error}
+        </Text>
+      )}
+
+      <PrimaryButton
+        title="Confirm"
+        style={{ marginTop: "auto" }}
+        onPress={onConfirmButtonPress}
+      />
     </SafeLayout>
   );
 }

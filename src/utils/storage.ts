@@ -21,7 +21,9 @@ export async function loadFromStorage<T>(
 ): Promise<T> {
   try {
     const data = await Storage.getItem({ key });
-    if (!data) return defaultValue;
+    if (!data) {
+      return defaultValue;
+    }
     return JSON.parse(data);
   } catch (e) {
     // No data found in the storage
