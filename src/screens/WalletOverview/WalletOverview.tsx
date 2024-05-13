@@ -48,7 +48,7 @@ export default function WalletOverview({ navigation }: WalletOverviewProps) {
   }
 
   function onScan() {
-    navigation.push("ScanModal");
+    navigation.push("Scan");
   }
 
   return (
@@ -68,7 +68,7 @@ export default function WalletOverview({ navigation }: WalletOverviewProps) {
             <Setting2 size={22} color={Colors.text100} />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.push("AccountsModal")}
+            onPress={() => navigation.push("Accounts")}
             style={{ flexDirection: "row", gap: 4 }}
           >
             <Paragraph

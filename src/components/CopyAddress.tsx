@@ -53,7 +53,7 @@ export default function CopyAddress({ address }: Props) {
         }}
       >
         <View>
-          <Headline style={{ fontSize: 16, lineHeight: 24, marginBottom: 0 }}>
+          <Headline size="h3" style={{ marginBottom: 0 }}>
             Address copied
           </Headline>
           <Paragraph>{trimAddress(address)}</Paragraph>

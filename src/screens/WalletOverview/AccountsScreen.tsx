@@ -7,7 +7,7 @@ import D from "decimal.js";
 import { Add, ArrowLeft2, Import, Setting2 } from "iconsax-react-native";
 import { Dimensions, FlatList, TouchableOpacity, View } from "react-native";
 
-type AccountsModalProps = NativeStackScreenProps<
+type AccountsScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
   "Accounts"
 >;
@@ -17,7 +17,7 @@ type AccountsRenderProps = {
   index: number;
 };
 
-export default function AccountsModal({ navigation }: AccountsModalProps) {
+export default function AccountsScreen({ navigation }: AccountsScreenProps) {
   const { width: screenWidth } = Dimensions.get("screen");
   const { accounts, activeAccount, setActiveAccount } = useAccountsStore();
   const calculateTotalAmount = () => {
@@ -86,10 +86,7 @@ export default function AccountsModal({ navigation }: AccountsModalProps) {
   };
 
   return (
-    <SafeLayout
-      style={{ paddingTop: 0, justifyContent: "space-between" }}
-      noScroll={true}
-    >
+    <SafeLayout style={{ justifyContent: "space-between" }} noScroll={true}>
       <View>
         <View
           style={{

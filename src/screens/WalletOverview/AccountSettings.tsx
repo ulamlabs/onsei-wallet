@@ -1,17 +1,18 @@
 import {
-  AccountOption,
   DangerButton,
   Headline,
   IconButton,
-  Modals,
+  Link,
+  OptionGroup,
   Paragraph,
   Row,
   SafeLayout,
+  SwitchWithLabel,
 } from "@/components";
 import { useAccountsStore, useAuthStore, useModalStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Setting2 } from "iconsax-react-native";
+import { Edit2 } from "iconsax-react-native";
 import { View } from "react-native";
 
 type AccountSettingsProps = NativeStackScreenProps<
@@ -69,65 +70,52 @@ export default function AccountSettings({
     }
   }
 
-  return (
-    <SafeLayout style={{ paddingTop: 24 }}>
-      {selectedAccount ? (
-        <>
-          <Row
-            style={{
-              paddingHorizontal: 22,
-              paddingVertical: 16,
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: 32,
-            }}
-          >
-            <Headline
-              style={{
-                fontSize: 20,
-              }}
-            >
-              {selectedAccount?.name}
-            </Headline>
-            <IconButton
-              icon={Setting2}
-              onPress={() =>
-                navigation.navigate("Edit name", { account: selectedAccount })
-              }
-            />
-          </Row>
-          <View style={{ gap: 1 }}>
-            <AccountOption
-              title="Hide assets value"
-              onPress={toggleAssets}
-              type="checkbox"
+  function render() {
+    if (!selectedAccount) {
+      return <Paragraph>Something went wrong</Paragraph>;
+    }
+    return (
+      <>
+        <Row
+          style={{
+            paddingHorizontal: 22,
+            paddingVertical: 16,
+            marginBottom: 32,
+          }}
+        >
+          <Headline size="h2">{selectedAccount?.name}</Headline>
+          <IconButton
+            icon={Edit2}
+            onPress={() =>
+              navigation.navigate("Edit name", { account: selectedAccount })
+            }
+          />
+        </Row>
+        <View style={{ gap: 1 }}>
+          <OptionGroup>
+            <SwitchWithLabel
+              onChange={toggleAssets}
               value={selectedAccount.hideAssetsValue}
-              style={{ borderTopStartRadius: 22, borderTopEndRadius: 22 }}
+              label="Hide assets value"
             />
-            <AccountOption
-              title="Allow notifications"
-              onPress={toggleNotifications}
-              type="checkbox"
+            <SwitchWithLabel
+              onChange={toggleNotifications}
               value={selectedAccount.allowNotifications}
+              label="Allow notifications"
             />
-            <AccountOption
-              title="Show recovery phrase"
-              onPress={showRecoveryPhrase}
-              style={{ borderBottomStartRadius: 22, borderBottomEndRadius: 22 }}
+            <Link label="Show recovery phrase" onPress={showRecoveryPhrase} />
+          </OptionGroup>
+          {activeAccount?.address !== address && (
+            <DangerButton
+              title="Remove Account"
+              onPress={onRemove}
+              style={{ marginTop: 20 }}
             />
-            {activeAccount?.address !== address && (
-              <DangerButton
-                title="Remove Account"
-                onPress={onRemove}
-                style={{ marginTop: 20 }}
-              />
-            )}
-          </View>
-        </>
-      ) : (
-        <Paragraph>Something went wrong</Paragraph>
-      )}
-      <Modals />
-    </SafeLayout>
-  );
+          )}
+        </View>
+      </>
+    );
+  }
+
+  return <SafeLayout style={{ paddingTop: 24 }}>{render()}</SafeLayout>;
 }

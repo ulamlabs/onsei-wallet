@@ -1,10 +1,10 @@
 import MnemonicScreen from "@/screens/MnemonicScreen";
 import ReceiveAssets from "@/screens/ReceiveAssets";
-import ScanModal from "@/screens/Scan/ScanModal";
+import ScanScreen from "@/screens/Scan/ScanScreen";
 import SendAssets from "@/screens/SendAssets";
 import Transactions from "@/screens/Transactions";
 import AccountSettings from "@/screens/WalletOverview/AccountSettings";
-import AccountsModal from "@/screens/WalletOverview/AccountsModal";
+import AccountsScreen from "@/screens/WalletOverview/AccountsScreen";
 import EditAccountName from "@/screens/WalletOverview/EditAccountName";
 import { ManageTokensScreen } from "@/screens/account";
 import AddOrEditAddress from "@/screens/addressBook/AddOrEditAddress";
@@ -109,40 +109,8 @@ export default function HomeNavigation() {
         options={{ presentation: "modal", headerShown: false }}
       />
       <Screen
-        options={{
-          presentation: "modal",
-          headerShown: false,
-        }}
-        name="AccountsModal"
-        component={AccountsModalNavigation}
-      />
-      <Screen
-        options={{ presentation: "modal", headerShown: false }}
-        name="ScanModal"
-        component={ScanModalNavigation}
-      />
-    </Navigator>
-  );
-}
-
-function ScanModalNavigation() {
-  return (
-    <Navigator screenOptions={navigatorScreenOptions}>
-      <Screen
-        name="Scan"
-        component={ScanModal}
-        options={{ headerShown: false }}
-      />
-    </Navigator>
-  );
-}
-
-function AccountsModalNavigation() {
-  return (
-    <Navigator screenOptions={navigatorScreenOptions}>
-      <Screen
         name="Accounts"
-        component={AccountsModal}
+        component={AccountsScreen}
         options={{ headerShown: false }}
       />
       <Screen
@@ -155,8 +123,7 @@ function AccountsModalNavigation() {
         component={EditAccountName}
         options={{ headerStyle: { backgroundColor: Colors.background100 } }}
       />
-      <Screen name="Manage Token List" component={ManageTokensScreen} />
-      <Screen name="Your Mnemonic" component={MnemonicScreen} />
+      <Screen name="Scan" component={ScanScreen} />
     </Navigator>
   );
 }
