@@ -4,6 +4,7 @@ import {
   Loader,
   Paragraph,
   PrimaryButton,
+  Row,
   SafeLayout,
   TextInput,
 } from "@/components";
@@ -14,6 +15,7 @@ import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { resetNavigationStack } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Lock } from "iconsax-react-native";
 import React, { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 
@@ -58,6 +60,10 @@ export default function ImportWalletScreen({ navigation }: NewWalletProps) {
     setLoading(true);
   }
 
+  useEffect(() => {
+    setError("");
+  }, [mnemonicInput.value]);
+
   return (
     <SafeLayout>
       <Column>
@@ -71,9 +77,10 @@ export default function ImportWalletScreen({ navigation }: NewWalletProps) {
 
         <TextInput
           multiline={true}
-          placeholder="Mnemonic"
+          placeholder="Secret Recovery Phrase"
           autoCapitalize="none"
           autoCorrect={false}
+          showClear={!!mnemonicInput.value}
           {...mnemonicInput}
         />
         {error && <Text style={{ color: Colors.danger }}>{error}</Text>}
@@ -84,9 +91,23 @@ export default function ImportWalletScreen({ navigation }: NewWalletProps) {
           <PrimaryButton
             title="Import"
             onPress={onButtonPress}
+            style={{ marginTop: 24 }}
             disabled={!mnemonicInput.value}
           />
         )}
+        <Row style={{ justifyContent: "flex-start" }}>
+          <Lock color={Colors.textBlue} />
+          <Paragraph
+            style={{
+              color: Colors.textBlue,
+              fontSize: 12,
+              lineHeight: 18,
+            }}
+          >
+            Remember, SEI Wallet ensures your funds' security and cannot access
+            your account. You retain sole control over your funds.
+          </Paragraph>
+        </Row>
       </Column>
     </SafeLayout>
   );
