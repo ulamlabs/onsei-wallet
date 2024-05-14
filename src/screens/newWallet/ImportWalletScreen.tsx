@@ -77,7 +77,7 @@ export default function ImportWalletScreen({ navigation }: NewWalletProps) {
 
         <TextInput
           multiline={true}
-          placeholder="Secret Recovery Phrase"
+          placeholder="Secret recovery phrase"
           autoCapitalize="none"
           autoCorrect={false}
           showClear={!!mnemonicInput.value}
