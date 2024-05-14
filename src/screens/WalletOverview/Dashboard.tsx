@@ -7,7 +7,7 @@ import {
   SecondaryButton,
   Text,
 } from "@/components";
-import { useAccountsStore, useSettingsStore } from "@/store";
+import { useAccountsStore, useSettingsStore, useTokensStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { formatTokenAmount } from "@/utils/formatAmount";
@@ -22,6 +22,7 @@ type DashboardProps = NativeStackScreenProps<NavigatorParamsList, "Wallet">;
 
 export default function Dashboard({ navigation }: DashboardProps) {
   const { activeAccount } = useAccountsStore();
+  const { sei } = useTokensStore();
   const {
     settings: { node },
   } = useSettingsStore();
@@ -56,7 +57,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
           </View>
         )}
         <Headline style={{ fontSize: 40, marginBottom: 0 }}>
-          {formatTokenAmount(activeAccount.balance)} SEI
+          {formatTokenAmount(sei.balance, sei.decimals)} SEI
         </Headline>
       </>
     );
