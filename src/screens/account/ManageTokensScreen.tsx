@@ -51,7 +51,7 @@ export default function ManageTokensScreen() {
   }
 
   function onToggle(token: CosmToken) {
-    if (tokensStore.tokenIds.has(token.address)) {
+    if (tokensStore.tokenMap.has(token.address)) {
       tokensStore.removeToken(token);
     } else {
       tokensStore.addToken(token);
@@ -84,7 +84,7 @@ export default function ManageTokensScreen() {
           <TokenToggle
             token={token}
             key={token.address}
-            selected={tokensStore.tokenIds.has(token.address)}
+            selected={tokensStore.tokenMap.has(token.address)}
             onToggle={() => onToggle(token)}
           />
         ))}

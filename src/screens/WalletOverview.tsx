@@ -8,7 +8,7 @@ import {
   SafeLayout,
   SecondaryButton,
 } from "@/components";
-import { useAccountsStore, useSettingsStore } from "@/store";
+import { useAccountsStore, useSettingsStore, useTokensStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { formatTokenAmount } from "@/utils/formatAmount";
@@ -24,6 +24,7 @@ type WalletOverviewProps = NativeStackScreenProps<
 
 export default function WalletOverview({ navigation }: WalletOverviewProps) {
   const { activeAccount } = useAccountsStore();
+  const { sei } = useTokensStore();
   const {
     settings: { node },
   } = useSettingsStore();
@@ -57,10 +58,9 @@ export default function WalletOverview({ navigation }: WalletOverviewProps) {
             <Paragraph style={{ marginBottom: 16 }}>
               {activeAccount.address}
             </Paragraph>
-            <Headline>{formatTokenAmount(activeAccount.balance)} SEI</Headline>
-            <Paragraph>
-              ${formatTokenAmount(activeAccount.usdBalance)}
-            </Paragraph>
+            <Headline>
+              {formatTokenAmount(sei.balance, sei.decimals)} SEI
+            </Headline>
           </>
         ) : (
           <Loader />

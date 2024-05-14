@@ -10,7 +10,7 @@ import {
 } from "@/components";
 import { useInputState } from "@/hooks";
 import { TransactionsService } from "@/services";
-import { useAccountsStore, useModalStore } from "@/store";
+import { useModalStore, useTokensStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { trimAddress } from "@/utils/trimAddress";
@@ -29,7 +29,7 @@ export default function SendAssets({
     params: { address },
   },
 }: SendAssetsProps) {
-  const { activeAccount } = useAccountsStore();
+  const { sei } = useTokensStore();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -47,7 +47,7 @@ export default function SendAssets({
   async function onMax() {
     try {
       amountInput.onChangeText("Calculating...");
-      const balance = (activeAccount?.balance || 0) * 10 ** 6;
+      const balance = Number(sei.balance) || 0;
       const fee = calculateFee(balance, "0.1usei"); // gas price hardcoded for now
       const maxValue = (balance - +fee.amount[0].amount) / 10 ** 6;
 
@@ -62,7 +62,7 @@ export default function SendAssets({
     try {
       setError(null);
       const amount = Number(amountInput.value.replaceAll(",", "."));
-      if (!activeAccount?.balance) {
+      if (!sei.balance) {
         throw Error("Cannot get balance");
       }
       const rawAmount = new D(amount).mul(10 ** 6);

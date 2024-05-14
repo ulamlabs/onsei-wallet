@@ -1,6 +1,6 @@
 import { Paragraph, RadioGroup, SafeLayout } from "@/components";
 import { NODES } from "@/const";
-import { useAccountsStore, useSettingsStore } from "@/store";
+import { useAccountsStore, useSettingsStore, useTokensStore } from "@/store";
 import { Node } from "@/types";
 
 export default function NodeSettingsScreen() {
@@ -8,11 +8,14 @@ export default function NodeSettingsScreen() {
     settings: { node },
     setSetting,
   } = useSettingsStore();
-  const { updateAccounts } = useAccountsStore();
+  const { activeAccount } = useAccountsStore();
+  const { loadTokens } = useTokensStore();
 
   function onNodeChange(newNode: Node) {
     setSetting("node", newNode);
-    updateAccounts();
+    if (activeAccount) {
+      loadTokens(activeAccount.address);
+    }
   }
 
   return (

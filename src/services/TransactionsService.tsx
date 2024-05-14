@@ -1,5 +1,5 @@
 import { NODE_URL } from "@/const";
-import { useAccountsStore, useSettingsStore } from "@/store";
+import { useAccountsStore, useSettingsStore, useTokensStore } from "@/store";
 import { StdFee } from "@cosmjs/stargate";
 import {
   getSigningStargateClient,
@@ -9,6 +9,7 @@ import {
 
 export class TransactionsService {
   private accountsStore = useAccountsStore();
+  private tokensStore = useTokensStore();
   private settingsStore = useSettingsStore();
 
   async transferAsset(
@@ -17,7 +18,7 @@ export class TransactionsService {
     fee: StdFee,
   ): Promise<string> {
     try {
-      const { getMnemonic, activeAccount, updateAccounts } = this.accountsStore;
+      const { getMnemonic, activeAccount } = this.accountsStore;
 
       if (!activeAccount) {
         throw new Error("No active user");
@@ -37,7 +38,7 @@ export class TransactionsService {
         fee,
       );
 
-      updateAccounts([activeAccount.address, receiver]);
+      this.tokensStore.updateBalances([this.tokensStore.sei]);
 
       return send.transactionHash;
     } catch (error: any) {
@@ -48,8 +49,9 @@ export class TransactionsService {
 
   validateTxnData(receiver: string, amount: number, fee: StdFee) {
     const { activeAccount } = this.accountsStore;
+    const { sei } = this.tokensStore;
 
-    if (!activeAccount?.balance) {
+    if (!sei.balance) {
       throw Error("Cannot get balance");
     }
 
@@ -71,7 +73,8 @@ export class TransactionsService {
 
     const feeAmount = +fee.amount[0].amount;
 
-    if (amount > (activeAccount?.balance * 10 ** 6 || 0) - feeAmount) {
+    const funds = Number(sei.balance) ?? 0;
+    if (amount > funds - feeAmount) {
       throw Error("Insufficient funds");
     }
   }

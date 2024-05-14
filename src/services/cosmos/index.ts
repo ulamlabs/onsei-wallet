@@ -1,2 +1,4 @@
 export * from "./types";
-export * from "./fetchToken";
+export * from "./fetchCW20Token";
+export * from "./fetchAccountBalances";
+export * from "./fetchCW20TokenBalance";

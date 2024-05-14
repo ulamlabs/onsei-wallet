@@ -7,6 +7,7 @@ export type CosmToken = {
   symbol: string;
   decimals: number;
   logo: string;
+  balance: string;
 };
 
 export type CW20TokenInfo = {
@@ -23,4 +24,8 @@ export type CW20MarketingInfo = {
   };
   marketing: string;
   project: string;
+};
+
+export type CW20BalanceInfo = {
+  balance: string;
 };
