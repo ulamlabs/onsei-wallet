@@ -3,8 +3,8 @@ import { Colors } from "@/styles";
 import { NavigationProp } from "@/types";
 import { useNavigation } from "@react-navigation/native";
 import { Setting2 } from "iconsax-react-native";
-import { TouchableOpacity, View } from "react-native";
-import { Headline, Paragraph } from "../../components/typography";
+import { TouchableOpacity } from "react-native";
+import { Headline } from "../../components/typography";
 
 export type AccountProps = {
   item: AccountType;
@@ -33,20 +33,16 @@ export default function Account({ item }: AccountProps) {
       }}
       onPress={() => selectAccount(item.address)}
     >
-      <View>
-        <Headline
-          style={{
-            color: isActive ? Colors.background : Colors.text,
-            textAlign: "left",
-          }}
-          size="base"
-        >
-          {item.name}
-        </Headline>
-        <Paragraph style={{ color: isActive ? "#575757" : Colors.text100 }}>
-          {item.balance} SEI
-        </Paragraph>
-      </View>
+      <Headline
+        style={{
+          color: isActive ? Colors.background : Colors.text,
+          textAlign: "left",
+          marginBottom: 0,
+        }}
+        size="base"
+      >
+        {item.name}
+      </Headline>
       <TouchableOpacity
         style={{
           width: 38,
