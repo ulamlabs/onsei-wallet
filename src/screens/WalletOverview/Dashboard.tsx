@@ -65,7 +65,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
 
   return (
     <SafeLayout>
-      <Column style={{ alignItems: "center" }}>{render()}</Column>
+      <Column style={{ alignItems: "center", zIndex: 1 }}>{render()}</Column>
       <Row
         style={{
           justifyContent: "space-around",
