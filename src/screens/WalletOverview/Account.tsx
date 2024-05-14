@@ -53,7 +53,7 @@ export default function Account({ item }: AccountProps) {
           height: 38,
           padding: 8,
           backgroundColor: isActive
-            ? Colors.background400
+            ? Colors.background500
             : Colors.background200,
           borderRadius: 14,
         }}
