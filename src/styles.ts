@@ -12,6 +12,7 @@ export const Colors = {
   labelBackground: "#345DC7",
   inputBorderColor: "#232323",
   activeInputBorderColor: "#D3D3D3",
+  activeTextInputBorderColor: "#4666A5",
   info: "#7983A7",
   success: "#3E925A",
   warning: "#FFEE0A",
