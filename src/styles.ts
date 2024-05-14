@@ -1,8 +1,8 @@
 export const Colors = {
   background: "#121212",
-  background100: "#212121",
-  background200: "#181818",
-  background300: "#1F1F1F",
+  background100: "#181818",
+  background200: "#1F1F1F",
+  background300: "#212121",
   background400: "#2C2C2C",
   background500: "#E9E9E9",
   text: "#FAFAFA",
@@ -17,7 +17,10 @@ export const Colors = {
   success: "#41D352",
   warning: "#FFEE0A",
   danger: "#FF444E",
-  switch: "#345DC7",
-  opacityBackground: "rgba(26,26,26,0.95)",
-  checkBackground: "#3E925A",
+};
+
+export const FontSizes = {
+  xl: 26,
+  lg: 20,
+  base: 16,
 };

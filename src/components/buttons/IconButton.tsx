@@ -15,7 +15,7 @@ export default function IconButton({
           paddingVertical: 8,
           paddingHorizontal: 8,
           borderRadius: 14,
-          backgroundColor: Colors.background300,
+          backgroundColor: Colors.background200,
         },
         styles,
       ]}

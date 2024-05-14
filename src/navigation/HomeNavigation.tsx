@@ -1,11 +1,9 @@
 import MnemonicScreen from "@/screens/MnemonicScreen";
 import ReceiveAssets from "@/screens/ReceiveAssets";
-import ScanScreen from "@/screens/Scan/ScanScreen";
 import SendAssets from "@/screens/SendAssets";
-import Transactions from "@/screens/Transactions";
-import AccountSettings from "@/screens/WalletOverview/AccountSettings";
+import AccountSettingsScreen from "@/screens/WalletOverview/AccountSettingsScreen";
 import AccountsScreen from "@/screens/WalletOverview/AccountsScreen";
-import EditAccountName from "@/screens/WalletOverview/EditAccountName";
+import EditAccountNameScreen from "@/screens/WalletOverview/EditAccountNameScreen";
 import { ManageTokensScreen } from "@/screens/account";
 import AddOrEditAddress from "@/screens/addressBook/AddOrEditAddress";
 import { AuthorizeScreen, BiometricsDisableScreen } from "@/screens/auth";
@@ -23,7 +21,6 @@ import ResetAppScreen from "@/screens/settings/ResetAppScreen";
 import SecuritySettingsScreen from "@/screens/settings/SecuritySettingsScreen";
 import SettingsScreen from "@/screens/settings/SettingsScreen";
 import { Account, SavedAddress, Wallet } from "@/store";
-import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
@@ -86,7 +83,6 @@ export default function HomeNavigation() {
       <Screen name="Send" component={SendAssets} />
       <Screen name="Receive" component={ReceiveAssets} />
       <Screen name="Saved Address" component={AddOrEditAddress} />
-      <Screen name="Transactions" component={Transactions} />
       <Screen name="Your Mnemonic" component={MnemonicScreen} />
       <Screen name="Add Wallet" component={AddWalletScreen} />
       <Screen
@@ -101,27 +97,10 @@ export default function HomeNavigation() {
       />
       <Screen name="Import Wallet" component={ImportWalletScreen} />
       <Screen name="Settings" component={SettingsScreen} />
-      <Screen
-        name="Manage Token List"
-        component={ManageTokensScreen}
-        options={{ presentation: "modal", headerShown: false }}
-      />
-      <Screen
-        name="Accounts"
-        component={AccountsScreen}
-        options={{ headerShown: false }}
-      />
-      <Screen
-        name="Account settings"
-        component={AccountSettings}
-        options={{ headerStyle: { backgroundColor: Colors.background100 } }}
-      />
-      <Screen
-        name="Edit name"
-        component={EditAccountName}
-        options={{ headerStyle: { backgroundColor: Colors.background100 } }}
-      />
-      <Screen name="Scan" component={ScanScreen} />
+      <Screen name="Manage Token List" component={ManageTokensScreen} />
+      <Screen name="Accounts" component={AccountsScreen} />
+      <Screen name="Account settings" component={AccountSettingsScreen} />
+      <Screen name="Edit name" component={EditAccountNameScreen} />
     </Navigator>
   );
 }

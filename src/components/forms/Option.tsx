@@ -15,7 +15,7 @@ export default function Option({
   children,
 }: OptionProps) {
   return (
-    <View style={{ backgroundColor: Colors.background300 }}>
+    <View style={{ backgroundColor: Colors.background200 }}>
       <View
         style={{
           flexDirection: "row",

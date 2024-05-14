@@ -1,128 +1,27 @@
-import { Paragraph, Row, SafeLayout, SecondaryButton } from "@/components";
-import { Account, useAccountsStore } from "@/store";
-import { Colors } from "@/styles";
+import { SafeLayout, SecondaryButton } from "@/components";
+import { useAccountsStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import D from "decimal.js";
-import { Add, ArrowLeft2, Import, Setting2 } from "iconsax-react-native";
-import { Dimensions, FlatList, TouchableOpacity, View } from "react-native";
+import { Add, Import } from "iconsax-react-native";
+import { FlatList, View } from "react-native";
+import Account, { AccountProps } from "./Account";
 
 type AccountsScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
   "Accounts"
 >;
 
-type AccountsRenderProps = {
-  item: Account;
-  index: number;
-};
-
 export default function AccountsScreen({ navigation }: AccountsScreenProps) {
-  const { width: screenWidth } = Dimensions.get("screen");
-  const { accounts, activeAccount, setActiveAccount } = useAccountsStore();
-  const calculateTotalAmount = () => {
-    return accounts
-      .reduce((totalBalance, account) => {
-        return new D(totalBalance).add(new D(account.balance));
-      }, new D(0))
-      .toString();
-  };
+  const { accounts } = useAccountsStore();
 
-  const selectAccount = (address: string) => {
-    setActiveAccount(address);
-    navigation.goBack();
-  };
-
-  const renderAccounts = ({ item }: AccountsRenderProps) => {
-    const isActive = item.address === activeAccount?.address;
-    return (
-      <TouchableOpacity
-        style={{
-          marginTop: 10,
-          backgroundColor: isActive ? Colors.text : Colors.background200,
-          paddingHorizontal: 22,
-          paddingVertical: 16,
-          borderRadius: 22,
-          justifyContent: "space-between",
-          flexDirection: "row",
-          alignItems: "center",
-        }}
-        onPress={() => selectAccount(item.address)}
-      >
-        <View>
-          <Paragraph
-            style={{
-              color: isActive ? Colors.background : Colors.text,
-              fontSize: 16,
-              fontWeight: "700",
-            }}
-          >
-            {item.name}
-          </Paragraph>
-          <Paragraph
-            style={{ color: isActive ? Colors.text300 : Colors.text100 }}
-          >
-            {item.balance} SEI
-          </Paragraph>
-        </View>
-        <TouchableOpacity
-          style={{
-            width: 38,
-            height: 38,
-            padding: 8,
-            backgroundColor: isActive
-              ? Colors.background400
-              : Colors.background100,
-            borderRadius: 14,
-          }}
-          onPress={() =>
-            navigation.push("Account settings", { address: item.address })
-          }
-        >
-          <Setting2 color={isActive ? Colors.background : Colors.text} />
-        </TouchableOpacity>
-      </TouchableOpacity>
-    );
+  const renderAccounts = ({ item }: AccountProps) => {
+    return <Account item={item} />;
   };
 
   return (
     <SafeLayout style={{ justifyContent: "space-between" }} noScroll={true}>
       <View>
-        <Row
-          style={{
-            paddingHorizontal: 16,
-            paddingVertical: 24,
-            backgroundColor: Colors.background200,
-            height: 70,
-            borderTopLeftRadius: 12,
-            borderTopRightRadius: 12,
-            marginLeft: -10,
-            width: screenWidth,
-          }}
-        >
-          <View style={{ flexDirection: "row" }}>
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={{ flexDirection: "row" }}
-            >
-              <ArrowLeft2 color={Colors.text} size={24} />
-              <Paragraph style={{ color: Colors.text, fontSize: 18 }}>
-                Home
-              </Paragraph>
-            </TouchableOpacity>
-          </View>
-          <Paragraph
-            style={{ color: Colors.text, fontSize: 18, fontWeight: "700" }}
-          >
-            Accounts
-          </Paragraph>
-          <Paragraph style={{ color: Colors.text }}>
-            Total: {calculateTotalAmount()} SEI
-          </Paragraph>
-        </Row>
-        <View style={{ paddingTop: 14 }}>
-          <FlatList data={accounts} renderItem={renderAccounts} />
-        </View>
+        <FlatList data={accounts} renderItem={renderAccounts} />
       </View>
       <View style={{ gap: 12, marginBottom: 0 }}>
         <SecondaryButton

@@ -8,9 +8,9 @@ import Option from "./Option";
 export type LinkProps = {
   label: string;
   icon?: ReactElement;
-  navigateTo?: keyof NavigatorParamsList;
+  navigateTo: keyof NavigatorParamsList;
   disabled?: boolean;
-  onPress?: () => void;
+  params?: NavigatorParamsList[keyof NavigatorParamsList];
 };
 
 export default function Link({
@@ -18,21 +18,17 @@ export default function Link({
   label,
   navigateTo,
   disabled,
-  onPress,
+  params,
 }: LinkProps) {
   const navigation = useNavigation<NavigationProp>();
-
-  function press() {
+  function onPress() {
     if (!disabled) {
-      if (onPress) {
-        onPress();
-        return;
-      }
-      navigation.navigate(navigateTo as any);
+      navigation.navigate(navigateTo as any, params);
     }
   }
+
   return (
-    <Pressable onPress={press}>
+    <Pressable onPress={onPress}>
       <Option label={label} icon={icon} disabled={disabled}>
         <ArrowRight2 color="white" />
       </Option>

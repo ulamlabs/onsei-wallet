@@ -39,7 +39,7 @@ export default function CopyAddress({ address }: Props) {
           position: "absolute",
           width: 214,
           transform: [{ translateY: 30 }, { translateX: -204 }],
-          backgroundColor: Colors.opacityBackground,
+          backgroundColor: "rgba(26,26,26,0.95)",
           paddingHorizontal: 16,
           paddingVertical: 12,
           flexDirection: "row",
@@ -53,12 +53,12 @@ export default function CopyAddress({ address }: Props) {
         }}
       >
         <View>
-          <Headline size="h3" style={{ marginBottom: 0 }}>
+          <Headline size="base" style={{ marginBottom: 0 }}>
             Address copied
           </Headline>
           <Paragraph>{trimAddress(address)}</Paragraph>
         </View>
-        <TickCircle variant="Bold" color={Colors.checkBackground} />
+        <TickCircle variant="Bold" color="#3E925A" />
       </Animated.View>
     </TouchableOpacity>
   );

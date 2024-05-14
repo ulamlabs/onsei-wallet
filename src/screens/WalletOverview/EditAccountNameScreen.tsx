@@ -3,6 +3,7 @@ import { useInputState } from "@/hooks";
 import { useAccountsStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
+import { validateName } from "@/utils/validateInputs";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
 
@@ -11,7 +12,7 @@ type EditAccountNameProps = NativeStackScreenProps<
   "Edit name"
 >;
 
-export default function EditAccountName({
+export default function EditAccountNameScreen({
   navigation,
   route: {
     params: { account },
@@ -19,7 +20,7 @@ export default function EditAccountName({
 }: EditAccountNameProps) {
   const name = useInputState();
   const [error, setError] = useState("");
-  const { editAccountName, validateName } = useAccountsStore();
+  const { editAccountName, accounts } = useAccountsStore();
 
   useEffect(() => {
     name.onChangeText(account.name);
@@ -31,7 +32,7 @@ export default function EditAccountName({
 
   const editName = () => {
     try {
-      validateName(name.value);
+      validateName(name.value, accounts);
       editAccountName(account.address, name.value);
       navigation.goBack();
     } catch (error: any) {
@@ -45,12 +46,7 @@ export default function EditAccountName({
         Give your account name to easily identify it. Names are stored locally
         and can only be seen by you
       </Paragraph>
-      <TextInput
-        {...name}
-        style={[
-          { borderColor: error ? Colors.danger : Colors.inputBorderColor },
-        ]}
-      />
+      <TextInput {...name} error={!!error} />
       <PrimaryButton
         style={{ marginTop: 32 }}
         title="Save"

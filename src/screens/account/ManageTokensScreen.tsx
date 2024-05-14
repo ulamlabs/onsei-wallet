@@ -2,24 +2,11 @@ import { Column, Loader, Paragraph, SafeLayout, TextInput } from "@/components";
 import { useInputState } from "@/hooks";
 import { CosmToken, fetchCW20Token } from "@/services/cosmos";
 import { useSettingsStore, useTokensStore } from "@/store";
-import { Colors } from "@/styles";
-import { NavigatorParamsList } from "@/types";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
-import { ArrowLeft2 } from "iconsax-react-native";
 import { useEffect, useState } from "react";
-import { Dimensions, TouchableOpacity, View } from "react-native";
 import TokenToggle from "./TokenToggle";
 
-type ManageTokensModalProps = NativeStackScreenProps<
-  NavigatorParamsList,
-  "Manage Token List"
->;
-
-export default function ManageTokensScreen({
-  navigation,
-}: ManageTokensModalProps) {
-  const { width: screenWidth } = Dimensions.get("screen");
+export default function ManageTokensScreen() {
   const searchInput = useInputState();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -72,34 +59,7 @@ export default function ManageTokensScreen({
   }
 
   return (
-    <SafeLayout style={{ paddingTop: 0 }}>
-      <View
-        style={{
-          paddingHorizontal: 16,
-          paddingVertical: 24,
-          backgroundColor: Colors.background200,
-          height: 70,
-          borderTopLeftRadius: 12,
-          borderTopRightRadius: 12,
-          marginLeft: -10,
-          width: screenWidth,
-          justifyContent: "space-between",
-          flexDirection: "row",
-          marginBottom: 24,
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={{ flexDirection: "row", gap: 24 }}
-        >
-          <ArrowLeft2 color={Colors.text} size={24} />
-          <Paragraph
-            style={{ color: Colors.text, fontSize: 18, fontWeight: "700" }}
-          >
-            Manage token list
-          </Paragraph>
-        </TouchableOpacity>
-      </View>
+    <SafeLayout>
       <Column>
         <TextInput
           placeholder="Enter token name or contract address"

@@ -2,44 +2,8 @@ import { NODE_URL } from "@/const";
 import { useSettingsStore } from "@/store";
 import { fetchData, formatDate } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
-
-export type Transaction = {
-  amount: number;
-  asset: string;
-  date: string;
-  from: string;
-  to: string;
-  type: string;
-};
-
-type Coin = { denom: string; amount: string };
-
-type MsgSend = {
-  "@type": "/cosmos.bank.v1beta1.MsgSend";
-  from_address: string;
-  to_address: string;
-  amount: Coin[];
-};
-
-type MsgMultiSend = {
-  "@type": "/cosmos.bank.v1beta1.MsgMultiSend";
-  inputs: { address: string; coins: Coin[] }[];
-  outputs: { address: string; coins: Coin[] }[];
-};
-
-type TxResponse = {
-  txhash: string;
-  tx: {
-    body: {
-      messages: MsgSend[] | MsgMultiSend[];
-    };
-  };
-  timestamp: string;
-};
-
-type TransactionData = {
-  tx_responses: TxResponse[];
-};
+import { Transaction, TransactionData } from "./types";
+import { parseMultiSend, parseSend } from "./utils";
 
 const buildUrl = (queryParams: Record<string, string>): string => {
   const baseUrl = `https://rest.${NODE_URL[useSettingsStore.getState().settings.node]}/cosmos/tx/v1beta1/txs`;
@@ -83,30 +47,14 @@ const getTransactions = async (address: string): Promise<Transaction[]> => {
       const isMultiSend =
         commonPath["@type"] === "/cosmos.bank.v1beta1.MsgMultiSend";
 
-      const amount = isMultiSend
-        ? +commonPath?.inputs[0].coins[0].amount / 10 ** 6
-        : +commonPath?.amount[0]?.amount / 10 ** 6;
-
       const asset = "SEI";
       const date = formatDate(resp.timestamp);
 
-      const from = isMultiSend
-        ? commonPath.inputs[0].address
-        : commonPath?.from_address;
-
-      const to = isMultiSend
-        ? commonPath.outputs[0].address
-        : commonPath?.to_address;
-
-      const type = isMultiSend
-        ? commonPath.inputs[0].address === address
-          ? "Send"
-          : "Receive"
-        : commonPath?.from_address === address
-          ? "Send"
-          : "Receive";
-
-      return { amount, asset, date, from, to, type };
+      if (isMultiSend) {
+        return { ...parseMultiSend(commonPath, address), asset, date };
+      } else {
+        return { ...parseSend(commonPath, address), asset, date };
+      }
     });
   return response;
 };
