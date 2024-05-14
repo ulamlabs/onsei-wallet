@@ -1,8 +1,3 @@
-import React, { useEffect, useState } from "react";
-import { FlatList } from "react-native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { EnglishMnemonic } from "@cosmjs/crypto";
-import { useAccountsStore } from "@/store/account";
 import {
   Headline,
   Paragraph,
@@ -11,11 +6,16 @@ import {
   ShakingView,
   Text,
 } from "@/components";
-import { getNumberName, shuffle } from "@/utils";
 import { MNEMONIC_WORDS_COUNT, MNEMONIC_WORDS_TO_CONFIRM } from "@/const";
-import { NavigatorParamsList } from "@/types";
-import { Colors } from "@/styles";
 import { addSkipButton } from "@/navigation/header/NewWalletHeader";
+import { useAccountsStore } from "@/store/account";
+import { Colors } from "@/styles";
+import { NavigatorParamsList } from "@/types";
+import { getNumberName, shuffle } from "@/utils";
+import { EnglishMnemonic } from "@cosmjs/crypto";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import React, { useEffect, useState } from "react";
+import { FlatList } from "react-native";
 import MnemonicButton from "./MnemonicButton";
 import { storeNewAccount } from "./storeNewAccount";
 
@@ -140,7 +140,7 @@ export default function ConfirmMnemonicScreen({
         <Paragraph style={{ textAlign: "center", marginBottom: 24 }}>
           Tap the {getNumberLabel(idsToSelect[0])},{" "}
           {getNumberLabel(idsToSelect[1])} and {getNumberLabel(idsToSelect[2])}{" "}
-          word to verify that you saved your recovery phrase.
+          word to verify that you saved your Recovery Phrase.
         </Paragraph>
       )}
 

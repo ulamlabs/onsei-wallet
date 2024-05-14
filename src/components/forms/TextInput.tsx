@@ -1,5 +1,5 @@
 import { Colors } from "@/styles";
-import { CloseSquare } from "iconsax-react-native";
+import { CloseCircle } from "iconsax-react-native";
 import { useState } from "react";
 import ReactNative, { Pressable, View } from "react-native";
 
@@ -59,7 +59,7 @@ export default function TextInput({
       />
       {showClear && !!value?.length && (
         <Pressable style={{ position: "absolute", right: 16 }} onPress={clear}>
-          <CloseSquare color={Colors.text} />
+          <CloseCircle variant="Bold" color={Colors.text100} />
         </Pressable>
       )}
     </View>

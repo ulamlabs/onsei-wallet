@@ -13,11 +13,11 @@ import { useInputState } from "@/hooks";
 import { useAccountsStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
-import { resetNavigationStack } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Lock } from "iconsax-react-native";
 import React, { useEffect, useState } from "react";
 import { Text, View } from "react-native";
+import { storeNewAccount } from "./storeNewAccount";
 
 type NewWalletProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -38,15 +38,8 @@ export default function ImportWalletScreen({ navigation }: NewWalletProps) {
 
   async function onImport() {
     try {
-      const newAccount = await accountsStore.importAccount(
-        mnemonicInput.value.trim(),
-      );
-      accountsStore.setActiveAccount(newAccount.address);
-
-      const nextRoute: keyof NavigatorParamsList =
-        navigation.getId() === "onboarding" ? "Protect Your Wallet" : "Home";
-      navigation.navigate(nextRoute);
-      resetNavigationStack(navigation);
+      const wallet = await accountsStore.restoreWallet(mnemonicInput.value);
+      await storeNewAccount(accountsStore, navigation, wallet!, true);
     } catch (e: any) {
       console.error("Error on wallet import:", e);
       setError(e.message);
@@ -68,19 +61,20 @@ export default function ImportWalletScreen({ navigation }: NewWalletProps) {
     <SafeLayout>
       <Column>
         <View style={{ marginBottom: 20 }}>
-          <Headline>Sign in with a recovery phrase</Headline>
+          <Headline>Sign in with a Recovery Phrase</Headline>
           <Paragraph style={{ textAlign: "center" }}>
-            This is a {MNEMONIC_WORDS_COUNT}-word phrase you were given when
-            your created you previous crypto wallet.
+            This is a {MNEMONIC_WORDS_COUNT}-word phrase you were given when you
+            created your previous crypto wallet.
           </Paragraph>
         </View>
 
         <TextInput
           multiline={true}
-          placeholder="Secret recovery phrase"
+          placeholder="Secret Recovery Phrase"
           autoCapitalize="none"
           autoCorrect={false}
           showClear={!!mnemonicInput.value}
+          style={{ minHeight: 80 }}
           {...mnemonicInput}
         />
         {error && <Text style={{ color: Colors.danger }}>{error}</Text>}
@@ -96,12 +90,13 @@ export default function ImportWalletScreen({ navigation }: NewWalletProps) {
           />
         )}
         <Row style={{ justifyContent: "flex-start" }}>
-          <Lock color={Colors.textBlue} />
+          <Lock color={Colors.info} />
           <Paragraph
             style={{
-              color: Colors.textBlue,
+              color: Colors.info,
               fontSize: 12,
               lineHeight: 18,
+              flex: 1,
             }}
           >
             Remember, SEI Wallet ensures your funds' security and cannot access

@@ -115,7 +115,7 @@ export default function GenerateWalletScreen({
 
   return (
     <SafeLayout>
-      <Headline>Secret recovery phrase</Headline>
+      <Headline>Secret Recovery Phrase</Headline>
       <Paragraph style={{ textAlign: "center", marginBottom: 32 }}>
         Save these 12 words in a secure location, such as a password manager,
         and never share them with anyone.

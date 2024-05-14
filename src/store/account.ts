@@ -33,10 +33,11 @@ export type AccountsStore = {
     wallet: Wallet,
     passphraseSkipped: boolean,
   ) => Promise<void>;
-  importAccount: (mnemonic: string) => Promise<Account>;
+  importAccount: (name: string, mnemonic: string) => Promise<Account>;
   deleteAccount: (name: string) => Promise<void>;
   clearStore: () => Promise<void>;
   getMnemonic: (name: string) => string;
+  restoreWallet: (mnemonic: string) => Promise<Wallet>;
   editAccountName: (address: string, newName: string) => void;
 };
 
@@ -67,6 +68,14 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
       mnemonic: wallet.mnemonic,
     };
   },
+  restoreWallet: async (mnemonic) => {
+    const wallet = await restoreWallet(mnemonic);
+    const address = (await wallet.getAccounts())[0].address;
+    return {
+      address,
+      mnemonic: wallet.mnemonic,
+    };
+  },
   storeAccount: async (name, wallet, passphraseSkipped = false) => {
     const accounts = get().accounts;
     validateEntry(name, wallet.address, accounts);
@@ -84,16 +93,15 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
     });
   },
   importAccount: async (name: string, mnemonic: string) => {
-    const accounts = get().accounts;
+    const { accounts } = get();
     const wallet = await restoreWallet(mnemonic);
     const address = (await wallet.getAccounts())[0].address;
     validateEntry(name, address, accounts);
     saveToSecureStorage(getMnenomicKey(address), wallet.mnemonic);
 
     const seiAccount = (await wallet.getAccounts())[0];
-    const accountNumber = accounts.length;
     const newAccount: Account = {
-      name: `Wallet ${accountNumber + 1}`,
+      name,
       address: seiAccount.address,
       passphraseSkipped: false,
     };
