@@ -4,11 +4,17 @@ import {
   MnemonicWords,
   Paragraph,
   PrimaryButton,
+  Row,
   SafeLayout,
   TertiaryButton,
+  Text,
 } from "@/components";
 import * as Clipboard from "expo-clipboard";
-import { Copy as ClipboardCopy, SecuritySafe } from "iconsax-react-native";
+import {
+  Copy as ClipboardCopy,
+  SecuritySafe,
+  TickCircle,
+} from "iconsax-react-native";
 import { Wallet, useAccountsStore, useModalStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -16,6 +22,7 @@ import { default as React, ReactElement, useEffect, useState } from "react";
 import { Colors } from "@/styles";
 import { addSkipButton } from "@/navigation/header/NewWalletHeader";
 import { storeNewAccount } from "./storeNewAccount";
+import { View } from "react-native";
 
 type GenerateWalletProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -28,6 +35,7 @@ export default function GenerateWalletScreen({
   const accountsStore = useAccountsStore();
   const { alert } = useModalStore();
   const [wallet, setWallet] = useState<Wallet | null>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     accountsStore.generateWallet().then(setWallet);
@@ -40,23 +48,37 @@ export default function GenerateWalletScreen({
   }, [wallet, navigation]);
 
   async function onSkip() {
-    Clipboard.setStringAsync(""); // Clear the clipboard just in case it was copied
+    if (copied) {
+      Clipboard.setStringAsync(""); // Clear the clipboard just in case it was copied
+    }
     await storeNewAccount(accountsStore, navigation, wallet!, true);
   }
 
   function onCopy() {
     Clipboard.setStringAsync(wallet!.mnemonic);
+    setCopied(true);
     alert({
       title: "Paste it in safe place",
-      description:
-        "Password Manager is a great option. Visiting unsecured sites poses a risk to clipboard data.",
+      description: (
+        <>
+          <Text style={{ fontWeight: "bold", color: Colors.text100 }}>
+            Password Manager
+          </Text>{" "}
+          <Text style={{ color: Colors.text100 }}>
+            is a great option. Visiting unsecured sites poses a risk to
+            clipboard data.
+          </Text>
+        </>
+      ),
       ok: "Got it",
       icon: SecuritySafe,
     });
   }
 
   function onNext() {
-    Clipboard.setStringAsync(""); // Clear the clipboard
+    if (copied) {
+      Clipboard.setStringAsync(""); // Clear the clipboard
+    }
     navigation.push("Confirm Mnemonic", { wallet: wallet! });
   }
 
@@ -69,13 +91,22 @@ export default function GenerateWalletScreen({
       <>
         <MnemonicWords mnemonic={wallet.mnemonic.split(" ")} />
 
-        <TertiaryButton
-          title="Copy to clipboard"
-          icon={ClipboardCopy}
-          color={Colors.text100}
-          textStyle={{ fontSize: 14 }}
-          onPress={onCopy}
-        />
+        {copied ? (
+          <View style={{ marginTop: 20, alignItems: "center" }}>
+            <Row style={{ maxWidth: "auto" }}>
+              <TickCircle size={16} variant="Bold" color={Colors.success} />
+              <Text style={{ fontWeight: "bold" }}>Copied</Text>
+            </Row>
+          </View>
+        ) : (
+          <TertiaryButton
+            title="Copy to clipboard"
+            icon={ClipboardCopy}
+            color={Colors.text100}
+            textStyle={{ fontSize: 14 }}
+            onPress={onCopy}
+          />
+        )}
         <PrimaryButton
           title="OK, stored safely"
           style={{ marginTop: "auto" }}

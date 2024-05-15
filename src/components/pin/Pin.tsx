@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { View } from "react-native";
-import { PIN_LENGTH, SHAKE_ANIMATION_DURATION } from "./const";
+import { PIN_LENGTH } from "./const";
 import PinDigits from "./PinDigits";
 import PinKeyboard from "./PinKeyboard";
 import * as Crypto from "expo-crypto";
 import { Colors } from "@/styles";
 import { Headline, Paragraph, Text } from "../typography";
+import { SHAKE_ANIMATION_DURATION } from "../ShakingView";
 
 export type PinProps = {
   label: string;
