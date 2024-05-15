@@ -8,6 +8,8 @@ type Props = PropsWithChildren & {
   onBackdropPress: () => void;
   onPress?: () => void;
   position?: "top" | "bottom";
+  transparentBg?: boolean;
+  getTopPosition?: React.Dispatch<React.SetStateAction<number>>;
 };
 
 export default function Tooltip({
@@ -17,14 +19,33 @@ export default function Tooltip({
   onBackdropPress,
   onPress,
   position,
+  transparentBg = false,
+  getTopPosition,
 }: Props) {
+  const measureTop = (pageY: number) => {
+    if (!getTopPosition) {
+      return;
+    }
+    getTopPosition(pageY);
+  };
+
   return (
     <>
-      <Pressable onPress={onPress}>{toggleElement}</Pressable>
+      <Pressable
+        onLayout={(e) =>
+          e.target.measure((x, y, width, height, pageX, pageY) => {
+            measureTop(pageY);
+          })
+        }
+        onPress={onPress}
+      >
+        {toggleElement}
+      </Pressable>
       <Modal
         position={position}
         isVisible={isVisible}
         onBackdropPress={onBackdropPress}
+        transparentBg={transparentBg}
       >
         {children}
       </Modal>

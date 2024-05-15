@@ -13,7 +13,6 @@ export default function MnemonicScreen({
 }: Props) {
   const { getMnemonic } = useAccountsStore();
   const [mnemonic, setMnemonic] = useState<string[]>([]);
-  console.log(address);
 
   useEffect(() => {
     setMnemonic(getMnemonic(address).split(" "));

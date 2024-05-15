@@ -4,7 +4,7 @@ import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Add, Import } from "iconsax-react-native";
 import { FlatList, View } from "react-native";
-import Account, { AccountProps } from "./Account";
+import Account from "./Account";
 
 type AccountsScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -14,21 +14,26 @@ type AccountsScreenProps = NativeStackScreenProps<
 export default function AccountsScreen({ navigation }: AccountsScreenProps) {
   const { accounts } = useAccountsStore();
 
-  const renderAccounts = ({ item }: AccountProps) => {
-    return <Account item={item} />;
-  };
-
   return (
-    <SafeLayout style={{ justifyContent: "space-between" }} noScroll={true}>
-      <View>
-        <FlatList data={accounts} renderItem={renderAccounts} />
-      </View>
-      <View style={{ gap: 12, marginBottom: 0 }}>
+    <SafeLayout
+      style={{
+        justifyContent: "space-between",
+        maxHeight: "100%",
+        paddingTop: 24,
+      }}
+      noScroll={true}
+    >
+      <FlatList
+        data={accounts}
+        renderItem={({ item }) => <Account item={item} />}
+      />
+
+      <View style={{ gap: 12, marginBottom: 0, paddingTop: 24 }}>
         <SecondaryButton
           title="Create new wallet"
           onPress={() => {
             navigation.goBack();
-            navigation.navigate("Add Wallet");
+            navigation.navigate("Generate Wallet");
           }}
           icon={Add}
         />

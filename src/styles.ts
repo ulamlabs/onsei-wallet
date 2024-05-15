@@ -9,7 +9,6 @@ export const Colors = {
   text100: "#9E9E9E",
   text200: "#7F7F7F",
   text300: "#6A6A6A",
-  text400: "#575757",
   labelBackground: "#345DC7",
   inputBorderColor: "#232323",
   activeInputBorderColor: "#D3D3D3",
@@ -17,6 +16,7 @@ export const Colors = {
   success: "#41D352",
   warning: "#FFEE0A",
   danger: "#FF444E",
+  tickColor: "#3E925A",
 };
 
 export const FontSizes = {

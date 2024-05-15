@@ -1,20 +1,19 @@
-import { AccountProps } from "@/screens/WalletOverview/Account";
 import { useAccountsStore } from "@/store";
 import { Colors } from "@/styles";
 import { Copy } from "iconsax-react-native";
 import { useState } from "react";
-import { Dimensions, FlatList, View } from "react-native";
+import { Dimensions, FlatList, Platform, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CopyAddressItem from "./CopyAddressItem";
 import Tooltip from "./Tooltip";
 
 export default function CopyAddress() {
-  const { width, height } = Dimensions.get("window");
+  const { height } = Dimensions.get("window");
   const [visible, setVisible] = useState(false);
   const { accounts } = useAccountsStore();
-
-  const RenderItem = ({ item }: AccountProps) => {
-    return <CopyAddressItem item={item} />;
-  };
+  const insets = useSafeAreaInsets();
+  const [top, setTop] = useState(0);
+  const isIOS = Platform.OS === "ios";
 
   return (
     <Tooltip
@@ -23,13 +22,15 @@ export default function CopyAddress() {
       onPress={() => setVisible(true)}
       onBackdropPress={() => setVisible(false)}
       toggleElement={<Copy size={22} color={Colors.text100} />}
+      transparentBg
+      getTopPosition={setTop}
     >
       <View
         style={{
           position: "absolute",
           width: 214,
-          left: width - 214 - 20,
-          top: -height + 120,
+          right: 20,
+          top: -height + insets.top + (isIOS ? top / 2 : top) + 24, // 24 is element element height
           backgroundColor: "rgb(26,26,26)",
           paddingHorizontal: 16,
           paddingVertical: 12,
@@ -44,7 +45,7 @@ export default function CopyAddress() {
         <FlatList
           scrollEnabled={false}
           data={accounts}
-          renderItem={RenderItem}
+          renderItem={({ item }) => <CopyAddressItem item={item} />}
           contentContainerStyle={{ gap: 32 }}
         />
       </View>

@@ -1,5 +1,3 @@
-import AccountListItem from "./AccountListItem";
-import AccountsList from "./AccountsList";
 import AddressBookEntry from "./AddressBookEntry";
 import Biometrics from "./Biometrics";
 import CopyAddress from "./CopyAddress";
@@ -17,8 +15,6 @@ export * from "./modals";
 export * from "./pin";
 export * from "./typography";
 export {
-  AccountListItem,
-  AccountsList,
   AddressBookEntry,
   Biometrics,
   CopyAddress,

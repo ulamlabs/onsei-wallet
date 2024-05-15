@@ -40,7 +40,6 @@ export type HomeParamList = {
   Authorize: { nextRoute: keyof NavigatorParamsList; nextParams?: any };
   Receive: undefined;
   Send: { address?: string };
-  Transactions: { address: string };
   "Saved Address": { action: "ADD" | "EDIT"; addressData?: SavedAddress };
   "Your Mnemonic": { address: string };
   "Add Wallet": undefined;
@@ -51,7 +50,6 @@ export type HomeParamList = {
   Accounts: undefined;
   "Account settings": { address: string };
   "Edit name": { account: Account };
-  Scan: undefined;
   "Manage Token List": undefined;
 };
 

@@ -1,10 +1,12 @@
+import { Column, IconButton, Row } from "@/components";
 import { Account as AccountType, useAccountsStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigationProp } from "@/types";
+import { trimAddress } from "@/utils";
 import { useNavigation } from "@react-navigation/native";
-import { Setting2 } from "iconsax-react-native";
+import { Setting2, Warning2 } from "iconsax-react-native";
 import { TouchableOpacity } from "react-native";
-import { Headline } from "../../components/typography";
+import { Headline, Paragraph } from "../../components/typography";
 
 export type AccountProps = {
   item: AccountType;
@@ -15,6 +17,9 @@ export default function Account({ item }: AccountProps) {
   const navigation = useNavigation<NavigationProp>();
   const isActive = item.address === activeAccount?.address;
   const selectAccount = (address: string) => {
+    if (address === activeAccount?.address) {
+      return;
+    }
     setActiveAccount(address);
     navigation.goBack();
   };
@@ -33,32 +38,37 @@ export default function Account({ item }: AccountProps) {
       }}
       onPress={() => selectAccount(item.address)}
     >
-      <Headline
+      <Column style={{ gap: 2 }}>
+        <Row>
+          <Headline
+            style={{
+              color: isActive ? Colors.background : Colors.text,
+              textAlign: "left",
+              marginBottom: 0,
+            }}
+            size="base"
+          >
+            {item.name}
+          </Headline>
+          {/* Temporary solution until we get designs */}
+          {item.passphraseSkipped && (
+            <Warning2 size={16} color={Colors.danger} />
+          )}
+        </Row>
+        <Paragraph>({trimAddress(item.address)})</Paragraph>
+      </Column>
+      <IconButton
+        icon={Setting2}
+        color={isActive ? Colors.background : Colors.text}
         style={{
-          color: isActive ? Colors.background : Colors.text,
-          textAlign: "left",
-          marginBottom: 0,
-        }}
-        size="base"
-      >
-        {item.name}
-      </Headline>
-      <TouchableOpacity
-        style={{
-          width: 38,
-          height: 38,
-          padding: 8,
           backgroundColor: isActive
             ? Colors.background500
             : Colors.background200,
-          borderRadius: 14,
         }}
         onPress={() =>
           navigation.navigate("Account settings", { address: item.address })
         }
-      >
-        <Setting2 color={isActive ? Colors.background : Colors.text} />
-      </TouchableOpacity>
+      />
     </TouchableOpacity>
   );
 }

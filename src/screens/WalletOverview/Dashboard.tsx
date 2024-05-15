@@ -16,7 +16,6 @@ import { DirectboxReceive, DirectboxSend } from "iconsax-react-native";
 import React from "react";
 import { View } from "react-native";
 import { TokensList } from "../account";
-import DashboardTopBar from "./DashboardTopBar";
 
 type DashboardProps = NativeStackScreenProps<NavigatorParamsList, "Wallet">;
 
@@ -41,7 +40,6 @@ export default function Dashboard({ navigation }: DashboardProps) {
 
     return (
       <>
-        <DashboardTopBar activeAccount={activeAccount} />
         {node === "TestNet" && (
           <View
             style={{
@@ -65,7 +63,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
 
   return (
     <SafeLayout>
-      <Column style={{ alignItems: "center", zIndex: 1 }}>{render()}</Column>
+      <Column style={{ alignItems: "center" }}>{render()}</Column>
       <Row
         style={{
           justifyContent: "space-around",

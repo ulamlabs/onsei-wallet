@@ -49,7 +49,7 @@ export default function EditAccountNameScreen({
       <TextInput {...name} error={!!error} />
       <PrimaryButton
         style={{ marginTop: 32 }}
-        title="Save"
+        title="Save account name"
         onPress={editName}
       />
       {error && <Paragraph style={{ color: Colors.danger }}>{error}</Paragraph>}

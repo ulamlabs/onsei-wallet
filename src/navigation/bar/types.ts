@@ -12,6 +12,7 @@ export type BarNavigationScreenOptions = {
   icon: Icon;
   title?: string;
   headerShown?: boolean;
+  headerTitle?: () => JSX.Element;
 };
 
 export type BarNavigationProp<

@@ -6,6 +6,7 @@ type ModalProps = PropsWithChildren & {
   isVisible: boolean;
   onBackdropPress?: () => void;
   position?: "top" | "bottom";
+  transparentBg?: boolean;
 };
 
 export default function Modal({
@@ -13,6 +14,7 @@ export default function Modal({
   children,
   onBackdropPress,
   position = "bottom",
+  transparentBg,
 }: ModalProps) {
   const translateY = useRef(new Animated.Value(200)).current;
 
@@ -43,12 +45,12 @@ export default function Modal({
       >
         <Animated.View
           style={{
-            backgroundColor: Colors.background,
+            backgroundColor: transparentBg ? "" : Colors.background,
             padding: 10,
             borderTopLeftRadius: 12,
             borderTopRightRadius: 12,
             transform: [{ translateY }],
-            borderColor: Colors.inputBorderColor,
+            borderColor: transparentBg ? "" : Colors.inputBorderColor,
             borderTopWidth: 2,
             borderLeftWidth: 2,
             borderRightWidth: 2,
