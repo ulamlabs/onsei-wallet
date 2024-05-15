@@ -27,7 +27,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.ulamlabs.seiwallet"
+      "package": "com.ulamlabs.seiwallet",
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -42,7 +43,9 @@
       "expo-secure-store",
       [
         "expo-local-authentication",
-        { "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID." }
+        {
+          "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID."
+        }
       ]
     ]
   }
