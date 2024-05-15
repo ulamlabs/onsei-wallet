@@ -39,7 +39,7 @@ export default function ImportWalletScreen({ navigation }: NewWalletProps) {
   async function onImport() {
     try {
       const wallet = await accountsStore.restoreWallet(mnemonicInput.value);
-      await storeNewAccount(accountsStore, navigation, wallet!, true);
+      await storeNewAccount(accountsStore, navigation, wallet!, false);
     } catch (e: any) {
       console.error("Error on wallet import:", e);
       setError(e.message);
@@ -94,10 +94,9 @@ export default function ImportWalletScreen({ navigation }: NewWalletProps) {
           <Paragraph
             style={{
               color: Colors.info,
-              fontSize: 12,
-              lineHeight: 18,
               flex: 1,
             }}
+            size="xs"
           >
             Remember, SEI Wallet ensures your funds' security and cannot access
             your account. You retain sole control over your funds.

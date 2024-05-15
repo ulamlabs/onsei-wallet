@@ -6,7 +6,7 @@ export async function storeNewAccount(
   accountsStore: AccountsStore,
   navigation: NavigationProp,
   wallet: Wallet,
-  skipValidation: boolean,
+  passphraseSkipped: boolean,
 ) {
   let walletName = "Account ";
   let i = accountsStore.accounts.length + 1;
@@ -15,7 +15,7 @@ export async function storeNewAccount(
   }
   walletName += i;
 
-  await accountsStore.storeAccount(walletName, wallet, skipValidation);
+  await accountsStore.storeAccount(walletName, wallet, passphraseSkipped);
   accountsStore.setActiveAccount(wallet.address);
 
   const nextRoute: keyof NavigatorParamsList =
