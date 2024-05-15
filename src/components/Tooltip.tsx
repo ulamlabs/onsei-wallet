@@ -7,6 +7,7 @@ type Props = PropsWithChildren & {
   isVisible: boolean;
   onBackdropPress: () => void;
   onPress?: () => void;
+  position?: "top" | "bottom";
 };
 
 export default function Tooltip({
@@ -15,11 +16,16 @@ export default function Tooltip({
   isVisible,
   onBackdropPress,
   onPress,
+  position,
 }: Props) {
   return (
     <>
       <Pressable onPress={onPress}>{toggleElement}</Pressable>
-      <Modal isVisible={isVisible} onBackdropPress={onBackdropPress}>
+      <Modal
+        position={position}
+        isVisible={isVisible}
+        onBackdropPress={onBackdropPress}
+      >
         {children}
       </Modal>
     </>

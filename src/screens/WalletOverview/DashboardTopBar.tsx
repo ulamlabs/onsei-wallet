@@ -45,7 +45,7 @@ export default function DashboardTopBar({ activeAccount }: Props) {
         </Paragraph>
         <ArrowDown2 color={Colors.text} />
       </TouchableOpacity>
-      <CopyAddress address={activeAccount?.address || ""} />
+      <CopyAddress />
     </View>
   );
 }

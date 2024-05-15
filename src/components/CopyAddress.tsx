@@ -1,45 +1,36 @@
+import { AccountProps } from "@/screens/WalletOverview/Account";
+import { useAccountsStore } from "@/store";
 import { Colors } from "@/styles";
-import { trimAddress } from "@/utils";
-import * as ClipboardCopy from "expo-clipboard";
-import { Copy, TickCircle } from "iconsax-react-native";
+import { Copy } from "iconsax-react-native";
 import { useState } from "react";
-import { Animated, TouchableOpacity, View } from "react-native";
-import { Headline, Paragraph } from "./typography";
+import { Dimensions, FlatList, View } from "react-native";
+import CopyAddressItem from "./CopyAddressItem";
+import Tooltip from "./Tooltip";
 
-type Props = {
-  address: string;
-};
-
-export default function CopyAddress({ address }: Props) {
+export default function CopyAddress() {
+  const { width, height } = Dimensions.get("window");
   const [visible, setVisible] = useState(false);
-  const opacity = useState(new Animated.Value(0))[0];
+  const { accounts } = useAccountsStore();
 
-  function copyAddress() {
-    ClipboardCopy.setStringAsync(address);
-    setVisible(true);
-    Animated.timing(opacity, {
-      toValue: 1,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-    setTimeout(() => {
-      Animated.timing(opacity, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }).start(({ finished }) => finished && setVisible(false));
-    }, 1500);
-  }
+  const RenderItem = ({ item }: AccountProps) => {
+    return <CopyAddressItem item={item} />;
+  };
 
   return (
-    <TouchableOpacity onPress={copyAddress}>
-      <Copy size={22} color={Colors.text100} />
-      <Animated.View
+    <Tooltip
+      isVisible={visible}
+      position="top"
+      onPress={() => setVisible(true)}
+      onBackdropPress={() => setVisible(false)}
+      toggleElement={<Copy size={22} color={Colors.text100} />}
+    >
+      <View
         style={{
           position: "absolute",
           width: 214,
-          transform: [{ translateY: 30 }, { translateX: -204 }],
-          backgroundColor: "rgba(26,26,26,0.95)",
+          left: width - 214 - 20,
+          top: -height + 120,
+          backgroundColor: "rgb(26,26,26)",
           paddingHorizontal: 16,
           paddingVertical: 12,
           flexDirection: "row",
@@ -48,18 +39,15 @@ export default function CopyAddress({ address }: Props) {
           borderWidth: 1,
           borderColor: Colors.inputBorderColor,
           borderRadius: 12,
-          opacity: opacity,
-          display: visible ? "flex" : "none",
         }}
       >
-        <View>
-          <Headline size="base" style={{ marginBottom: 0 }}>
-            Address copied
-          </Headline>
-          <Paragraph>{trimAddress(address)}</Paragraph>
-        </View>
-        <TickCircle variant="Bold" color="#3E925A" />
-      </Animated.View>
-    </TouchableOpacity>
+        <FlatList
+          scrollEnabled={false}
+          data={accounts}
+          renderItem={RenderItem}
+          contentContainerStyle={{ gap: 32 }}
+        />
+      </View>
+    </Tooltip>
   );
 }
