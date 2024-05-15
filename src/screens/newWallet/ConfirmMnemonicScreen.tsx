@@ -8,6 +8,7 @@ import {
   Paragraph,
   PrimaryButton,
   SafeLayout,
+  ShakingView,
   Text,
 } from "@/components";
 import { getNumberName, shuffle } from "@/utils";
@@ -89,6 +90,7 @@ export default function ConfirmMnemonicScreen({
       if (selectedWords.join(",") !== mnemonicCheck) {
         setError("Selected words do not match passphrase");
         setLoading(false);
+        setSelectedWords([]);
         return;
       }
     }
@@ -104,6 +106,7 @@ export default function ConfirmMnemonicScreen({
   }
 
   function onWordPress(word: string) {
+    setError("");
     if (selectedWords.includes(word)) {
       const updatedWords = [...selectedWords];
       updatedWords.splice(selectedWords.indexOf(word), 1);
@@ -141,25 +144,27 @@ export default function ConfirmMnemonicScreen({
         </Paragraph>
       )}
 
-      <FlatList
-        data={words}
-        style={{
-          paddingTop: 10,
-          maxHeight: 400,
-          overflow: "visible",
-        }}
-        numColumns={2}
-        scrollEnabled={false}
-        renderItem={({ item, index }) => (
-          <MnemonicButton
-            key={index}
-            title={item}
-            selectedAs={wordToMnemoId(item)}
-            onPress={onWordPress}
-          />
-        )}
-        keyExtractor={(item) => item}
-      />
+      <ShakingView shaking={!!error}>
+        <FlatList
+          data={words}
+          style={{
+            paddingTop: 10,
+            maxHeight: 400,
+            overflow: "visible",
+          }}
+          numColumns={2}
+          scrollEnabled={false}
+          renderItem={({ item, index }) => (
+            <MnemonicButton
+              key={index}
+              title={item}
+              selectedAs={wordToMnemoId(item)}
+              onPress={onWordPress}
+            />
+          )}
+          keyExtractor={(item) => item}
+        />
+      </ShakingView>
 
       {error && (
         <Text
