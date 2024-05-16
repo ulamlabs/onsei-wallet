@@ -15,7 +15,11 @@ import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as Clipboard from "expo-clipboard";
-import { Copy as ClipboardCopy, SecuritySafe } from "iconsax-react-native";
+import {
+  Copy as ClipboardCopy,
+  SecuritySafe,
+  TickCircle,
+} from "iconsax-react-native";
 import { default as React, ReactElement, useEffect, useState } from "react";
 import { View } from "react-native";
 import { storeNewAccount } from "./storeNewAccount";
