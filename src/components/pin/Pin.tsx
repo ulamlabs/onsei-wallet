@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { PIN_LENGTH } from "./const";
 import PinDigits from "./PinDigits";
-import PinKeyboard from "./PinKeyboard";
+import { NumericPad } from "../numericPad";
 import * as Crypto from "expo-crypto";
 import { Colors } from "@/styles";
 import { Headline, Paragraph, Text } from "../typography";
@@ -102,7 +102,7 @@ export default function Pin({
       <Text style={{ fontWeight: "bold" }}>{extraInfo}</Text>
 
       <View style={{ marginBottom: 20 }}>
-        <PinKeyboard onDelete={onDelete} onDigit={onDigit} />
+        <NumericPad onDelete={onDelete} onDigit={onDigit} />
       </View>
     </View>
   );

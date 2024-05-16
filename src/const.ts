@@ -17,4 +17,9 @@ export const NODE_URL: Record<Node, string> = {
   TestNet: "atlantic-2.seinetwork.io",
 };
 
+export const NETWORK_NAMES: Record<Node, string> = {
+  MainNet: "pacific-1",
+  TestNet: "atlantic-2",
+};
+
 export const NODES: Node[] = ["MainNet", "TestNet"];

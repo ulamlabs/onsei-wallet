@@ -11,7 +11,7 @@ import { useSettingsStore } from "./settings";
 
 const SEI_TOKEN: CosmToken = {
   type: "native",
-  address: "",
+  id: "usei",
   decimals: 6,
   name: "Sei",
   symbol: "SEI",
@@ -55,7 +55,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
   },
   addToken: (token) => {
     const { tokens, _updateStructures, updateBalance } = get();
-    const exists = tokens.find((t) => t.address === token.address);
+    const exists = tokens.find((t) => t.id === token.id);
     if (exists) {
       return;
     }
@@ -64,7 +64,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
   },
   removeToken: (token) => {
     const { tokens, _updateStructures } = get();
-    const nextTokens = tokens.filter((t) => t.address !== token.address);
+    const nextTokens = tokens.filter((t) => t.id !== token.id);
     _updateStructures(nextTokens, { save: true });
   },
   clearAddress: async (address) => {
@@ -88,7 +88,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     const { node } = useSettingsStore.getState().settings;
 
     token = { ...token };
-    const index = tokens.findIndex((t) => t.address === token.address);
+    const index = tokens.findIndex((t) => t.id === token.id);
     if (index === -1) {
       return;
     }
@@ -101,7 +101,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     } else if (token.type === "cw20") {
       token.balance = await fetchCW20TokenBalance(
         accountAddress,
-        token.address,
+        token.id,
         node,
       );
     }
@@ -112,7 +112,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     if (!tokensToUpdate) {
       tokensToUpdate = tokens;
     }
-    return Promise.all(tokens.map((token) => updateBalance(token)));
+    return Promise.all(tokensToUpdate.map((token) => updateBalance(token)));
   },
   _updateStructures: (tokens, options) => {
     const { accountAddress } = get();
@@ -133,5 +133,5 @@ function getTokensKey(address: string, node: Node | "") {
 }
 
 function tokensToMap(tokens: CosmToken[]): Map<string, CosmToken> {
-  return new Map(tokens.map((t) => [t.address, t]));
+  return new Map(tokens.map((t) => [t.id, t]));
 }

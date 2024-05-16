@@ -1,6 +1,5 @@
 import MnemonicScreen from "@/screens/MnemonicScreen";
 import ReceiveAssets from "@/screens/ReceiveAssets";
-import SendAssets from "@/screens/SendAssets";
 import AccountSettingsScreen from "@/screens/WalletOverview/AccountSettingsScreen";
 import AccountsScreen from "@/screens/WalletOverview/AccountsScreen";
 import EditAccountNameScreen from "@/screens/WalletOverview/EditAccountNameScreen";
@@ -27,6 +26,16 @@ import React from "react";
 import BottomBarsNavigation from "./BottomBarsNavigation";
 import { navigatorScreenOptions } from "./const";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
+import {
+  TransferAmountScreen,
+  TransferSentScreen,
+  TransferSelectAddressScreen,
+  TransferSelectTokenScreen,
+  TransferSendingScreen,
+  TransferSummaryScreen,
+} from "@/screens/transfer";
+import { DeliverTxResponse } from "@cosmjs/stargate";
+import { Transfer } from "@/services/cosmos/tx";
 
 export type HomeParamList = {
   Home: undefined;
@@ -39,7 +48,6 @@ export type HomeParamList = {
   "Clear app data": undefined;
   Authorize: { nextRoute: keyof NavigatorParamsList; nextParams?: any };
   Receive: undefined;
-  Send: { address?: string };
   "Saved Address": { action: "ADD" | "EDIT"; addressData?: SavedAddress };
   "Your Mnemonic": { address: string };
   "Add Wallet": undefined;
@@ -51,6 +59,12 @@ export type HomeParamList = {
   "Account settings": { address: string };
   "Edit name": { account: Account };
   "Manage Token List": undefined;
+  transferSelectToken: undefined;
+  transferSelectAddress: Pick<Transfer, "token">;
+  transferAmount: Pick<Transfer, "token" | "recipient">;
+  transferSummary: Pick<Transfer, "token" | "recipient" | "intAmount">;
+  transferSending: Transfer;
+  transferSent: { tx: DeliverTxResponse };
 };
 
 const { Navigator, Screen } = createNativeStackNavigator<HomeParamList>();
@@ -78,7 +92,6 @@ export default function HomeNavigation() {
       />
       <Screen name="Change Node" component={NodeSettingsScreen} />
       <Screen name="Authorize" component={AuthorizeScreen} />
-      <Screen name="Send" component={SendAssets} />
       <Screen name="Receive" component={ReceiveAssets} />
       <Screen name="Saved Address" component={AddOrEditAddress} />
       <Screen name="Your Mnemonic" component={MnemonicScreen} />
@@ -99,6 +112,36 @@ export default function HomeNavigation() {
       <Screen name="Accounts" component={AccountsScreen} />
       <Screen name="Account settings" component={AccountSettingsScreen} />
       <Screen name="Edit name" component={EditAccountNameScreen} />
+      <Screen
+        name="transferSelectToken"
+        component={TransferSelectTokenScreen}
+        options={{ title: "Select token" }}
+      />
+      <Screen
+        name="transferSelectAddress"
+        component={TransferSelectAddressScreen}
+        options={{ title: "Choose address" }}
+      />
+      <Screen
+        name="transferAmount"
+        component={TransferAmountScreen}
+        options={{ title: "Enter amount" }}
+      />
+      <Screen
+        name="transferSummary"
+        component={TransferSummaryScreen}
+        options={{ title: "Summary" }}
+      />
+      <Screen
+        name="transferSending"
+        component={TransferSendingScreen}
+        options={{ headerShown: false }}
+      />
+      <Screen
+        name="transferSent"
+        component={TransferSentScreen}
+        options={{ headerShown: false }}
+      />
     </Navigator>
   );
 }

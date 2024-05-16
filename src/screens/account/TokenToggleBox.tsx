@@ -1,21 +1,21 @@
 import { CosmToken } from "@/services/cosmos";
-import Token from "./Token";
+import { TokenBox } from "@/components";
 import { Switch } from "react-native";
 
-type TokenInfoProps = {
+type TokenToggleProps = {
   token: CosmToken;
   selected: boolean;
   onToggle: () => void;
 };
 
-export default function TokenToggle({
+export default function TokenToggleBox({
   token,
   selected,
   onToggle,
-}: TokenInfoProps) {
+}: TokenToggleProps) {
   return (
-    <Token token={token}>
+    <TokenBox token={token}>
       <Switch onValueChange={onToggle} value={selected} />
-    </Token>
+    </TokenBox>
   );
 }

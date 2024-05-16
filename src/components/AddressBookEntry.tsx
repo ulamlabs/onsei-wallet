@@ -5,7 +5,6 @@ import {
   Clipboard as ClipboardCopy,
   Edit2,
   More,
-  Send2,
   Trash,
 } from "iconsax-react-native";
 import Tooltip from "./Tooltip";
@@ -36,11 +35,6 @@ export default function AddressBookEntry({ addressData }: Props) {
   function onEdit() {
     setVisibleTooltip(false);
     navigation.push("Saved Address", { action: "EDIT", addressData });
-  }
-
-  function onSend() {
-    setVisibleTooltip(false);
-    navigation.push("Send", { address: addressData.address });
   }
 
   async function onRemove() {
@@ -84,7 +78,6 @@ export default function AddressBookEntry({ addressData }: Props) {
             title="Copy Address"
             icon={ClipboardCopy}
           />
-          <TertiaryButton onPress={onSend} title="Send Assets" icon={Send2} />
           <TertiaryButton onPress={onEdit} title="Edit Entry" icon={Edit2} />
           <TertiaryButton
             onPress={onRemove}
