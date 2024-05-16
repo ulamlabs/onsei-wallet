@@ -1,5 +1,6 @@
 import { Colors, FontSizes } from "@/styles";
-import { Text, TextProps } from "react-native";
+import { TextProps } from "react-native";
+import Text from "./Text";
 
 type Props = TextProps & {
   size?: keyof typeof FontSizes;
