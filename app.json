@@ -46,6 +46,18 @@
         {
           "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID."
         }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Satoshi-Black.otf",
+            "./assets/fonts/Satoshi-Bold.otf",
+            "./assets/fonts/Satoshi-Light.otf",
+            "./assets/fonts/Satoshi-Medium.otf",
+            "./assets/fonts/Satoshi-Regular.otf"
+          ]
+        }
       ]
     ]
   }

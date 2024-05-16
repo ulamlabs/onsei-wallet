@@ -1,6 +1,7 @@
 import { Colors } from "@/styles";
 import { Icon } from "iconsax-react-native";
-import { Pressable, StyleProp, Text, TextStyle, ViewStyle } from "react-native";
+import { Pressable, StyleProp, TextStyle, ViewStyle } from "react-native";
+import { Text } from "../typography";
 
 export type BaseButtonProps = {
   title?: string;

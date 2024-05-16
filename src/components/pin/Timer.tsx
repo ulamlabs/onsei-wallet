@@ -1,6 +1,6 @@
 import { Colors } from "@/styles";
 import { useMemo } from "react";
-import { Text } from "react-native";
+import { Text } from "../typography";
 
 export type TimerProps = {
   seconds: number;

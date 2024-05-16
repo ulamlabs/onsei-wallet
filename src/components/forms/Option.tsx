@@ -1,6 +1,7 @@
 import { Colors } from "@/styles";
 import { PropsWithChildren, ReactElement } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
+import { Text } from "../typography";
 
 type OptionProps = PropsWithChildren & {
   label: string;

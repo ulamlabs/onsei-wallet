@@ -12,6 +12,7 @@ import {
   useSettingsStore,
 } from "@/store";
 import { NavigationContainer } from "@react-navigation/native";
+import { useFonts } from "expo-font";
 import { StatusBar } from "expo-status-bar";
 import "fastestsmallesttextencoderdecoder";
 import "globals";
@@ -21,7 +22,13 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function App() {
   const [ready, setReady] = useState(false);
-
+  const [fontsLoaded] = useFonts({
+    light: require("./assets/fonts/Satoshi-Light.otf"),
+    regular: require("./assets/fonts/Satoshi-Regular.otf"),
+    medium: require("./assets/fonts/Satoshi-Medium.otf"),
+    bold: require("./assets/fonts/Satoshi-Bold.otf"),
+    black: require("./assets/fonts/Satoshi-Black.otf"),
+  });
   useInactivityLock();
 
   const accountsStore = useAccountsStore();
@@ -56,7 +63,7 @@ export default function App() {
   }, [ready, onboardingStore, hasAccounts]);
 
   function getContent() {
-    if (!ready) {
+    if (!ready && !fontsLoaded) {
       return <></>;
     }
 
