@@ -3,6 +3,7 @@ import Biometrics from "./Biometrics";
 import CopyAddress from "./CopyAddress";
 import Loader from "./Loader";
 import MnemonicWords from "./MnemonicWords";
+import ShakingView from "./ShakingView";
 import TokenIcon from "./TokenIcon";
 import Tooltip from "./Tooltip";
 import Modal from "./modals/Modal";
@@ -22,6 +23,10 @@ export {
   MnemonicWords,
   Modal,
   Pin,
+  Tooltip,
+  Biometrics,
+  Loader,
+  ShakingView,
   TokenIcon,
   Tooltip,
 };

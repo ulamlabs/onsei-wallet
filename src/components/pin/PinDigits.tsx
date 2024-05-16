@@ -1,7 +1,6 @@
-import { Animated } from "react-native";
-import { PIN_LENGTH, SHAKE_ANIMATION_DURATION } from "./const";
+import { PIN_LENGTH } from "./const";
 import PinDigit from "./PinDigit";
-import { useEffect, useRef } from "react";
+import ShakingView from "../ShakingView";
 
 const digits = Array(PIN_LENGTH).fill(0);
 
@@ -10,38 +9,19 @@ export type PinDigitsProps = {
   error: boolean;
 };
 
-const shakeSize = 15;
-const animationSteps = [-shakeSize, shakeSize, -shakeSize, 0];
-
 export default function PinDigits({ pin, error }: PinDigitsProps) {
-  const translateX = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    if (error) {
-      Animated.sequence(
-        animationSteps.map((toValue) =>
-          Animated.timing(translateX, {
-            toValue: toValue,
-            duration: SHAKE_ANIMATION_DURATION / animationSteps.length,
-            useNativeDriver: true,
-          }),
-        ),
-      ).start();
-    }
-  }, [error]);
-
   return (
-    <Animated.View
+    <ShakingView
+      shaking={!!error}
       style={{
         display: "flex",
         flexDirection: "row",
         gap: 20,
-        transform: [{ translateX }],
       }}
     >
       {digits.map((_, index) => (
         <PinDigit filled={index < pin.length} key={index} error={error} />
       ))}
-    </Animated.View>
+    </ShakingView>
   );
 }
