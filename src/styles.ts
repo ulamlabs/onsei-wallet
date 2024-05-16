@@ -13,13 +13,13 @@ export const Colors = {
   inputBorderColor: "#232323",
   activeInputBorderColor: "#D3D3D3",
   info: "#7983A7",
-  success: "#41D352",
+  success: "#3E925A",
   warning: "#FFEE0A",
   danger: "#FF444E",
-  tickColor: "#3E925A",
 };
 
 export const FontSizes = {
+  "2xl": 40,
   xl: 26,
   lg: 20,
   base: 16,

@@ -20,7 +20,7 @@ export default function BottomBarsNavigation() {
       <Screen
         name="Wallet"
         component={Dashboard}
-        options={{ icon: Wallet2, headerTitle: () => <DashboardHeader /> }}
+        options={{ icon: Wallet2, headerTitle: DashboardHeader }}
       />
       <Screen
         name="Address Book"

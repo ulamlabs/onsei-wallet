@@ -10,7 +10,7 @@ type TransactionRenderProps = {
   index: number;
 };
 
-const Transactions = () => {
+export default function Transactions() {
   const { activeAccount } = useAccountsStore();
   const {
     data: transactions,
@@ -73,6 +73,4 @@ const Transactions = () => {
       </View>
     </SafeLayout>
   );
-};
-
-export default Transactions;
+}

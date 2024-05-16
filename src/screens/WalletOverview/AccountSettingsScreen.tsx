@@ -4,7 +4,6 @@ import {
   IconButton,
   Link,
   OptionGroup,
-  Paragraph,
   Row,
   SafeLayout,
 } from "@/components";
@@ -47,44 +46,37 @@ export default function AccountSettingsScreen({
     }
   }
 
-  function render() {
-    if (!account) {
-      return <Paragraph>Something went wrong</Paragraph>;
-    }
-    return (
-      <>
-        <Row
-          style={{
-            paddingHorizontal: 22,
-            paddingVertical: 16,
-            marginBottom: 32,
-          }}
-        >
-          <Headline size="lg">{account?.name}</Headline>
-          <IconButton
-            icon={Edit2}
-            onPress={() =>
-              navigation.navigate("Edit name", { account: account })
-            }
-          />
-        </Row>
-        <OptionGroup>
-          <Link
-            label="Show recovery phrase"
-            navigateTo={"Your Mnemonic"}
-            params={{ address }}
-          />
-        </OptionGroup>
-        {activeAccount?.address !== address && (
-          <DangerButton
-            title="Remove Account"
-            onPress={onRemove}
-            style={{ marginTop: 20 }}
-          />
-        )}
-      </>
-    );
-  }
-
-  return <SafeLayout style={{ paddingTop: 24 }}>{render()}</SafeLayout>;
+  return (
+    <SafeLayout style={{ paddingTop: 24 }}>
+      <Row
+        style={{
+          paddingHorizontal: 22,
+          paddingVertical: 16,
+          marginBottom: 32,
+        }}
+      >
+        <Headline size="lg">{account?.name}</Headline>
+        <IconButton
+          icon={Edit2}
+          onPress={() =>
+            navigation.navigate("Edit name", { account: account! })
+          }
+        />
+      </Row>
+      <OptionGroup>
+        <Link
+          label="Show recovery phrase"
+          navigateTo={"Your Mnemonic"}
+          params={{ address }}
+        />
+      </OptionGroup>
+      {activeAccount?.address !== address && (
+        <DangerButton
+          title="Remove Account"
+          onPress={onRemove}
+          style={{ marginTop: 20 }}
+        />
+      )}
+    </SafeLayout>
+  );
 }

@@ -54,7 +54,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
             </Text>
           </View>
         )}
-        <Headline style={{ fontSize: 40, marginBottom: 0 }}>
+        <Headline size="2xl" style={{ marginBottom: 0 }}>
           {formatTokenAmount(sei.balance, sei.decimals)} SEI
         </Headline>
       </>

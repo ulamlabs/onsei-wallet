@@ -31,7 +31,7 @@ export default function CopyAddressItem({ item }: AccountProps) {
           <Paragraph>{trimAddress(item.address)}</Paragraph>
         </View>
         {clicked ? (
-          <TickCircle variant="Bold" color={Colors.tickColor} />
+          <TickCircle variant="Bold" color={Colors.success} />
         ) : (
           <CopyIcon color={Colors.text100} />
         )}

@@ -17,10 +17,9 @@ export default function Account({ item }: AccountProps) {
   const navigation = useNavigation<NavigationProp>();
   const isActive = item.address === activeAccount?.address;
   const selectAccount = (address: string) => {
-    if (address === activeAccount?.address) {
-      return;
+    if (address !== activeAccount?.address) {
+      setActiveAccount(address);
     }
-    setActiveAccount(address);
     navigation.goBack();
   };
 

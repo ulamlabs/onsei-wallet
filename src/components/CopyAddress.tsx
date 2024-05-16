@@ -2,8 +2,7 @@ import { useAccountsStore } from "@/store";
 import { Colors } from "@/styles";
 import { Copy } from "iconsax-react-native";
 import { useState } from "react";
-import { Dimensions, FlatList, Platform, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Dimensions, FlatList, View } from "react-native";
 import CopyAddressItem from "./CopyAddressItem";
 import Tooltip from "./Tooltip";
 
@@ -11,9 +10,7 @@ export default function CopyAddress() {
   const { height } = Dimensions.get("window");
   const [visible, setVisible] = useState(false);
   const { accounts } = useAccountsStore();
-  const insets = useSafeAreaInsets();
   const [top, setTop] = useState(0);
-  const isIOS = Platform.OS === "ios";
 
   return (
     <Tooltip
@@ -30,7 +27,7 @@ export default function CopyAddress() {
           position: "absolute",
           width: 214,
           right: 20,
-          top: -height + insets.top + (isIOS ? top / 2 : top) + 24, // 24 is element element height
+          top: -height + top + 48,
           backgroundColor: "rgb(26,26,26)",
           paddingHorizontal: 16,
           paddingVertical: 12,
