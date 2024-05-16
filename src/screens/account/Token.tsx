@@ -12,7 +12,7 @@ export default function Token({ token, children }: TokenInfoProps) {
   return (
     <Row
       style={{
-        backgroundColor: Colors.background300,
+        backgroundColor: Colors.background200,
         padding: 5,
         borderRadius: 22,
         alignItems: "center",

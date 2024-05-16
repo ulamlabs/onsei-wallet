@@ -1,27 +1,22 @@
 import { Loader, Paragraph, Row, SafeLayout, Text } from "@/components";
 import { Transaction, useTransactions } from "@/modules/transactions";
+import { useAccountsStore } from "@/store";
 import { Colors } from "@/styles";
-import { NavigatorParamsList } from "@/types";
 import { trimAddress } from "@/utils/trimAddress";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { FlatList, View } from "react-native";
-
-type TransactionsProps = NativeStackScreenProps<
-  NavigatorParamsList,
-  "Transactions"
->;
 
 type TransactionRenderProps = {
   item: Transaction;
   index: number;
 };
 
-const Transactions = ({
-  route: {
-    params: { address },
-  },
-}: TransactionsProps) => {
-  const { data: transactions, error, isLoading } = useTransactions(address);
+export default function Transactions() {
+  const { activeAccount } = useAccountsStore();
+  const {
+    data: transactions,
+    error,
+    isLoading,
+  } = useTransactions(activeAccount?.address || "");
 
   const renderTxn = ({ item, index }: TransactionRenderProps) => {
     return (
@@ -78,6 +73,4 @@ const Transactions = ({
       </View>
     </SafeLayout>
   );
-};
-
-export default Transactions;
+}

@@ -5,7 +5,12 @@ export default function Column({ style, ...props }: ViewProps) {
     <View
       {...props}
       style={[
-        { flexDirection: "row", justifyContent: "space-between", gap: 12 },
+        {
+          flexDirection: "row",
+          justifyContent: "space-between",
+          gap: 12,
+          alignItems: "center",
+        },
         style,
       ]}
     />

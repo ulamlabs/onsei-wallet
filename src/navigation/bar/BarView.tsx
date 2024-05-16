@@ -1,9 +1,9 @@
-import { Animated, Dimensions } from "react-native";
-import { TabNavigationState, ParamListBase } from "@react-navigation/native";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { BAR_ANIMATION_DURATION } from "./const";
 import { Colors } from "@/styles";
 import { Header } from "@react-navigation/elements";
+import { ParamListBase, TabNavigationState } from "@react-navigation/native";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Animated, Dimensions } from "react-native";
+import { BAR_ANIMATION_DURATION } from "./const";
 import { BarDescriptor } from "./types";
 
 type BarNavigationProps = {
@@ -86,6 +86,11 @@ export default function BarView({
             backgroundColor: Colors.background,
           }}
           headerTintColor={Colors.text}
+          headerTitle={
+            descriptor.options.headerTitle
+              ? () => descriptor.options.headerTitle!()
+              : undefined
+          }
           headerShadowVisible={false}
         />
       )}

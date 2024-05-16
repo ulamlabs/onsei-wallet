@@ -1,12 +1,12 @@
-import { LayoutChangeEvent, View } from "react-native";
-import { TabNavigationState, ParamListBase } from "@react-navigation/native";
-import BarItem from "./BarItem";
 import { Colors } from "@/styles";
+import { NavigationProp } from "@/types";
+import { ParamListBase, TabNavigationState } from "@react-navigation/native";
 import { useMemo, useState } from "react";
-import { distributeItems } from "./utils";
+import { LayoutChangeEvent, View } from "react-native";
+import BarItem from "./BarItem";
 import { BAR_BORDER_RADIUS, BAR_HEIGHT, BAR_PADDING } from "./const";
 import { BarDescriptorMap } from "./types";
-import { NavigationProp } from "@/types";
+import { distributeItems } from "./utils";
 
 type BarProps = {
   state: TabNavigationState<ParamListBase>;
@@ -48,7 +48,7 @@ export default function Bar({ state, descriptors, navigation }: BarProps) {
     >
       <View
         style={{
-          backgroundColor: Colors.background300,
+          backgroundColor: Colors.background200,
           borderRadius: BAR_BORDER_RADIUS,
           padding: BAR_PADDING,
           height: BAR_HEIGHT,

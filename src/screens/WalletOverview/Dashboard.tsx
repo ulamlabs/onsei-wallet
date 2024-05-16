@@ -1,12 +1,11 @@
 import {
-  AccountsList,
   Column,
   Headline,
   Loader,
-  Paragraph,
   Row,
   SafeLayout,
   SecondaryButton,
+  Text,
 } from "@/components";
 import { useAccountsStore, useSettingsStore, useTokensStore } from "@/store";
 import { Colors } from "@/styles";
@@ -14,15 +13,13 @@ import { NavigatorParamsList } from "@/types";
 import { formatTokenAmount } from "@/utils/formatAmount";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { DirectboxReceive, DirectboxSend } from "iconsax-react-native";
-import { Text, View } from "react-native";
-import { TokensList } from "./account";
+import React from "react";
+import { View } from "react-native";
+import { TokensList } from "../account";
 
-type WalletOverviewProps = NativeStackScreenProps<
-  NavigatorParamsList,
-  "Wallet"
->;
+type DashboardProps = NativeStackScreenProps<NavigatorParamsList, "Wallet">;
 
-export default function WalletOverview({ navigation }: WalletOverviewProps) {
+export default function Dashboard({ navigation }: DashboardProps) {
   const { activeAccount } = useAccountsStore();
   const { sei } = useTokensStore();
   const {
@@ -36,37 +33,37 @@ export default function WalletOverview({ navigation }: WalletOverviewProps) {
     navigation.push("Send", {});
   }
 
-  return (
-    <SafeLayout>
-      <Column style={{ alignItems: "center" }}>
+  function render() {
+    if (!activeAccount) {
+      return <Loader />;
+    }
+
+    return (
+      <>
         {node === "TestNet" && (
           <View
             style={{
               borderRadius: 50,
               backgroundColor: Colors.warning,
               paddingHorizontal: 20,
-              paddingVertical: 8,
+              paddingVertical: 6,
             }}
           >
-            <Text>TestNet</Text>
+            <Text style={{ fontSize: 12, color: Colors.background }}>
+              TestNet
+            </Text>
           </View>
         )}
-        <Headline>PORTFOLIO</Headline>
+        <Headline size="2xl" style={{ marginBottom: 0 }}>
+          {formatTokenAmount(sei.balance, sei.decimals)} SEI
+        </Headline>
+      </>
+    );
+  }
 
-        {activeAccount ? (
-          <>
-            <Paragraph style={{ marginBottom: 16 }}>
-              {activeAccount.address}
-            </Paragraph>
-            <Headline>
-              {formatTokenAmount(sei.balance, sei.decimals)} SEI
-            </Headline>
-          </>
-        ) : (
-          <Loader />
-        )}
-      </Column>
-
+  return (
+    <SafeLayout>
+      <Column style={{ alignItems: "center" }}>{render()}</Column>
       <Row
         style={{
           justifyContent: "space-around",
@@ -80,9 +77,6 @@ export default function WalletOverview({ navigation }: WalletOverviewProps) {
         />
         <SecondaryButton title="Send" onPress={onSend} icon={DirectboxSend} />
       </Row>
-
-      <AccountsList />
-
       <TokensList />
     </SafeLayout>
   );

@@ -5,18 +5,22 @@ import { Animated, Pressable, Modal as ReactModal } from "react-native";
 type ModalProps = PropsWithChildren & {
   isVisible: boolean;
   onBackdropPress?: () => void;
+  position?: "top" | "bottom";
+  transparentBg?: boolean;
 };
 
 export default function Modal({
   isVisible,
   children,
   onBackdropPress,
+  position = "bottom",
+  transparentBg,
 }: ModalProps) {
   const translateY = useRef(new Animated.Value(200)).current;
 
   useEffect(() => {
     Animated.timing(translateY, {
-      toValue: isVisible ? 0 : 200,
+      toValue: isVisible ? 0 : position === "bottom" ? 200 : -200,
       duration: 300,
       useNativeDriver: true,
     }).start();
@@ -41,12 +45,12 @@ export default function Modal({
       >
         <Animated.View
           style={{
-            backgroundColor: Colors.background,
+            backgroundColor: transparentBg ? "" : Colors.background,
             padding: 10,
             borderTopLeftRadius: 12,
             borderTopRightRadius: 12,
             transform: [{ translateY }],
-            borderColor: Colors.inputBorderColor,
+            borderColor: transparentBg ? "" : Colors.inputBorderColor,
             borderTopWidth: 2,
             borderLeftWidth: 2,
             borderRightWidth: 2,

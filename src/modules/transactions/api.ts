@@ -2,33 +2,8 @@ import { NODE_URL } from "@/const";
 import { useSettingsStore } from "@/store";
 import { fetchData, formatDate } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
-
-export type Transaction = {
-  amount: number;
-  asset: string;
-  date: string;
-  from: string;
-  to: string;
-  type: string;
-};
-
-type TxResponse = {
-  txhash: string;
-  tx: {
-    body: {
-      messages: {
-        from_address: string;
-        to_address: string;
-        amount: { denom: "string"; amount: "string" }[];
-      }[];
-    };
-  };
-  timestamp: string;
-};
-
-type TransactionData = {
-  tx_responses: TxResponse[];
-};
+import { Transaction, TransactionData } from "./types";
+import { parseMultiSend, parseSend } from "./utils";
 
 const buildUrl = (queryParams: Record<string, string>): string => {
   const baseUrl = `https://rest.${NODE_URL[useSettingsStore.getState().settings.node]}/cosmos/tx/v1beta1/txs`;
@@ -62,23 +37,24 @@ const getTransactions = async (address: string): Promise<Transaction[]> => {
     ...sendData.tx_responses,
     ...receivedData.tx_responses,
   ]
-    .filter((resp) => resp.tx.body.messages[0]?.amount !== undefined)
+    .filter((resp) => resp.tx.body.messages[0] !== undefined)
     .sort(
       (a, b) =>
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
     )
     .map((resp) => {
-      return {
-        amount: +resp.tx.body.messages[0]?.amount[0]?.amount / 10 ** 6,
-        asset: "SEI",
-        date: formatDate(resp.timestamp),
-        from: resp.tx.body.messages[0]?.from_address,
-        to: resp.tx.body.messages[0]?.to_address,
-        type:
-          resp.tx.body.messages[0]?.from_address === address
-            ? "Send"
-            : "Receive",
-      };
+      const commonPath = resp.tx.body.messages[0];
+      const isMultiSend =
+        commonPath["@type"] === "/cosmos.bank.v1beta1.MsgMultiSend";
+
+      const asset = "SEI";
+      const date = formatDate(resp.timestamp);
+
+      if (isMultiSend) {
+        return { ...parseMultiSend(commonPath, address), asset, date };
+      } else {
+        return { ...parseSend(commonPath, address), asset, date };
+      }
     });
   return response;
 };

@@ -1,13 +1,17 @@
-import { Colors } from "@/styles";
+import { Colors, FontSizes } from "@/styles";
 import { Text, TextProps } from "react-native";
 
-export default function Headline({ style, ...props }: TextProps) {
+type Props = TextProps & {
+  size?: keyof typeof FontSizes;
+};
+
+export default function Headline({ style, size = "xl", ...props }: Props) {
   return (
     <Text
       style={[
         {
           color: Colors.text,
-          fontSize: 26,
+          fontSize: FontSizes[size],
           fontWeight: "bold",
           marginBottom: 8,
           textAlign: "center",

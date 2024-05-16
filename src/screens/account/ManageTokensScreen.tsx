@@ -1,10 +1,10 @@
 import { Column, Loader, Paragraph, SafeLayout, TextInput } from "@/components";
+import { useInputState } from "@/hooks";
 import { CosmToken, fetchCW20Token } from "@/services/cosmos";
 import { useSettingsStore, useTokensStore } from "@/store";
 import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
 import { useEffect, useState } from "react";
 import TokenToggle from "./TokenToggle";
-import { useInputState } from "@/hooks";
 
 export default function ManageTokensScreen() {
   const searchInput = useInputState();

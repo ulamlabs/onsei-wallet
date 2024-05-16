@@ -1,14 +1,15 @@
-import React from "react";
-import WalletOverview from "@/screens/WalletOverview";
+import DashboardHeader from "@/navigation/header/DashboardHeader";
+import Transactions from "@/screens/Transactions";
+import Dashboard from "@/screens/WalletOverview/Dashboard";
 import AddressBook from "@/screens/addressBook/AddressBookScreen";
-import { Book1, Setting2, Wallet2 } from "iconsax-react-native";
-import SettingsScreen from "@/screens/settings/SettingsScreen";
+import { Book, Book1, Wallet2 } from "iconsax-react-native";
+import React from "react";
 import { createBarNavigation } from "./bar";
 
 export type BottomTabsParamList = {
   Wallet: undefined;
   "Address Book": undefined;
-  Settings: undefined;
+  Transactions: { address: string };
 };
 
 const { Navigator, Screen } = createBarNavigation<BottomTabsParamList>();
@@ -18,8 +19,8 @@ export default function BottomBarsNavigation() {
     <Navigator>
       <Screen
         name="Wallet"
-        component={WalletOverview}
-        options={{ icon: Wallet2, headerShown: false }}
+        component={Dashboard}
+        options={{ icon: Wallet2, headerTitle: DashboardHeader }}
       />
       <Screen
         name="Address Book"
@@ -27,9 +28,9 @@ export default function BottomBarsNavigation() {
         options={{ icon: Book1 }}
       />
       <Screen
-        name="Settings"
-        component={SettingsScreen}
-        options={{ icon: Setting2 }}
+        name="Transactions"
+        component={Transactions}
+        options={{ icon: Book }}
       />
     </Navigator>
   );

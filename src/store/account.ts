@@ -1,4 +1,4 @@
-import { MNEMONIC_WORDS_COUNT, VALID_ACCOUNT_NAME_REGEX } from "@/const";
+import { MNEMONIC_WORDS_COUNT } from "@/const";
 import {
   loadFromSecureStorage,
   loadFromStorage,
@@ -6,6 +6,7 @@ import {
   saveToSecureStorage,
   saveToStorage,
 } from "@/utils";
+import { validateEntry } from "@/utils/validateInputs";
 import { generateWallet, restoreWallet } from "@sei-js/cosmjs";
 import { create } from "zustand";
 import { useTokensStore } from "./tokens";
@@ -33,10 +34,10 @@ export type AccountsStore = {
     passphraseSkipped: boolean,
   ) => Promise<void>;
   importAccount: (name: string, mnemonic: string) => Promise<Account>;
-  validateEntry: (name: string, address: string) => void;
   deleteAccount: (name: string) => Promise<void>;
   clearStore: () => Promise<void>;
   getMnemonic: (name: string) => string;
+  editAccountName: (address: string, newName: string) => void;
 };
 
 export const useAccountsStore = create<AccountsStore>((set, get) => ({
@@ -67,7 +68,8 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
     };
   },
   storeAccount: async (name, wallet, passphraseSkipped = false) => {
-    get().validateEntry(name, wallet.address);
+    const accounts = get().accounts;
+    validateEntry(name, wallet.address, accounts);
     saveToSecureStorage(getMnenomicKey(wallet.address), wallet.mnemonic);
 
     const account: Account = {
@@ -82,9 +84,10 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
     });
   },
   importAccount: async (name: string, mnemonic: string) => {
+    const accounts = get().accounts;
     const wallet = await restoreWallet(mnemonic);
     const address = (await wallet.getAccounts())[0].address;
-    get().validateEntry(name, address);
+    validateEntry(name, address, accounts);
     saveToSecureStorage(getMnenomicKey(address), wallet.mnemonic);
 
     const seiAccount = (await wallet.getAccounts())[0];
@@ -101,23 +104,6 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
     });
 
     return newAccount;
-  },
-  validateEntry: (name: string, address: string) => {
-    const accounts = get().accounts;
-    if (name.length > 20) {
-      throw new Error("Name cannot be longer than 20 chars");
-    }
-    if (!VALID_ACCOUNT_NAME_REGEX.test(name)) {
-      throw new Error(
-        'Name cannot have any special characters except for "_" and "-"',
-      );
-    }
-    if (accounts.find((a) => a.name === name)) {
-      throw Error("An account with given name already exists");
-    }
-    if (accounts.find((a) => a.address === address)) {
-      throw Error("An account with this address already exists");
-    }
   },
   deleteAccount: async (address: string) => {
     removeFromSecureStorage(getMnenomicKey(address));
@@ -137,6 +123,23 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
   },
   getMnemonic: (address: string) => {
     return loadFromSecureStorage(getMnenomicKey(address));
+  },
+  editAccountName(address, newName) {
+    const { setActiveAccount, activeAccount } = get();
+    set((state) => {
+      const updatedAccounts = state.accounts.map((acc) => {
+        if (acc.address === address) {
+          return { ...acc, name: newName };
+        }
+        return acc;
+      });
+      saveToStorage("accounts", updatedAccounts);
+
+      return { ...state, accounts: updatedAccounts };
+    });
+    if (activeAccount?.address === address) {
+      setActiveAccount(address);
+    }
   },
 }));
 
