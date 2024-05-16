@@ -102,9 +102,7 @@ export default function SendAssets({
             onPress={() => Clipboard.setStringAsync(transaction)}
             style={{ flexDirection: "row", gap: 6, alignItems: "center" }}
           >
-            <Paragraph style={{ fontSize: 12 }}>
-              ID: {trimAddress(transaction)}
-            </Paragraph>
+            <Paragraph size="xs">ID: {trimAddress(transaction)}</Paragraph>
             <ClipboardCopy color={Colors.text} size={16} />
           </TouchableOpacity>
           <Paragraph>

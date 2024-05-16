@@ -1,21 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { Text, View } from "react-native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useAccountsStore } from "@/store";
-import { resetNavigationStack } from "@/utils";
-import { useInputState } from "@/hooks";
 import {
+  Column,
+  Headline,
+  Loader,
+  Paragraph,
+  PrimaryButton,
+  Row,
   SafeLayout,
   TextInput,
-  PrimaryButton,
-  Headline,
-  Paragraph,
-  Column,
-  Loader,
 } from "@/components";
-import { NavigatorParamsList } from "@/types";
 import { MNEMONIC_WORDS_COUNT } from "@/const";
+import { useInputState } from "@/hooks";
+import { useAccountsStore } from "@/store";
 import { Colors } from "@/styles";
+import { NavigatorParamsList } from "@/types";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Lock } from "iconsax-react-native";
+import React, { useEffect, useState } from "react";
+import { Text, View } from "react-native";
+import { storeNewAccount } from "./storeNewAccount";
 
 type NewWalletProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -24,7 +26,6 @@ type NewWalletProps = NativeStackScreenProps<
 
 export default function ImportWalletScreen({ navigation }: NewWalletProps) {
   const accountsStore = useAccountsStore();
-  const nameInput = useInputState();
   const mnemonicInput = useInputState();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -37,16 +38,8 @@ export default function ImportWalletScreen({ navigation }: NewWalletProps) {
 
   async function onImport() {
     try {
-      const newAccount = await accountsStore.importAccount(
-        nameInput.value.trim(),
-        mnemonicInput.value.trim(),
-      );
-      accountsStore.setActiveAccount(newAccount.address);
-
-      const nextRoute: keyof NavigatorParamsList =
-        navigation.getId() === "onboarding" ? "Protect Your Wallet" : "Home";
-      navigation.navigate(nextRoute);
-      resetNavigationStack(navigation);
+      const wallet = await accountsStore.restoreWallet(mnemonicInput.value);
+      await storeNewAccount(accountsStore, navigation, wallet!, false);
     } catch (e: any) {
       console.error("Error on wallet import:", e);
       setError(e.message);
@@ -60,26 +53,28 @@ export default function ImportWalletScreen({ navigation }: NewWalletProps) {
     setLoading(true);
   }
 
+  useEffect(() => {
+    setError("");
+  }, [mnemonicInput.value]);
+
   return (
     <SafeLayout>
       <Column>
-        <View>
-          <Headline>Sign in with a recovery phrase</Headline>
-
+        <View style={{ marginBottom: 20 }}>
+          <Headline>Sign in with a Recovery Phrase</Headline>
           <Paragraph style={{ textAlign: "center" }}>
-            This is a {MNEMONIC_WORDS_COUNT}-word phrase you were given when
-            your created you previous crypto wallet.
+            This is a {MNEMONIC_WORDS_COUNT}-word phrase you were given when you
+            created your previous crypto wallet.
           </Paragraph>
         </View>
 
-        <TextInput placeholder="Name" autoCorrect={false} {...nameInput} />
-
         <TextInput
           multiline={true}
-          placeholder="Mnemonic"
+          placeholder="Secret Recovery Phrase"
           autoCapitalize="none"
           autoCorrect={false}
-          style={{ height: 100 }}
+          showClear={!!mnemonicInput.value}
+          style={{ minHeight: 80 }}
           {...mnemonicInput}
         />
         {error && <Text style={{ color: Colors.danger }}>{error}</Text>}
@@ -90,9 +85,23 @@ export default function ImportWalletScreen({ navigation }: NewWalletProps) {
           <PrimaryButton
             title="Import"
             onPress={onButtonPress}
-            disabled={!(mnemonicInput.value && nameInput.value)}
+            style={{ marginTop: 24 }}
+            disabled={!mnemonicInput.value}
           />
         )}
+        <Row style={{ justifyContent: "flex-start" }}>
+          <Lock color={Colors.info} />
+          <Paragraph
+            style={{
+              color: Colors.info,
+              flex: 1,
+            }}
+            size="xs"
+          >
+            Remember, SEI Wallet ensures your funds' security and cannot access
+            your account. You retain sole control over your funds.
+          </Paragraph>
+        </Row>
       </Column>
     </SafeLayout>
   );

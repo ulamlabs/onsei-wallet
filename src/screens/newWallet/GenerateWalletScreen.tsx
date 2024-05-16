@@ -9,20 +9,20 @@ import {
   TertiaryButton,
   Text,
 } from "@/components";
+import { addSkipButton } from "@/navigation/header/NewWalletHeader";
+import { Wallet, useAccountsStore, useModalStore } from "@/store";
+import { Colors } from "@/styles";
+import { NavigatorParamsList } from "@/types";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as Clipboard from "expo-clipboard";
 import {
   Copy as ClipboardCopy,
   SecuritySafe,
   TickCircle,
 } from "iconsax-react-native";
-import { Wallet, useAccountsStore, useModalStore } from "@/store";
-import { NavigatorParamsList } from "@/types";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { default as React, ReactElement, useEffect, useState } from "react";
-import { Colors } from "@/styles";
-import { addSkipButton } from "@/navigation/header/NewWalletHeader";
-import { storeNewAccount } from "./storeNewAccount";
 import { View } from "react-native";
+import { storeNewAccount } from "./storeNewAccount";
 
 type GenerateWalletProps = NativeStackScreenProps<
   NavigatorParamsList,
