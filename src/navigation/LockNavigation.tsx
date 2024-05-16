@@ -17,7 +17,7 @@ export default function LockNavigation() {
       <Screen
         name="Unlock"
         component={UnlockScreen}
-        options={{ headerShown: false }}
+        options={{ headerTitle: () => <></> }}
       />
       <Screen name="Clear app data" component={ResetAppScreen} />
     </Navigator>

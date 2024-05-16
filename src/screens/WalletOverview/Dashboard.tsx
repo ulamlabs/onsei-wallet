@@ -21,7 +21,7 @@ type DashboardProps = NativeStackScreenProps<NavigatorParamsList, "Wallet">;
 
 export default function Dashboard({ navigation }: DashboardProps) {
   const { activeAccount } = useAccountsStore();
-  const { sei } = useTokensStore();
+  const { sei, updateBalances } = useTokensStore();
   const {
     settings: { node },
   } = useSettingsStore();
@@ -62,7 +62,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
   }
 
   return (
-    <SafeLayout>
+    <SafeLayout refreshFn={updateBalances}>
       <Column style={{ alignItems: "center" }}>{render()}</Column>
       <Row
         style={{
