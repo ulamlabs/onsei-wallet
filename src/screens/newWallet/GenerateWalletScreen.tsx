@@ -1,4 +1,5 @@
 import {
+  Column,
   Headline,
   Loader,
   MnemonicWords,
@@ -20,7 +21,7 @@ import {
   SecuritySafe,
   TickCircle,
 } from "iconsax-react-native";
-import { default as React, ReactElement, useEffect, useState } from "react";
+import { default as React, useEffect, useState } from "react";
 import { View } from "react-native";
 import { storeNewAccount } from "./storeNewAccount";
 
@@ -82,50 +83,42 @@ export default function GenerateWalletScreen({
     navigation.push("Confirm Mnemonic", { wallet: wallet! });
   }
 
-  function getContent(): ReactElement {
-    if (!wallet) {
-      return <Loader />;
-    }
-
-    return (
-      <>
-        <MnemonicWords mnemonic={wallet.mnemonic.split(" ")} />
-
-        {copied ? (
-          <View style={{ marginTop: 20, alignItems: "center" }}>
-            <Row style={{ maxWidth: "auto" }}>
-              <TickCircle size={16} variant="Bold" color={Colors.success} />
-              <Text style={{ fontWeight: "bold" }}>Copied</Text>
-            </Row>
-          </View>
-        ) : (
-          <TertiaryButton
-            title="Copy to clipboard"
-            icon={ClipboardCopy}
-            color={Colors.text100}
-            textStyle={{ fontSize: 14 }}
-            onPress={onCopy}
-          />
-        )}
-        <PrimaryButton
-          title="OK, stored safely"
-          style={{ marginTop: "auto" }}
-          textStyle={{ fontSize: 16 }}
-          onPress={onNext}
-        />
-      </>
-    );
-  }
-
   return (
-    <SafeLayout>
-      <Headline>Secret Recovery Phrase</Headline>
-      <Paragraph style={{ textAlign: "center", marginBottom: 32 }}>
-        Save these 12 words in a secure location, such as a password manager,
-        and never share them with anyone.
-      </Paragraph>
+    <SafeLayout noScroll={true}>
+      {!wallet ? (
+        <Loader />
+      ) : (
+        <Column style={{ height: "100%", justifyContent: "space-between" }}>
+          <View>
+            <View>
+              <Headline>Secret Recovery Phrase</Headline>
+              <Paragraph style={{ textAlign: "center", marginBottom: 32 }}>
+                Save these 12 words in a secure location, such as a password
+                manager, and never share them with anyone.
+              </Paragraph>
 
-      {getContent()}
+              <MnemonicWords mnemonic={wallet.mnemonic.split(" ")} />
+            </View>
+            {copied ? (
+              <View style={{ marginTop: 20, alignItems: "center" }}>
+                <Row style={{ maxWidth: "auto" }}>
+                  <TickCircle size={16} variant="Bold" color={Colors.success} />
+                  <Text style={{ fontWeight: "bold" }}>Copied</Text>
+                </Row>
+              </View>
+            ) : (
+              <TertiaryButton
+                title="Copy to clipboard"
+                icon={ClipboardCopy}
+                color={Colors.text100}
+                textStyle={{ fontSize: 14 }}
+                onPress={onCopy}
+              />
+            )}
+          </View>
+          <PrimaryButton title="OK, stored safely" onPress={onNext} />
+        </Column>
+      )}
     </SafeLayout>
   );
 }

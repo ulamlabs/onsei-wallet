@@ -5,6 +5,9 @@ export default function TertiaryButton({
   ...props
 }: BaseButtonProps) {
   return (
-    <BaseButton textStyle={[{ fontWeight: "400" }, textStyle]} {...props} />
+    <BaseButton
+      textStyle={[{ fontWeight: "400", fontSize: 16 }, textStyle]}
+      {...props}
+    />
   );
 }

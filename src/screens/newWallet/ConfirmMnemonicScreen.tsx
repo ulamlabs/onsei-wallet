@@ -1,4 +1,5 @@
 import {
+  Column,
   Headline,
   Paragraph,
   PrimaryButton,
@@ -15,7 +16,7 @@ import { getNumberName, shuffle } from "@/utils";
 import { EnglishMnemonic } from "@cosmjs/crypto";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
-import { FlatList } from "react-native";
+import { FlatList, View } from "react-native";
 import MnemonicButton from "./MnemonicButton";
 import { storeNewAccount } from "./storeNewAccount";
 
@@ -135,54 +136,57 @@ export default function ConfirmMnemonicScreen({
 
   return (
     <SafeLayout noScroll={true}>
-      <Headline>Confirm Recovery Phrase</Headline>
-      {idsToSelect.length === MNEMONIC_WORDS_TO_CONFIRM && (
-        <Paragraph style={{ textAlign: "center", marginBottom: 24 }}>
-          Tap the {getNumberLabel(idsToSelect[0])},{" "}
-          {getNumberLabel(idsToSelect[1])} and {getNumberLabel(idsToSelect[2])}{" "}
-          word to verify that you saved your Recovery Phrase.
-        </Paragraph>
-      )}
-
-      <ShakingView shaking={!!error}>
-        <FlatList
-          data={words}
-          style={{
-            paddingTop: 10,
-            maxHeight: 400,
-            overflow: "visible",
-          }}
-          numColumns={2}
-          scrollEnabled={false}
-          renderItem={({ item, index }) => (
-            <MnemonicButton
-              key={index}
-              title={item}
-              selectedAs={wordToMnemoId(item)}
-              onPress={onWordPress}
-            />
+      <Column
+        style={{ height: "100%", justifyContent: "space-between", gap: 50 }}
+      >
+        <View>
+          <Headline>Confirm Recovery Phrase</Headline>
+          {idsToSelect.length === MNEMONIC_WORDS_TO_CONFIRM && (
+            <Paragraph style={{ textAlign: "center", marginBottom: 24 }}>
+              Tap the {getNumberLabel(idsToSelect[0])},{" "}
+              {getNumberLabel(idsToSelect[1])} and{" "}
+              {getNumberLabel(idsToSelect[2])} word to verify that you saved
+              your Recovery Phrase.
+            </Paragraph>
           )}
-          keyExtractor={(item) => item}
-        />
-      </ShakingView>
 
-      {error && (
-        <Text
-          style={{
-            marginTop: 10,
-            color: Colors.danger,
-            textAlign: "center",
-          }}
-        >
-          {error}
-        </Text>
-      )}
+          <ShakingView shaking={!!error}>
+            <FlatList
+              data={words}
+              style={{
+                paddingTop: 10,
+                maxHeight: 400,
+                overflow: "visible",
+              }}
+              numColumns={2}
+              scrollEnabled={false}
+              renderItem={({ item, index }) => (
+                <MnemonicButton
+                  key={index}
+                  title={item}
+                  selectedAs={wordToMnemoId(item)}
+                  onPress={onWordPress}
+                />
+              )}
+              keyExtractor={(item) => item}
+            />
+          </ShakingView>
 
-      <PrimaryButton
-        title="Confirm"
-        style={{ marginTop: "auto" }}
-        onPress={onConfirmButtonPress}
-      />
+          {error && (
+            <Text
+              style={{
+                marginTop: 10,
+                color: Colors.danger,
+                textAlign: "center",
+              }}
+            >
+              {error}
+            </Text>
+          )}
+        </View>
+
+        <PrimaryButton title="Confirm" onPress={onConfirmButtonPress} />
+      </Column>
     </SafeLayout>
   );
 }
