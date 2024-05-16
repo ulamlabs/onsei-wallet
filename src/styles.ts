@@ -20,16 +20,10 @@ export const Colors = {
 };
 
 export const FontSizes = {
+  "2xl": 40,
   xl: 26,
   lg: 20,
   base: 16,
   sm: 14,
   xs: 12,
-};
-
-export const FontSizes = {
-  "2xl": 40,
-  xl: 26,
-  lg: 20,
-  base: 16,
 };
