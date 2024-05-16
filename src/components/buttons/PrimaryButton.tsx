@@ -10,6 +10,7 @@ export default function PrimaryButton({
       {...props}
       color={Colors.background}
       style={[{ backgroundColor: Colors.text }, styles]}
+      textStyle={{ fontSize: 16 }}
     />
   );
 }
