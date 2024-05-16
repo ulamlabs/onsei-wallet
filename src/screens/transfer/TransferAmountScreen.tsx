@@ -8,14 +8,14 @@ import {
   Text,
   SafeLayout,
 } from "@/components";
-import { useTokensStore } from "@/store";
-import { Colors } from "@/styles";
+import { Colors, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
-import { toDecimalAmount, toIntAmount, trimAddress } from "@/utils";
-import { formatTokenAmount } from "@/utils/formatAmount";
+import { parseAmount, trimAddress } from "@/utils";
+import { formatAmount } from "@/utils/formatAmount";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import TransferAmount from "./TransferAmount";
+import { useTokensStore } from "@/store";
 
 type TransferAmountScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -27,35 +27,34 @@ export default function TransferAmountScreen({
   route,
 }: TransferAmountScreenProps) {
   const [decimalAmount, setDecimalAmount] = useState("");
-  const [token, setToken] = useState(route.params.token);
-  const { updateBalances, tokenMap } = useTokensStore();
-  const { recipient } = route.params;
+  const { tokenMap, updateBalances } = useTokensStore();
+  const { tokenId, recipient } = route.params;
+
+  const token = useMemo(() => tokenMap.get(tokenId)!, [tokenId, tokenMap]);
 
   const intAmount = useMemo(
-    () => toIntAmount(token, decimalAmount),
+    () => parseAmount(decimalAmount, token.decimals),
     [decimalAmount],
   );
 
   const hasFunds = useMemo(() => {
-    return Number(token.balance) >= (Number(intAmount) || 0);
+    return token.balance >= intAmount;
   }, [intAmount]);
-
-  const numberAmount = useMemo(() => Number(intAmount), [intAmount]);
-
-  useEffect(() => {
-    setToken({ ...token, balance: tokenMap.get(token.id)!.balance });
-  }, [tokenMap]);
 
   function goToSummary() {
     navigation.navigate("transferSummary", {
-      token,
+      tokenId,
       recipient,
-      intAmount,
+      intAmount: intAmount.toString(),
     });
   }
 
   function onMax() {
-    setDecimalAmount(toDecimalAmount(token, token.balance));
+    setDecimalAmount(
+      formatAmount(token.balance, token.decimals, {
+        noDecimalSeparator: true,
+      }),
+    );
   }
 
   function onDigit(digit: string) {
@@ -105,8 +104,8 @@ export default function TransferAmountScreen({
             <Text style={{ color: Colors.text100, fontSize: 12 }}>
               Available to send:
             </Text>
-            <Text style={{ fontFamily: "bold", fontSize: 16 }}>
-              {formatTokenAmount(token.balance, token.decimals)} {token.symbol}
+            <Text style={{ fontFamily: FontWeights.bold, fontSize: 16 }}>
+              {formatAmount(token.balance, token.decimals)} {token.symbol}
             </Text>
           </Column>
           <SecondaryButton title="Max" onPress={onMax} />
@@ -115,7 +114,7 @@ export default function TransferAmountScreen({
         <PrimaryButton
           title="Go to summary"
           onPress={goToSummary}
-          disabled={!numberAmount || !hasFunds}
+          disabled={!intAmount || !hasFunds}
         />
 
         <NumericPad

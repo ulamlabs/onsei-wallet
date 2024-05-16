@@ -7,5 +7,5 @@ export type CosmToken = {
   symbol: string;
   decimals: number;
   logo: string;
-  balance: string;
+  balance: bigint;
 };

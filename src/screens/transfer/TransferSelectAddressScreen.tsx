@@ -84,8 +84,7 @@ export default function TransferSelectAddressScreen({
   );
 
   function select(recipient: string) {
-    const token = route.params.token;
-    navigation.navigate("transferAmount", { token, recipient });
+    navigation.navigate("transferAmount", { ...route.params, recipient });
   }
 
   function validateTypedAddress() {

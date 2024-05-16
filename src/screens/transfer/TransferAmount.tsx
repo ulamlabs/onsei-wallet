@@ -1,6 +1,7 @@
 import { Row, Text } from "@/components";
 import { CosmToken } from "@/services/cosmos";
 import { Colors, FontWeights } from "@/styles";
+import { formatDecimalSeparator } from "@/utils";
 import { useMemo } from "react";
 import { StyleSheet } from "react-native";
 
@@ -15,7 +16,7 @@ export default function TransferAmount({
 }: TransferAmountProps) {
   const formattedAmount = useMemo(() => {
     const [whole, fraction] = decimalAmount.split(".");
-    const wholeFormatted = Number(whole).toLocaleString("en-US");
+    const wholeFormatted = formatDecimalSeparator(whole);
     if (decimalAmount.includes(".")) {
       return `${wholeFormatted}.${fraction}`;
     }

@@ -1,5 +1,5 @@
 export type Transaction = {
-  amount: number;
+  amount: bigint;
   asset: string;
   date: string;
   from: string;

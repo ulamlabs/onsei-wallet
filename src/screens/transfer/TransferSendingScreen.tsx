@@ -11,7 +11,7 @@ import { useTokensStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { resetNavigationStack } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
 
 type TransferSendingScreenProps = NativeStackScreenProps<
@@ -26,9 +26,19 @@ export default function TransferSendingScreen({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const { sei, updateBalances } = useTokensStore();
-
   const transfer = route.params;
+
+  const { sei, updateBalances, tokenMap } = useTokensStore();
+
+  const token = useMemo(
+    () => tokenMap.get(transfer.tokenId)!,
+    [transfer.tokenId],
+  );
+
+  const intAmount = useMemo(
+    () => BigInt(transfer.intAmount),
+    [transfer.intAmount],
+  );
 
   useEffect(() => {
     send();
@@ -36,15 +46,15 @@ export default function TransferSendingScreen({
 
   async function send() {
     try {
-      const tx = await transferToken(transfer);
+      const tx = await transferToken({ ...transfer, token, intAmount });
       navigation.navigate("transferSent", { tx });
     } catch (error: any) {
       setError(error.toString());
     } finally {
       setLoading(false);
       const tokensToUpdate = [sei];
-      if (transfer.token.id !== sei.id) {
-        tokensToUpdate.push(transfer.token);
+      if (token.id !== sei.id) {
+        tokensToUpdate.push(token);
       }
       updateBalances(tokensToUpdate);
     }

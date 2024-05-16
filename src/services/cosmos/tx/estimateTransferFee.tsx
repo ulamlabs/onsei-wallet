@@ -12,10 +12,10 @@ const GAS_MULTIPLIER = 1.4;
 export async function estimateTransferFee(
   receiver: string,
   token: CosmToken,
-  amount: string,
+  amount: bigint,
 ): Promise<StdFee> {
   const [client, sender] = await getSigningClientAndSender();
-  const msg = getSendAnyTokensMsg(sender, receiver, token, amount);
+  const msg = getSendAnyTokensMsg(sender, receiver, token, amount.toString());
   const gas = await client.simulate(sender, [msg], undefined);
   return calculateFee(Math.ceil(gas * GAS_MULTIPLIER), GAS_PRICE);
 }

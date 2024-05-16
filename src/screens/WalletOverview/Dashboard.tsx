@@ -10,7 +10,7 @@ import {
 import { useAccountsStore, useSettingsStore, useTokensStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
-import { formatTokenAmount } from "@/utils/formatAmount";
+import { formatAmount } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { DirectboxReceive, DirectboxSend } from "iconsax-react-native";
 import React from "react";
@@ -55,7 +55,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
           </View>
         )}
         <Headline size="2xl" style={{ marginBottom: 0 }}>
-          {formatTokenAmount(sei.balance, sei.decimals)} SEI
+          {formatAmount(sei.balance, sei.decimals)} SEI
         </Headline>
       </>
     );

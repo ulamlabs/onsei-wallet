@@ -1,7 +1,7 @@
 import { MsgMultiSend, MsgSend } from "./types";
 
 export const parseSend = (data: MsgSend, address: string) => {
-  const amount = +data?.amount[0]?.amount / 10 ** 6;
+  const amount = BigInt(data?.amount[0]?.amount);
 
   const from = data?.from_address;
 
@@ -13,7 +13,7 @@ export const parseSend = (data: MsgSend, address: string) => {
 };
 
 export const parseMultiSend = (data: MsgMultiSend, address: string) => {
-  const amount = +data?.inputs[0].coins[0].amount / 10 ** 6;
+  const amount = BigInt(data?.inputs[0].coins[0].amount);
 
   const from = data.inputs[0].address;
 

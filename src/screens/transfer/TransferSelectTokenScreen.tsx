@@ -26,7 +26,9 @@ export default function TransferSelectTokenScreen({
   }, [searchInput.value]);
 
   function select(token: CosmToken) {
-    navigation.navigate("transferSelectAddress", { token });
+    navigation.navigate("transferSelectAddress", {
+      tokenId: token.id,
+    });
   }
 
   return (

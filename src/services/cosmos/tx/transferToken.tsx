@@ -64,7 +64,7 @@ export async function transferToken(
     sender,
     transfer.recipient,
     transfer.token,
-    transfer.intAmount,
+    transfer.intAmount.toString(),
   );
 
   return await client.signAndBroadcast(sender, [msg], transfer.fee);
