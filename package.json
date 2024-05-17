@@ -21,6 +21,7 @@
     "@react-navigation/native-stack": "^6.9.26",
     "@sei-js/cosmjs": "^1.0.5",
     "@tanstack/react-query": "^5.35.1",
+    "axios": "^1.6.8",
     "crypto-browserify": "^3.12.0",
     "decimal.js": "^10.0.0",
     "expo": "~51.0.7",
