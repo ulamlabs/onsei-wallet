@@ -21,8 +21,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import "react-native-get-random-values";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-SplashScreen.preventAutoHideAsync();
-
 export default function App() {
   const [ready, setReady] = useState(false);
   const [fontsLoaded, fontError] = useFonts({
@@ -72,7 +70,7 @@ export default function App() {
   }, [ready, onboardingStore, hasAccounts]);
 
   function getContent() {
-    if (!ready && !fontsLoaded && !fontError) {
+    if (!ready || !fontsLoaded || fontError) {
       return <></>;
     }
 
