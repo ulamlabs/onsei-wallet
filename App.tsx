@@ -23,11 +23,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 export default function App() {
   const [ready, setReady] = useState(false);
   const [fontsLoaded] = useFonts({
-    light: require("./assets/fonts/Satoshi-Light.otf"),
-    regular: require("./assets/fonts/Satoshi-Regular.otf"),
-    medium: require("./assets/fonts/Satoshi-Medium.otf"),
-    bold: require("./assets/fonts/Satoshi-Bold.otf"),
-    black: require("./assets/fonts/Satoshi-Black.otf"),
+    Satoshi: require("./assets/fonts/Satoshi.ttf"),
   });
   useInactivityLock();
 
