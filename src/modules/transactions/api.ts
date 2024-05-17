@@ -7,7 +7,7 @@ import { Transaction, TransactionData } from "./types";
 import { parseMultiSend, parseSend } from "./utils";
 
 const buildUrl = (queryParams: Record<string, string>): string => {
-  const baseUrl = `https://rest.${NODE_URL[useSettingsStore.getState().settings.node]}/cosmos/tx/v1beta1/txss`;
+  const baseUrl = `https://rest.${NODE_URL[useSettingsStore.getState().settings.node]}/cosmos/tx/v1beta1/txs`;
   const queryString = Object.entries(queryParams)
     .map(
       ([key, value]) =>
