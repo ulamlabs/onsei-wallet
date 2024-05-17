@@ -27,3 +27,11 @@ export const FontSizes = {
   sm: 14,
   xs: 12,
 };
+
+export const FontWeights = {
+  light: "light",
+  regular: "regular",
+  medium: "medium",
+  bold: "bold",
+  black: "black",
+};

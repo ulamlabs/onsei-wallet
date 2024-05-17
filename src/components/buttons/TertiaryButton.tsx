@@ -1,3 +1,4 @@
+import { FontWeights } from "@/styles";
 import BaseButton, { BaseButtonProps } from "./BaseButton";
 
 export default function TertiaryButton({
@@ -6,7 +7,7 @@ export default function TertiaryButton({
 }: BaseButtonProps) {
   return (
     <BaseButton
-      textStyle={[{ fontWeight: "400", fontSize: 16 }, textStyle]}
+      textStyle={[{ fontFamily: FontWeights.regular, fontSize: 16 }, textStyle]}
       {...props}
     />
   );

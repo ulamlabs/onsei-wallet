@@ -1,4 +1,4 @@
-import { Colors, FontSizes } from "@/styles";
+import { Colors, FontSizes, FontWeights } from "@/styles";
 import { TextProps } from "react-native";
 import Text from "./Text";
 
@@ -13,7 +13,7 @@ export default function Headline({ style, size = "xl", ...props }: Props) {
         {
           color: Colors.text,
           fontSize: FontSizes[size],
-          fontWeight: "bold",
+          fontFamily: FontWeights.bold,
           marginBottom: 8,
           textAlign: "center",
         },

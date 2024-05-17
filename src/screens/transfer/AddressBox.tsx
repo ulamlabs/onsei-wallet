@@ -1,9 +1,8 @@
-import { Text } from "@/components";
-import { Colors } from "@/styles";
-import { Pressable, View } from "react-native";
-import { Box } from "@/components";
+import { Box, Text } from "@/components";
 import { SavedAddress } from "@/store";
+import { Colors, FontWeights } from "@/styles";
 import { trimAddress } from "@/utils";
+import { Pressable, View } from "react-native";
 
 type AddressBoxProps = {
   address: SavedAddress;
@@ -15,7 +14,7 @@ export default function AddressBox({ address, onPress }: AddressBoxProps) {
     <Pressable onPress={() => (onPress ? onPress(address.address) : null)}>
       <Box>
         <View>
-          <Text style={{ fontWeight: "bold" }}>{address.name}</Text>
+          <Text style={{ fontFamily: FontWeights.bold }}>{address.name}</Text>
           <Text style={{ color: Colors.text100 }}>
             {trimAddress(address.address)}
           </Text>

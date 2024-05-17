@@ -1,4 +1,4 @@
-import { Colors } from "@/styles";
+import { Colors, FontWeights } from "@/styles";
 import { useMemo } from "react";
 import { Text } from "../typography";
 
@@ -28,7 +28,7 @@ export default function Timer({ seconds: totalSeconds }: TimerProps) {
       style={{
         color: Colors.text,
         fontSize: 30,
-        fontWeight: "bold",
+        fontFamily: FontWeights.bold,
       }}
     >
       {timeFormatted}
