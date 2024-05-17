@@ -46,17 +46,25 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
   tokenPrice: 0,
   init: async () => {
     const accounts = await loadFromStorage<Account[]>("accounts", []);
-    const activeAccount = accounts[0];
+    const activeAccountAddress = await loadFromStorage<string | null>(
+      "activeAccount",
+      accounts[0]?.address,
+    );
+    const activeAccount = activeAccountAddress
+      ? accounts.find((acc) => acc.address === activeAccountAddress)!
+      : null;
     if (activeAccount) {
       useTokensStore.getState().loadTokens(activeAccount.address);
     }
     set({ accounts, activeAccount });
   },
   setActiveAccount: (address) => {
+    const account = get().accounts.find((a) => a.address === address);
     set((state) => ({
       ...state,
-      activeAccount: state.accounts.find((a) => a.address === address),
+      activeAccount: account,
     }));
+    saveToStorage("activeAccount", account?.address);
     useTokensStore.getState().loadTokens(address ?? "");
   },
   generateWallet: async () => {
