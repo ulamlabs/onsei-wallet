@@ -1,4 +1,3 @@
-export * from "./fetchData";
 export * from "./formatDate";
 export * from "./getNumberName";
 export * from "./resetNavigationStack";
