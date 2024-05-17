@@ -43,13 +43,13 @@ export default function EditAccountNameScreen({
   return (
     <SafeLayout style={{ paddingTop: 24 }} noScroll={true}>
       <Paragraph style={{ marginBottom: 12 }}>
-        Give your account name to easily identify it. Names are stored locally
+        Give your wallet name to easily identify it. Names are stored locally
         and can only be seen by you
       </Paragraph>
       <TextInput {...name} error={!!error} />
       <PrimaryButton
         style={{ marginTop: 32 }}
-        title="Save account name"
+        title="Save wallet name"
         onPress={editName}
       />
       {error && <Paragraph style={{ color: Colors.danger }}>{error}</Paragraph>}

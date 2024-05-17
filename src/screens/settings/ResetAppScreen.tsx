@@ -7,10 +7,10 @@ import {
 } from "@/components";
 import {
   useAccountsStore,
+  useAuthStore,
   useOnboardingStore,
   useSettingsStore,
 } from "@/store";
-import { useAuthStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
@@ -39,7 +39,7 @@ export default function ResetAppScreen({ navigation }: ResetAppScreenProps) {
     <SafeLayout>
       <Column>
         <Paragraph>
-          This will remove all application data including your accounts and
+          This will remove all application data including your wallets and
           settings. Are you sure?
         </Paragraph>
 

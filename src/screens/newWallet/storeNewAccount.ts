@@ -8,7 +8,7 @@ export async function storeNewAccount(
   wallet: Wallet,
   passphraseSkipped: boolean,
 ) {
-  let walletName = "Account ";
+  let walletName = "Wallet ";
   let i = accountsStore.accounts.length + 1;
   while (accountsStore.accounts.find((a) => a.name === walletName + i)) {
     i++;

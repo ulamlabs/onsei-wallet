@@ -19,23 +19,23 @@ import NodeSettingsScreen from "@/screens/settings/NodeSettingsScreen";
 import ResetAppScreen from "@/screens/settings/ResetAppScreen";
 import SecuritySettingsScreen from "@/screens/settings/SecuritySettingsScreen";
 import SettingsScreen from "@/screens/settings/SettingsScreen";
+import {
+  TransferAmountScreen,
+  TransferSelectAddressScreen,
+  TransferSelectTokenScreen,
+  TransferSendingScreen,
+  TransferSentScreen,
+  TransferSummaryScreen,
+} from "@/screens/transfer";
+import { Transfer } from "@/services/cosmos/tx";
 import { Account, SavedAddress, Wallet } from "@/store";
 import { NavigatorParamsList } from "@/types";
+import { DeliverTxResponse } from "@cosmjs/stargate";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import BottomBarsNavigation from "./BottomBarsNavigation";
 import { navigatorScreenOptions } from "./const";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
-import {
-  TransferAmountScreen,
-  TransferSentScreen,
-  TransferSelectAddressScreen,
-  TransferSelectTokenScreen,
-  TransferSendingScreen,
-  TransferSummaryScreen,
-} from "@/screens/transfer";
-import { DeliverTxResponse } from "@cosmjs/stargate";
-import { Transfer } from "@/services/cosmos/tx";
 
 export type HomeParamList = {
   Home: undefined;
@@ -55,8 +55,8 @@ export type HomeParamList = {
   "Import Wallet": undefined;
   "Confirm Mnemonic": { wallet: Wallet };
   Settings: undefined;
-  Accounts: undefined;
-  "Account settings": { address: string };
+  Wallets: undefined;
+  "Wallet settings": { address: string };
   "Edit name": { account: Account };
   "Manage Token List": undefined;
   transferSelectToken: undefined;
@@ -109,8 +109,8 @@ export default function HomeNavigation() {
       <Screen name="Import Wallet" component={ImportWalletScreen} />
       <Screen name="Settings" component={SettingsScreen} />
       <Screen name="Manage Token List" component={ManageTokensScreen} />
-      <Screen name="Accounts" component={AccountsScreen} />
-      <Screen name="Account settings" component={AccountSettingsScreen} />
+      <Screen name="Wallets" component={AccountsScreen} />
+      <Screen name="Wallet settings" component={AccountSettingsScreen} />
       <Screen name="Edit name" component={EditAccountNameScreen} />
       <Screen
         name="transferSelectToken"

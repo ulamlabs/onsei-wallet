@@ -14,7 +14,7 @@ import { Edit2 } from "iconsax-react-native";
 
 type AccountSettingsProps = NativeStackScreenProps<
   NavigatorParamsList,
-  "Account settings"
+  "Wallet settings"
 >;
 
 export default function AccountSettingsScreen({
@@ -34,9 +34,9 @@ export default function AccountSettingsScreen({
     const yesno = await ask({
       title: "Remove account?",
       question:
-        "Are you sure you want to remove this account?\nThis action cannot be reversed.",
-      yes: "Yes, remove the account",
-      no: "No, keep the account",
+        "Are you sure you want to remove this wallet?\nThis action cannot be reversed.",
+      yes: "Yes, remove the wallet",
+      no: "No, keep the wallet",
       primary: "yes",
       danger: true,
     });
@@ -72,7 +72,7 @@ export default function AccountSettingsScreen({
       </OptionGroup>
       {activeAccount?.address !== address && (
         <DangerButton
-          title="Remove Account"
+          title="Remove Wallet"
           onPress={onRemove}
           style={{ marginTop: 20 }}
         />

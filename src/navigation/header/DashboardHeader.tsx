@@ -23,7 +23,7 @@ export default function DashboardHeader() {
         <Setting2 size={22} color={Colors.text100} />
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => navigation.push("Accounts")}
+        onPress={() => navigation.push("Wallets")}
         style={{ flexDirection: "row", gap: 4 }}
       >
         <Row style={{ gap: 4 }}>

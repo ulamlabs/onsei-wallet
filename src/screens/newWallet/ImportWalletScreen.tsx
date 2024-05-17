@@ -99,7 +99,7 @@ export default function ImportWalletScreen({ navigation }: NewWalletProps) {
             size="xs"
           >
             Remember, SEI Wallet ensures your funds' security and cannot access
-            your account. You retain sole control over your funds.
+            your wallet. You retain sole control over your funds.
           </Paragraph>
         </Row>
       </Column>
