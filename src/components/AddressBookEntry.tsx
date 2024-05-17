@@ -1,5 +1,8 @@
-import React, { useState } from "react";
-import { View } from "react-native";
+import { SavedAddress, useAddressBookStore, useModalStore } from "@/store";
+import { Colors, FontWeights } from "@/styles";
+import { NavigationProp } from "@/types";
+import { trimAddress } from "@/utils";
+import { useNavigation } from "@react-navigation/native";
 import * as Clipboard from "expo-clipboard";
 import {
   Clipboard as ClipboardCopy,
@@ -7,15 +10,12 @@ import {
   More,
   Trash,
 } from "iconsax-react-native";
+import React, { useState } from "react";
+import { View } from "react-native";
 import Tooltip from "./Tooltip";
-import { SavedAddress, useAddressBookStore, useModalStore } from "@/store";
-import { useNavigation } from "@react-navigation/native";
-import { NavigationProp } from "@/types";
 import { TertiaryButton } from "./buttons";
-import { Colors } from "@/styles";
 import { Row } from "./layout";
 import { Text } from "./typography";
-import { trimAddress } from "@/utils";
 
 type Props = {
   addressData: SavedAddress;
@@ -63,7 +63,9 @@ export default function AddressBookEntry({ addressData }: Props) {
     >
       <Row>
         <View>
-          <Text style={{ fontWeight: "bold" }}>{addressData.name}</Text>
+          <Text style={{ fontFamily: FontWeights.bold }}>
+            {addressData.name}
+          </Text>
           <Text>{trimAddress(addressData.address)}</Text>
         </View>
 

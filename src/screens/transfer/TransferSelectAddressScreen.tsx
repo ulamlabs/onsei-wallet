@@ -2,18 +2,18 @@ import {
   Column,
   Paragraph,
   PrimaryButton,
+  SafeLayout,
   Text,
   TextInput,
 } from "@/components";
-import { SavedAddress, useAccountsStore, useAddressBookStore } from "@/store";
-import { SafeLayout } from "@/components";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { NavigatorParamsList } from "@/types";
 import { useInputState } from "@/hooks";
+import { SavedAddress, useAccountsStore, useAddressBookStore } from "@/store";
+import { Colors, FontWeights } from "@/styles";
+import { NavigatorParamsList } from "@/types";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
 import { useEffect, useMemo, useState } from "react";
 import AddressBox from "./AddressBox";
-import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
-import { Colors } from "@/styles";
 
 type TransferSelectTokenScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -31,7 +31,9 @@ function AddressList({ addresses, label, onSelect }: AddressListProps) {
   }
   return (
     <>
-      <Text style={{ fontWeight: "bold", marginTop: 15 }}>{label}</Text>
+      <Text style={{ fontFamily: FontWeights.bold, marginTop: 15 }}>
+        {label}
+      </Text>
       {addresses.map((address) => (
         <AddressBox
           address={address}

@@ -12,7 +12,7 @@ import {
 } from "@/components";
 import { addSkipButton } from "@/navigation/header/NewWalletHeader";
 import { Wallet, useAccountsStore, useModalStore } from "@/store";
-import { Colors } from "@/styles";
+import { Colors, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as Clipboard from "expo-clipboard";
@@ -62,7 +62,7 @@ export default function GenerateWalletScreen({
       title: "Paste it in safe place",
       description: (
         <>
-          <Text style={{ fontWeight: "bold", color: Colors.text100 }}>
+          <Text style={{ fontFamily: FontWeights.bold, color: Colors.text100 }}>
             Password Manager
           </Text>{" "}
           <Text style={{ color: Colors.text100 }}>
@@ -103,7 +103,7 @@ export default function GenerateWalletScreen({
               <View style={{ marginTop: 20, alignItems: "center" }}>
                 <Row style={{ maxWidth: "auto" }}>
                   <TickCircle size={16} variant="Bold" color={Colors.success} />
-                  <Text style={{ fontWeight: "bold" }}>Copied</Text>
+                  <Text style={{ fontFamily: FontWeights.bold }}>Copied</Text>
                 </Row>
               </View>
             ) : (

@@ -1,12 +1,12 @@
+import { Colors, FontWeights } from "@/styles";
+import * as Crypto from "expo-crypto";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
-import { PIN_LENGTH } from "./const";
-import PinDigits from "./PinDigits";
-import { NumericPad } from "../numericPad";
-import * as Crypto from "expo-crypto";
-import { Colors } from "@/styles";
-import { Headline, Paragraph, Text } from "../typography";
 import { SHAKE_ANIMATION_DURATION } from "../ShakingView";
+import { NumericPad } from "../numericPad";
+import { Headline, Paragraph, Text } from "../typography";
+import PinDigits from "./PinDigits";
+import { PIN_LENGTH } from "./const";
 
 export type PinProps = {
   label: string;
@@ -99,7 +99,7 @@ export default function Pin({
         )}
       </View>
 
-      <Text style={{ fontWeight: "bold" }}>{extraInfo}</Text>
+      <Text style={{ fontFamily: FontWeights.bold }}>{extraInfo}</Text>
 
       <View style={{ marginBottom: 20 }}>
         <NumericPad onDelete={onDelete} onDigit={onDigit} />

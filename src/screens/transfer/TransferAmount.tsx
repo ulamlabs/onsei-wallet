@@ -1,6 +1,6 @@
 import { Row, Text } from "@/components";
 import { CosmToken } from "@/services/cosmos";
-import { Colors } from "@/styles";
+import { Colors, FontWeights } from "@/styles";
 import { useMemo } from "react";
 import { StyleSheet } from "react-native";
 
@@ -55,7 +55,7 @@ export default function TransferAmount({
 const styles = StyleSheet.create({
   text: {
     fontSize: 40,
-    fontWeight: "bold",
+    fontFamily: FontWeights.bold,
     textAlign: "center",
   },
 });

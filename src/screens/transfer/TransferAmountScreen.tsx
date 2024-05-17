@@ -1,12 +1,12 @@
 import {
   Box,
   Column,
+  NumericPad,
   PrimaryButton,
   Row,
+  SafeLayoutBottom,
   SecondaryButton,
   Text,
-  NumericPad,
-  SafeLayoutBottom,
 } from "@/components";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
@@ -98,7 +98,7 @@ export default function TransferAmountScreen({
             <Text style={{ color: Colors.text100, fontSize: 12 }}>
               Available to send:
             </Text>
-            <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+            <Text style={{ fontFamily: "bold", fontSize: 16 }}>
               {formatTokenAmount(token.balance, token.decimals)} {token.symbol}
             </Text>
           </Column>

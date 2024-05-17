@@ -1,6 +1,6 @@
 import { CopyAddress, Paragraph, Row } from "@/components";
 import { useAccountsStore } from "@/store";
-import { Colors } from "@/styles";
+import { Colors, FontWeights } from "@/styles";
 import { NavigationProp } from "@/types";
 import { useNavigation } from "@react-navigation/native";
 import { ArrowDown2, Setting2, Warning2 } from "iconsax-react-native";
@@ -31,7 +31,7 @@ export default function DashboardHeader() {
             style={{
               color: Colors.text,
               fontSize: 18,
-              fontWeight: "700",
+              fontFamily: FontWeights.bold,
             }}
           >
             {activeAccount?.name}

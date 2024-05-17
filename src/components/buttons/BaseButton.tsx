@@ -1,4 +1,4 @@
-import { Colors } from "@/styles";
+import { Colors, FontWeights } from "@/styles";
 import { Icon } from "iconsax-react-native";
 import { Pressable, StyleProp, TextStyle, ViewStyle } from "react-native";
 import { Text } from "../typography";
@@ -42,7 +42,9 @@ export default function BaseButton({
     >
       {Icon && <Icon color={color} size={20} />}
       {title && (
-        <Text style={[{ color, fontWeight: "bold" }, textStyle]}>{title}</Text>
+        <Text style={[{ color, fontFamily: FontWeights.bold }, textStyle]}>
+          {title}
+        </Text>
       )}
     </Pressable>
   );

@@ -1,9 +1,9 @@
 import { CosmToken } from "@/services/cosmos";
-import TokenBox from "./TokenBox";
+import { Colors, FontWeights } from "@/styles";
 import { formatTokenAmount } from "@/utils/formatAmount";
-import { Text } from "./typography";
-import { Colors } from "@/styles";
 import { Pressable } from "react-native";
+import TokenBox from "./TokenBox";
+import { Text } from "./typography";
 
 type TokenBalanceBoxProps = {
   token: CosmToken;
@@ -23,7 +23,7 @@ export default function TokenBalanceBox({
   return (
     <Pressable onPress={onPressWrapped}>
       <TokenBox token={token}>
-        <Text style={{ fontWeight: "bold", color: Colors.text100 }}>
+        <Text style={{ fontFamily: FontWeights.bold, color: Colors.text100 }}>
           {formatTokenAmount(token.balance, token.decimals)}
         </Text>
       </TokenBox>

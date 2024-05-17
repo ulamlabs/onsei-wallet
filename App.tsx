@@ -13,17 +13,24 @@ import {
 } from "@/store";
 import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import "fastestsmallesttextencoderdecoder";
 import "globals";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import "react-native-get-random-values";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+SplashScreen.preventAutoHideAsync();
+
 export default function App() {
   const [ready, setReady] = useState(false);
-  const [fontsLoaded] = useFonts({
-    Satoshi: require("./assets/fonts/Satoshi.ttf"),
+  const [fontsLoaded, fontError] = useFonts({
+    light: require("./assets/fonts/Satoshi-Light.otf"),
+    regular: require("./assets/fonts/Satoshi-Regular.otf"),
+    medium: require("./assets/fonts/Satoshi-Medium.otf"),
+    bold: require("./assets/fonts/Satoshi-Bold.otf"),
+    black: require("./assets/fonts/Satoshi-Black.otf"),
   });
   useInactivityLock();
 
@@ -32,6 +39,12 @@ export default function App() {
   const addressStore = useAddressBookStore();
   const onboardingStore = useOnboardingStore();
   const settingsStore = useSettingsStore();
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded || fontError) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, fontError]);
 
   useEffect(() => {
     async function init() {
@@ -59,7 +72,7 @@ export default function App() {
   }, [ready, onboardingStore, hasAccounts]);
 
   function getContent() {
-    if (!ready && !fontsLoaded) {
+    if (!ready && !fontsLoaded && !fontError) {
       return <></>;
     }
 
@@ -81,7 +94,7 @@ export default function App() {
   return (
     <QueryClientProvider>
       <NavigationContainer>
-        <SafeAreaProvider>
+        <SafeAreaProvider onLayout={onLayoutRootView}>
           <StatusBar style="light" />
           {getContent()}
           <Modals />
