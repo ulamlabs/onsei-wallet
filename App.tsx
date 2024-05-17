@@ -17,9 +17,11 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import "fastestsmallesttextencoderdecoder";
 import "globals";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "react-native-get-random-values";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [ready, setReady] = useState(false);
@@ -38,11 +40,11 @@ export default function App() {
   const onboardingStore = useOnboardingStore();
   const settingsStore = useSettingsStore();
 
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded || fontError) {
-      await SplashScreen.hideAsync();
+  useEffect(() => {
+    if (ready && (fontsLoaded || fontError)) {
+      SplashScreen.hideAsync();
     }
-  }, [fontsLoaded, fontError]);
+  }, [ready, fontsLoaded, fontError]);
 
   useEffect(() => {
     async function init() {
@@ -70,10 +72,6 @@ export default function App() {
   }, [ready, onboardingStore, hasAccounts]);
 
   function getContent() {
-    if (!ready || !fontsLoaded || fontError) {
-      return <></>;
-    }
-
     if (onboardingStore.state === "onboarding") {
       return <OnboardingNavigation />;
     }
@@ -92,7 +90,7 @@ export default function App() {
   return (
     <QueryClientProvider>
       <NavigationContainer>
-        <SafeAreaProvider onLayout={onLayoutRootView}>
+        <SafeAreaProvider>
           <StatusBar style="light" />
           {getContent()}
           <Modals />
