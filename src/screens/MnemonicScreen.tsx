@@ -27,7 +27,7 @@ export default function MnemonicScreen({
             This is your recovery passphrase. Make sure to record these words in
             the correct order, using the corresponding numbers and do not share
             this passphrase with anyone, as it grants full access to your
-            account.
+            wallet.
           </Paragraph>
 
           <MnemonicWords mnemonic={mnemonic} />

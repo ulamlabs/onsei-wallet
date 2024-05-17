@@ -28,13 +28,13 @@ export const validateName = (
     );
   }
   if (!isAddressBook && accounts?.find((a) => a.name === name)) {
-    throw Error("An account with given name already exists");
+    throw Error("A wallet with given name already exists");
   }
 };
 
 export const validateAddress = (address: string, accounts: Account[]) => {
   if (accounts.find((a) => a.address === address)) {
-    throw Error("An account with this address already exists");
+    throw Error("A wallet with this address already exists");
   }
 };
 

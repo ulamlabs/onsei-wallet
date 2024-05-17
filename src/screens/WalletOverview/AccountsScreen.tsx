@@ -8,7 +8,7 @@ import Account from "./Account";
 
 type AccountsScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
-  "Accounts"
+  "Wallets"
 >;
 
 export default function AccountsScreen({ navigation }: AccountsScreenProps) {

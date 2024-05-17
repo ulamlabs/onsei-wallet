@@ -65,7 +65,7 @@ export default function Account({ item }: AccountProps) {
             : Colors.background200,
         }}
         onPress={() =>
-          navigation.navigate("Account settings", { address: item.address })
+          navigation.navigate("Wallet settings", { address: item.address })
         }
       />
     </TouchableOpacity>
