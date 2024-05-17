@@ -8,7 +8,6 @@ import {
   SafeLayout,
   TextInput,
 } from "@/components";
-import { MNEMONIC_WORDS_COUNT } from "@/const";
 import { useInputState } from "@/hooks";
 import { useAccountsStore } from "@/store";
 import { Colors } from "@/styles";
@@ -24,7 +23,10 @@ type NewWalletProps = NativeStackScreenProps<
   "Import Wallet"
 >;
 
-export default function ImportWalletScreen({ navigation }: NewWalletProps) {
+export default function ImportWalletScreen({
+  navigation,
+  route,
+}: NewWalletProps) {
   const accountsStore = useAccountsStore();
   const mnemonicInput = useInputState();
   const [loading, setLoading] = useState(false);
@@ -39,7 +41,13 @@ export default function ImportWalletScreen({ navigation }: NewWalletProps) {
   async function onImport() {
     try {
       const wallet = await accountsStore.restoreWallet(mnemonicInput.value);
-      await storeNewAccount(accountsStore, navigation, wallet!, false);
+      await storeNewAccount(
+        accountsStore,
+        navigation,
+        wallet!,
+        false,
+        route.params?.name,
+      );
     } catch (e: any) {
       console.error("Error on wallet import:", e);
       setError(e.message);
@@ -61,10 +69,14 @@ export default function ImportWalletScreen({ navigation }: NewWalletProps) {
     <SafeLayout>
       <Column>
         <View style={{ marginBottom: 20 }}>
-          <Headline>Sign in with a Recovery Phrase</Headline>
+          <Headline>
+            {route.params?.name
+              ? "Import wallet with your unique Recovery Phrase"
+              : "Sign in with Recovery Phrase"}
+          </Headline>
           <Paragraph style={{ textAlign: "center" }}>
-            This is a {MNEMONIC_WORDS_COUNT}-word phrase you were given when you
-            created your previous crypto wallet.
+            This is a recovery phrase you were given when you created your
+            previous crypto wallet.
           </Paragraph>
         </View>
 

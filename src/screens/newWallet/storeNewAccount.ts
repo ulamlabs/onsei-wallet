@@ -7,15 +7,22 @@ export async function storeNewAccount(
   navigation: NavigationProp,
   wallet: Wallet,
   passphraseSkipped: boolean,
+  name?: string,
 ) {
-  let walletName = "Wallet ";
-  let i = accountsStore.accounts.length + 1;
-  while (accountsStore.accounts.find((a) => a.name === walletName + i)) {
-    i++;
+  let walletName = "Account ";
+  if (!name) {
+    let i = accountsStore.accounts.length + 1;
+    while (accountsStore.accounts.find((a) => a.name === walletName + i)) {
+      i++;
+    }
+    walletName += i;
   }
-  walletName += i;
 
-  await accountsStore.storeAccount(walletName, wallet, passphraseSkipped);
+  await accountsStore.storeAccount(
+    name || walletName,
+    wallet,
+    passphraseSkipped,
+  );
   accountsStore.setActiveAccount(wallet.address);
 
   const nextRoute: keyof NavigatorParamsList =

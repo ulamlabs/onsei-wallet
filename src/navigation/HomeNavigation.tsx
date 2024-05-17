@@ -15,6 +15,7 @@ import {
   GenerateWalletScreen,
   ImportWalletScreen,
 } from "@/screens/newWallet";
+import SetWalletNameScreen from "@/screens/newWallet/SetWalletNameScreen";
 import NodeSettingsScreen from "@/screens/settings/NodeSettingsScreen";
 import ResetAppScreen from "@/screens/settings/ResetAppScreen";
 import SecuritySettingsScreen from "@/screens/settings/SecuritySettingsScreen";
@@ -50,8 +51,8 @@ export type HomeParamList = {
   "Saved Address": { action: "ADD" | "EDIT"; addressData?: SavedAddress };
   "Your Mnemonic": { address: string };
   "Add Wallet": undefined;
-  "Generate Wallet": undefined;
-  "Import Wallet": undefined;
+  "Generate Wallet": { name: string } | undefined;
+  "Import Wallet": { name: string } | undefined;
   "Confirm Mnemonic": { wallet: Wallet };
   Settings: undefined;
   Wallets: undefined;
@@ -69,6 +70,7 @@ export type HomeParamList = {
     fee: StdFee;
   };
   transferSent: { tx: DeliverTxResponse };
+  "Set Name": { nextRoute: "Import Wallet" | "Generate Wallet" };
 };
 
 const { Navigator, Screen } = createNativeStackNavigator<HomeParamList>();
@@ -110,7 +112,11 @@ export default function HomeNavigation() {
         options={() => newWalletScreenOptions({ step: 2 })}
         component={ConfirmMnemonicScreen}
       />
-      <Screen name="Import Wallet" component={ImportWalletScreen} />
+      <Screen
+        name="Import Wallet"
+        component={ImportWalletScreen}
+        options={{ title: "" }}
+      />
       <Screen name="Settings" component={SettingsScreen} />
       <Screen name="Manage Token List" component={ManageTokensScreen} />
       <Screen name="Wallets" component={AccountsScreen} />
@@ -145,6 +151,11 @@ export default function HomeNavigation() {
         name="transferSent"
         component={TransferSentScreen}
         options={{ headerShown: false }}
+      />
+      <Screen
+        name="Set Name"
+        component={SetWalletNameScreen}
+        options={({ route }) => ({ title: route.params.nextRoute })}
       />
     </Navigator>
   );

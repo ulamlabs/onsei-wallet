@@ -32,16 +32,14 @@ export default function AccountsScreen({ navigation }: AccountsScreenProps) {
         <SecondaryButton
           title="Create new wallet"
           onPress={() => {
-            navigation.goBack();
-            navigation.navigate("Generate Wallet");
+            navigation.navigate("Set Name", { nextRoute: "Generate Wallet" });
           }}
           icon={Add}
         />
         <SecondaryButton
           title="Import an existing wallet"
           onPress={() => {
-            navigation.goBack();
-            navigation.navigate("Import Wallet");
+            navigation.navigate("Set Name", { nextRoute: "Import Wallet" });
           }}
           icon={Import}
         />

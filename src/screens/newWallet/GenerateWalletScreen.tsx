@@ -32,6 +32,7 @@ type GenerateWalletProps = NativeStackScreenProps<
 
 export default function GenerateWalletScreen({
   navigation,
+  route,
 }: GenerateWalletProps) {
   const accountsStore = useAccountsStore();
   const { alert } = useModalStore();
@@ -52,7 +53,13 @@ export default function GenerateWalletScreen({
     if (copied) {
       Clipboard.setStringAsync(""); // Clear the clipboard just in case it was copied
     }
-    await storeNewAccount(accountsStore, navigation, wallet!, true);
+    await storeNewAccount(
+      accountsStore,
+      navigation,
+      wallet!,
+      true,
+      route.params?.name,
+    );
   }
 
   function onCopy() {
