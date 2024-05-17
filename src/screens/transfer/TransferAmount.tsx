@@ -1,7 +1,7 @@
 import { Row, Text } from "@/components";
-import { CosmToken } from "@/services/cosmos";
 import { Colors, FontWeights } from "@/styles";
 import { formatDecimalSeparator } from "@/utils";
+import { CosmToken } from "@/services/cosmos";
 import { useMemo } from "react";
 import { StyleSheet } from "react-native";
 

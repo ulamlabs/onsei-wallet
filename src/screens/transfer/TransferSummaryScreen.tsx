@@ -28,7 +28,7 @@ export default function TransferSummaryScreen({
   route,
 }: TransferSummaryScreenProps) {
   const transfer = route.params;
-  const { sei, updateBalance, tokenMap } = useTokensStore();
+  const { sei, updateBalances, tokenMap } = useTokensStore();
   const [fee, setFee] = useState<StdFee | null>(null);
   const [estimationFailed, setEstimationFailed] = useState(false);
 
@@ -68,7 +68,7 @@ export default function TransferSummaryScreen({
     setFee(null);
     setEstimationFailed(false);
 
-    updateBalance(sei);
+    updateBalances([sei]);
     estimateTransferFee(transfer.recipient, token, intAmount)
       .then(setFee)
       .catch(() => setEstimationFailed(true));

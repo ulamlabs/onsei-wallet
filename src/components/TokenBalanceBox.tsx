@@ -1,13 +1,13 @@
-import { CosmToken } from "@/services/cosmos";
 import { Colors, FontWeights } from "@/styles";
+import { CosmTokenWithBalance } from "@/services/cosmos";
 import TokenBox from "./TokenBox";
 import { formatAmount } from "@/utils";
 import { Text } from "./typography";
 import { Pressable } from "react-native";
 
 type TokenBalanceBoxProps = {
-  token: CosmToken;
-  onPress?: (token: CosmToken) => void;
+  token: CosmTokenWithBalance;
+  onPress?: (token: CosmTokenWithBalance) => void;
 };
 
 export default function TokenBalanceBox({

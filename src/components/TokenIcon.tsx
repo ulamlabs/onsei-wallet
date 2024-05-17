@@ -1,23 +1,37 @@
 import { CosmToken } from "@/services/cosmos";
-import { Image, View } from "react-native";
+import { useState } from "react";
+import { Image } from "react-native";
 
 type TokenIconProps = {
   token: CosmToken;
 };
 
-export default function TokenIcon({ token }: TokenIconProps) {
-  const style = { width: 32, height: 32 };
+const PLACEHOLDER_LOGO = require("../../assets/token-placeholder.png");
 
-  if (!token.logo) {
-    return <View style={style} />;
-  }
+export default function TokenIcon({ token }: TokenIconProps) {
+  const [placeholder, setPlaceholder] = useState(false);
+  const style = { width: 32, height: 32 };
 
   function getSource() {
     if (typeof token.logo === "number") {
       return token.logo as any;
     }
-    return { uri: token.logo };
+    if (token.logo) {
+      return { uri: token.logo };
+    }
+    return PLACEHOLDER_LOGO;
   }
 
-  return <Image source={getSource()} style={style} />;
+  if (placeholder) {
+    return <Image source={PLACEHOLDER_LOGO} style={style} />;
+  }
+
+  return (
+    <Image
+      defaultSource={PLACEHOLDER_LOGO}
+      onError={() => setPlaceholder(true)}
+      source={getSource()}
+      style={style}
+    />
+  );
 }
