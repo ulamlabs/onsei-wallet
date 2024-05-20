@@ -4,15 +4,22 @@ import {
   Paragraph,
   PrimaryButton,
   SafeLayout,
+  SecondaryButton,
 } from "@/components";
 import { useAccountsStore } from "@/store";
+import { Colors } from "@/styles";
+import { NavigatorParamsList } from "@/types";
+import { trimAddress } from "@/utils";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as Clipboard from "expo-clipboard";
-import { Clipboard as ClipboardImg, ClipboardTick } from "iconsax-react-native";
+import { Copy, TickCircle } from "iconsax-react-native";
 import { useState } from "react";
 import { View } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 
-export default function ReceiveAssets() {
+type Props = NativeStackScreenProps<NavigatorParamsList, "Your SEI address">;
+
+export default function ReceiveAssets({ navigation }: Props) {
   const { activeAccount } = useAccountsStore();
 
   const [addressCopied, setAddressCopied] = useState(false);
@@ -22,7 +29,7 @@ export default function ReceiveAssets() {
     setAddressCopied(true);
     setTimeout(() => {
       setAddressCopied(false);
-    }, 10000);
+    }, 2000);
   }
 
   if (!activeAccount) {
@@ -30,21 +37,46 @@ export default function ReceiveAssets() {
   }
 
   return (
-    <SafeLayout>
-      <Column style={{ alignItems: "center" }}>
-        <Headline>Receive Assets</Headline>
-
-        <View style={{ padding: 30, margin: 30, backgroundColor: "white" }}>
-          <QRCode value={activeAccount.address} size={200} />
+    <SafeLayout noScroll={true}>
+      <Column
+        style={{ gap: 0, justifyContent: "space-between", height: "100%" }}
+      >
+        <View style={{ alignItems: "center" }}>
+          <View
+            style={{
+              padding: 12,
+              marginBottom: 24,
+              backgroundColor: Colors.text,
+              borderRadius: 23,
+            }}
+          >
+            <QRCode
+              value={activeAccount.address}
+              size={220}
+              logoSize={60}
+              logoBackgroundColor="white"
+              logo={{
+                uri: "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAEklEQVR42mP8z/C/HwAFgwJ/lGkZtwAAAABJRU5ErkJggg==",
+              }}
+            />
+          </View>
+          <Headline>Your SEI address</Headline>
+          <Paragraph size="base">
+            Use this address to receive tokens on SEI
+          </Paragraph>
         </View>
-
-        <Paragraph>{activeAccount.address}</Paragraph>
-
-        <PrimaryButton
-          title={addressCopied ? "Copied successfully" : "Copy address"}
-          onPress={onCopy}
-          icon={addressCopied ? ClipboardTick : ClipboardImg}
-        />
+        <View style={{ gap: 12 }}>
+          <SecondaryButton
+            title={
+              addressCopied ? "Copied" : trimAddress(activeAccount.address)
+            }
+            onPress={onCopy}
+            iconColor={addressCopied ? Colors.success : Colors.text}
+            iconVariant={addressCopied ? "Bold" : "Linear"}
+            icon={addressCopied ? TickCircle : Copy}
+          />
+          <PrimaryButton title="Done" onPress={() => navigation.goBack()} />
+        </View>
       </Column>
     </SafeLayout>
   );

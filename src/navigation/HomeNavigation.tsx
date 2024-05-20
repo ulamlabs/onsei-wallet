@@ -46,7 +46,7 @@ export type HomeParamList = {
   "Change Node": undefined;
   "Clear app data": undefined;
   Authorize: { nextRoute: keyof NavigatorParamsList; nextParams?: any };
-  Receive: undefined;
+  "Your SEI address": undefined;
   "Saved Address": { action: "ADD" | "EDIT"; addressData?: SavedAddress };
   "Your Mnemonic": { address: string };
   "Add Wallet": undefined;
@@ -96,7 +96,7 @@ export default function HomeNavigation() {
       />
       <Screen name="Change Node" component={NodeSettingsScreen} />
       <Screen name="Authorize" component={AuthorizeScreen} />
-      <Screen name="Receive" component={ReceiveAssets} />
+      <Screen name="Your SEI address" component={ReceiveAssets} />
       <Screen name="Saved Address" component={AddOrEditAddress} />
       <Screen name="Your Mnemonic" component={MnemonicScreen} />
       <Screen name="Add Wallet" component={AddWalletScreen} />
