@@ -4,16 +4,17 @@ import {
   NumericPad,
   PrimaryButton,
   Row,
-  SafeLayoutBottom,
   SecondaryButton,
   Text,
+  SafeLayout,
 } from "@/components";
+import { useTokensStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { toDecimalAmount, toIntAmount, trimAddress } from "@/utils";
 import { formatTokenAmount } from "@/utils/formatAmount";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import TransferAmount from "./TransferAmount";
 
 type TransferAmountScreenProps = NativeStackScreenProps<
@@ -26,7 +27,9 @@ export default function TransferAmountScreen({
   route,
 }: TransferAmountScreenProps) {
   const [decimalAmount, setDecimalAmount] = useState("");
-  const { token, recipient } = route.params;
+  const [token, setToken] = useState(route.params.token);
+  const { updateBalances, tokenMap } = useTokensStore();
+  const { recipient } = route.params;
 
   const intAmount = useMemo(
     () => toIntAmount(token, decimalAmount),
@@ -38,6 +41,10 @@ export default function TransferAmountScreen({
   }, [intAmount]);
 
   const numberAmount = useMemo(() => Number(intAmount), [intAmount]);
+
+  useEffect(() => {
+    setToken({ ...token, balance: tokenMap.get(token.id)!.balance });
+  }, [tokenMap]);
 
   function goToSummary() {
     navigation.navigate("transferSummary", {
@@ -78,7 +85,7 @@ export default function TransferAmountScreen({
   }
 
   return (
-    <SafeLayoutBottom>
+    <SafeLayout refreshFn={updateBalances}>
       <Column style={{ flex: 1, gap: 24 }}>
         <Box>
           <Text style={{ color: Colors.text100 }}>To: </Text>
@@ -118,6 +125,6 @@ export default function TransferAmountScreen({
           style="condensed"
         />
       </Column>
-    </SafeLayoutBottom>
+    </SafeLayout>
   );
 }

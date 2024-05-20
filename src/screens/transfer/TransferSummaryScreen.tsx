@@ -3,7 +3,7 @@ import {
   Option,
   OptionGroup,
   PrimaryButton,
-  SafeLayoutBottom,
+  SafeLayout,
   Text,
 } from "@/components";
 import TransferAmount from "./TransferAmount";
@@ -27,14 +27,12 @@ export default function TransferSummaryScreen({
   route,
 }: TransferSummaryScreenProps) {
   const transfer = route.params;
-  const { sei } = useTokensStore();
+  const { sei, updateBalance } = useTokensStore();
   const [fee, setFee] = useState<StdFee | null>(null);
   const [estimationFailed, setEstimationFailed] = useState(false);
 
   useEffect(() => {
-    estimateTransferFee(transfer.recipient, transfer.token, transfer.intAmount)
-      .then(setFee)
-      .catch(() => setEstimationFailed(true));
+    getFeeEstimation();
   }, []);
 
   const hasFundsForFee = useMemo(() => {
@@ -46,7 +44,17 @@ export default function TransferSummaryScreen({
       seiLeft -= Number(transfer.intAmount);
     }
     return seiLeft >= 0;
-  }, [fee]);
+  }, [fee, sei.balance]);
+
+  function getFeeEstimation() {
+    setFee(null);
+    setEstimationFailed(false);
+
+    updateBalance(sei);
+    estimateTransferFee(transfer.recipient, transfer.token, transfer.intAmount)
+      .then(setFee)
+      .catch(() => setEstimationFailed(true));
+  }
 
   function send() {
     if (!fee) {
@@ -74,7 +82,7 @@ export default function TransferSummaryScreen({
   }
 
   return (
-    <SafeLayoutBottom>
+    <SafeLayout refreshFn={getFeeEstimation}>
       <TransferAmount
         token={transfer.token}
         decimalAmount={toDecimalAmount(transfer.token, transfer.intAmount)}
@@ -102,6 +110,6 @@ export default function TransferSummaryScreen({
         onPress={send}
         disabled={!fee || !hasFundsForFee}
       />
-    </SafeLayoutBottom>
+    </SafeLayout>
   );
 }

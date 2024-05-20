@@ -1,9 +1,9 @@
-import { Loader, Paragraph, Row, SafeLayout, Text } from "@/components";
+import { Column, Loader, Paragraph, Row, SafeLayout, Text } from "@/components";
 import { Transaction, useTransactions } from "@/modules/transactions";
-import { useAccountsStore } from "@/store";
+import { useAccountsStore, useTokensStore } from "@/store";
 import { Colors } from "@/styles";
 import { trimAddress } from "@/utils/trimAddress";
-import { FlatList, View } from "react-native";
+import { View } from "react-native";
 
 type TransactionRenderProps = {
   item: Transaction;
@@ -16,11 +16,17 @@ export default function Transactions() {
     data: transactions,
     error,
     isLoading,
+    refetch,
   } = useTransactions(activeAccount?.address || "");
+  const { updateBalances } = useTokensStore();
+
+  async function refreshApp() {
+    await Promise.all([refetch(), updateBalances()]);
+  }
 
   const renderTxn = ({ item, index }: TransactionRenderProps) => {
     return (
-      <View style={{ marginTop: 20, gap: 10 }}>
+      <View key={index} style={{ marginTop: 20, gap: 10 }}>
         {(index === 0 || item.date !== transactions![index - 1].date) && (
           <Text>{item.date}</Text>
         )}
@@ -53,7 +59,7 @@ export default function Transactions() {
   };
 
   return (
-    <SafeLayout noScroll={true}>
+    <SafeLayout refreshFn={refreshApp}>
       <View>
         {isLoading ? (
           <Loader />
@@ -62,7 +68,9 @@ export default function Transactions() {
         ) : (
           <View>
             {transactions && transactions?.length > 0 ? (
-              <FlatList data={transactions} renderItem={renderTxn} />
+              <Column>
+                {transactions.map((item, index) => renderTxn({ item, index }))}
+              </Column>
             ) : (
               <Paragraph style={{ textAlign: "center" }}>
                 No transactions yet
