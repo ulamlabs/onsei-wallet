@@ -37,7 +37,7 @@ export default function ReceiveAssets({ navigation }: Props) {
   }
 
   return (
-    <SafeLayout noScroll={true}>
+    <SafeLayout>
       <Column
         style={{ gap: 0, justifyContent: "space-between", height: "100%" }}
       >
@@ -50,15 +50,7 @@ export default function ReceiveAssets({ navigation }: Props) {
               borderRadius: 23,
             }}
           >
-            <QRCode
-              value={activeAccount.address}
-              size={220}
-              logoSize={60}
-              logoBackgroundColor="white"
-              logo={{
-                uri: "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAEklEQVR42mP8z/C/HwAFgwJ/lGkZtwAAAABJRU5ErkJggg==",
-              }}
-            />
+            <QRCode value={activeAccount.address} size={220} />
           </View>
           <Headline>Your SEI address</Headline>
           <Paragraph size="base">
