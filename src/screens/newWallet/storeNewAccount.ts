@@ -1,21 +1,19 @@
 import { AccountsStore, Wallet } from "@/store";
 import { NavigationProp, NavigatorParamsList } from "@/types";
-import { resetNavigationStack } from "@/utils";
+import { generateWalletName, resetNavigationStack } from "@/utils";
 
 export async function storeNewAccount(
   accountsStore: AccountsStore,
   navigation: NavigationProp,
   wallet: Wallet,
   passphraseSkipped: boolean,
+  name?: string,
 ) {
-  let walletName = "Wallet ";
-  let i = accountsStore.accounts.length + 1;
-  while (accountsStore.accounts.find((a) => a.name === walletName + i)) {
-    i++;
-  }
-  walletName += i;
-
-  await accountsStore.storeAccount(walletName, wallet, passphraseSkipped);
+  await accountsStore.storeAccount(
+    name || generateWalletName(accountsStore.accounts),
+    wallet,
+    passphraseSkipped,
+  );
   accountsStore.setActiveAccount(wallet.address);
 
   const nextRoute: keyof NavigatorParamsList =

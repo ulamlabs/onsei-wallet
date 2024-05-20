@@ -1,23 +1,23 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Wallet } from "@/store";
+import { PinEnableScreen } from "@/screens/auth";
 import {
   ConfirmMnemonicScreen,
   GenerateWalletScreen,
   ImportWalletScreen,
 } from "@/screens/newWallet";
-import OnboardingWelcomeScreen from "@/screens/onboarding/OnboardingWelcomeScreen";
+import { OnboardingEnableBiometricsScreen } from "@/screens/onboarding/OnboardingEnableBiometricsScreen";
 import OnboardingFinishScreen from "@/screens/onboarding/OnboardingFinishScreen";
 import OnboardingProtectionScreen from "@/screens/onboarding/OnboardingProtectionScreen";
-import { PinEnableScreen } from "@/screens/auth";
+import OnboardingWelcomeScreen from "@/screens/onboarding/OnboardingWelcomeScreen";
+import { Wallet } from "@/store";
+import { NavigatorParamsList } from "@/types";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { navigatorScreenOptions } from "./const";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
-import { NavigatorParamsList } from "@/types";
-import { OnboardingEnableBiometricsScreen } from "@/screens/onboarding/OnboardingEnableBiometricsScreen";
 
 export type OnboardingParamList = {
   Welcome: undefined;
-  "Generate Wallet": undefined;
-  "Import Wallet": undefined;
+  "Generate Wallet": { name: string } | undefined;
+  "Import Wallet": { name: string } | undefined;
   "Confirm Mnemonic": { wallet: Wallet };
   "Protect Your Wallet": undefined;
   "Enable Biometrics": undefined;
@@ -45,7 +45,11 @@ export default function OnboardingNavigation() {
         options={() => newWalletScreenOptions({ step: 2 })}
         component={ConfirmMnemonicScreen}
       />
-      <Screen name="Import Wallet" component={ImportWalletScreen} />
+      <Screen
+        name="Import Wallet"
+        component={ImportWalletScreen}
+        options={{ title: "" }}
+      />
       <Screen
         name="Protect Your Wallet"
         component={OnboardingProtectionScreen}
