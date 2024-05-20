@@ -72,6 +72,9 @@ export default function App() {
   }, [ready, onboardingStore, hasAccounts]);
 
   function getContent() {
+    if (!ready || !fontsLoaded || fontError) {
+      return <></>;
+    }
     if (onboardingStore.state === "onboarding") {
       return <OnboardingNavigation />;
     }
