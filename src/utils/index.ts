@@ -8,6 +8,4 @@ export * from "./searchTokens";
 export * from "./secureStorage";
 export * from "./shuffle";
 export * from "./storage";
-export * from "./toDecimalAmount";
-export * from "./toIntAmount";
 export * from "./trimAddress";
