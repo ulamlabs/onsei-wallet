@@ -4,6 +4,6 @@ import { CosmToken } from "../types";
 export type Transfer = {
   token: CosmToken;
   recipient: string;
-  intAmount: string;
+  intAmount: bigint;
   fee: StdFee;
 };

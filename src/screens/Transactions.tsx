@@ -2,6 +2,7 @@ import { Column, Loader, Paragraph, Row, SafeLayout, Text } from "@/components";
 import { Transaction, useTransactions } from "@/modules/transactions";
 import { useAccountsStore, useTokensStore } from "@/store";
 import { Colors } from "@/styles";
+import { formatAmount } from "@/utils";
 import { trimAddress } from "@/utils/trimAddress";
 import { View } from "react-native";
 
@@ -23,6 +24,8 @@ export default function Transactions() {
   async function refreshApp() {
     await Promise.all([refetch(), updateBalances()]);
   }
+
+  const { sei } = useTokensStore();
 
   const renderTxn = ({ item, index }: TransactionRenderProps) => {
     return (
@@ -51,7 +54,7 @@ export default function Transactions() {
             }}
           >
             {item.type === "Send" ? "-" : "+"}
-            {item.amount} {item.asset}
+            {formatAmount(item.amount, sei.decimals)} {item.asset}
           </Text>
         </Row>
       </View>

@@ -27,10 +27,9 @@ import {
   TransferSentScreen,
   TransferSummaryScreen,
 } from "@/screens/transfer";
-import { Transfer } from "@/services/cosmos/tx";
 import { Account, SavedAddress, Wallet } from "@/store";
 import { NavigatorParamsList } from "@/types";
-import { DeliverTxResponse } from "@cosmjs/stargate";
+import { DeliverTxResponse, StdFee } from "@cosmjs/stargate";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import BottomBarsNavigation from "./BottomBarsNavigation";
@@ -60,10 +59,15 @@ export type HomeParamList = {
   "Edit name": { account: Account };
   "Manage Token List": undefined;
   transferSelectToken: undefined;
-  transferSelectAddress: Pick<Transfer, "token">;
-  transferAmount: Pick<Transfer, "token" | "recipient">;
-  transferSummary: Pick<Transfer, "token" | "recipient" | "intAmount">;
-  transferSending: Transfer;
+  transferSelectAddress: { tokenId: string };
+  transferAmount: { tokenId: string; recipient: string };
+  transferSummary: { tokenId: string; recipient: string; intAmount: string };
+  transferSending: {
+    tokenId: string;
+    recipient: string;
+    intAmount: string;
+    fee: StdFee;
+  };
   transferSent: { tx: DeliverTxResponse };
 };
 

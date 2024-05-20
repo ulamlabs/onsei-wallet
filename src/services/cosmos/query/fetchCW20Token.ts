@@ -19,6 +19,6 @@ export async function fetchCW20Token(
     name: tokenInfo.name,
     symbol: tokenInfo.symbol,
     logo: marketingInfo.logo?.url ?? "",
-    balance: "",
+    balance: 0n,
   };
 }

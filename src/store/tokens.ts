@@ -16,7 +16,7 @@ const SEI_TOKEN: CosmToken = {
   name: "Sei",
   symbol: "SEI",
   logo: require("../../assets/sei-logo.png"),
-  balance: "",
+  balance: 0n,
 };
 
 type TokensStore = {
@@ -49,7 +49,8 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     const { node } = useSettingsStore.getState().settings;
     set({ accountAddress: address, tokens: [SEI_TOKEN] });
     const key = getTokensKey(address, node);
-    const cw20Tokens = await loadFromStorage<CosmToken[]>(key, []);
+    let cw20Tokens = await loadFromStorage<CosmToken[]>(key, []);
+    cw20Tokens = cw20Tokens.map(deserializeToken);
     _updateStructures([SEI_TOKEN, ...cw20Tokens]);
     updateBalances();
   },
@@ -96,8 +97,9 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
 
     if (token.type === "native") {
       const balances = await fetchAccountBalances(accountAddress, node);
-      token.balance =
-        balances.balances.find((b) => b.denom === "usei")?.amount ?? "0";
+      token.balance = BigInt(
+        balances.balances.find((b) => b.denom === "usei")?.amount ?? "0",
+      );
     } else if (token.type === "cw20") {
       token.balance = await fetchCW20TokenBalance(
         accountAddress,
@@ -123,7 +125,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     set({ sei, tokens, cw20Tokens, tokenMap });
     if (options?.save) {
       const key = getTokensKey(accountAddress, node);
-      saveToStorage(key, cw20Tokens);
+      saveToStorage(key, cw20Tokens.map(serializeToken));
     }
   },
 }));
@@ -134,4 +136,12 @@ function getTokensKey(address: string, node: Node | "") {
 
 function tokensToMap(tokens: CosmToken[]): Map<string, CosmToken> {
   return new Map(tokens.map((t) => [t.id, t]));
+}
+
+function serializeToken(token: CosmToken): CosmToken {
+  return { ...token, balance: token.balance.toString() as any };
+}
+
+function deserializeToken(token: CosmToken): CosmToken {
+  return { ...token, balance: BigInt(token.balance) };
 }

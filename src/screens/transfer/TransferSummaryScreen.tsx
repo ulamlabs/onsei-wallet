@@ -9,13 +9,14 @@ import {
 import TransferAmount from "./TransferAmount";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamsList } from "@/types";
-import { toDecimalAmount, trimAddress } from "@/utils";
+import { trimAddress } from "@/utils";
 import { View } from "react-native";
 import { useTokensStore } from "@/store";
 import { useEffect, useMemo, useState } from "react";
 import { estimateTransferFee } from "@/services/cosmos/tx";
 import { StdFee } from "@cosmjs/stargate";
 import { Colors } from "@/styles";
+import { formatAmount } from "@/utils";
 
 type TransferSummaryScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -27,7 +28,7 @@ export default function TransferSummaryScreen({
   route,
 }: TransferSummaryScreenProps) {
   const transfer = route.params;
-  const { sei, updateBalance } = useTokensStore();
+  const { sei, updateBalance, tokenMap } = useTokensStore();
   const [fee, setFee] = useState<StdFee | null>(null);
   const [estimationFailed, setEstimationFailed] = useState(false);
 
@@ -35,13 +36,30 @@ export default function TransferSummaryScreen({
     getFeeEstimation();
   }, []);
 
+  const token = useMemo(
+    () => tokenMap.get(transfer.tokenId)!,
+    [transfer.tokenId],
+  );
+
+  const intAmount = useMemo(
+    () => BigInt(transfer.intAmount),
+    [transfer.intAmount],
+  );
+
+  const feeInt = useMemo(() => {
+    if (fee) {
+      return BigInt(fee.amount[0].amount);
+    }
+    return 0n;
+  }, [fee]);
+
   const hasFundsForFee = useMemo(() => {
     if (!fee) {
       return false;
     }
-    let seiLeft = Number(sei.balance) - Number(fee.amount[0].amount);
-    if (transfer.token.id === sei.id) {
-      seiLeft -= Number(transfer.intAmount);
+    let seiLeft = sei.balance - feeInt;
+    if (token.id === sei.id) {
+      seiLeft -= intAmount;
     }
     return seiLeft >= 0;
   }, [fee, sei.balance]);
@@ -51,7 +69,7 @@ export default function TransferSummaryScreen({
     setEstimationFailed(false);
 
     updateBalance(sei);
-    estimateTransferFee(transfer.recipient, transfer.token, transfer.intAmount)
+    estimateTransferFee(transfer.recipient, token, intAmount)
       .then(setFee)
       .catch(() => setEstimationFailed(true));
   }
@@ -67,7 +85,7 @@ export default function TransferSummaryScreen({
     if (fee) {
       return (
         <Text>
-          {toDecimalAmount(sei, fee.amount[0].amount)} {sei.symbol}
+          {formatAmount(feeInt, sei.decimals)} {sei.symbol}
         </Text>
       );
     }
@@ -84,8 +102,10 @@ export default function TransferSummaryScreen({
   return (
     <SafeLayout refreshFn={getFeeEstimation}>
       <TransferAmount
-        token={transfer.token}
-        decimalAmount={toDecimalAmount(transfer.token, transfer.intAmount)}
+        token={token}
+        decimalAmount={formatAmount(intAmount, token.decimals, {
+          noDecimalSeparator: true,
+        })}
       />
 
       <View style={{ flex: 1 }}>
