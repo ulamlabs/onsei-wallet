@@ -3,6 +3,7 @@ import { useInputState } from "@/hooks";
 import { useAccountsStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
+import { generateWalletName } from "@/utils";
 import { validateName } from "@/utils/validateInputs";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
@@ -21,7 +22,7 @@ export default function SetWalletNameScreen({
   const { accounts } = useAccountsStore();
 
   useEffect(() => {
-    name.onChangeText(`Wallet ${accounts.length + 1}`);
+    name.onChangeText(generateWalletName(accounts));
   }, []);
 
   useEffect(() => {
