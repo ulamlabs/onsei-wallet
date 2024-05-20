@@ -27,7 +27,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
   } = useSettingsStore();
 
   function onReceive() {
-    navigation.push("Receive");
+    navigation.push("Your SEI address");
   }
   function onSend() {
     navigation.push("transferSelectToken");
