@@ -12,7 +12,7 @@ export function getSendAnyTokensMsg(
   token: CosmToken,
   amount: string,
 ): EncodeObject {
-  if (token.type === "native") {
+  if (token.type === "native" || token.type === "ics20") {
     return getSendNativeTokenMsg(fromAddress, toAddress, token, amount);
   } else if (token.type === "cw20") {
     return getSendCW20TokenMsg(fromAddress, toAddress, token, amount);

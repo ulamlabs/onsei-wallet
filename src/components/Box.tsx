@@ -12,6 +12,7 @@ export default function Box({ children }: PropsWithChildren) {
         alignItems: "center",
         paddingHorizontal: 22,
         paddingVertical: 16,
+        gap: 15,
       }}
     >
       {children}

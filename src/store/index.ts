@@ -5,3 +5,4 @@ export * from "./onboarding";
 export * from "./settings";
 export * from "./modal";
 export * from "./tokens";
+export * from "./tokenRegistry";

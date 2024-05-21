@@ -1,4 +1,4 @@
-export type CosmTokenType = "native" | "ics20" | "cw20";
+export type CosmTokenType = "native" | "ics20" | "cw20" | "erc20";
 
 export type CosmToken = {
   type: CosmTokenType;
@@ -7,5 +7,9 @@ export type CosmToken = {
   symbol: string;
   decimals: number;
   logo: string;
+  coingeckoId: string;
+};
+
+export type CosmTokenWithBalance = CosmToken & {
   balance: bigint;
 };

@@ -10,6 +10,7 @@ import {
   useAuthStore,
   useOnboardingStore,
   useSettingsStore,
+  useTokenRegistryStore,
 } from "@/store";
 import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
@@ -39,6 +40,7 @@ export default function App() {
   const addressStore = useAddressBookStore();
   const onboardingStore = useOnboardingStore();
   const settingsStore = useSettingsStore();
+  const tokenRegistryStore = useTokenRegistryStore();
 
   useEffect(() => {
     if (ready && (fontsLoaded || fontError)) {
@@ -50,6 +52,7 @@ export default function App() {
     async function init() {
       await settingsStore.init(); // Settings must be initialized before everything else
       await Promise.all([
+        tokenRegistryStore.init(),
         accountsStore.init(),
         authStore.init(),
         addressStore.init(),

@@ -1,5 +1,5 @@
+import { Colors, FontSizes, FontWeights } from "@/styles";
 import { CosmToken } from "@/services/cosmos";
-import { Colors, FontWeights } from "@/styles";
 import { PropsWithChildren } from "react";
 import { View } from "react-native";
 import Box from "./Box";
@@ -14,13 +14,23 @@ type TokenBoxProps = PropsWithChildren & {
 export default function TokenBox({ token, children }: TokenBoxProps) {
   return (
     <Box>
-      <Row style={{ alignItems: "center" }}>
+      <Row style={{ alignItems: "center", flexShrink: 1 }}>
         <TokenIcon token={token} />
-        <View>
-          <Text style={{ fontFamily: FontWeights.bold, fontSize: 16 }}>
+        <View style={{ flexShrink: 1 }}>
+          <Text
+            style={{ fontFamily: FontWeights.bold, fontSize: FontSizes.base }}
+          >
+            {token.symbol}
+          </Text>
+          <Text
+            style={{
+              color: Colors.text100,
+              flexShrink: 1,
+            }}
+            numberOfLines={1}
+          >
             {token.name}
           </Text>
-          <Text style={{ color: Colors.text100 }}>{token.symbol}</Text>
         </View>
       </Row>
       {children}

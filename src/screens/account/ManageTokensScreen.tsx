@@ -1,6 +1,6 @@
 import { Column, Loader, Paragraph, SafeLayout, TextInput } from "@/components";
 import { useInputState } from "@/hooks";
-import { CosmToken, fetchCW20Token } from "@/services/cosmos";
+import { CosmTokenWithBalance, fetchCW20Token } from "@/services/cosmos";
 import { useSettingsStore, useTokensStore } from "@/store";
 import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
 import { useEffect, useState } from "react";
@@ -44,7 +44,7 @@ export default function ManageTokensScreen() {
     }
   }
 
-  function onToggle(token: CosmToken) {
+  function onToggle(token: CosmTokenWithBalance) {
     if (tokensStore.tokenMap.has(token.id)) {
       tokensStore.removeToken(token);
     } else {

@@ -1,6 +1,6 @@
 import { NODES } from "@/const";
 import {
-  CosmToken,
+  CosmTokenWithBalance,
   fetchAccountBalances,
   fetchCW20TokenBalance,
 } from "@/services/cosmos";
@@ -8,8 +8,9 @@ import { Node } from "@/types";
 import { loadFromStorage, removeFromStorage, saveToStorage } from "@/utils";
 import { create } from "zustand";
 import { useSettingsStore } from "./settings";
+import { useTokenRegistryStore } from "./tokenRegistry";
 
-const SEI_TOKEN: CosmToken = {
+const SEI_TOKEN: CosmTokenWithBalance = {
   type: "native",
   id: "usei",
   decimals: 6,
@@ -17,22 +18,25 @@ const SEI_TOKEN: CosmToken = {
   symbol: "SEI",
   logo: require("../../assets/sei-logo.png"),
   balance: 0n,
+  coingeckoId: "",
 };
 
 type TokensStore = {
-  sei: CosmToken;
-  tokens: CosmToken[];
-  cw20Tokens: CosmToken[];
-  tokenMap: Map<string, CosmToken>;
+  sei: CosmTokenWithBalance;
+  tokens: CosmTokenWithBalance[];
+  cw20Tokens: CosmTokenWithBalance[];
+  tokenMap: Map<string, CosmTokenWithBalance>;
   accountAddress: string;
+  fetchBalancesPromise: Promise<any> | null;
   loadTokens: (address: string) => Promise<void>;
-  addToken: (token: CosmToken) => void;
-  removeToken: (token: CosmToken) => void;
+  addToken: (token: CosmTokenWithBalance) => void;
+  removeToken: (token: CosmTokenWithBalance) => void;
   clearAddress: (address: string) => Promise<void>;
-  updateBalance: (token: CosmToken) => Promise<void>;
-  updateBalances: (tokens?: CosmToken[]) => Promise<void[]>;
+  updateBalances: (tokens?: CosmTokenWithBalance[]) => Promise<void[]>;
+  _updateCw20Balance: (token: CosmTokenWithBalance) => Promise<void>;
+  _updateNativeBalances: () => Promise<void>;
   _updateStructures: (
-    tokens: CosmToken[],
+    tokens: CosmTokenWithBalance[],
     options?: { save?: boolean },
   ) => void;
 };
@@ -44,18 +48,24 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
   tokens: [],
   cw20Tokens: [],
   tokenMap: new Map(),
+  fetchBalancesPromise: null,
   loadTokens: async (address) => {
     const { updateBalances, _updateStructures } = get();
     const { node } = useSettingsStore.getState().settings;
+
     set({ accountAddress: address, tokens: [SEI_TOKEN] });
     const key = getTokensKey(address, node);
-    let cw20Tokens = await loadFromStorage<CosmToken[]>(key, []);
+    let cw20Tokens = await loadFromStorage<CosmTokenWithBalance[]>(key, []);
     cw20Tokens = cw20Tokens.map(deserializeToken);
     _updateStructures([SEI_TOKEN, ...cw20Tokens]);
     updateBalances();
   },
   addToken: (token) => {
-    const { tokens, _updateStructures, updateBalance } = get();
+    const {
+      tokens,
+      _updateStructures,
+      _updateCw20Balance: updateBalance,
+    } = get();
     const exists = tokens.find((t) => t.id === token.id);
     if (exists) {
       return;
@@ -84,45 +94,90 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       return {};
     });
   },
-  updateBalance: async (token) => {
-    const { accountAddress, tokens, _updateStructures } = get();
-    const { node } = useSettingsStore.getState().settings;
+  updateBalances: (tokensToUpdate) => {
+    // Will always update native token balances.
+    const { cw20Tokens, _updateCw20Balance } = get();
 
-    token = { ...token };
+    let cw20ToUpdate = cw20Tokens;
+    if (tokensToUpdate) {
+      cw20ToUpdate = tokensToUpdate.filter((t) => t.type === "cw20");
+    }
+
+    return Promise.all([
+      get()._updateNativeBalances(),
+      ...cw20ToUpdate.map((token) => _updateCw20Balance(token)),
+    ]);
+  },
+  _updateCw20Balance: async (token) => {
+    const { node } = useSettingsStore.getState().settings;
+    const { accountAddress } = get();
+
+    const balance = await fetchCW20TokenBalance(accountAddress, token.id, node);
+
+    const { tokenMap, tokens, _updateStructures } = get();
+
+    token = { ...tokenMap.get(token.id)!, balance };
+
     const index = tokens.findIndex((t) => t.id === token.id);
     if (index === -1) {
       return;
     }
     tokens.splice(index, 1, token);
 
-    if (token.type === "native") {
-      const balances = await fetchAccountBalances(accountAddress, node);
-      token.balance = BigInt(
-        balances.balances.find((b) => b.denom === "usei")?.amount ?? "0",
-      );
-    } else if (token.type === "cw20") {
-      token.balance = await fetchCW20TokenBalance(
-        accountAddress,
-        token.id,
-        node,
-      );
-    }
     _updateStructures([...tokens], { save: true });
   },
-  updateBalances: (tokensToUpdate) => {
-    const { tokens, updateBalance } = get();
-    if (!tokensToUpdate) {
-      tokensToUpdate = tokens;
+  _updateNativeBalances: async () => {
+    const { accountAddress, cw20Tokens, _updateStructures, sei } = get();
+    const { node } = useSettingsStore.getState().settings;
+
+    const balances = await fetchAccountBalances(accountAddress, node);
+
+    const { registryRefreshPromise: refreshPromise } =
+      useTokenRegistryStore.getState();
+
+    let { tokenRegistryMap } = useTokenRegistryStore.getState();
+
+    const newSei = { ...sei };
+    const nativeTokens: CosmTokenWithBalance[] = [newSei];
+    for (const balanceData of balances.balances) {
+      const balance = BigInt(balanceData.amount);
+      if (balanceData.denom === sei.id) {
+        newSei.balance = balance;
+        continue;
+      }
+      let token = tokenRegistryMap.get(balanceData.denom);
+      if (!token && refreshPromise) {
+        await refreshPromise;
+        tokenRegistryMap = useTokenRegistryStore.getState().tokenRegistryMap;
+        token = tokenRegistryMap.get(balanceData.denom);
+      }
+      if (token) {
+        nativeTokens.push({ ...token, balance });
+      }
     }
-    return Promise.all(tokensToUpdate.map((token) => updateBalance(token)));
+
+    _updateStructures([...cw20Tokens, ...nativeTokens]);
   },
   _updateStructures: (tokens, options) => {
     const { accountAddress } = get();
     const { node } = useSettingsStore.getState().settings;
+
+    tokens = tokens.sort((a, b) => {
+      if (a.id === "usei") {
+        return -Infinity;
+      }
+      if (b.id === "usei") {
+        return Infinity;
+      }
+      return a.symbol.localeCompare(b.symbol);
+    });
+
     const cw20Tokens = tokens.filter((t) => t.type === "cw20");
     const sei = tokens.find((t) => t.type === "native");
     const tokenMap = tokensToMap(tokens);
+
     set({ sei, tokens, cw20Tokens, tokenMap });
+
     if (options?.save) {
       const key = getTokensKey(accountAddress, node);
       saveToStorage(key, cw20Tokens.map(serializeToken));
@@ -134,14 +189,16 @@ function getTokensKey(address: string, node: Node | "") {
   return `cw20tokens-${node}-${address}.json`;
 }
 
-function tokensToMap(tokens: CosmToken[]): Map<string, CosmToken> {
+function tokensToMap(
+  tokens: CosmTokenWithBalance[],
+): Map<string, CosmTokenWithBalance> {
   return new Map(tokens.map((t) => [t.id, t]));
 }
 
-function serializeToken(token: CosmToken): CosmToken {
+function serializeToken(token: CosmTokenWithBalance): CosmTokenWithBalance {
   return { ...token, balance: token.balance.toString() as any };
 }
 
-function deserializeToken(token: CosmToken): CosmToken {
+function deserializeToken(token: CosmTokenWithBalance): CosmTokenWithBalance {
   return { ...token, balance: BigInt(token.balance) };
 }
