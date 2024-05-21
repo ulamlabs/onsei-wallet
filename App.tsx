@@ -21,6 +21,7 @@ import "globals";
 import { useEffect, useMemo, useState } from "react";
 import "react-native-get-random-values";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { NotificationsListener } from "@/notifications";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -100,6 +101,7 @@ export default function App() {
           <StatusBar style="light" />
           {getContent()}
           <Modals />
+          {ready && <NotificationsListener />}
         </SafeAreaProvider>
       </NavigationContainer>
     </QueryClientProvider>

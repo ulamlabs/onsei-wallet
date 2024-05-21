@@ -2,12 +2,12 @@ import { parseTx } from "../parsing";
 
 import astroportSwapTx from "./fixtures/astroportSwapTx.json";
 import createDenomMetadataTx from "./fixtures/createDenomMetadataTx.json";
+import noEventsTx from "./fixtures/noEventsTx.json";
 import transferCw20Tx from "./fixtures/transferCw20Tx.json";
 import transferIcs20Tx from "./fixtures/transferIcs20Tx.json";
 import transferNativeTx from "./fixtures/transferNativeTx.json";
-import transferSeiTx from "./fixtures/transferSeiTx.json";
 import transferSeiMultisendTx from "./fixtures/transferSeiMultisendTx.json";
-import noEventsTx from "./fixtures/noEventsTx.json";
+import transferSeiTx from "./fixtures/transferSeiTx.json";
 
 it("parse createDenomMetadataTx", () => {
   expect(parseTx(createDenomMetadataTx.tx_response)).toEqual({
@@ -22,6 +22,7 @@ it("parse createDenomMetadataTx", () => {
     type: "MsgSetDenomMetadata",
     contract: "",
     contractAction: "",
+    sender: "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
     memo: "",
   });
 });
@@ -39,6 +40,7 @@ it("parse transferSeiTx", () => {
     amount: 10000n,
     from: "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
     to: "sei1h90zjqlfvqm3q7d6fhsmstulhz7wllnj6up5n5",
+    sender: "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
     memo: "test memo",
   });
 });
@@ -56,6 +58,7 @@ it("parse transferSeiMultisendTx", () => {
     amount: 5000000n,
     from: "",
     to: "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
+    sender: "sei1qhu8qamnlql3c3gfv985xs255fr208qs987qzh",
     memo: "",
   });
 });
@@ -73,6 +76,7 @@ it("parse transferNativeTx", () => {
     amount: 15n,
     from: "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
     to: "sei1h90zjqlfvqm3q7d6fhsmstulhz7wllnj6up5n5",
+    sender: "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
     memo: "",
   });
 });
@@ -90,6 +94,7 @@ it("parse transferCw20Tx", () => {
     amount: 5000000n,
     from: "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
     to: "sei1h90zjqlfvqm3q7d6fhsmstulhz7wllnj6up5n5",
+    sender: "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
     memo: "",
   });
 });
@@ -108,6 +113,7 @@ it("parse transferIcs20Tx", () => {
     amount: 100n,
     from: "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
     to: "sei1h90zjqlfvqm3q7d6fhsmstulhz7wllnj6up5n5",
+    sender: "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
     memo: "",
   });
 });
@@ -125,6 +131,7 @@ it("parse astroportSwapTx", () => {
     amount: 0n,
     from: "",
     to: "",
+    sender: "sei1f8se40xdwnaaj66hsndt2ch8ppusah4yuw8s9p",
     memo: "",
   });
 });
@@ -142,6 +149,7 @@ it("parse noEventsTx", () => {
     amount: 0n,
     from: "",
     to: "",
+    sender: "",
     memo: "",
   });
 });
