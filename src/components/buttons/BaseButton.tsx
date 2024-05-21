@@ -23,7 +23,7 @@ export default function BaseButton({
   icon: Icon,
   disabled = false,
   color = Colors.text,
-  iconColor = Colors.text,
+  iconColor = color,
   iconVariant = "Linear",
 }: BaseButtonProps) {
   return (

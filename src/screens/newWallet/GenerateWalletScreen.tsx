@@ -1,13 +1,12 @@
 import {
   Column,
+  CopyButton,
   Headline,
   Loader,
   MnemonicWords,
   Paragraph,
   PrimaryButton,
-  Row,
   SafeLayout,
-  TertiaryButton,
   Text,
 } from "@/components";
 import { addSkipButton } from "@/navigation/header/NewWalletHeader";
@@ -16,11 +15,7 @@ import { Colors, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as Clipboard from "expo-clipboard";
-import {
-  Copy as ClipboardCopy,
-  SecuritySafe,
-  TickCircle,
-} from "iconsax-react-native";
+import { SecuritySafe } from "iconsax-react-native";
 import { default as React, useEffect, useState } from "react";
 import { View } from "react-native";
 import { storeNewAccount } from "./storeNewAccount";
@@ -63,7 +58,6 @@ export default function GenerateWalletScreen({
   }
 
   function onCopy() {
-    Clipboard.setStringAsync(wallet!.mnemonic);
     setCopied(true);
     alert({
       title: "Paste it in safe place",
@@ -97,7 +91,7 @@ export default function GenerateWalletScreen({
       ) : (
         <Column style={{ height: "100%", justifyContent: "space-between" }}>
           <View>
-            <View>
+            <View style={{ marginBottom: 20 }}>
               <Headline>Secret Recovery Phrase</Headline>
               <Paragraph style={{ textAlign: "center", marginBottom: 32 }}>
                 Save these 12 words in a secure location, such as a password
@@ -106,22 +100,13 @@ export default function GenerateWalletScreen({
 
               <MnemonicWords mnemonic={wallet.mnemonic.split(" ")} />
             </View>
-            {copied ? (
-              <View style={{ marginTop: 20, alignItems: "center" }}>
-                <Row style={{ maxWidth: "auto" }}>
-                  <TickCircle size={16} variant="Bold" color={Colors.success} />
-                  <Text style={{ fontFamily: FontWeights.bold }}>Copied</Text>
-                </Row>
-              </View>
-            ) : (
-              <TertiaryButton
-                title="Copy to clipboard"
-                icon={ClipboardCopy}
-                color={Colors.text100}
-                textStyle={{ fontSize: 14 }}
-                onPress={onCopy}
-              />
-            )}
+
+            <CopyButton
+              title="Copy to clipboard"
+              titleColor={Colors.text100}
+              toCopy={wallet!.mnemonic}
+              onCopy={onCopy}
+            />
           </View>
           <PrimaryButton title="OK, stored safely" onPress={onNext} />
         </Column>

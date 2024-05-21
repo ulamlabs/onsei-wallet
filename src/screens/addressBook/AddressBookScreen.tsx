@@ -1,45 +1,77 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
-  AddressBookEntry,
   Column,
+  IconButton,
   Paragraph,
-  PrimaryButton,
   SafeLayout,
+  TextInput,
 } from "@/components";
+import { Add, SearchNormal } from "iconsax-react-native";
 import { useAddressBookStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
+import { useInputState } from "@/hooks";
+import AddressBookEntry from "./AddressBookEntry";
 
 type Props = NativeStackScreenProps<NavigatorParamsList, "Address Book">;
 
 export default function AddressBook({ navigation }: Props) {
   const { addressBook } = useAddressBookStore();
+  const [displayedAddresses, setDisplayedAddresses] = useState(addressBook);
+  const searchInput = useInputState();
 
-  function onAddNew() {
-    navigation.push("Saved Address", { action: "ADD" });
-  }
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <IconButton
+          style={{ marginRight: 16, backgroundColor: "transparent" }}
+          icon={Add}
+          onPress={() => navigation.push("Saved Address")}
+        />
+      ),
+    });
+  }, []);
+
+  useEffect(() => {
+    setDisplayedAddresses(addressBook);
+  }, [addressBook]);
+
+  useEffect(() => {
+    if (searchInput.value) {
+      const inputLowered = searchInput.value.toLowerCase();
+      const filteredAddresses = addressBook.filter(
+        (a) =>
+          a.address.toLowerCase().includes(inputLowered) ||
+          a.name.toLowerCase().includes(inputLowered),
+      );
+      setDisplayedAddresses(filteredAddresses);
+    } else {
+      setDisplayedAddresses(addressBook);
+    }
+  }, [searchInput.value]);
 
   return (
     <SafeLayout>
-      <Paragraph style={{ marginBottom: 30 }}>
-        Here you can find the list of your known addresses as well as add new
-        ones. They will be easily accessible in the receiver input while sending
-        assets.
-      </Paragraph>
+      <TextInput
+        placeholder="Search name or SEI address"
+        icon={SearchNormal}
+        autoCorrect={false}
+        {...searchInput}
+        showClear
+      />
 
-      <Column>
-        <PrimaryButton
-          onPress={onAddNew}
-          style={{ paddingVertical: 10, marginLeft: "auto" }}
-          title="+"
-        />
-
-        {addressBook.map((addressData) => (
+      <Column style={{ marginTop: 24 }}>
+        {displayedAddresses.map((addressData) => (
           <AddressBookEntry
             key={addressData.address}
             addressData={addressData}
           />
         ))}
+        {searchInput.value && displayedAddresses.length === 0 && (
+          <Paragraph style={{ textAlign: "center" }}>
+            No addresses matching the criteria
+          </Paragraph>
+        )}
       </Column>
     </SafeLayout>
   );

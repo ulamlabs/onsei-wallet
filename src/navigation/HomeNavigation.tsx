@@ -36,6 +36,8 @@ import React from "react";
 import BottomBarsNavigation from "./BottomBarsNavigation";
 import { navigatorScreenOptions } from "./const";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
+import AddressDetailsScreen from "@/screens/addressBook/AddressDetailsScreen";
+import TransactionsWithAddress from "@/screens/addressBook/TransactionsWithAddress";
 
 export type HomeParamList = {
   Home: undefined;
@@ -48,7 +50,9 @@ export type HomeParamList = {
   "Clear app data": undefined;
   Authorize: { nextRoute: keyof NavigatorParamsList; nextParams?: any };
   "Your SEI address": undefined;
-  "Saved Address": { action: "ADD" | "EDIT"; addressData?: SavedAddress };
+  "Saved Address": { addressData: SavedAddress } | undefined;
+  "Address Details": { addressData: SavedAddress };
+  "Address Transactions": { addressData: SavedAddress };
   "Your Mnemonic": { address: string };
   "Add Wallet": undefined;
   "Generate Wallet": { name: string } | undefined;
@@ -99,7 +103,21 @@ export default function HomeNavigation() {
       <Screen name="Change Node" component={NodeSettingsScreen} />
       <Screen name="Authorize" component={AuthorizeScreen} />
       <Screen name="Your SEI address" component={ReceiveAssets} />
-      <Screen name="Saved Address" component={AddOrEditAddress} />
+      <Screen
+        name="Saved Address"
+        component={AddOrEditAddress}
+        options={({ route }) => ({
+          title: route.params?.addressData ? "Edit address" : "Add address",
+        })}
+      />
+      <Screen name="Address Details" component={AddressDetailsScreen} />
+      <Screen
+        name="Address Transactions"
+        component={TransactionsWithAddress}
+        options={({ route }) => ({
+          title: `${route.params.addressData.name}: Transactions`,
+        })}
+      />
       <Screen name="Your Mnemonic" component={MnemonicScreen} />
       <Screen name="Add Wallet" component={AddWalletScreen} />
       <Screen

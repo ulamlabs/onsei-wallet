@@ -29,6 +29,7 @@ export const useAddressBookStore = create<AddressBookStore>((set, get) => ({
     const accounts = useAccountsStore.getState().accounts;
     validateAddressBook(name, address, accounts, get().addressBook);
     const updatedBook = [...get().addressBook, { name, address }];
+    sortAddresses(updatedBook);
     set(() => ({ addressBook: updatedBook }));
     saveToStorage(ADDRESSBOOK_KEY, updatedBook);
   },
@@ -41,6 +42,7 @@ export const useAddressBookStore = create<AddressBookStore>((set, get) => ({
     );
     updatedBook[modifiedEntry].name = name;
     updatedBook[modifiedEntry].address = address;
+    sortAddresses(updatedBook);
     set(() => ({ addressBook: updatedBook }));
     saveToStorage(ADDRESSBOOK_KEY, updatedBook);
   },
@@ -54,3 +56,7 @@ export const useAddressBookStore = create<AddressBookStore>((set, get) => ({
     removeFromStorage(ADDRESSBOOK_KEY);
   },
 }));
+
+function sortAddresses(addresses: SavedAddress[]) {
+  addresses.sort((a, b) => a.name.localeCompare(b.name));
+}
