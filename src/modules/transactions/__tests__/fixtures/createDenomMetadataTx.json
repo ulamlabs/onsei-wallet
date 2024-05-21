@@ -1,0 +1,263 @@
+{
+  "tx": {
+    "body": {
+      "messages": [
+        {
+          "@type": "/seiprotocol.seichain.tokenfactory.MsgSetDenomMetadata",
+          "sender": "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
+          "metadata": {
+            "description": "Llama Ulama",
+            "denom_units": [
+              {
+                "denom": "factory/sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y/ullama",
+                "exponent": 0,
+                "aliases": ["microllama"]
+              },
+              {
+                "denom": "llama",
+                "exponent": 6,
+                "aliases": []
+              }
+            ],
+            "base": "factory/sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y/ullama",
+            "display": "llama",
+            "name": "Llama",
+            "symbol": "LLAMA"
+          }
+        }
+      ],
+      "memo": "",
+      "timeout_height": "0",
+      "extension_options": [],
+      "non_critical_extension_options": []
+    },
+    "auth_info": {
+      "signer_infos": [
+        {
+          "public_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "ApWGQ8i8R+70tWVeEwx63WPNQqCAPkzhZvHUEN6E7tA6"
+          },
+          "mode_info": {
+            "single": {
+              "mode": "SIGN_MODE_DIRECT"
+            }
+          },
+          "sequence": "32"
+        }
+      ],
+      "fee": {
+        "amount": [
+          {
+            "denom": "usei",
+            "amount": "20000"
+          }
+        ],
+        "gas_limit": "200000",
+        "payer": "",
+        "granter": ""
+      }
+    },
+    "signatures": [
+      "bjj5rWNS1qnu1PueB6LDHZCR830L3exgGlQaTQrYXIEtdga9+FBjG540HKU562paMm8pp8SBgeEpo89kGFE6hg=="
+    ]
+  },
+  "tx_response": {
+    "height": "89301156",
+    "txhash": "3E10693DDA076C33EB2303430C30C739940ADB3DEC15A9B4AB2D719BE4EDD507",
+    "codespace": "",
+    "code": 0,
+    "data": "0A380A362F73656970726F746F636F6C2E736569636861696E2E746F6B656E666163746F72792E4D736753657444656E6F6D4D65746164617461",
+    "raw_log": "[{\"events\":[{\"type\":\"message\",\"attributes\":[{\"key\":\"action\",\"value\":\"/seiprotocol.seichain.tokenfactory.MsgSetDenomMetadata\"}]},{\"type\":\"set_denom_metadata\",\"attributes\":[{\"key\":\"denom\",\"value\":\"factory/sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y/ullama\"},{\"key\":\"denom_metadata\",\"value\":\"description:\\\"Llama Ulama\\\" denom_units:\\u003cdenom:\\\"factory/sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y/ullama\\\" aliases:\\\"microllama\\\" \\u003e denom_units:\\u003cdenom:\\\"llama\\\" exponent:6 \\u003e base:\\\"factory/sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y/ullama\\\" display:\\\"llama\\\" name:\\\"Llama\\\" symbol:\\\"LLAMA\\\" \"}]}]}]",
+    "logs": [
+      {
+        "msg_index": 0,
+        "log": "",
+        "events": [
+          {
+            "type": "message",
+            "attributes": [
+              {
+                "key": "action",
+                "value": "/seiprotocol.seichain.tokenfactory.MsgSetDenomMetadata"
+              }
+            ]
+          },
+          {
+            "type": "set_denom_metadata",
+            "attributes": [
+              {
+                "key": "denom",
+                "value": "factory/sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y/ullama"
+              },
+              {
+                "key": "denom_metadata",
+                "value": "description:\"Llama Ulama\" denom_units:\u003cdenom:\"factory/sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y/ullama\" aliases:\"microllama\" \u003e denom_units:\u003cdenom:\"llama\" exponent:6 \u003e base:\"factory/sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y/ullama\" display:\"llama\" name:\"Llama\" symbol:\"LLAMA\" "
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "info": "",
+    "gas_wanted": "200000",
+    "gas_used": "21740",
+    "tx": {
+      "@type": "/cosmos.tx.v1beta1.Tx",
+      "body": {
+        "messages": [
+          {
+            "@type": "/seiprotocol.seichain.tokenfactory.MsgSetDenomMetadata",
+            "sender": "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
+            "metadata": {
+              "description": "Llama Ulama",
+              "denom_units": [
+                {
+                  "denom": "factory/sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y/ullama",
+                  "exponent": 0,
+                  "aliases": ["microllama"]
+                },
+                {
+                  "denom": "llama",
+                  "exponent": 6,
+                  "aliases": []
+                }
+              ],
+              "base": "factory/sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y/ullama",
+              "display": "llama",
+              "name": "Llama",
+              "symbol": "LLAMA"
+            }
+          }
+        ],
+        "memo": "",
+        "timeout_height": "0",
+        "extension_options": [],
+        "non_critical_extension_options": []
+      },
+      "auth_info": {
+        "signer_infos": [
+          {
+            "public_key": {
+              "@type": "/cosmos.crypto.secp256k1.PubKey",
+              "key": "ApWGQ8i8R+70tWVeEwx63WPNQqCAPkzhZvHUEN6E7tA6"
+            },
+            "mode_info": {
+              "single": {
+                "mode": "SIGN_MODE_DIRECT"
+              }
+            },
+            "sequence": "32"
+          }
+        ],
+        "fee": {
+          "amount": [
+            {
+              "denom": "usei",
+              "amount": "20000"
+            }
+          ],
+          "gas_limit": "200000",
+          "payer": "",
+          "granter": ""
+        }
+      },
+      "signatures": [
+        "bjj5rWNS1qnu1PueB6LDHZCR830L3exgGlQaTQrYXIEtdga9+FBjG540HKU562paMm8pp8SBgeEpo89kGFE6hg=="
+      ]
+    },
+    "timestamp": "2024-05-16T09:56:03Z",
+    "events": [
+      {
+        "type": "coin_spent",
+        "attributes": [
+          {
+            "key": "c3BlbmRlcg==",
+            "value": "c2VpMTR5NWFyNTJ6Y2cwanhlbmNkeHBxZjY1a2xkMzNtNzBmcjN3Zjd5",
+            "index": true
+          },
+          {
+            "key": "YW1vdW50",
+            "value": "MjAwMDB1c2Vp",
+            "index": true
+          }
+        ]
+      },
+      {
+        "type": "tx",
+        "attributes": [
+          {
+            "key": "ZmVl",
+            "value": "MjAwMDB1c2Vp",
+            "index": true
+          },
+          {
+            "key": "ZmVlX3BheWVy",
+            "value": "c2VpMTR5NWFyNTJ6Y2cwanhlbmNkeHBxZjY1a2xkMzNtNzBmcjN3Zjd5",
+            "index": true
+          }
+        ]
+      },
+      {
+        "type": "tx",
+        "attributes": [
+          {
+            "key": "YWNjX3NlcQ==",
+            "value": "c2VpMTR5NWFyNTJ6Y2cwanhlbmNkeHBxZjY1a2xkMzNtNzBmcjN3Zjd5LzMy",
+            "index": true
+          }
+        ]
+      },
+      {
+        "type": "tx",
+        "attributes": [
+          {
+            "key": "c2lnbmF0dXJl",
+            "value": "YmpqNXJXTlMxcW51MVB1ZUI2TERIWkNSODMwTDNleGdHbFFhVFFyWVhJRXRkZ2E5K0ZCakc1NDBIS1U1NjJwYU1tOHBwOFNCZ2VFcG84OWtHRkU2aGc9PQ==",
+            "index": true
+          }
+        ]
+      },
+      {
+        "type": "signer",
+        "attributes": [
+          {
+            "key": "ZXZtX2FkZHI=",
+            "value": "MHhFNUE1OTg1YkI4Q2Q2MzdBNEE1ZUI1MGRkMEQ5Q0FlQTE0OWQyNGQ1",
+            "index": true
+          },
+          {
+            "key": "c2VpX2FkZHI=",
+            "value": "c2VpMTR5NWFyNTJ6Y2cwanhlbmNkeHBxZjY1a2xkMzNtNzBmcjN3Zjd5",
+            "index": true
+          }
+        ]
+      },
+      {
+        "type": "message",
+        "attributes": [
+          {
+            "key": "YWN0aW9u",
+            "value": "L3NlaXByb3RvY29sLnNlaWNoYWluLnRva2VuZmFjdG9yeS5Nc2dTZXREZW5vbU1ldGFkYXRh",
+            "index": true
+          }
+        ]
+      },
+      {
+        "type": "set_denom_metadata",
+        "attributes": [
+          {
+            "key": "ZGVub20=",
+            "value": "ZmFjdG9yeS9zZWkxNHk1YXI1MnpjZzBqeGVuY2R4cHFmNjVrbGQzM203MGZyM3dmN3kvdWxsYW1h",
+            "index": true
+          },
+          {
+            "key": "ZGVub21fbWV0YWRhdGE=",
+            "value": "ZGVzY3JpcHRpb246IkxsYW1hIFVsYW1hIiBkZW5vbV91bml0czo8ZGVub206ImZhY3Rvcnkvc2VpMTR5NWFyNTJ6Y2cwanhlbmNkeHBxZjY1a2xkMzNtNzBmcjN3Zjd5L3VsbGFtYSIgYWxpYXNlczoibWljcm9sbGFtYSIgPiBkZW5vbV91bml0czo8ZGVub206ImxsYW1hIiBleHBvbmVudDo2ID4gYmFzZToiZmFjdG9yeS9zZWkxNHk1YXI1MnpjZzBqeGVuY2R4cHFmNjVrbGQzM203MGZyM3dmN3kvdWxsYW1hIiBkaXNwbGF5OiJsbGFtYSIgbmFtZToiTGxhbWEiIHN5bWJvbDoiTExBTUEiIA==",
+            "index": true
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -43,9 +43,7 @@ const saveTransactionsToStorage = async (
   transactions: Transaction[],
 ) => {
   const key = getStorageKey(address);
-  transactions.sort(
-    (a, b) => new Date(b.date).valueOf() - new Date(a.date).valueOf(),
-  );
+  transactions.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
   if (transactions.length > TXN_HISTORY_COUNT) {
     transactions.splice(TXN_HISTORY_COUNT);
   }
@@ -59,9 +57,19 @@ const getStorageKey = (address: string) => {
 };
 
 const serializeTxn = (txn: Transaction) => {
-  return { ...txn, amount: txn.amount.toString(), fee: txn.fee.toString() };
+  return {
+    ...txn,
+    amount: txn.amount.toString(),
+    fee: txn.fee.toString(),
+    timestamp: txn.timestamp.toISOString(),
+  };
 };
 
 const deserializeTxn = (txn: Transaction) => {
-  return { ...txn, amount: BigInt(txn.amount), fee: BigInt(txn.fee || 0) };
+  return {
+    ...txn,
+    amount: BigInt(txn.amount),
+    fee: BigInt(txn.fee || 0),
+    timestamp: new Date(txn.timestamp),
+  };
 };

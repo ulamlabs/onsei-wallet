@@ -1,12 +1,14 @@
 import { Transaction } from "@/modules/transactions";
-import { useTokensStore } from "@/store";
+import { useAccountsStore, useTokensStore } from "@/store";
 import { Colors } from "@/styles";
 import { formatAmount, formatDate } from "@/utils";
 import { trimAddress } from "@/utils/trimAddress";
-import { View } from "react-native";
+import { TextStyle, View } from "react-native";
 import Box from "./Box";
-import { Column } from "./layout";
+import { Column, Row } from "./layout";
 import { Text } from "./typography";
+import { useMemo } from "react";
+import { CloseCircle, Receive } from "iconsax-react-native";
 
 type TransactionRenderProps = {
   txn: Transaction;
@@ -16,32 +18,128 @@ type TransactionListProps = {
   transactions: Transaction[];
 };
 
-const unknownAsset = {
+const unknownToken = {
   symbol: "?",
   decimals: 6,
 };
 
+type SentOrReceived = "sent" | "received" | "";
+
 function TransactionBox({ txn }: TransactionRenderProps) {
   const { tokenMap } = useTokensStore();
-  const asset = tokenMap.get(txn.asset) || unknownAsset;
+  const { activeAccount } = useAccountsStore();
+  const token = tokenMap.get(txn.token) || unknownToken;
+
+  const sentOrReceived: SentOrReceived = useMemo(getSentOrReceived, [txn]);
+
+  const type = useMemo(() => {
+    if (txn.token) {
+      return "";
+    }
+    if (txn.contractAction) {
+      return txn.contractAction;
+    }
+    return txn.type;
+  }, [txn]);
+
+  function getSentOrReceived(): SentOrReceived {
+    if (txn.from === activeAccount?.address) {
+      return "sent";
+    }
+    if (txn.to === activeAccount?.address) {
+      return "received";
+    }
+    return "";
+  }
+
+  const color = useMemo(() => {
+    if (txn.status === "fail") {
+      return Colors.danger;
+    }
+    return sentOrReceived === "sent" ? Colors.text : Colors.success;
+  }, [sentOrReceived, txn]);
+
+  const Icon = useMemo(() => {
+    if (txn.status === "fail") {
+      return CloseCircle;
+    }
+    if (sentOrReceived !== "") {
+      return Receive;
+    }
+  }, [txn]);
+
+  function getContent() {
+    if (txn.token && sentOrReceived !== "") {
+      return (
+        <>
+          <View>
+            <Text>
+              {trimAddress(sentOrReceived === "sent" ? txn.to : txn.from)}
+            </Text>
+            <Text style={{ color: Colors.text100 }}>
+              {txn.timestamp.toISOString()}
+            </Text>
+          </View>
+
+          <Text style={{ color }}>
+            {sentOrReceived === "sent" ? "-" : "+"}
+            {formatAmount(txn.amount, token.decimals)} {token.symbol}
+          </Text>
+        </>
+      );
+    }
+
+    if (txn.contractAction) {
+      const chipStyle: TextStyle = {
+        backgroundColor: Colors.background,
+        padding: 5,
+        borderRadius: 5,
+      };
+      return (
+        <View>
+          <Row style={{ justifyContent: "flex-start" }}>
+            <Text>Execute</Text>
+            <Text style={chipStyle}>{txn.contractAction}</Text>
+            <Text>on</Text>
+            <Text style={chipStyle}>{trimAddress(txn.contract)}</Text>
+          </Row>
+          <Text style={{ color: Colors.text100 }}>
+            {txn.timestamp.toISOString()}
+          </Text>
+        </View>
+      );
+    }
+
+    return (
+      <View>
+        <Text>{type}</Text>
+        <Text style={{ color: Colors.text100 }}>
+          {txn.timestamp.toISOString()}
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <Box>
-      <View>
-        <Text>{txn.type}</Text>
-        <Text style={{ color: Colors.text100 }}>
-          {trimAddress(txn.type === "Send" ? txn.to : txn.from)}
-        </Text>
-      </View>
-
-      <Text
-        style={{
-          color: txn.type === "Send" ? Colors.danger : Colors.success,
-        }}
-      >
-        {txn.type === "Send" ? "-" : "+"}
-        {formatAmount(txn.amount, asset.decimals)} {asset.symbol}
-      </Text>
+      {Icon && (
+        <View
+          style={{
+            backgroundColor: Colors.background,
+            padding: 10,
+            borderRadius: 10,
+          }}
+        >
+          <Icon
+            color={color}
+            size={20}
+            style={
+              sentOrReceived === "sent" ? { transform: [{ scale: -1 }] } : null
+            }
+          />
+        </View>
+      )}
+      {getContent()}
     </Box>
   );
 }
@@ -62,10 +160,9 @@ export default function TransactionList({
       {transactions.map((item, index) => (
         <View key={index} style={{ marginTop: 20, gap: 10 }}>
           {(index === 0 ||
-            !isSameDay(
-              new Date(item.date),
-              new Date(transactions[index - 1].date),
-            )) && <Text>{formatDate(item.date)}</Text>}
+            !isSameDay(item.timestamp, transactions[index - 1].timestamp)) && (
+            <Text>{formatDate(item.timestamp)}</Text>
+          )}
 
           <TransactionBox txn={item} />
         </View>

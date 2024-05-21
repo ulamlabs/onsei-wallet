@@ -1,40 +1,36 @@
 export type Transaction = {
   amount: bigint;
   fee: bigint;
-  asset: string;
-  date: string;
+  token: string;
+  timestamp: Date;
   from: string;
   to: string;
   type: string;
   status: "success" | "fail";
   hash: string;
+  contract: string;
+  contractAction: string;
 };
 
-export type Coin = { denom: string; amount: string };
-
-export type MsgSend = {
-  "@type": "/cosmos.bank.v1beta1.MsgSend";
-  from_address: string;
-  to_address: string;
-  amount: Coin[];
-};
-
-export type MsgMultiSend = {
-  "@type": "/cosmos.bank.v1beta1.MsgMultiSend";
-  inputs: { address: string; coins: Coin[] }[];
-  outputs: { address: string; coins: Coin[] }[];
+export type TransactionsData = {
+  tx_responses: TxResponse[];
 };
 
 export type TxResponse = {
   txhash: string;
-  tx: {
-    body: {
-      messages: MsgSend[] | MsgMultiSend[];
-    };
-  };
   timestamp: string;
+  gas_used: string;
+  gas_wanted: string;
+  code: number;
+  events: TxEvent[];
 };
 
-export type TransactionData = {
-  tx_responses: TxResponse[];
+export type TxEvent = {
+  type: string;
+  attributes: TxEventAttribute[];
+};
+
+export type TxEventAttribute = {
+  key: string;
+  value: string;
 };
