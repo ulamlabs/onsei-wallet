@@ -1,11 +1,18 @@
 import { NODES } from "@/const";
+import { getUSDPrices, usdPrices } from "@/modules/balances";
 import {
   CosmTokenWithBalance,
   fetchAccountBalances,
   fetchCW20TokenBalance,
 } from "@/services/cosmos";
 import { Node } from "@/types";
-import { loadFromStorage, removeFromStorage, saveToStorage } from "@/utils";
+import {
+  formatAmount,
+  formatUsdBalance,
+  loadFromStorage,
+  removeFromStorage,
+  saveToStorage,
+} from "@/utils";
 import { create } from "zustand";
 import { useSettingsStore } from "./settings";
 import { useTokenRegistryStore } from "./tokenRegistry";
@@ -18,7 +25,7 @@ const SEI_TOKEN: CosmTokenWithBalance = {
   symbol: "SEI",
   logo: require("../../assets/sei-logo.png"),
   balance: 0n,
-  coingeckoId: "",
+  coingeckoId: "sei-network",
 };
 
 type TokensStore = {
@@ -28,6 +35,7 @@ type TokensStore = {
   tokenMap: Map<string, CosmTokenWithBalance>;
   accountAddress: string;
   fetchBalancesPromise: Promise<any> | null;
+  prices: usdPrices[];
   loadTokens: (address: string) => Promise<void>;
   addToken: (token: CosmTokenWithBalance) => void;
   removeToken: (token: CosmTokenWithBalance) => void;
@@ -39,6 +47,7 @@ type TokensStore = {
     tokens: CosmTokenWithBalance[],
     options?: { save?: boolean },
   ) => void;
+  loadPrices: () => Promise<void>;
 };
 
 export const useTokensStore = create<TokensStore>((set, get) => ({
@@ -49,8 +58,9 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
   cw20Tokens: [],
   tokenMap: new Map(),
   fetchBalancesPromise: null,
+  prices: [],
   loadTokens: async (address) => {
-    const { updateBalances, _updateStructures } = get();
+    const { updateBalances, _updateStructures, loadPrices } = get();
     const { node } = useSettingsStore.getState().settings;
 
     set({ accountAddress: address, tokens: [SEI_TOKEN] });
@@ -58,6 +68,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     let cw20Tokens = await loadFromStorage<CosmTokenWithBalance[]>(key, []);
     cw20Tokens = cw20Tokens.map(deserializeToken);
     _updateStructures([SEI_TOKEN, ...cw20Tokens]);
+    await loadPrices();
     updateBalances();
   },
   addToken: (token) => {
@@ -110,13 +121,24 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
   },
   _updateCw20Balance: async (token) => {
     const { node } = useSettingsStore.getState().settings;
-    const { accountAddress } = get();
+    const { accountAddress, prices } = get();
+
+    const tokenPrice =
+      prices.find(
+        (price) =>
+          price.id === token.id ||
+          price.id === token.coingeckoId ||
+          price.name === token.name,
+      )?.price || 0;
 
     const balance = await fetchCW20TokenBalance(accountAddress, token.id, node);
+    const usdBalance = formatUsdBalance(
+      tokenPrice * +formatAmount(balance, token.decimals),
+    );
 
     const { tokenMap, tokens, _updateStructures } = get();
 
-    token = { ...tokenMap.get(token.id)!, balance };
+    token = { ...tokenMap.get(token.id)!, balance, usdBalance };
 
     const index = tokens.findIndex((t) => t.id === token.id);
     if (index === -1) {
@@ -127,7 +149,8 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     _updateStructures([...tokens], { save: true });
   },
   _updateNativeBalances: async () => {
-    const { accountAddress, cw20Tokens, _updateStructures, sei } = get();
+    const { accountAddress, cw20Tokens, _updateStructures, sei, prices } =
+      get();
     const { node } = useSettingsStore.getState().settings;
 
     const balances = await fetchAccountBalances(accountAddress, node);
@@ -141,8 +164,13 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     const nativeTokens: CosmTokenWithBalance[] = [newSei];
     for (const balanceData of balances.balances) {
       const balance = BigInt(balanceData.amount);
+      const usdBalance =
+        prices.find((price) => price.id === newSei.coingeckoId)?.price || 0;
       if (balanceData.denom === sei.id) {
         newSei.balance = balance;
+        newSei.usdBalance = formatUsdBalance(
+          usdBalance * +formatAmount(balance, newSei.decimals),
+        );
         continue;
       }
       let token = tokenRegistryMap.get(balanceData.denom);
@@ -152,7 +180,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
         token = tokenRegistryMap.get(balanceData.denom);
       }
       if (token) {
-        nativeTokens.push({ ...token, balance });
+        nativeTokens.push({ ...token, balance, usdBalance });
       }
     }
 
@@ -182,6 +210,11 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       const key = getTokensKey(accountAddress, node);
       saveToStorage(key, cw20Tokens.map(serializeToken));
     }
+  },
+  loadPrices: async () => {
+    const { tokens } = get();
+    const prices = await getUSDPrices(tokens);
+    set({ prices });
   },
 }));
 
