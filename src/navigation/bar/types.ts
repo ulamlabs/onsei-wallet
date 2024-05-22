@@ -13,6 +13,7 @@ export type BarNavigationScreenOptions = {
   title?: string;
   headerShown?: boolean;
   headerTitle?: () => JSX.Element;
+  headerRight?: () => JSX.Element;
 };
 
 export type BarNavigationProp<

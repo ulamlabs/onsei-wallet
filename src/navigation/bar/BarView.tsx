@@ -91,6 +91,11 @@ export default function BarView({
               ? () => descriptor.options.headerTitle!()
               : undefined
           }
+          headerRight={
+            descriptor.options.headerRight
+              ? () => descriptor.options.headerRight!()
+              : undefined
+          }
           headerShadowVisible={false}
         />
       )}

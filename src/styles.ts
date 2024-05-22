@@ -9,6 +9,7 @@ export const Colors = {
   text100: "#9E9E9E",
   text200: "#7F7F7F",
   text300: "#6A6A6A",
+  text400: "#3D3D3D",
   labelBackground: "#345DC7",
   inputBorderColor: "#232323",
   activeInputBorderColor: "#D3D3D3",
