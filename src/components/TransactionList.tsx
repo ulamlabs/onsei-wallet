@@ -1,7 +1,7 @@
 import { Transaction } from "@/modules/transactions";
 import { useTokensStore } from "@/store";
 import { Colors } from "@/styles";
-import { formatAmount } from "@/utils";
+import { formatAmount, formatDate } from "@/utils";
 import { trimAddress } from "@/utils/trimAddress";
 import { View } from "react-native";
 import Box from "./Box";
@@ -16,8 +16,14 @@ type TransactionListProps = {
   transactions: Transaction[];
 };
 
+const unknownAsset = {
+  symbol: "?",
+  decimals: 6,
+};
+
 function TransactionBox({ txn }: TransactionRenderProps) {
-  const { sei } = useTokensStore();
+  const { tokenMap } = useTokensStore();
+  const asset = tokenMap.get(txn.asset) || unknownAsset;
 
   return (
     <Box>
@@ -34,7 +40,7 @@ function TransactionBox({ txn }: TransactionRenderProps) {
         }}
       >
         {txn.type === "Send" ? "-" : "+"}
-        {formatAmount(txn.amount, sei.decimals)} {txn.asset}
+        {formatAmount(txn.amount, asset.decimals)} {asset.symbol}
       </Text>
     </Box>
   );
@@ -43,13 +49,23 @@ function TransactionBox({ txn }: TransactionRenderProps) {
 export default function TransactionList({
   transactions,
 }: TransactionListProps) {
+  function isSameDay(date1: Date, date2: Date) {
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
+  }
+
   return (
     <Column>
       {transactions.map((item, index) => (
         <View key={index} style={{ marginTop: 20, gap: 10 }}>
-          {(index === 0 || item.date !== transactions![index - 1].date) && (
-            <Text>{item.date}</Text>
-          )}
+          {(index === 0 ||
+            !isSameDay(
+              new Date(item.date),
+              new Date(transactions[index - 1].date),
+            )) && <Text>{formatDate(item.date)}</Text>}
 
           <TransactionBox txn={item} />
         </View>

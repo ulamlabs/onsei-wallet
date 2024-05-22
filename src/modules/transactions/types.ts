@@ -1,10 +1,13 @@
 export type Transaction = {
   amount: bigint;
+  fee: bigint;
   asset: string;
   date: string;
   from: string;
   to: string;
   type: string;
+  status: "success" | "fail";
+  hash: string;
 };
 
 export type Coin = { denom: string; amount: string };

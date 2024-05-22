@@ -1,5 +1,6 @@
 import { Paragraph, RadioGroup, SafeLayout } from "@/components";
 import { NODES } from "@/const";
+import { useTransactions } from "@/modules/transactions";
 import {
   useAccountsStore,
   useSettingsStore,
@@ -16,12 +17,16 @@ export default function NodeSettingsScreen() {
   const { activeAccount } = useAccountsStore();
   const { loadTokens } = useTokensStore();
   const { refreshRegistryCache } = useTokenRegistryStore();
+  const { refetch: refetchTransactions } = useTransactions(
+    activeAccount!.address,
+  );
 
   function onNodeChange(newNode: Node) {
     setSetting("node", newNode);
     refreshRegistryCache();
     if (activeAccount) {
       loadTokens(activeAccount.address);
+      refetchTransactions();
     }
   }
 
