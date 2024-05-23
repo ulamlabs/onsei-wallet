@@ -20,7 +20,7 @@ export const validateName = (
     throw Error("Name cannot be empty");
   }
   if (name.length > 20) {
-    throw new Error("Name cannot be longer than 20 chars");
+    throw new Error("Name cannot be longer than 20 characters");
   }
   if (!VALID_ACCOUNT_NAME_REGEX.test(name)) {
     throw new Error(
