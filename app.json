@@ -59,6 +59,12 @@
             "./assets/fonts/Satoshi-Regular.otf"
           ]
         }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera"
+        }
       ]
     ]
   }

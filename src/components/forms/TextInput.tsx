@@ -9,6 +9,7 @@ type TextInputProps = ReactNative.TextInputProps & {
   icon?: Icon;
   showClear?: boolean;
   error?: boolean;
+  getFocus?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export default function TextInput({
@@ -19,6 +20,7 @@ export default function TextInput({
   label,
   icon: Icon,
   error,
+  getFocus,
   ...props
 }: TextInputProps) {
   const [focused, setFocused] = useState(false);
@@ -47,7 +49,7 @@ export default function TextInput({
   }
 
   return (
-    <View style={{ justifyContent: "center" }}>
+    <View style={{ justifyContent: "center", flex: 1 }}>
       {label && (
         <Text
           style={{

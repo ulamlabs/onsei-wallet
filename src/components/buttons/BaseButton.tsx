@@ -13,6 +13,7 @@ export type BaseButtonProps = {
   color?: string;
   iconColor?: string;
   iconVariant?: IconProps["variant"];
+  iconSize?: number;
 };
 
 export default function BaseButton({
@@ -25,6 +26,7 @@ export default function BaseButton({
   color = Colors.text,
   iconColor = color,
   iconVariant = "Linear",
+  iconSize = 20,
 }: BaseButtonProps) {
   return (
     <Pressable
@@ -44,7 +46,7 @@ export default function BaseButton({
       ]}
       onPress={onPress}
     >
-      {Icon && <Icon color={iconColor} size={20} variant={iconVariant} />}
+      {Icon && <Icon color={iconColor} size={iconSize} variant={iconVariant} />}
       {title && (
         <Text style={[{ color, fontFamily: FontWeights.bold }, textStyle]}>
           {title}

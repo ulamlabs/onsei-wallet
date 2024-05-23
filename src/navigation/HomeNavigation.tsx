@@ -5,6 +5,8 @@ import AccountsScreen from "@/screens/WalletOverview/AccountsScreen";
 import EditAccountNameScreen from "@/screens/WalletOverview/EditAccountNameScreen";
 import { ManageTokensScreen } from "@/screens/account";
 import AddOrEditAddress from "@/screens/addressBook/AddOrEditAddress";
+import AddressDetailsScreen from "@/screens/addressBook/AddressDetailsScreen";
+import TransactionsWithAddress from "@/screens/addressBook/TransactionsWithAddress";
 import { AuthorizeScreen, BiometricsDisableScreen } from "@/screens/auth";
 import PinChangeScreen from "@/screens/auth/PinChangeScreen";
 import PinDisableScreen from "@/screens/auth/PinDisableScreen";
@@ -28,6 +30,7 @@ import {
   TransferSentScreen,
   TransferSummaryScreen,
 } from "@/screens/transfer";
+import ScanAddressScreen from "@/screens/transfer/ScanAddressScreen";
 import { Account, SavedAddress, Wallet } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { DeliverTxResponse, StdFee } from "@cosmjs/stargate";
@@ -36,8 +39,6 @@ import React from "react";
 import BottomBarsNavigation from "./BottomBarsNavigation";
 import { navigatorScreenOptions } from "./const";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
-import AddressDetailsScreen from "@/screens/addressBook/AddressDetailsScreen";
-import TransactionsWithAddress from "@/screens/addressBook/TransactionsWithAddress";
 
 export type HomeParamList = {
   Home: undefined;
@@ -64,7 +65,7 @@ export type HomeParamList = {
   "Edit name": { account: Account };
   "Manage Token List": undefined;
   transferSelectToken: undefined;
-  transferSelectAddress: { tokenId: string };
+  transferSelectAddress: { tokenId: string; address?: string };
   transferAmount: { tokenId: string; recipient: string };
   transferSummary: { tokenId: string; recipient: string; intAmount: string };
   transferSending: {
@@ -75,6 +76,7 @@ export type HomeParamList = {
   };
   transferSent: { tx: DeliverTxResponse };
   "Set Name": { nextRoute: "Import Wallet" | "Generate Wallet" };
+  "Scan QR code": { nextRoute: keyof NavigatorParamsList; tokenId: string };
 };
 
 const { Navigator, Screen } = createNativeStackNavigator<HomeParamList>();
@@ -175,6 +177,7 @@ export default function HomeNavigation() {
         component={SetWalletNameScreen}
         options={({ route }) => ({ title: route.params.nextRoute })}
       />
+      <Screen name="Scan QR code" component={ScanAddressScreen} />
     </Navigator>
   );
 }
