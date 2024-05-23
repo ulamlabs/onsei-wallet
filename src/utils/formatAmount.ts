@@ -15,7 +15,10 @@ export function formatAmount(
   options?: FormatAmountOptions,
 ): string {
   if (decimals === 0) {
-    return formatDecimalSeparator(amount.toString());
+    if (!options?.noDecimalSeparator) {
+      return formatDecimalSeparator(amount.toString());
+    }
+    return amount.toString();
   }
 
   const magnitude = 10n ** BigInt(decimals);
