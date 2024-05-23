@@ -1,8 +1,8 @@
 import { NODE_URL } from "@/const";
 import { useSettingsStore } from "@/store";
-import { formatDate } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
 import { get } from "../api/api";
+import { combineTransactionsWithStorage } from "./storage";
 import { Transaction, TransactionData } from "./types";
 import { parseMultiSend, parseSend } from "./utils";
 
@@ -48,13 +48,27 @@ const getTransactions = async (address: string): Promise<Transaction[]> => {
       const isMultiSend =
         commonPath["@type"] === "/cosmos.bank.v1beta1.MsgMultiSend";
 
-      const asset = "SEI";
-      const date = formatDate(resp.timestamp);
+      const asset = "usei";
+      const date = new Date(resp.timestamp).toISOString();
 
       if (isMultiSend) {
-        return { ...parseMultiSend(commonPath, address), asset, date };
+        return {
+          ...parseMultiSend(commonPath, address),
+          asset,
+          date,
+          fee: BigInt((resp as any).gas_used),
+          status: "success",
+          hash: resp.txhash,
+        };
       } else {
-        return { ...parseSend(commonPath, address), asset, date };
+        return {
+          ...parseSend(commonPath, address),
+          asset,
+          date,
+          fee: BigInt((resp as any).gas_used),
+          status: "success",
+          hash: resp.txhash,
+        };
       }
     });
   return response;
@@ -63,5 +77,8 @@ const getTransactions = async (address: string): Promise<Transaction[]> => {
 export const useTransactions = (address: string) =>
   useQuery({
     queryKey: ["transactions", address],
-    queryFn: () => getTransactions(address),
+    queryFn: () =>
+      getTransactions(address).then((response) =>
+        combineTransactionsWithStorage(address, response),
+      ),
   });

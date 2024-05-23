@@ -6,11 +6,13 @@ import {
   SafeLayoutBottom,
   Text,
 } from "@/components";
+import { storeNewTransaction } from "@/modules/transactions/storage";
 import { transferToken } from "@/services/cosmos/tx";
-import { useTokensStore } from "@/store";
+import { useAccountsStore, useTokensStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { resetNavigationStack } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
 
@@ -23,8 +25,10 @@ export default function TransferSendingScreen({
   navigation,
   route,
 }: TransferSendingScreenProps) {
+  const { activeAccount } = useAccountsStore();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
   const transfer = route.params;
 
@@ -47,6 +51,18 @@ export default function TransferSendingScreen({
   async function send() {
     try {
       const tx = await transferToken({ ...transfer, token, intAmount });
+      storeNewTransaction(activeAccount!.address, {
+        amount: intAmount,
+        asset: token.id,
+        date: new Date().toISOString(),
+        from: activeAccount!.address,
+        to: transfer.recipient,
+        type: "Send",
+        fee: tx.gasUsed,
+        status: tx.code === 0 ? "success" : "fail",
+        hash: tx.transactionHash,
+      });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
       navigation.navigate("transferSent", { tx });
     } catch (error: any) {
       setError(error.toString());
