@@ -83,6 +83,11 @@ export default function TransferAmountScreen({
     setDecimalAmount(decimalAmount.slice(0, decimalAmount.length - 1));
   }
 
+  if (!token) {
+    // Happens when sending max amount of a native token. The token is no longer available.
+    return <></>;
+  }
+
   return (
     <SafeLayout refreshFn={updateBalances}>
       <Column style={{ flex: 1, gap: 24 }}>
