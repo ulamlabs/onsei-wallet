@@ -62,7 +62,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
   }
 
   return (
-    <SafeLayout refreshFn={updateBalances}>
+    <SafeLayout refreshFn={() => updateBalances(undefined, true)}>
       <Column style={{ alignItems: "center" }}>{render()}</Column>
       <Row
         style={{

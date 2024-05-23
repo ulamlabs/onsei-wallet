@@ -8,21 +8,18 @@ import {
   usdPrices,
 } from "./types";
 
-export const getUSDPrice = async (token: CosmToken) => {
-  const getByCoingeckoIdUrl = `https://api.coingecko.com/api/v3/simple/price?ids=${token.coingeckoId}&vs_currencies=usd`;
-  const getByAddressUrl = `https://api.coingecko.com/api/v3/simple/token_price/sei-network?contract_addresses=${token.id}&vs_currencies=usd`;
-
-  if (token.coingeckoId) {
-    const { data } = await get<coinGeckoPrice>(getByCoingeckoIdUrl);
-    return data[token.coingeckoId]?.usd;
-  }
-
-  const { data } = await get<coinGeckoPrice>(getByAddressUrl);
-  return data[token.id]?.usd;
-};
-
 export const geckoTerminalUrl = (address: string) =>
   `https://api.geckoterminal.com/api/v2/simple/networks/sei-network/token_price/${address}`;
+
+export const getUSDPrice = async (token: CosmToken) => {
+  const coingeckoPriceUrl = token.coingeckoId
+    ? `https://api.coingecko.com/api/v3/simple/price?ids=${token.coingeckoId}&vs_currencies=usd`
+    : `https://api.coingecko.com/api/v3/simple/token_price/sei-network?contract_addresses=${token.id}&vs_currencies=usd`;
+
+  const { data } = await get<coinGeckoPrice>(coingeckoPriceUrl);
+
+  return token.coingeckoId ? data[token.coingeckoId]?.usd : data[token.id]?.usd;
+};
 
 export const getUSDPrices = async (tokens: CosmToken[]) => {
   const coinGeckoCategoryUrl =
@@ -53,9 +50,9 @@ export const getUSDPrices = async (tokens: CosmToken[]) => {
   const addressPrices =
     chunkedAddresses.length > 0
       ? await Promise.all(
-          chunkedAddresses.map(async (address) => {
+          chunkedAddresses.map(async (addressChunk) => {
             const { data: prices } = await get<geckoTerminalResponse>(
-              geckoTerminalUrl(address),
+              geckoTerminalUrl(addressChunk),
             );
             return prices.data.attributes.token_prices;
           }),
@@ -72,23 +69,28 @@ export const getUSDPrices = async (tokens: CosmToken[]) => {
         )
       : [];
 
-  const structuredAddressPrices = addressPrices.map((address) => {
-    const key = Object.keys(address)[0];
-    return { id: key, price: address[key] };
-  });
+  const structuredAddressPrices = addresses.map((address) => ({
+    id: address,
+    price: addressPrices.find((addressPrice) => addressPrice)?.[address] || 0,
+  }));
 
-  const structuredCoinGeckoCategory = coinGeckoCategory.map((coin) => {
-    return { id: coin.id, name: coin.name, price: coin.current_price };
-  });
+  const structuredCoinGeckoCategory = coinGeckoCategory.map((coin) => ({
+    id: coin.id,
+    name: coin.name,
+    price: coin.current_price,
+  }));
 
-  const structuredGeckoIdPrices = coinGeckoIdPrices.map((coin) => {
-    return { id: coin.id, name: coin.name, price: coin.price };
-  });
+  const structuredGeckoIdPrices = coinGeckoIdPrices.map((coin) => ({
+    id: coin.id,
+    name: coin.name,
+    price: coin.price,
+  }));
 
   const result: usdPrices[] = [
     ...structuredCoinGeckoCategory,
     ...structuredAddressPrices,
     ...structuredGeckoIdPrices,
   ];
+
   return result;
 };

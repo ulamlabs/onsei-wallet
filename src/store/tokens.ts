@@ -40,14 +40,17 @@ type TokensStore = {
   addToken: (token: CosmTokenWithBalance) => void;
   removeToken: (token: CosmTokenWithBalance) => void;
   clearAddress: (address: string) => Promise<void>;
-  updateBalances: (tokens?: CosmTokenWithBalance[]) => Promise<void[]>;
+  updateBalances: (
+    tokens?: CosmTokenWithBalance[],
+    updatePrice?: boolean,
+  ) => Promise<void[]>;
   _updateCw20Balance: (token: CosmTokenWithBalance) => Promise<void>;
   _updateNativeBalances: () => Promise<void>;
   _updateStructures: (
     tokens: CosmTokenWithBalance[],
     options?: { save?: boolean },
   ) => void;
-  loadPrices: () => Promise<void>;
+  loadPrices: (udpate?: boolean) => Promise<void>;
 };
 
 export const useTokensStore = create<TokensStore>((set, get) => ({
@@ -71,17 +74,19 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     await loadPrices();
     updateBalances();
   },
-  addToken: (token) => {
+  addToken: async (token) => {
     const {
       tokens,
       _updateStructures,
       _updateCw20Balance: updateBalance,
+      loadPrices,
     } = get();
     const exists = tokens.find((t) => t.id === token.id);
     if (exists) {
       return;
     }
     _updateStructures([...tokens, token], { save: true });
+    await loadPrices();
     updateBalance(token);
   },
   removeToken: (token) => {
@@ -105,10 +110,12 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       return {};
     });
   },
-  updateBalances: (tokensToUpdate) => {
+  updateBalances: async (tokensToUpdate, updatePrices) => {
     // Will always update native token balances.
-    const { cw20Tokens, _updateCw20Balance } = get();
-
+    const { cw20Tokens, _updateCw20Balance, loadPrices } = get();
+    if (updatePrices) {
+      await loadPrices(true);
+    }
     let cw20ToUpdate = cw20Tokens;
     if (tokensToUpdate) {
       cw20ToUpdate = tokensToUpdate.filter((t) => t.type === "cw20");
@@ -124,12 +131,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     const { accountAddress, prices } = get();
 
     const tokenPrice =
-      prices.find(
-        (price) =>
-          price.id === token.id ||
-          price.id === token.coingeckoId ||
-          price.name === token.name,
-      )?.price || 0;
+      prices.find((price) => MatchPriceToToken(token, price))?.price || 0;
 
     const balance = await fetchCW20TokenBalance(accountAddress, token.id, node);
     const usdBalance = formatUsdBalance(
@@ -211,10 +213,16 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       saveToStorage(key, cw20Tokens.map(serializeToken));
     }
   },
-  loadPrices: async () => {
-    const { tokens } = get();
-    const prices = await getUSDPrices(tokens);
-    set({ prices });
+  loadPrices: async (update) => {
+    const { tokens, prices } = get();
+    const missingPrices = tokens.filter(
+      (token) => !prices.some((price) => MatchPriceToToken(token, price)),
+    );
+    if (missingPrices.length === 0 && !update) {
+      return;
+    }
+    const newPrices = await getUSDPrices(tokens);
+    set({ prices: newPrices });
   },
 }));
 
@@ -234,4 +242,12 @@ function serializeToken(token: CosmTokenWithBalance): CosmTokenWithBalance {
 
 function deserializeToken(token: CosmTokenWithBalance): CosmTokenWithBalance {
   return { ...token, balance: BigInt(token.balance) };
+}
+
+function MatchPriceToToken(token: CosmTokenWithBalance, price: usdPrices) {
+  return (
+    token.name === price.name ||
+    token.id === price.id ||
+    token.coingeckoId === price.id
+  );
 }
