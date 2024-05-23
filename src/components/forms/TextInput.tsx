@@ -28,12 +28,22 @@ export default function TextInput({
     }
   }
 
-  function onFocus() {
+  function onFocus(
+    e: ReactNative.NativeSyntheticEvent<ReactNative.TextInputFocusEventData>,
+  ) {
     setFocused(true);
+    if (props.onFocus) {
+      props.onFocus(e);
+    }
   }
 
-  function onBlur() {
+  function onBlur(
+    e: ReactNative.NativeSyntheticEvent<ReactNative.TextInputFocusEventData>,
+  ) {
     setFocused(false);
+    if (props.onBlur) {
+      props.onBlur(e);
+    }
   }
 
   return (
@@ -49,15 +59,10 @@ export default function TextInput({
           {label}
         </Text>
       )}
-      <ReactNative.TextInput
-        placeholderTextColor={Colors.text100}
-        onChangeText={onChangeText}
-        onFocus={onFocus}
-        onBlur={onBlur}
-        value={value}
-        {...props}
+      <View
         style={[
           {
+            justifyContent: "center",
             borderRadius: 18,
             borderWidth: 1,
             borderColor: error
@@ -65,27 +70,38 @@ export default function TextInput({
               : focused
                 ? Colors.activeTextInputBorderColor
                 : Colors.inputBorderColor,
-            padding: 16,
             backgroundColor: Colors.background100,
-            color: Colors.text,
-            paddingRight: showClear ? 55 : 16,
+            paddingRight: showClear && !!value?.length ? 55 : 16,
             paddingLeft: Icon ? 42 : 16,
           },
           style,
         ]}
-      />
-      {Icon && (
-        <Icon
-          size={16}
-          style={{ position: "absolute", left: 16 }}
-          color={Colors.text100}
+      >
+        <ReactNative.TextInput
+          placeholderTextColor={Colors.text100}
+          onChangeText={onChangeText}
+          value={value}
+          style={{ paddingVertical: 16, color: Colors.text }}
+          {...props}
+          onFocus={onFocus}
+          onBlur={onBlur}
         />
-      )}
-      {showClear && !!value?.length && (
-        <Pressable style={{ position: "absolute", right: 16 }} onPress={clear}>
-          <CloseCircle variant="Bold" color={Colors.text100} />
-        </Pressable>
-      )}
+        {Icon && (
+          <Icon
+            size={16}
+            style={{ position: "absolute", left: 16 }}
+            color={Colors.text100}
+          />
+        )}
+        {showClear && !!value?.length && (
+          <Pressable
+            style={{ position: "absolute", right: 16 }}
+            onPress={clear}
+          >
+            <CloseCircle variant="Bold" color={Colors.text100} />
+          </Pressable>
+        )}
+      </View>
     </View>
   );
 }
