@@ -66,8 +66,8 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     let cw20Tokens = await loadFromStorage<CosmTokenWithBalance[]>(key, []);
     cw20Tokens = cw20Tokens.map(deserializeToken);
     _updateStructures([SEI_TOKEN, ...cw20Tokens]);
-    await loadPrices();
-    updateBalances();
+    await updateBalances();
+    loadPrices();
   },
   addToken: async (token) => {
     const {
@@ -81,8 +81,8 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       return;
     }
     _updateStructures([...tokens, token], { save: true });
-    await loadPrices();
-    updateBalance(token);
+    await updateBalance(token);
+    loadPrices();
   },
   removeToken: (token) => {
     const { tokens, _updateStructures } = get();

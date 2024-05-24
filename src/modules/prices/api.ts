@@ -32,26 +32,18 @@ export const getUSDPrices = async (tokens: CosmToken[]) => {
     coinGeckoCategory.map((coin) => coin.id.toLowerCase()),
   );
 
-  const tokensWithoutPrice = tokens.filter(
-    (token) =>
-      !coinGeckoIdsSet.has(token.id.toLowerCase()) &&
-      !coinGeckoIdsSet.has(token.coingeckoId),
-  );
+  const tokensWithoutPrice = tokens.filter((token) => {
+    return !coinGeckoIdsSet.has(token.coingeckoId);
+  });
 
   const withCoingeckoId = tokensWithoutPrice.filter(
     (token) => token.coingeckoId,
   );
+
   const addresses = tokensWithoutPrice
     .filter((token) => !token.coingeckoId)
     .map((token) => {
-      const splitted = token.id.split("/");
-      if (splitted.length > 1) {
-        const longestString = splitted.reduce((longest, current) => {
-          return current.length > longest.length ? current : longest;
-        }, "");
-        return splitted.find((item) => item.startsWith("sei")) || longestString;
-      }
-      return token.id;
+      return token.id.replaceAll("/", "%2F");
     });
 
   const chunkedAddresses = chunkArray(addresses, 30);
