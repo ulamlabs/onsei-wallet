@@ -33,12 +33,18 @@ import {
 import ScanAddressScreen from "@/screens/transfer/ScanAddressScreen";
 import { Account, SavedAddress, Wallet } from "@/store";
 import { NavigatorParamsList } from "@/types";
+import { trimAddress } from "@/utils";
 import { DeliverTxResponse, StdFee } from "@cosmjs/stargate";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import BottomBarsNavigation from "./BottomBarsNavigation";
 import { navigatorScreenOptions } from "./const";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
+
+export type Recipient = {
+  address: string;
+  name?: string;
+};
 
 export type HomeParamList = {
   Home: undefined;
@@ -51,7 +57,7 @@ export type HomeParamList = {
   "Clear app data": undefined;
   Authorize: { nextRoute: keyof NavigatorParamsList; nextParams?: any };
   "Your SEI address": undefined;
-  "Saved Address": { addressData: SavedAddress } | undefined;
+  "Saved Address": { addressData?: SavedAddress; address?: string } | undefined;
   "Address Details": { addressData: SavedAddress };
   "Address Transactions": { addressData: SavedAddress };
   "Your Mnemonic": { address: string };
@@ -66,11 +72,16 @@ export type HomeParamList = {
   "Manage Token List": undefined;
   transferSelectToken: undefined;
   transferSelectAddress: { tokenId: string; address?: string };
-  transferAmount: { tokenId: string; recipient: string };
-  transferSummary: { tokenId: string; recipient: string; intAmount: string };
+  transferAmount: { tokenId: string; recipient: Recipient };
+  transferSummary: {
+    tokenId: string;
+    recipient: Recipient;
+    intAmount: string;
+    memo?: string;
+  };
   transferSending: {
     tokenId: string;
-    recipient: string;
+    recipient: Recipient;
     intAmount: string;
     fee: StdFee;
   };
@@ -155,7 +166,9 @@ export default function HomeNavigation() {
       <Screen
         name="transferAmount"
         component={TransferAmountScreen}
-        options={{ title: "Enter amount" }}
+        options={({ route }) => ({
+          title: `To: ${route.params.recipient.name || ""} (${trimAddress(route.params.recipient.address)})`,
+        })}
       />
       <Screen
         name="transferSummary"

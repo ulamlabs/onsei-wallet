@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
+  ClipboardAddressBox,
+  Column,
+  PrimaryButton,
   SafeLayout,
   Text,
   TextInput,
-  PrimaryButton,
-  Column,
-  ClipboardAddressBox,
 } from "@/components";
 import { useInputState } from "@/hooks";
 import { useAddressBookStore } from "@/store";
-import { NavigatorParamsList } from "@/types";
 import { Colors } from "@/styles";
+import { NavigatorParamsList } from "@/types";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 
 type Props = NativeStackScreenProps<NavigatorParamsList, "Saved Address">;
@@ -23,11 +23,15 @@ export default function AddOrEditAddress({ navigation, route }: Props) {
   const [error, setError] = useState("");
   const [addressFocused, setAddressFocused] = useState(false);
   const addressData = route.params?.addressData;
+  const address = route.params?.address;
 
   useEffect(() => {
     if (addressData) {
       nameInput.onChangeText(addressData.name);
       addressInput.onChangeText(addressData.address);
+    }
+    if (address) {
+      addressInput.onChangeText(address);
     }
   }, []);
 

@@ -1,4 +1,5 @@
 import {
+  Column,
   IconButton,
   Paragraph,
   PrimaryButton,
@@ -37,6 +38,10 @@ export default function TransferSelectAddressScreen({
   const [isInvalidAddress, setIsInvalidAddress] = useState(false);
   const [copiedText, setCopiedText] = useState("");
   const [focused, setFocused] = useState(false);
+  const allAddresses = [
+    ...allAddressBook.map((address) => address.address),
+    ...allAccounts.map((account) => account.address),
+  ];
 
   const fetchCopiedText = async () => {
     const text = await Clipboard.getStringAsync();
@@ -86,7 +91,13 @@ export default function TransferSelectAddressScreen({
   );
 
   function select(recipient: string) {
-    navigation.navigate("transferAmount", { ...route.params, recipient });
+    const name = [...allAddressBook, ...allAccounts].find(
+      (address) => address.address === recipient,
+    )?.name;
+    navigation.navigate("transferAmount", {
+      ...route.params,
+      recipient: { address: recipient, name },
+    });
   }
 
   function validateTypedAddress(address: string = typedAddress) {
@@ -104,15 +115,20 @@ export default function TransferSelectAddressScreen({
     });
   }
 
+  function addToAddressBook() {
+    navigation.navigate("Saved Address", { address: typedAddress });
+  }
+
   return (
     <SafeLayout noScroll={true}>
-      <View>
+      <Column>
         <Row style={{ gap: 10 }}>
           <TextInput
             placeholder="Type name or address"
             {...searchInput}
             autoCorrect={false}
-            getFocus={setFocused}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
             showClear
           />
           <IconButton
@@ -133,7 +149,7 @@ export default function TransferSelectAddressScreen({
           </Paragraph>
         )}
 
-        {typedAddress && !sameAddressError && copiedText !== typedAddress && (
+        {typedAddress && !sameAddressError && (
           <AddressBox
             address={{ name: "Correct address", address: typedAddress }}
             onPress={select}
@@ -149,14 +165,17 @@ export default function TransferSelectAddressScreen({
           />
         )}
 
-        {addressBook.length === 0 && yourAddresses.length === 0 && (
-          <SmallButton
-            onPress={() => {}}
-            title="Add to address book"
-            style={{ marginRight: 61 }}
-          />
-        )}
-      </View>
+        {addressBook.length === 0 &&
+          yourAddresses.length === 0 &&
+          typedAddress &&
+          !allAddresses.some((address) => address === typedAddress) && (
+            <SmallButton
+              onPress={addToAddressBook}
+              title="Add to address book"
+              style={{ marginRight: 61 }}
+            />
+          )}
+      </Column>
       <View style={{ flex: 1 }}>
         <SectionList
           stickySectionHeadersEnabled={false}
