@@ -3,16 +3,18 @@ import { CosmToken } from "@/services/cosmos";
 import { Colors, FontWeights } from "@/styles";
 import { formatDecimalSeparator } from "@/utils";
 import { useMemo } from "react";
-import { StyleSheet } from "react-native";
+import { StyleProp, StyleSheet, ViewStyle } from "react-native";
 
 type TransferAmountProps = {
   token: CosmToken;
   decimalAmount: string;
+  style?: StyleProp<ViewStyle>;
 };
 
 export default function TransferAmount({
   token,
   decimalAmount,
+  style,
 }: TransferAmountProps) {
   const formattedAmount = useMemo(() => {
     const [whole, fraction] = decimalAmount.split(".");
@@ -42,10 +44,14 @@ export default function TransferAmount({
 
   return (
     <Row
-      style={{
-        justifyContent: "center",
-        alignItems: "center",
-      }}
+      style={[
+        {
+          justifyContent: "center",
+          alignItems: "center",
+          flex: 1,
+        },
+        style,
+      ]}
     >
       {getContent()}
     </Row>

@@ -4,6 +4,7 @@ import IconButton from "./IconButton";
 import PrimaryButton from "./PrimaryButton";
 import SecondaryButton from "./SecondaryButton";
 import SmallButton from "./SmallButton";
+import SwipeButton from "./SwipeButton";
 import TertiaryButton from "./TertiaryButton";
 
 export {
@@ -13,5 +14,6 @@ export {
   PrimaryButton,
   SecondaryButton,
   SmallButton,
+  SwipeButton,
   TertiaryButton,
 };

@@ -105,7 +105,11 @@ export default function TransferAmountScreen({
         <Column
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
         >
-          <TransferAmount token={token} decimalAmount={decimalAmount} />
+          <TransferAmount
+            style={{ flex: 0 }}
+            token={token}
+            decimalAmount={decimalAmount}
+          />
           <Paragraph>
             Network fee: {decimalAmount ? "<$0.01" : "$0.00"}
           </Paragraph>

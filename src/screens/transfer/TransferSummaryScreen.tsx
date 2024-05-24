@@ -2,21 +2,20 @@ import {
   Loader,
   Option,
   OptionGroup,
-  PrimaryButton,
   SafeLayout,
+  SwipeButton,
   Text,
 } from "@/components";
-import TransferAmount from "./TransferAmount";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { NavigatorParamsList } from "@/types";
-import { trimAddress } from "@/utils";
-import { View } from "react-native";
-import { useTokensStore } from "@/store";
-import { useEffect, useMemo, useState } from "react";
 import { estimateTransferFee } from "@/services/cosmos/tx";
-import { StdFee } from "@cosmjs/stargate";
+import { useTokensStore } from "@/store";
 import { Colors } from "@/styles";
-import { formatAmount } from "@/utils";
+import { NavigatorParamsList } from "@/types";
+import { formatAmount, trimAddress } from "@/utils";
+import { StdFee } from "@cosmjs/stargate";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useEffect, useMemo, useState } from "react";
+import { View } from "react-native";
+import TransferAmount from "./TransferAmount";
 
 type TransferSummaryScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -69,7 +68,7 @@ export default function TransferSummaryScreen({
     setEstimationFailed(false);
 
     updateBalances([sei]);
-    estimateTransferFee(transfer.recipient, token, intAmount)
+    estimateTransferFee(transfer.recipient.address, token, intAmount)
       .then(setFee)
       .catch(() => setEstimationFailed(true));
   }
@@ -111,8 +110,16 @@ export default function TransferSummaryScreen({
       <View style={{ flex: 1 }}>
         <OptionGroup>
           <Option label="To">
-            <Text>{trimAddress(transfer.recipient)}</Text>
+            <Text>
+              {transfer.recipient.name} (
+              {trimAddress(transfer.recipient.address)})
+            </Text>
           </Option>
+          {transfer.memo && (
+            <Option label="Network fee">
+              <Text>{transfer.memo}</Text>
+            </Option>
+          )}
           <Option label="Network fee">{getFeeElement()}</Option>
         </OptionGroup>
 
@@ -125,11 +132,7 @@ export default function TransferSummaryScreen({
         )}
       </View>
 
-      <PrimaryButton
-        title="Send"
-        onPress={send}
-        disabled={!fee || !hasFundsForFee}
-      />
+      <SwipeButton />
     </SafeLayout>
   );
 }
