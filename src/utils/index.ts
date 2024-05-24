@@ -1,3 +1,4 @@
+export * from "./calculateTokenUsdBalance";
 export * from "./calculateTotalBalance";
 export * from "./chunkArray";
 export * from "./formatAmount";

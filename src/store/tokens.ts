@@ -1,5 +1,5 @@
 import { NODES } from "@/const";
-import { getUSDPrices, usdPrices } from "@/modules/balances";
+import { getUSDPrices } from "@/modules/prices";
 import {
   CosmTokenWithBalance,
   fetchAccountBalances,
@@ -7,8 +7,6 @@ import {
 } from "@/services/cosmos";
 import { Node } from "@/types";
 import {
-  formatAmount,
-  formatUsdBalance,
   loadFromStorage,
   matchPriceToToken,
   removeFromStorage,
@@ -37,22 +35,18 @@ type TokensStore = {
   tokenMap: Map<string, CosmTokenWithBalance>;
   accountAddress: string;
   fetchBalancesPromise: Promise<any> | null;
-  prices: usdPrices[];
   loadTokens: (address: string) => Promise<void>;
   addToken: (token: CosmTokenWithBalance) => void;
   removeToken: (token: CosmTokenWithBalance) => void;
   clearAddress: (address: string) => Promise<void>;
-  updateBalances: (
-    tokens?: CosmTokenWithBalance[],
-    updatePrice?: boolean,
-  ) => Promise<void[]>;
+  updateBalances: (tokens?: CosmTokenWithBalance[]) => Promise<void[]>;
   _updateCw20Balance: (token: CosmTokenWithBalance) => Promise<void>;
   _updateNativeBalances: () => Promise<void>;
   _updateStructures: (
     tokens: CosmTokenWithBalance[],
     options?: { save?: boolean },
   ) => void;
-  loadPrices: (udpate?: boolean) => Promise<void>;
+  loadPrices: () => Promise<void>;
 };
 
 export const useTokensStore = create<TokensStore>((set, get) => ({
@@ -63,7 +57,6 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
   cw20Tokens: [],
   tokenMap: new Map(),
   fetchBalancesPromise: null,
-  prices: [],
   loadTokens: async (address) => {
     const { updateBalances, _updateStructures, loadPrices } = get();
     const { node } = useSettingsStore.getState().settings;
@@ -112,12 +105,9 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       return {};
     });
   },
-  updateBalances: async (tokensToUpdate, updatePrices) => {
+  updateBalances: async (tokensToUpdate) => {
     // Will always update native token balances.
-    const { cw20Tokens, _updateCw20Balance, loadPrices } = get();
-    if (updatePrices) {
-      await loadPrices(true);
-    }
+    const { cw20Tokens, _updateCw20Balance } = get();
     let cw20ToUpdate = cw20Tokens;
     if (tokensToUpdate) {
       cw20ToUpdate = tokensToUpdate.filter((t) => t.type === "cw20");
@@ -130,23 +120,15 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
   },
   _updateCw20Balance: async (token) => {
     const { node } = useSettingsStore.getState().settings;
-    const { accountAddress, prices } = get();
-
-    const tokenPrice =
-      prices.find((price) => matchPriceToToken(token, price))?.price || 0;
+    const { accountAddress } = get();
 
     const balance = await fetchCW20TokenBalance(accountAddress, token.id, node);
-    const usdBalance = formatUsdBalance(
-      tokenPrice * +formatAmount(balance, token.decimals),
-    );
 
     const { tokenMap, tokens, _updateStructures } = get();
 
     token = {
       ...tokenMap.get(token.id)!,
       balance,
-      usdBalance,
-      price: tokenPrice,
     };
 
     const index = tokens.findIndex((t) => t.id === token.id);
@@ -158,8 +140,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     _updateStructures([...tokens], { save: true });
   },
   _updateNativeBalances: async () => {
-    const { accountAddress, cw20Tokens, _updateStructures, sei, prices } =
-      get();
+    const { accountAddress, cw20Tokens, _updateStructures, sei } = get();
     const { node } = useSettingsStore.getState().settings;
 
     const balances = await fetchAccountBalances(accountAddress, node);
@@ -174,37 +155,18 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     for (const balanceData of balances.balances) {
       const balance = BigInt(balanceData.amount);
       if (balanceData.denom === sei.id) {
-        const usdPrice =
-          prices.find((price) => matchPriceToToken(sei, price))?.price || 0;
         newSei.balance = balance;
-        newSei.usdBalance = formatUsdBalance(
-          usdPrice *
-            +formatAmount(balance, newSei.decimals, {
-              noDecimalSeparator: true,
-            }),
-        );
-        newSei.price = usdPrice;
         continue;
       }
       let token = tokenRegistryMap.get(balanceData.denom);
-      const usdPrice =
-        prices.find((price) => matchPriceToToken(token, price))?.price || 0;
 
-      const usdBalance = token
-        ? formatUsdBalance(
-            usdPrice *
-              +formatAmount(balance, token.decimals, {
-                noDecimalSeparator: true,
-              }),
-          )
-        : 0;
       if (!token && refreshPromise) {
         await refreshPromise;
         tokenRegistryMap = useTokenRegistryStore.getState().tokenRegistryMap;
         token = tokenRegistryMap.get(balanceData.denom);
       }
       if (token) {
-        nativeTokens.push({ ...token, balance, usdBalance, price: usdPrice });
+        nativeTokens.push({ ...token, balance });
       }
     }
 
@@ -235,16 +197,16 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       saveToStorage(key, cw20Tokens.map(serializeToken));
     }
   },
-  loadPrices: async (update) => {
-    const { tokens, prices } = get();
-    const missingPrices = tokens.filter(
-      (token) => !prices.some((price) => matchPriceToToken(token, price)),
-    );
-    if (missingPrices.length === 0 && !update) {
-      return;
-    }
+  loadPrices: async () => {
+    const { tokens, _updateStructures } = get();
     const newPrices = await getUSDPrices(tokens);
-    set({ prices: newPrices });
+
+    const updatedTokens: CosmTokenWithBalance[] = tokens.map((token) => ({
+      ...token,
+      price: newPrices.find((price) => matchPriceToToken(token, price))?.price,
+    }));
+
+    _updateStructures([...updatedTokens]);
   },
 }));
 

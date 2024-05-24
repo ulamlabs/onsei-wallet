@@ -1,8 +1,8 @@
-import { usdPrices } from "@/modules/balances";
+import { usdPrices } from "@/modules/prices";
 import { CosmToken, CosmTokenWithBalance } from "@/services/cosmos";
 
 export function matchPriceToToken(
-  token: CosmTokenWithBalance | undefined | CosmToken,
+  token: CosmTokenWithBalance | CosmToken,
   price: usdPrices,
 ) {
   return token?.id === price.id || token?.coingeckoId === price.id;

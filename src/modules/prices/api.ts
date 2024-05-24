@@ -28,13 +28,14 @@ export const getUSDPrices = async (tokens: CosmToken[]) => {
   const { data: coinGeckoCategory } =
     await get<coinGeckoCategoryResponse[]>(coinGeckoCategoryUrl);
 
+  const coinGeckoIdsSet = new Set(
+    coinGeckoCategory.map((coin) => coin.id.toLowerCase()),
+  );
+
   const tokensWithoutPrice = tokens.filter(
     (token) =>
-      !coinGeckoCategory.some(
-        (coin) =>
-          coin.id.toLowerCase() === token.id.toLowerCase() ||
-          coin.id === token.coingeckoId,
-      ),
+      !coinGeckoIdsSet.has(token.id.toLowerCase()) &&
+      !coinGeckoIdsSet.has(token.coingeckoId),
   );
 
   const withCoingeckoId = tokensWithoutPrice.filter(
@@ -79,7 +80,10 @@ export const getUSDPrices = async (tokens: CosmToken[]) => {
 
   const structuredAddressPrices = addresses.map((address) => ({
     id: address,
-    price: addressPrices.find((addressPrice) => addressPrice)?.[address] || 0,
+    price:
+      addressPrices.find((addressPrice) =>
+        Object.prototype.hasOwnProperty.call(addressPrice, address),
+      )?.[address] || 0,
   }));
 
   const structuredCoinGeckoCategory = coinGeckoCategory.map((coin) => ({

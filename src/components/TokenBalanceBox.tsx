@@ -1,6 +1,6 @@
 import { CosmTokenWithBalance } from "@/services/cosmos";
 import { Colors, FontWeights } from "@/styles";
-import { formatAmount, formatUsdBalance } from "@/utils";
+import { calculateTokenUsdBalance, formatAmount } from "@/utils";
 import { Pressable, View } from "react-native";
 import TokenBox from "./TokenBox";
 import { Text } from "./typography";
@@ -23,22 +23,18 @@ export default function TokenBalanceBox({
   return (
     <Pressable onPress={onPressWrapped}>
       <TokenBox token={token}>
-        {token.price || token.type === "native" ? (
-          <View style={{ alignItems: "flex-end" }}>
+        <View style={{ alignItems: "flex-end" }}>
+          {token.price ? (
             <Text style={{ fontFamily: FontWeights.bold }}>
-              ${formatUsdBalance(token.usdBalance || 0)}
+              ${calculateTokenUsdBalance(token)}
             </Text>
-            <Text
-              style={{ fontFamily: FontWeights.bold, color: Colors.text100 }}
-            >
-              {formatAmount(token.balance, token.decimals)}
-            </Text>
-          </View>
-        ) : (
+          ) : (
+            ""
+          )}
           <Text style={{ fontFamily: FontWeights.bold, color: Colors.text100 }}>
             {formatAmount(token.balance, token.decimals)}
           </Text>
-        )}
+        </View>
       </TokenBox>
     </Pressable>
   );

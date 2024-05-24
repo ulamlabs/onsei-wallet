@@ -14,13 +14,12 @@ export default function NodeSettingsScreen() {
     setSetting,
   } = useSettingsStore();
   const { activeAccount } = useAccountsStore();
-  const { loadTokens, loadPrices } = useTokensStore();
+  const { loadTokens } = useTokensStore();
   const { refreshRegistryCache } = useTokenRegistryStore();
 
   function onNodeChange(newNode: Node) {
     setSetting("node", newNode);
     refreshRegistryCache();
-    loadPrices();
     if (activeAccount) {
       loadTokens(activeAccount.address);
     }

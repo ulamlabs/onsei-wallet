@@ -12,6 +12,5 @@ export type CosmToken = {
 
 export type CosmTokenWithBalance = CosmToken & {
   balance: bigint;
-  usdBalance?: number;
   price?: number;
 };
