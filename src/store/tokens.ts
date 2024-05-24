@@ -10,6 +10,7 @@ import {
   formatAmount,
   formatUsdBalance,
   loadFromStorage,
+  matchPriceToToken,
   removeFromStorage,
   saveToStorage,
 } from "@/utils";
@@ -131,7 +132,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     const { accountAddress, prices } = get();
 
     const tokenPrice =
-      prices.find((price) => MatchPriceToToken(token, price))?.price || 0;
+      prices.find((price) => matchPriceToToken(token, price))?.price || 0;
 
     const balance = await fetchCW20TokenBalance(accountAddress, token.id, node);
     const usdBalance = formatUsdBalance(
@@ -166,16 +167,30 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     const nativeTokens: CosmTokenWithBalance[] = [newSei];
     for (const balanceData of balances.balances) {
       const balance = BigInt(balanceData.amount);
-      const usdBalance =
-        prices.find((price) => price.id === newSei.coingeckoId)?.price || 0;
       if (balanceData.denom === sei.id) {
+        const usdPrice =
+          prices.find((price) => matchPriceToToken(sei, price))?.price || 0;
         newSei.balance = balance;
         newSei.usdBalance = formatUsdBalance(
-          usdBalance * +formatAmount(balance, newSei.decimals),
+          usdPrice *
+            +formatAmount(balance, newSei.decimals, {
+              noDecimalSeparator: true,
+            }),
         );
         continue;
       }
       let token = tokenRegistryMap.get(balanceData.denom);
+      const usdPrice =
+        prices.find((price) => matchPriceToToken(token, price))?.price || 0;
+
+      const usdBalance = token
+        ? formatUsdBalance(
+            usdPrice *
+              +formatAmount(balance, token.decimals, {
+                noDecimalSeparator: true,
+              }),
+          )
+        : 0;
       if (!token && refreshPromise) {
         await refreshPromise;
         tokenRegistryMap = useTokenRegistryStore.getState().tokenRegistryMap;
@@ -216,7 +231,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
   loadPrices: async (update) => {
     const { tokens, prices } = get();
     const missingPrices = tokens.filter(
-      (token) => !prices.some((price) => MatchPriceToToken(token, price)),
+      (token) => !prices.some((price) => matchPriceToToken(token, price)),
     );
     if (missingPrices.length === 0 && !update) {
       return;
@@ -242,12 +257,4 @@ function serializeToken(token: CosmTokenWithBalance): CosmTokenWithBalance {
 
 function deserializeToken(token: CosmTokenWithBalance): CosmTokenWithBalance {
   return { ...token, balance: BigInt(token.balance) };
-}
-
-function MatchPriceToToken(token: CosmTokenWithBalance, price: usdPrices) {
-  return (
-    token.name === price.name ||
-    token.id === price.id ||
-    token.coingeckoId === price.id
-  );
 }

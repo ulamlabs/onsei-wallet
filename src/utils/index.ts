@@ -5,6 +5,7 @@ export * from "./formatDate";
 export * from "./formatUsdBalance";
 export * from "./generateWalletName";
 export * from "./getNumberName";
+export * from "./matchPriceToToken";
 export * from "./resetNavigationStack";
 export * from "./scaling";
 export * from "./searchTokens";
