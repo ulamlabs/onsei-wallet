@@ -2,7 +2,7 @@
   "expo": {
     "name": "sei-wallet",
     "slug": "sei-wallet",
-    "version": "1.0.5",
+    "version": "1.0.7",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -20,7 +20,8 @@
       },
       "infoPlist": {
         "NSFaceIDUsageDescription": "This app stores users's private keys and the access should be Face ID protected."
-      }
+      },
+      "buildNumber": "2"
     },
     "android": {
       "adaptiveIcon": {
@@ -28,7 +29,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.ulamlabs.seiwallet",
-      "versionCode": 2
+      "versionCode": 4
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -50,7 +51,13 @@
       [
         "expo-font",
         {
-          "fonts": ["./assets/fonts/Satoshi.ttf"]
+          "fonts": [
+            "./assets/fonts/Satoshi-Black.otf",
+            "./assets/fonts/Satoshi-Bold.otf",
+            "./assets/fonts/Satoshi-Light.otf",
+            "./assets/fonts/Satoshi-Medium.otf",
+            "./assets/fonts/Satoshi-Regular.otf"
+          ]
         }
       ]
     ]
