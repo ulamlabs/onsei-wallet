@@ -23,10 +23,10 @@ export default function TokenBalanceBox({
   return (
     <Pressable onPress={onPressWrapped}>
       <TokenBox token={token}>
-        {token.usdBalance ? (
+        {token.price || token.type === "native" ? (
           <View style={{ alignItems: "flex-end" }}>
             <Text style={{ fontFamily: FontWeights.bold }}>
-              ${formatUsdBalance(token.usdBalance)}
+              ${formatUsdBalance(token.usdBalance || 0)}
             </Text>
             <Text
               style={{ fontFamily: FontWeights.bold, color: Colors.text100 }}

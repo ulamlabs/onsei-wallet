@@ -27,6 +27,7 @@ const SEI_TOKEN: CosmTokenWithBalance = {
   logo: require("../../assets/sei-logo.png"),
   balance: 0n,
   coingeckoId: "sei-network",
+  price: 0,
 };
 
 type TokensStore = {
@@ -141,7 +142,12 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
 
     const { tokenMap, tokens, _updateStructures } = get();
 
-    token = { ...tokenMap.get(token.id)!, balance, usdBalance };
+    token = {
+      ...tokenMap.get(token.id)!,
+      balance,
+      usdBalance,
+      price: tokenPrice,
+    };
 
     const index = tokens.findIndex((t) => t.id === token.id);
     if (index === -1) {
@@ -177,6 +183,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
               noDecimalSeparator: true,
             }),
         );
+        newSei.price = usdPrice;
         continue;
       }
       let token = tokenRegistryMap.get(balanceData.denom);
@@ -197,7 +204,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
         token = tokenRegistryMap.get(balanceData.denom);
       }
       if (token) {
-        nativeTokens.push({ ...token, balance, usdBalance });
+        nativeTokens.push({ ...token, balance, usdBalance, price: usdPrice });
       }
     }
 
