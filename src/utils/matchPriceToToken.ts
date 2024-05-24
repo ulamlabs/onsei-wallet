@@ -5,8 +5,5 @@ export function matchPriceToToken(
   token: CosmTokenWithBalance | undefined | CosmToken,
   price: usdPrices,
 ) {
-  return (
-    token?.id.toLowerCase() === price.id.toLowerCase() ||
-    token?.coingeckoId.toLowerCase() === price.id.toLowerCase()
-  );
+  return token?.id === price.id || token?.coingeckoId === price.id;
 }
