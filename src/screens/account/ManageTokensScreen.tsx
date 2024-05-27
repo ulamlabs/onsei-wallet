@@ -22,6 +22,7 @@ export default function ManageTokensScreen() {
   const tokensStore = useTokensStore();
   const { tokenRegistry } = useTokenRegistryStore();
   const [tokens, setTokens] = useState<CosmToken[]>([]);
+  const [addingToken, setAddingToken] = useState("");
   const {
     settings: { node },
   } = useSettingsStore();
@@ -66,11 +67,13 @@ export default function ManageTokensScreen() {
     }
   }
 
-  function onToggle(token: any) {
+  async function onToggle(token: CosmToken) {
     if (tokensStore.tokenMap.has(token.id)) {
       tokensStore.removeToken(token);
     } else {
-      tokensStore.addToken({ ...token, balance: 0n });
+      setAddingToken(token.id);
+      await tokensStore.addToken(token);
+      setAddingToken("");
     }
   }
 
@@ -106,7 +109,10 @@ export default function ManageTokensScreen() {
                 <TokenToggleBox
                   token={token}
                   key={token.id}
-                  selected={tokensStore.tokenMap.has(token.id)}
+                  selected={
+                    tokensStore.tokenMap.has(token.id) ||
+                    addingToken === token.id
+                  }
                   onToggle={() => onToggle(token)}
                 />
               </View>

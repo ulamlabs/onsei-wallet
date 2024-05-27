@@ -21,9 +21,9 @@ export default function NodeSettingsScreen() {
     activeAccount!.address,
   );
 
-  function onNodeChange(newNode: Node) {
+  async function onNodeChange(newNode: Node) {
     setSetting("node", newNode);
-    refreshRegistryCache();
+    await refreshRegistryCache();
     if (activeAccount) {
       loadTokens(activeAccount.address);
       refetchTransactions();

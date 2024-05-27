@@ -7,7 +7,12 @@ import {
   SecondaryButton,
   Text,
 } from "@/components";
-import { useAccountsStore, useSettingsStore, useTokensStore } from "@/store";
+import {
+  useAccountsStore,
+  useSettingsStore,
+  useTokenRegistryStore,
+  useTokensStore,
+} from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { calculateTotalBalance } from "@/utils";
@@ -22,6 +27,7 @@ type DashboardProps = NativeStackScreenProps<NavigatorParamsList, "Wallet">;
 export default function Dashboard({ navigation }: DashboardProps) {
   const { activeAccount } = useAccountsStore();
   const { updateBalances, tokens } = useTokensStore();
+  const { refreshRegistryCache } = useTokenRegistryStore();
   const {
     settings: { node },
   } = useSettingsStore();
@@ -31,6 +37,10 @@ export default function Dashboard({ navigation }: DashboardProps) {
   }
   function onSend() {
     navigation.push("transferSelectToken");
+  }
+  async function onRefresh() {
+    await refreshRegistryCache();
+    updateBalances();
   }
 
   function render() {
@@ -62,7 +72,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
   }
 
   return (
-    <SafeLayout refreshFn={updateBalances}>
+    <SafeLayout refreshFn={onRefresh}>
       <Column style={{ alignItems: "center" }}>{render()}</Column>
       <Row
         style={{

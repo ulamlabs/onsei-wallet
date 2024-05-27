@@ -36,36 +36,40 @@ export const getUSDPrices = async (tokens: CosmToken[]) => {
     return !coinGeckoIdsSet.has(token.coingeckoId);
   });
 
-  const withCoingeckoId = tokensWithoutPrice.filter(
-    (token) => token.coingeckoId,
-  );
-
   const addresses = tokensWithoutPrice
     .filter((token) => !token.coingeckoId)
     .map((token) => {
       return token.id.replaceAll("/", "%2F");
     });
-
   const chunkedAddresses = chunkArray(addresses, 30);
 
   const addressPrices = await Promise.all(
     chunkedAddresses.map(async (addressChunk) => {
-      const { data: prices } = await get<geckoTerminalResponse>(
-        geckoTerminalUrl(addressChunk),
-      );
-      return prices.data.attributes.token_prices;
+      try {
+        const { data: prices } = await get<geckoTerminalResponse>(
+          geckoTerminalUrl(addressChunk),
+        );
+        return prices.data.attributes.token_prices;
+      } catch (e) {
+        return {};
+      }
     }),
   );
 
-  const coinGeckoIdPrices =
-    withCoingeckoId.length > 0
-      ? await Promise.all(
-          withCoingeckoId.map(async (token) => {
-            const price = await getUSDPrice(token);
-            return { ...token, price };
-          }),
-        )
-      : [];
+  const withCoingeckoId = tokensWithoutPrice.filter(
+    (token) => token.coingeckoId,
+  );
+
+  const coinGeckoIdPrices = await Promise.all(
+    withCoingeckoId.map(async (token) => {
+      try {
+        const price = await getUSDPrice(token);
+        return { ...token, price };
+      } catch (e) {
+        return { ...token, price: 0 };
+      }
+    }),
+  );
 
   const structuredAddressPrices = addresses.map((address) => ({
     id: address,

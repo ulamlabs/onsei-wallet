@@ -1,16 +1,18 @@
-import { CosmToken } from "@/services/cosmos";
-import { loadFromStorage, saveToStorage } from "@/utils";
+import { CosmToken, CosmTokenWithPrice } from "@/services/cosmos";
+import { loadFromStorage, matchPriceToToken, saveToStorage } from "@/utils";
 import { create } from "zustand";
 import { useSettingsStore } from "./settings";
 import { NETWORK_NAMES, NODE_URL } from "@/const";
+import { getUSDPrices, usdPrices } from "@/modules/prices";
 
 type TokenRegistryStore = {
-  tokenRegistry: CosmToken[];
-  cw20Registry: CosmToken[];
-  tokenRegistryMap: Map<string, CosmToken>;
+  tokenRegistry: CosmTokenWithPrice[];
+  cw20Registry: CosmTokenWithPrice[];
+  tokenRegistryMap: Map<string, CosmTokenWithPrice>;
   registryRefreshPromise: Promise<void> | null;
   init: () => Promise<void>;
-  addCW20ToRegistry: (newToken: CosmToken) => void;
+  addCW20ToRegistry: (newToken: CosmToken) => Promise<void>;
+  getPrices: (tokens: CosmToken[]) => Promise<usdPrices[]>;
   refreshRegistryCache: () => Promise<void>;
   _refreshRegistryCache: () => Promise<void>;
 };
@@ -21,30 +23,40 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
   tokenRegistryMap: new Map(),
   registryRefreshPromise: null,
   init: async () => {
-    const cachedTokenRegistry = await loadFromStorage<CosmToken[]>(
+    const cachedTokenRegistry = await loadFromStorage<CosmTokenWithPrice[]>(
       getRegistryKey(),
       [],
     );
-    const cw20Registry = await loadFromStorage<CosmToken[]>(
+    const cw20Registry = await loadFromStorage<CosmTokenWithPrice[]>(
       getCW20RegistryKey(),
       [],
     );
     set({
       tokenRegistry: cachedTokenRegistry,
       cw20Registry,
-      registryRefreshPromise: get()._refreshRegistryCache(),
       tokenRegistryMap: tokensToMap(cachedTokenRegistry),
     });
+    await get()._refreshRegistryCache();
   },
-  addCW20ToRegistry: (newToken) => {
-    const { cw20Registry, tokenRegistry } = get();
+  addCW20ToRegistry: async (newToken) => {
+    const { cw20Registry, tokenRegistry, getPrices } = get();
     const exists = cw20Registry.find((t) => t.id === newToken.id);
     if (exists) {
       return;
     }
 
-    const updatedRegistry = [...tokenRegistry, newToken];
-    const updatedCW20Registry = [...cw20Registry, newToken];
+    const prices = await getPrices([newToken]);
+    const newTokenPrice =
+      prices.find((p) => matchPriceToToken(newToken, p))?.price || 0;
+
+    const updatedRegistry = [
+      ...tokenRegistry,
+      { ...newToken, price: newTokenPrice },
+    ];
+    const updatedCW20Registry = [
+      ...cw20Registry,
+      { ...newToken, price: newTokenPrice },
+    ];
     saveToStorage(getRegistryKey(), updatedRegistry);
     saveToStorage(getCW20RegistryKey(), updatedCW20Registry);
     set({
@@ -52,6 +64,14 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
       cw20Registry: updatedCW20Registry,
       tokenRegistryMap: tokensToMap(updatedRegistry),
     });
+  },
+  getPrices: async (tokens: CosmToken[]) => {
+    try {
+      return await getUSDPrices(tokens);
+    } catch (e) {
+      console.error("error at fetching prices: ", e);
+      return [];
+    }
   },
   refreshRegistryCache: async () => {
     const { _refreshRegistryCache: _refreshCache } = get();
@@ -66,13 +86,25 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
     const uniqueNativeTokens = nativeTokens.filter(
       (t) => !registryTokensIds.has(t.id),
     );
+
     const tokenRegistry = [
       ...registryTokens,
       ...uniqueNativeTokens,
       ...get().cw20Registry,
     ];
+    const prices = await get().getPrices(tokenRegistry);
+
+    const tokenRegistryWithPrices = tokenRegistry.map((token) => ({
+      ...token,
+      price:
+        prices.find((price) => matchPriceToToken(token, price))?.price || 0,
+    })) as CosmTokenWithPrice[];
+
     saveToStorage(getRegistryKey(), tokenRegistry);
-    set({ tokenRegistry, tokenRegistryMap: tokensToMap(tokenRegistry) });
+    set({
+      tokenRegistry: tokenRegistryWithPrices,
+      tokenRegistryMap: tokensToMap(tokenRegistryWithPrices),
+    });
   },
 }));
 
@@ -103,7 +135,9 @@ async function fetchNativeTokens(): Promise<CosmToken[]> {
   return tokens;
 }
 
-function tokensToMap(tokens: CosmToken[]): Map<string, CosmToken> {
+function tokensToMap(
+  tokens: CosmTokenWithPrice[],
+): Map<string, CosmTokenWithPrice> {
   return new Map(tokens.map((t) => [t.id, t]));
 }
 

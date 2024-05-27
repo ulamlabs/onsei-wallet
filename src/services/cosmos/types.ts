@@ -10,7 +10,10 @@ export type CosmToken = {
   coingeckoId: string;
 };
 
-export type CosmTokenWithBalance = CosmToken & {
+export type CosmTokenWithPrice = CosmToken & {
+  price: number;
+};
+
+export type CosmTokenWithBalance = CosmTokenWithPrice & {
   balance: bigint;
-  price?: number;
 };
