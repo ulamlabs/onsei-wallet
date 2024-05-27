@@ -10,7 +10,7 @@ import {
 import { useAccountsStore, useSettingsStore, useTokensStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
-import { formatAmount } from "@/utils";
+import { calculateTotalBalance } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { DirectboxReceive, DirectboxSend } from "iconsax-react-native";
 import React from "react";
@@ -21,7 +21,7 @@ type DashboardProps = NativeStackScreenProps<NavigatorParamsList, "Wallet">;
 
 export default function Dashboard({ navigation }: DashboardProps) {
   const { activeAccount } = useAccountsStore();
-  const { sei, updateBalances } = useTokensStore();
+  const { updateBalances, tokens } = useTokensStore();
   const {
     settings: { node },
   } = useSettingsStore();
@@ -55,7 +55,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
           </View>
         )}
         <Headline size="2xl" style={{ marginBottom: 0 }}>
-          {formatAmount(sei.balance, sei.decimals)} SEI
+          ${calculateTotalBalance(tokens)}
         </Headline>
       </>
     );

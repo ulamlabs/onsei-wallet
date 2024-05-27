@@ -1,11 +1,17 @@
 import { NODES } from "@/const";
+import { getUSDPrices } from "@/modules/prices";
 import {
   CosmTokenWithBalance,
   fetchAccountBalances,
   fetchCW20TokenBalance,
 } from "@/services/cosmos";
 import { Node } from "@/types";
-import { loadFromStorage, removeFromStorage, saveToStorage } from "@/utils";
+import {
+  loadFromStorage,
+  matchPriceToToken,
+  removeFromStorage,
+  saveToStorage,
+} from "@/utils";
 import { create } from "zustand";
 import { useSettingsStore } from "./settings";
 import { useTokenRegistryStore } from "./tokenRegistry";
@@ -18,7 +24,8 @@ const SEI_TOKEN: CosmTokenWithBalance = {
   symbol: "SEI",
   logo: require("../../assets/sei-logo.png"),
   balance: 0n,
-  coingeckoId: "",
+  coingeckoId: "sei-network",
+  price: 0,
 };
 
 type TokensStore = {
@@ -39,6 +46,7 @@ type TokensStore = {
     tokens: CosmTokenWithBalance[],
     options?: { save?: boolean },
   ) => void;
+  loadPrices: (tokens?: CosmTokenWithBalance[]) => Promise<void>;
 };
 
 export const useTokensStore = create<TokensStore>((set, get) => ({
@@ -50,7 +58,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
   tokenMap: new Map(),
   fetchBalancesPromise: null,
   loadTokens: async (address) => {
-    const { updateBalances, _updateStructures } = get();
+    const { updateBalances, _updateStructures, loadPrices } = get();
     const { node } = useSettingsStore.getState().settings;
 
     set({ accountAddress: address, tokens: [SEI_TOKEN] });
@@ -58,20 +66,23 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     let cw20Tokens = await loadFromStorage<CosmTokenWithBalance[]>(key, []);
     cw20Tokens = cw20Tokens.map(deserializeToken);
     _updateStructures([SEI_TOKEN, ...cw20Tokens]);
-    updateBalances();
+    await updateBalances();
+    loadPrices();
   },
-  addToken: (token) => {
+  addToken: async (token) => {
     const {
       tokens,
       _updateStructures,
       _updateCw20Balance: updateBalance,
+      loadPrices,
     } = get();
     const exists = tokens.find((t) => t.id === token.id);
     if (exists) {
       return;
     }
     _updateStructures([...tokens, token], { save: true });
-    updateBalance(token);
+    await updateBalance(token);
+    loadPrices([token]);
   },
   removeToken: (token) => {
     const { tokens, _updateStructures } = get();
@@ -94,10 +105,9 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       return {};
     });
   },
-  updateBalances: (tokensToUpdate) => {
+  updateBalances: async (tokensToUpdate) => {
     // Will always update native token balances.
     const { cw20Tokens, _updateCw20Balance } = get();
-
     let cw20ToUpdate = cw20Tokens;
     if (tokensToUpdate) {
       cw20ToUpdate = tokensToUpdate.filter((t) => t.type === "cw20");
@@ -116,7 +126,10 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
 
     const { tokenMap, tokens, _updateStructures } = get();
 
-    token = { ...tokenMap.get(token.id)!, balance };
+    token = {
+      ...tokenMap.get(token.id)!,
+      balance,
+    };
 
     const index = tokens.findIndex((t) => t.id === token.id);
     if (index === -1) {
@@ -146,6 +159,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
         continue;
       }
       let token = tokenRegistryMap.get(balanceData.denom);
+
       if (!token && refreshPromise) {
         await refreshPromise;
         tokenRegistryMap = useTokenRegistryStore.getState().tokenRegistryMap;
@@ -182,6 +196,18 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       const key = getTokensKey(accountAddress, node);
       saveToStorage(key, cw20Tokens.map(serializeToken));
     }
+  },
+  loadPrices: async (tokens) => {
+    const { tokens: allTokens, _updateStructures } = get();
+    const loadTokens = tokens || allTokens;
+    const newPrices = await getUSDPrices(loadTokens);
+
+    const updatedTokens: CosmTokenWithBalance[] = loadTokens.map((token) => ({
+      ...token,
+      price: newPrices.find((price) => matchPriceToToken(token, price))?.price,
+    }));
+
+    _updateStructures([...updatedTokens]);
   },
 }));
 
