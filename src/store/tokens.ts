@@ -202,9 +202,11 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     const loadTokens = tokens || allTokens;
     const newPrices = await getUSDPrices(loadTokens);
 
-    const updatedTokens: CosmTokenWithBalance[] = loadTokens.map((token) => ({
+    const updatedTokens: CosmTokenWithBalance[] = allTokens.map((token) => ({
       ...token,
-      price: newPrices.find((price) => matchPriceToToken(token, price))?.price,
+      price:
+        newPrices.find((price) => matchPriceToToken(token, price))?.price ||
+        token.price,
     }));
 
     _updateStructures([...updatedTokens]);
