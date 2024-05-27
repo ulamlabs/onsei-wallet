@@ -29,7 +29,7 @@ export default function TokenBalanceBox({
               ${calculateTokenUsdBalance(token)}
             </Text>
           ) : (
-            ""
+            <></>
           )}
           <Text style={{ fontFamily: FontWeights.bold, color: Colors.text100 }}>
             {formatAmount(token.balance, token.decimals)}

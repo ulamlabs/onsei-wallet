@@ -48,17 +48,14 @@ export const getUSDPrices = async (tokens: CosmToken[]) => {
 
   const chunkedAddresses = chunkArray(addresses, 30);
 
-  const addressPrices =
-    chunkedAddresses.length > 0
-      ? await Promise.all(
-          chunkedAddresses.map(async (addressChunk) => {
-            const { data: prices } = await get<geckoTerminalResponse>(
-              geckoTerminalUrl(addressChunk),
-            );
-            return prices.data.attributes.token_prices;
-          }),
-        )
-      : [];
+  const addressPrices = await Promise.all(
+    chunkedAddresses.map(async (addressChunk) => {
+      const { data: prices } = await get<geckoTerminalResponse>(
+        geckoTerminalUrl(addressChunk),
+      );
+      return prices.data.attributes.token_prices;
+    }),
+  );
 
   const coinGeckoIdPrices =
     withCoingeckoId.length > 0

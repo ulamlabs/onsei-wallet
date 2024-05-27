@@ -46,7 +46,7 @@ type TokensStore = {
     tokens: CosmTokenWithBalance[],
     options?: { save?: boolean },
   ) => void;
-  loadPrices: () => Promise<void>;
+  loadPrices: (tokens?: CosmTokenWithBalance[]) => Promise<void>;
 };
 
 export const useTokensStore = create<TokensStore>((set, get) => ({
@@ -82,7 +82,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     }
     _updateStructures([...tokens, token], { save: true });
     await updateBalance(token);
-    loadPrices();
+    loadPrices([token]);
   },
   removeToken: (token) => {
     const { tokens, _updateStructures } = get();
@@ -197,11 +197,12 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       saveToStorage(key, cw20Tokens.map(serializeToken));
     }
   },
-  loadPrices: async () => {
-    const { tokens, _updateStructures } = get();
-    const newPrices = await getUSDPrices(tokens);
+  loadPrices: async (tokens) => {
+    const { tokens: allTokens, _updateStructures } = get();
+    const loadTokens = tokens || allTokens;
+    const newPrices = await getUSDPrices(loadTokens);
 
-    const updatedTokens: CosmTokenWithBalance[] = tokens.map((token) => ({
+    const updatedTokens: CosmTokenWithBalance[] = loadTokens.map((token) => ({
       ...token,
       price: newPrices.find((price) => matchPriceToToken(token, price))?.price,
     }));
