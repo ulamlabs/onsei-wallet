@@ -32,6 +32,8 @@ type TokensStore = {
   sei: CosmTokenWithBalance;
   tokens: CosmTokenWithBalance[];
   cw20Tokens: CosmTokenWithBalance[];
+  whitelistedTokensIds: string[];
+  blacklistedTokensIds: string[];
   tokenMap: Map<string, CosmTokenWithBalance>;
   accountAddress: string;
   fetchBalancesPromise: Promise<any> | null;
@@ -41,7 +43,11 @@ type TokensStore = {
   clearAddress: (address: string) => Promise<void>;
   updateBalances: (tokens?: CosmTokenWithBalance[]) => Promise<void[]>;
   _updateCw20Balance: (token: CosmTokenWithBalance) => Promise<void>;
-  _updateNativeBalances: () => Promise<void>;
+  _updateNativeBalances: (tokens?: CosmTokenWithBalance[]) => Promise<void>;
+  _updateTokenLists: (
+    tokenId: string,
+    action: "WHITELIST" | "BLACKLIST",
+  ) => Promise<void>;
   _updateStructures: (
     tokens: CosmTokenWithBalance[],
     options?: { save?: boolean },
@@ -55,13 +61,26 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
   sei: SEI_TOKEN,
   tokens: [],
   cw20Tokens: [],
+  whitelistedTokensIds: [],
+  blacklistedTokensIds: [],
   tokenMap: new Map(),
   fetchBalancesPromise: null,
   loadTokens: async (address) => {
     const { updateBalances, _updateStructures, loadPrices } = get();
     const { node } = useSettingsStore.getState().settings;
+    const whitelistKey = getTokenWhitelistKey(address, node);
+    const blacklistKey = getTokenBlacklistKey(address, node);
+    const [whitelistedTokensIds, blacklistedTokensIds] = await Promise.all([
+      loadFromStorage<string[]>(whitelistKey, []),
+      loadFromStorage<string[]>(blacklistKey, []),
+    ]);
 
-    set({ accountAddress: address, tokens: [SEI_TOKEN] });
+    set({
+      accountAddress: address,
+      tokens: [SEI_TOKEN],
+      whitelistedTokensIds,
+      blacklistedTokensIds,
+    });
     const key = getTokensKey(address, node);
     let cw20Tokens = await loadFromStorage<CosmTokenWithBalance[]>(key, []);
     cw20Tokens = cw20Tokens.map(deserializeToken);
@@ -72,20 +91,35 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
   addToken: async (token) => {
     const {
       tokens,
+      _updateNativeBalances: updateNativeBalance,
+      _updateTokenLists: updateTokenLists,
       _updateStructures,
-      _updateCw20Balance: updateBalance,
+      _updateCw20Balance: updateCW20Balance,
       loadPrices,
     } = get();
+    if (token.type !== "cw20") {
+      await updateTokenLists(token.id, "WHITELIST");
+    }
     const exists = tokens.find((t) => t.id === token.id);
     if (exists) {
       return;
     }
     _updateStructures([...tokens, token], { save: true });
-    await updateBalance(token);
+    if (token.type === "cw20") {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { balance, ...noBalanceToken } = token;
+      useTokenRegistryStore.getState().addCW20ToRegistry(noBalanceToken);
+      await updateCW20Balance(token);
+    } else {
+      await updateNativeBalance([token]);
+    }
     loadPrices([token]);
   },
   removeToken: (token) => {
-    const { tokens, _updateStructures } = get();
+    const { tokens, _updateTokenLists, _updateStructures } = get();
+    if (token.type !== "cw20") {
+      _updateTokenLists(token.id, "BLACKLIST");
+    }
     const nextTokens = tokens.filter((t) => t.id !== token.id);
     _updateStructures(nextTokens, { save: true });
   },
@@ -139,11 +173,32 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
 
     _updateStructures([...tokens], { save: true });
   },
-  _updateNativeBalances: async () => {
-    const { accountAddress, cw20Tokens, _updateStructures, sei } = get();
+  _updateNativeBalances: async (tokens) => {
+    const {
+      accountAddress,
+      cw20Tokens,
+      _updateStructures,
+      sei,
+      whitelistedTokensIds,
+      blacklistedTokensIds,
+    } = get();
     const { node } = useSettingsStore.getState().settings;
 
     const balances = await fetchAccountBalances(accountAddress, node);
+    if (tokens) {
+      const tokensIds = new Set(tokens.map((t) => t.id));
+      balances.balances = balances.balances.filter((token) =>
+        tokensIds.has(token.denom),
+      );
+    }
+    balances.balances = balances.balances.filter(
+      (token) => !blacklistedTokensIds.includes(token.denom),
+    );
+    for (const whitelistedID of whitelistedTokensIds) {
+      if (!balances.balances.find((token) => token.denom === whitelistedID)) {
+        balances.balances.push({ denom: whitelistedID, amount: "0" });
+      }
+    }
 
     const { registryRefreshPromise: refreshPromise } =
       useTokenRegistryStore.getState();
@@ -171,6 +226,34 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     }
 
     _updateStructures([...cw20Tokens, ...nativeTokens]);
+  },
+  _updateTokenLists: async (tokenId, action) => {
+    const {
+      accountAddress: address,
+      whitelistedTokensIds,
+      blacklistedTokensIds,
+    } = get();
+    const { node } = useSettingsStore.getState().settings;
+    const whitelistKey = getTokenWhitelistKey(address, node);
+    const blacklistKey = getTokenBlacklistKey(address, node);
+
+    let newWhitelist, newBlacklist;
+    if (action === "WHITELIST") {
+      newWhitelist = [...whitelistedTokensIds, tokenId];
+      newBlacklist = blacklistedTokensIds.filter((t) => t !== tokenId);
+    } else {
+      newWhitelist = whitelistedTokensIds.filter((t) => t !== tokenId);
+      newBlacklist = [...blacklistedTokensIds, tokenId];
+    }
+
+    set({
+      whitelistedTokensIds: newWhitelist,
+      blacklistedTokensIds: newBlacklist,
+    });
+    await Promise.all([
+      saveToStorage(whitelistKey, newWhitelist),
+      saveToStorage(blacklistKey, newBlacklist),
+    ]);
   },
   _updateStructures: (tokens, options) => {
     const { accountAddress } = get();
@@ -215,6 +298,14 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
 
 function getTokensKey(address: string, node: Node | "") {
   return `cw20tokens-${node}-${address}.json`;
+}
+
+function getTokenWhitelistKey(address: string, node: Node | "") {
+  return `token-whitelist-${node}-${address}.json`;
+}
+
+function getTokenBlacklistKey(address: string, node: Node | "") {
+  return `token-blacklist-${node}-${address}.json`;
 }
 
 function tokensToMap(

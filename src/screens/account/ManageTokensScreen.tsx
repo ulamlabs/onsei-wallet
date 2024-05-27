@@ -1,18 +1,27 @@
+import { SearchNormal } from "iconsax-react-native";
 import { Column, Loader, Paragraph, SafeLayout, TextInput } from "@/components";
 import { useInputState } from "@/hooks";
-import { CosmTokenWithBalance, fetchCW20Token } from "@/services/cosmos";
-import { useSettingsStore, useTokensStore } from "@/store";
+import { CosmToken, fetchCW20Token } from "@/services/cosmos";
+import {
+  useSettingsStore,
+  useTokenRegistryStore,
+  useTokensStore,
+} from "@/store";
 import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
 import { useEffect, useState } from "react";
 import TokenToggleBox from "./TokenToggleBox";
 import { searchTokens } from "@/utils";
+import { FlatList, View } from "react-native";
+
+const TOKENS_PER_PAGE = 20;
 
 export default function ManageTokensScreen() {
   const searchInput = useInputState();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const tokensStore = useTokensStore();
-  const [tokens, setTokens] = useState(tokensStore.cw20Tokens);
+  const { tokenRegistry } = useTokenRegistryStore();
+  const [tokens, setTokens] = useState<CosmToken[]>([]);
   const {
     settings: { node },
   } = useSettingsStore();
@@ -28,7 +37,20 @@ export default function ManageTokensScreen() {
       return;
     }
 
-    setTokens(searchTokens(tokensStore.cw20Tokens, searchInput.value));
+    if (searchInput.value) {
+      setTokens(searchTokens(tokenRegistry, searchInput.value));
+    } else {
+      setTokens(tokenRegistry.slice(0, TOKENS_PER_PAGE));
+    }
+  }
+
+  function addTokensToList() {
+    if (!searchInput.value) {
+      setTokens([
+        ...tokens,
+        ...tokenRegistry.slice(tokens.length, tokens.length + TOKENS_PER_PAGE),
+      ]);
+    }
   }
 
   async function fetchToken() {
@@ -44,19 +66,20 @@ export default function ManageTokensScreen() {
     }
   }
 
-  function onToggle(token: CosmTokenWithBalance) {
+  function onToggle(token: any) {
     if (tokensStore.tokenMap.has(token.id)) {
       tokensStore.removeToken(token);
     } else {
-      tokensStore.addToken(token);
+      tokensStore.addToken({ ...token, balance: 0n });
     }
   }
 
   return (
-    <SafeLayout>
-      <Column>
+    <SafeLayout noScroll={true}>
+      <Column style={{ flexGrow: 1 }}>
         <TextInput
           placeholder="Enter token name or contract address"
+          icon={SearchNormal}
           {...searchInput}
           autoCorrect={false}
           showClear
@@ -74,14 +97,24 @@ export default function ManageTokensScreen() {
           </Paragraph>
         )}
 
-        {tokens.map((token) => (
-          <TokenToggleBox
-            token={token}
-            key={token.id}
-            selected={tokensStore.tokenMap.has(token.id)}
-            onToggle={() => onToggle(token)}
+        <View style={{ flex: 1 }}>
+          <FlatList
+            data={tokens}
+            nestedScrollEnabled={true}
+            renderItem={({ item: token }) => (
+              <View style={{ marginVertical: 6 }}>
+                <TokenToggleBox
+                  token={token}
+                  key={token.id}
+                  selected={tokensStore.tokenMap.has(token.id)}
+                  onToggle={() => onToggle(token)}
+                />
+              </View>
+            )}
+            onEndReached={addTokensToList}
+            onEndReachedThreshold={0.3}
           />
-        ))}
+        </View>
       </Column>
     </SafeLayout>
   );

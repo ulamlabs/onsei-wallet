@@ -1,6 +1,7 @@
 import { CosmToken } from "@/services/cosmos";
 import { TokenBox } from "@/components";
 import { Switch } from "react-native";
+import { Colors } from "@/styles";
 
 type TokenToggleProps = {
   token: CosmToken;
@@ -15,7 +16,15 @@ export default function TokenToggleBox({
 }: TokenToggleProps) {
   return (
     <TokenBox token={token}>
-      <Switch onValueChange={onToggle} value={selected} />
+      <Switch
+        onValueChange={onToggle}
+        value={selected}
+        trackColor={{
+          true: Colors.labelBackground,
+          false: Colors.activeInputBorderColor,
+        }}
+        ios_backgroundColor={Colors.activeInputBorderColor}
+      />
     </TokenBox>
   );
 }

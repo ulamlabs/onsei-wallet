@@ -6,15 +6,18 @@ import { NETWORK_NAMES, NODE_URL } from "@/const";
 
 type TokenRegistryStore = {
   tokenRegistry: CosmToken[];
+  cw20Registry: CosmToken[];
   tokenRegistryMap: Map<string, CosmToken>;
   registryRefreshPromise: Promise<void> | null;
   init: () => Promise<void>;
+  addCW20ToRegistry: (newToken: CosmToken) => void;
   refreshRegistryCache: () => Promise<void>;
   _refreshRegistryCache: () => Promise<void>;
 };
 
 export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
   tokenRegistry: [],
+  cw20Registry: [],
   tokenRegistryMap: new Map(),
   registryRefreshPromise: null,
   init: async () => {
@@ -22,10 +25,32 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
       getRegistryKey(),
       [],
     );
+    const cw20Registry = await loadFromStorage<CosmToken[]>(
+      getCW20RegistryKey(),
+      [],
+    );
     set({
       tokenRegistry: cachedTokenRegistry,
+      cw20Registry,
       registryRefreshPromise: get()._refreshRegistryCache(),
       tokenRegistryMap: tokensToMap(cachedTokenRegistry),
+    });
+  },
+  addCW20ToRegistry: (newToken) => {
+    const { cw20Registry, tokenRegistry } = get();
+    const exists = cw20Registry.find((t) => t.id === newToken.id);
+    if (exists) {
+      return;
+    }
+
+    const updatedRegistry = [...tokenRegistry, newToken];
+    const updatedCW20Registry = [...cw20Registry, newToken];
+    saveToStorage(getRegistryKey(), updatedRegistry);
+    saveToStorage(getCW20RegistryKey(), updatedCW20Registry);
+    set({
+      tokenRegistry: updatedRegistry,
+      cw20Registry: updatedCW20Registry,
+      tokenRegistryMap: tokensToMap(updatedRegistry),
     });
   },
   refreshRegistryCache: async () => {
@@ -41,7 +66,11 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
     const uniqueNativeTokens = nativeTokens.filter(
       (t) => !registryTokensIds.has(t.id),
     );
-    const tokenRegistry = [...registryTokens, ...uniqueNativeTokens];
+    const tokenRegistry = [
+      ...registryTokens,
+      ...uniqueNativeTokens,
+      ...get().cw20Registry,
+    ];
     saveToStorage(getRegistryKey(), tokenRegistry);
     set({ tokenRegistry, tokenRegistryMap: tokensToMap(tokenRegistry) });
   },
@@ -80,6 +109,10 @@ function tokensToMap(tokens: CosmToken[]): Map<string, CosmToken> {
 
 function getRegistryKey() {
   return `tokenRegistry-${getNode()}.json`;
+}
+
+function getCW20RegistryKey() {
+  return `tokenCW20Registry-${getNode()}.json`;
 }
 
 function getNode() {

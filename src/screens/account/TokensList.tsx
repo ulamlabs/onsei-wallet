@@ -3,7 +3,7 @@ import { useTokensStore } from "@/store";
 import { Colors, FontWeights } from "@/styles";
 import { NavigationProp } from "@/types";
 import { useNavigation } from "@react-navigation/native";
-import { Setting5 } from "iconsax-react-native";
+import { Setting4 } from "iconsax-react-native";
 import TokenBalanceBox from "../../components/TokenBalanceBox";
 
 export default function TokensList() {
@@ -13,19 +13,19 @@ export default function TokensList() {
 
   return (
     <>
-      <TertiaryButton
-        title="Manage token list"
-        icon={Setting5}
-        onPress={() => navigation.navigate("Manage Token List")}
-        color={Colors.text100}
-        textStyle={{ fontFamily: FontWeights.bold }}
-      />
-
       <Column>
         {tokens.map((token) => (
           <TokenBalanceBox key={token.id} token={token} />
         ))}
       </Column>
+
+      <TertiaryButton
+        title="Manage token list"
+        icon={Setting4}
+        onPress={() => navigation.navigate("Manage Token List")}
+        color={Colors.text100}
+        textStyle={{ fontFamily: FontWeights.bold }}
+      />
     </>
   );
 }
