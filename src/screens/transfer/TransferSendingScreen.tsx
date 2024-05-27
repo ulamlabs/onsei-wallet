@@ -56,10 +56,11 @@ export default function TransferSendingScreen({
         activeAccount!.address,
         parseTx(deliverTxResponseToTxResponse(tx)),
       );
+      const amount = formatAmount(intAmount, token.decimals);
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       navigation.navigate("transferSent", {
         tx,
-        amount: formatAmount(intAmount, token.decimals),
+        amount,
         token,
       });
     } catch (error: any) {

@@ -9,14 +9,12 @@ import {
   Text,
 } from "@/components";
 import { NETWORK_NAMES } from "@/const";
-import { CosmToken } from "@/services/cosmos";
 import { useSettingsStore } from "@/store";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
-import { resetNavigationStack } from "@/utils";
-import { DeliverTxResponse } from "@cosmjs/stargate";
+import { resetNavigationStack, trimAddress } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ExportSquare, TickCircle } from "iconsax-react-native";
+import { CloseCircle, ExportSquare, TickCircle } from "iconsax-react-native";
 import { useMemo } from "react";
 import { Linking, View } from "react-native";
 
@@ -25,95 +23,91 @@ type TransferSentScreenProps = NativeStackScreenProps<
   "transferSent"
 >;
 
-type SummitBoxType = {
-  txResponse: DeliverTxResponse;
-  amount?: string;
-  token?: CosmToken;
+type SummitBoxProps = {
+  title: string;
+  text: string;
+  onPress: () => void;
 };
 
-function SummitBox({ txResponse, amount, token }: SummitBoxType) {
+const SummitBox = ({ title, text, onPress }: SummitBoxProps) => (
+  <Box style={{ width: "100%", alignItems: "center", marginTop: 10 }}>
+    <View style={{ justifyContent: "flex-start" }}>
+      <Paragraph>{title}</Paragraph>
+      <Text style={{ textAlign: "left", fontFamily: FontWeights.bold }}>
+        {text}
+      </Text>
+    </View>
+    <TertiaryButton
+      title="View on SeiScan"
+      icon={ExportSquare}
+      onPress={onPress}
+      iconAllign="right"
+      textStyle={{ fontSize: FontSizes.sm, fontFamily: FontWeights.bold }}
+      iconSize={16}
+      style={{ paddingHorizontal: 0, paddingVertical: 0 }}
+    />
+  </Box>
+);
+
+const TransferSentScreen = ({ navigation, route }: TransferSentScreenProps) => {
+  const { tx, amount, token } = route.params;
+  const success = useMemo(() => tx.code === 0, [tx]);
   const {
     settings: { node },
   } = useSettingsStore();
 
-  function showDetails() {
-    const network = NETWORK_NAMES[node];
-    const url = `https://www.seiscan.app/${network}/txs/${txResponse.transactionHash}`;
-    Linking.openURL(url);
-  }
-
-  return (
-    <Box style={{ width: "100%", alignItems: "center", marginTop: 10 }}>
-      <View style={{ justifyContent: "flex-start" }}>
-        <Paragraph>Amount sent</Paragraph>
-        <Text style={{ textAlign: "left", fontFamily: FontWeights.bold }}>
-          {amount} {token?.symbol}
-        </Text>
-      </View>
-      <TertiaryButton
-        title="View on SeiScan"
-        icon={ExportSquare}
-        onPress={showDetails}
-        iconAllign="right"
-        textStyle={{ fontSize: FontSizes.sm, fontFamily: FontWeights.bold }}
-        iconSize={16}
-        style={{ paddingHorizontal: 0, paddingVertical: 0 }}
-      />
-    </Box>
-  );
-}
-
-export default function TransferSentScreen({
-  navigation,
-  route,
-}: TransferSentScreenProps) {
-  const { tx, amount, token } = route.params;
-
-  const success = useMemo(() => tx.code === 0, [tx]);
-
-  function done() {
+  const handleDone = () => {
     navigation.navigate("Home");
     resetNavigationStack(navigation);
-  }
+  };
+
+  const handleShowDetails = () => {
+    const network = NETWORK_NAMES[node];
+    const url = `https://www.seiscan.app/${network}/txs/${tx.transactionHash}`;
+    Linking.openURL(url);
+  };
 
   return (
     <SafeLayoutBottom>
       <Column
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       >
-        {success ? (
-          <>
-            <View
-              style={{
-                padding: 20,
-                width: 128,
-                height: 128,
-                justifyContent: "center",
-                alignItems: "center",
-                borderRadius: 22,
-                backgroundColor: Colors.success100,
-              }}
-            >
-              <TickCircle variant="Bold" color={Colors.success} size={88} />
-            </View>
-            <Headline>It's Done!</Headline>
-            <Paragraph size="base" style={{ textAlign: "center" }}>
-              Transaction completed successfully
-            </Paragraph>
-            <SummitBox txResponse={tx} amount={amount} token={token} />
-          </>
-        ) : (
-          <>
-            <Headline style={{ color: Colors.danger }}>Failed!</Headline>
-            <Paragraph style={{ textAlign: "center" }}>
-              Transaction failed to execute
-            </Paragraph>
-            <Paragraph style={{ textAlign: "center" }}>{tx.rawLog}</Paragraph>
-          </>
-        )}
+        <View
+          style={{
+            padding: 20,
+            width: 128,
+            height: 128,
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 22,
+            backgroundColor: Colors.success100,
+          }}
+        >
+          {success ? (
+            <TickCircle variant="Bold" color={Colors.success} size={88} />
+          ) : (
+            <CloseCircle variant="Bold" color={Colors.success} size={88} />
+          )}
+        </View>
+        <Headline>{success ? "It's Done!" : "Something went wrong"}</Headline>
+        <Paragraph size="base" style={{ textAlign: "center" }}>
+          {success
+            ? "Transaction completed successfully."
+            : "Click below to see why the transaction failed."}
+        </Paragraph>
+        <SummitBox
+          onPress={handleShowDetails}
+          title={success ? "Amount sent" : "Transaction ID"}
+          text={
+            success
+              ? `${amount} ${token?.symbol}`
+              : trimAddress(tx.transactionHash)
+          }
+        />
       </Column>
-
-      <PrimaryButton title="Done" onPress={done} />
+      <PrimaryButton title="Done" onPress={handleDone} />
     </SafeLayoutBottom>
   );
-}
+};
+
+export default TransferSentScreen;

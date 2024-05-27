@@ -1,12 +1,12 @@
-import { Row, Text } from "@/components";
-import { CosmToken } from "@/services/cosmos";
+import { Column, Row, Text } from "@/components";
+import { CosmTokenWithBalance } from "@/services/cosmos";
 import { Colors, FontWeights } from "@/styles";
-import { formatDecimalSeparator } from "@/utils";
+import { calculateTokenUsdBalance, formatDecimalSeparator } from "@/utils";
 import { useMemo } from "react";
 import { StyleProp, StyleSheet, ViewStyle } from "react-native";
 
 type TransferAmountProps = {
-  token: CosmToken;
+  token: CosmTokenWithBalance;
   decimalAmount: string;
   style?: StyleProp<ViewStyle>;
 };
@@ -43,18 +43,25 @@ export default function TransferAmount({
   }
 
   return (
-    <Row
-      style={[
-        {
-          justifyContent: "center",
-          alignItems: "center",
-          flex: 1,
-        },
-        style,
-      ]}
-    >
-      {getContent()}
-    </Row>
+    <Column>
+      <Row
+        style={[
+          {
+            justifyContent: "center",
+            alignItems: "center",
+            flex: 1,
+          },
+          style,
+        ]}
+      >
+        {getContent()}
+      </Row>
+      {token.price ? (
+        <Text>${calculateTokenUsdBalance(token, BigInt(decimalAmount))}</Text>
+      ) : (
+        <></>
+      )}
+    </Column>
   );
 }
 
