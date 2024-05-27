@@ -204,7 +204,9 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
 
     const updatedTokens: CosmTokenWithBalance[] = allTokens.map((token) => ({
       ...token,
-      price: newPrices.find((price) => matchPriceToToken(token, price))?.price,
+      price:
+        newPrices.find((price) => matchPriceToToken(token, price))?.price ||
+        token.price,
     }));
 
     _updateStructures([...updatedTokens]);
