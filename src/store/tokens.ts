@@ -199,19 +199,13 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
   },
   loadPrices: async (tokens) => {
     const { tokens: allTokens, _updateStructures } = get();
-    const newPrices = await getUSDPrices(allTokens);
+    const loadTokens = tokens || allTokens;
+    const newPrices = await getUSDPrices(loadTokens);
 
-    const updatedTokens: CosmTokenWithBalance[] = allTokens.map((token) => {
-      if (!tokens || tokens?.some((coin) => coin.id === token.id)) {
-        return {
-          ...token,
-          price: newPrices.find((price) => matchPriceToToken(token, price))
-            ?.price,
-        };
-      }
-
-      return token;
-    });
+    const updatedTokens: CosmTokenWithBalance[] = allTokens.map((token) => ({
+      ...token,
+      price: newPrices.find((price) => matchPriceToToken(token, price))?.price,
+    }));
 
     _updateStructures([...updatedTokens]);
   },
