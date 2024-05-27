@@ -11,7 +11,7 @@ import { storeNewTransaction } from "@/modules/transactions/storage";
 import { transferToken } from "@/services/cosmos/tx";
 import { useAccountsStore, useTokensStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
-import { resetNavigationStack } from "@/utils";
+import { formatAmount, resetNavigationStack } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
@@ -57,7 +57,11 @@ export default function TransferSendingScreen({
         parseTx(deliverTxResponseToTxResponse(tx)),
       );
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
-      navigation.navigate("transferSent", { tx });
+      navigation.navigate("transferSent", {
+        tx,
+        amount: formatAmount(intAmount, token.decimals),
+        token,
+      });
     } catch (error: any) {
       setError(error.toString());
     } finally {
@@ -79,8 +83,8 @@ export default function TransferSendingScreen({
     if (loading) {
       return (
         <>
-          <Loader size="large" />
-          <Headline>Sending...</Headline>
+          <Loader size="large" systemLoader={false} />
+          <Headline>Sending ...</Headline>
         </>
       );
     }

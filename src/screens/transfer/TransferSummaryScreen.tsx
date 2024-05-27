@@ -30,6 +30,7 @@ export default function TransferSummaryScreen({
   const { sei, updateBalances, tokenMap } = useTokensStore();
   const [fee, setFee] = useState<StdFee | null>(null);
   const [estimationFailed, setEstimationFailed] = useState(false);
+  const [scrollEnabled, setScrollEnabled] = useState(true);
 
   useEffect(() => {
     getFeeEstimation();
@@ -99,7 +100,7 @@ export default function TransferSummaryScreen({
   }
 
   return (
-    <SafeLayout refreshFn={getFeeEstimation}>
+    <SafeLayout refreshFn={getFeeEstimation} scrollEnabled={scrollEnabled}>
       <TransferAmount
         token={token}
         decimalAmount={formatAmount(intAmount, token.decimals, {
@@ -131,8 +132,11 @@ export default function TransferSummaryScreen({
           </Text>
         )}
       </View>
-
-      <SwipeButton />
+      <SwipeButton
+        onSuccess={send}
+        disabled={!fee || !hasFundsForFee}
+        setScrolling={setScrollEnabled}
+      />
     </SafeLayout>
   );
 }

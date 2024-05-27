@@ -1,9 +1,9 @@
-import { DeliverTxResponse, MsgSendEncodeObject } from "@cosmjs/stargate";
 import { MsgExecuteContractEncodeObject } from "@cosmjs/cosmwasm-stargate";
-import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { EncodeObject } from "@cosmjs/proto-signing";
-import { getSigningClientAndSender } from "./getSigningClientAndSender";
+import { DeliverTxResponse, MsgSendEncodeObject } from "@cosmjs/stargate";
+import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { CosmToken } from "../types";
+import { getSigningClientAndSender } from "./getSigningClientAndSender";
 import { Transfer } from "./types";
 
 export function getSendAnyTokensMsg(
@@ -67,5 +67,10 @@ export async function transferToken(
     transfer.intAmount.toString(),
   );
 
-  return await client.signAndBroadcast(sender, [msg], transfer.fee);
+  return await client.signAndBroadcast(
+    sender,
+    [msg],
+    transfer.fee,
+    transfer.memo,
+  );
 }

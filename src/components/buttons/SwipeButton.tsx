@@ -1,6 +1,6 @@
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { ArrowRight2 } from "iconsax-react-native";
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
   Animated,
   GestureResponderEvent,
@@ -13,9 +13,11 @@ import { Text } from "../typography";
 
 type Props = {
   disabled?: boolean;
+  setScrolling: Dispatch<SetStateAction<boolean>>;
+  onSuccess: () => void;
 };
 
-const SwipeButton = ({ disabled }: Props) => {
+const SwipeButton = ({ disabled, setScrolling, onSuccess }: Props) => {
   const [translateX] = useState<Animated.Value & { _value?: number }>(
     new Animated.Value(0),
   );
@@ -25,12 +27,62 @@ const SwipeButton = ({ disabled }: Props) => {
   const [endReached, setEndReached] = useState(false);
   const scrollDistance = width - 76;
 
+  const arrowOpacity1 = useState(new Animated.Value(1))[0];
+  const arrowOpacity2 = useState(new Animated.Value(1))[0];
+  const arrowOpacity3 = useState(new Animated.Value(1))[0];
+
   useEffect(() => {
     setSwipeThreshold(0.7 * scrollDistance);
+
+    const animateArrows = () => {
+      Animated.loop(
+        Animated.stagger(300, [
+          Animated.sequence([
+            Animated.timing(arrowOpacity1, {
+              toValue: 0.2,
+              duration: 600,
+              useNativeDriver: true,
+            }),
+            Animated.timing(arrowOpacity1, {
+              toValue: 1,
+              duration: 600,
+              useNativeDriver: true,
+            }),
+          ]),
+          Animated.sequence([
+            Animated.timing(arrowOpacity2, {
+              toValue: 0.2,
+              duration: 600,
+              useNativeDriver: true,
+            }),
+            Animated.timing(arrowOpacity2, {
+              toValue: 1,
+              duration: 600,
+              useNativeDriver: true,
+            }),
+          ]),
+          Animated.sequence([
+            Animated.timing(arrowOpacity3, {
+              toValue: 0.2,
+              duration: 600,
+              useNativeDriver: true,
+            }),
+            Animated.timing(arrowOpacity3, {
+              toValue: 1,
+              delay: 200,
+              duration: 600,
+              useNativeDriver: true,
+            }),
+          ]),
+        ]),
+      ).start();
+    };
+
+    animateArrows();
   }, [width]);
 
   const onComplete = () => {
-    console.log("dupa");
+    onSuccess();
   };
 
   const animateToStart = () => {
@@ -64,6 +116,8 @@ const SwipeButton = ({ disabled }: Props) => {
       return false;
     }
 
+    setScrolling(false);
+
     if (gestureState.dx < 0 || gestureState.dx > scrollDistance) {
       return Animated.event([{ dx: translateX }], { useNativeDriver: false })({
         ...gestureState,
@@ -80,7 +134,7 @@ const SwipeButton = ({ disabled }: Props) => {
     if (disabled) {
       return;
     }
-
+    setScrolling(true);
     if (endReached) {
       return animateToStart();
     }
@@ -91,6 +145,8 @@ const SwipeButton = ({ disabled }: Props) => {
   };
 
   const panResponder = PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onStartShouldSetPanResponderCapture: () => true,
     onMoveShouldSetPanResponder: () => true,
     onPanResponderGrant: () => {
       translateX.setOffset(0);
@@ -130,15 +186,15 @@ const SwipeButton = ({ disabled }: Props) => {
           Swipe to send
         </Text>
         <Row style={{ width: 48, gap: 0, paddingRight: 16 }}>
-          <Text style={{ color: "#666", fontSize: 16, marginHorizontal: 1 }}>
-            ›
-          </Text>
-          <Text style={{ color: "#666", fontSize: 16, marginHorizontal: 1 }}>
-            ›
-          </Text>
-          <Text style={{ color: "#666", fontSize: 16, marginHorizontal: 1 }}>
-            ›
-          </Text>
+          <Animated.View style={{ opacity: arrowOpacity1 }}>
+            <ArrowRight2 size={16} color={Colors.background500} />
+          </Animated.View>
+          <Animated.View style={{ opacity: arrowOpacity2 }}>
+            <ArrowRight2 size={16} color={Colors.background500} />
+          </Animated.View>
+          <Animated.View style={{ opacity: arrowOpacity3 }}>
+            <ArrowRight2 size={16} color={Colors.background500} />
+          </Animated.View>
         </Row>
       </Row>
       <Animated.View

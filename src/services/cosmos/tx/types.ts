@@ -6,4 +6,5 @@ export type Transfer = {
   recipient: string;
   intAmount: bigint;
   fee: StdFee;
+  memo?: string;
 };

@@ -18,6 +18,7 @@ type LayoutProps = PropsWithChildren & {
   noScroll?: boolean;
   refreshFn?: () => any;
   style?: StyleProp<ViewStyle>;
+  scrollEnabled?: boolean;
 };
 
 // Layout with safe paddings that ensure that content won't be hidden behind phone elements (like front camera)
@@ -26,6 +27,7 @@ export default function SafeLayout({
   noScroll,
   refreshFn,
   style,
+  scrollEnabled = true,
 }: LayoutProps) {
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation<NavigationProp>();
@@ -75,6 +77,7 @@ export default function SafeLayout({
           <ScrollView
             contentContainerStyle={{ flexGrow: 1 }}
             keyboardShouldPersistTaps="handled"
+            scrollEnabled={scrollEnabled}
             refreshControl={
               refreshFn && (
                 <RefreshControl

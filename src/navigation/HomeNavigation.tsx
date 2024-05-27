@@ -31,6 +31,7 @@ import {
   TransferSummaryScreen,
 } from "@/screens/transfer";
 import ScanAddressScreen from "@/screens/transfer/ScanAddressScreen";
+import { CosmToken } from "@/services/cosmos";
 import { Account, SavedAddress, Wallet } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { trimAddress } from "@/utils";
@@ -85,7 +86,7 @@ export type HomeParamList = {
     intAmount: string;
     fee: StdFee;
   };
-  transferSent: { tx: DeliverTxResponse };
+  transferSent: { tx: DeliverTxResponse; amount?: string; token?: CosmToken };
   "Set Name": { nextRoute: "Import Wallet" | "Generate Wallet" };
   "Scan QR code": { nextRoute: keyof NavigatorParamsList; tokenId: string };
 };

@@ -14,6 +14,7 @@ export type BaseButtonProps = {
   iconColor?: string;
   iconVariant?: IconProps["variant"];
   iconSize?: number;
+  iconAllign?: "left" | "right";
 };
 
 export default function BaseButton({
@@ -27,6 +28,7 @@ export default function BaseButton({
   iconColor = color,
   iconVariant = "Linear",
   iconSize = 20,
+  iconAllign = "left",
 }: BaseButtonProps) {
   return (
     <Pressable
@@ -46,11 +48,16 @@ export default function BaseButton({
       ]}
       onPress={onPress}
     >
-      {Icon && <Icon color={iconColor} size={iconSize} variant={iconVariant} />}
+      {Icon && iconAllign === "left" && (
+        <Icon color={iconColor} size={iconSize} variant={iconVariant} />
+      )}
       {title && (
         <Text style={[{ color, fontFamily: FontWeights.bold }, textStyle]}>
           {title}
         </Text>
+      )}
+      {Icon && iconAllign === "right" && (
+        <Icon color={iconColor} size={iconSize} variant={iconVariant} />
       )}
     </Pressable>
   );
