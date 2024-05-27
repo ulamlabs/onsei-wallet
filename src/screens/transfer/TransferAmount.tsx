@@ -1,7 +1,7 @@
-import { Column, Row, Text } from "@/components";
+import { Column, Paragraph, Row, Text } from "@/components";
 import { CosmTokenWithBalance } from "@/services/cosmos";
-import { Colors, FontWeights } from "@/styles";
-import { calculateTokenUsdBalance, formatDecimalSeparator } from "@/utils";
+import { Colors, FontSizes, FontWeights } from "@/styles";
+import { formatDecimalSeparator, formatUsdBalance } from "@/utils";
 import { useMemo } from "react";
 import { StyleProp, StyleSheet, ViewStyle } from "react-native";
 
@@ -9,12 +9,14 @@ type TransferAmountProps = {
   token: CosmTokenWithBalance;
   decimalAmount: string;
   style?: StyleProp<ViewStyle>;
+  error?: boolean;
 };
 
 export default function TransferAmount({
   token,
   decimalAmount,
   style,
+  error,
 }: TransferAmountProps) {
   const formattedAmount = useMemo(() => {
     const [whole, fraction] = decimalAmount.split(".");
@@ -28,7 +30,11 @@ export default function TransferAmount({
   function getContent() {
     if (decimalAmount) {
       return (
-        <Text style={styles.text} adjustsFontSizeToFit={true} numberOfLines={1}>
+        <Text
+          style={[{ color: error ? Colors.danger : Colors.text }, styles.text]}
+          adjustsFontSizeToFit={true}
+          numberOfLines={1}
+        >
           {formattedAmount || 0} {token.symbol}
         </Text>
       );
@@ -43,23 +49,34 @@ export default function TransferAmount({
   }
 
   return (
-    <Column>
-      <Row
-        style={[
-          {
-            justifyContent: "center",
-            alignItems: "center",
-            flex: 1,
-          },
-          style,
-        ]}
-      >
-        {getContent()}
-      </Row>
+    <Column
+      style={[
+        { alignItems: "center", justifyContent: "center", flex: 1 },
+        style,
+      ]}
+    >
+      <Row>{getContent()}</Row>
+
       {token.price ? (
-        <Text>${calculateTokenUsdBalance(token, BigInt(decimalAmount))}</Text>
+        <Paragraph size="lg">
+          $
+          {formatUsdBalance(
+            token.price * +formattedAmount.replaceAll(",", ""),
+          ) || 0}
+        </Paragraph>
       ) : (
         <></>
+      )}
+      {error && (
+        <Paragraph
+          style={{
+            color: Colors.danger,
+            textAlign: "center",
+            fontSize: FontSizes.base,
+          }}
+        >
+          Insufficient funds
+        </Paragraph>
       )}
     </Column>
   );

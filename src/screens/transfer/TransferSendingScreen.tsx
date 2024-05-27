@@ -61,7 +61,7 @@ export default function TransferSendingScreen({
       navigation.navigate("transferSent", {
         tx,
         amount,
-        token,
+        symbol: token.symbol,
       });
     } catch (error: any) {
       setError(error.toString());

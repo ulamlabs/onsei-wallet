@@ -2,13 +2,10 @@ import { CosmTokenWithBalance } from "@/services/cosmos";
 import { formatAmount } from "./formatAmount";
 import { formatUsdBalance } from "./formatUsdBalance";
 
-export const calculateTokenUsdBalance = (
-  token: CosmTokenWithBalance,
-  amount?: bigint,
-) => {
+export const calculateTokenUsdBalance = (token: CosmTokenWithBalance) => {
   return formatUsdBalance(
     token.price! *
-      +formatAmount(amount || token.balance, token.decimals, {
+      +formatAmount(token.balance, token.decimals, {
         noDecimalSeparator: true,
       }),
   );

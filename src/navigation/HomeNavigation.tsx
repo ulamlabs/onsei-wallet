@@ -1,3 +1,4 @@
+import { Text } from "@/components";
 import MnemonicScreen from "@/screens/MnemonicScreen";
 import ReceiveAssets from "@/screens/ReceiveAssets";
 import AccountSettingsScreen from "@/screens/WalletOverview/AccountSettingsScreen";
@@ -31,13 +32,14 @@ import {
   TransferSummaryScreen,
 } from "@/screens/transfer";
 import ScanAddressScreen from "@/screens/transfer/ScanAddressScreen";
-import { CosmToken } from "@/services/cosmos";
 import { Account, SavedAddress, Wallet } from "@/store";
-import { NavigatorParamsList } from "@/types";
+import { NavigationProp, NavigatorParamsList } from "@/types";
 import { trimAddress } from "@/utils";
 import { DeliverTxResponse, StdFee } from "@cosmjs/stargate";
+import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
+import { TouchableOpacity } from "react-native";
 import BottomBarsNavigation from "./BottomBarsNavigation";
 import { navigatorScreenOptions } from "./const";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
@@ -86,7 +88,7 @@ export type HomeParamList = {
     intAmount: string;
     fee: StdFee;
   };
-  transferSent: { tx: DeliverTxResponse; amount?: string; token?: CosmToken };
+  transferSent: { tx: DeliverTxResponse; amount?: string; symbol?: string };
   "Set Name": { nextRoute: "Import Wallet" | "Generate Wallet" };
   "Scan QR code": { nextRoute: keyof NavigatorParamsList; tokenId: string };
 };
@@ -94,6 +96,7 @@ export type HomeParamList = {
 const { Navigator, Screen } = createNativeStackNavigator<HomeParamList>();
 
 export default function HomeNavigation() {
+  const navigation = useNavigation<NavigationProp>();
   return (
     <Navigator id="home" screenOptions={navigatorScreenOptions}>
       <Screen
@@ -174,7 +177,14 @@ export default function HomeNavigation() {
       <Screen
         name="transferSummary"
         component={TransferSummaryScreen}
-        options={{ title: "Summary" }}
+        options={() => ({
+          title: "Summary",
+          headerRight: () => (
+            <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+              <Text>Cancel</Text>
+            </TouchableOpacity>
+          ),
+        })}
       />
       <Screen
         name="transferSending"

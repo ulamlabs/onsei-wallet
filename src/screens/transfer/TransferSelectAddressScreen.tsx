@@ -16,7 +16,7 @@ import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
 import * as Clipboard from "expo-clipboard";
-import { CopySuccess, Scan } from "iconsax-react-native";
+import { CopySuccess, Scan, TickCircle } from "iconsax-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { SectionList, View } from "react-native";
 import AddressBox from "./AddressBox";
@@ -138,23 +138,21 @@ export default function TransferSelectAddressScreen({
             onPress={scanCode}
           />
         </Row>
-
         {isInvalidAddress && (
           <Text style={{ color: Colors.danger }}>Invalid SEI address</Text>
+        )}
+
+        {typedAddress && !sameAddressError && (
+          <Row style={{ justifyContent: "flex-start" }}>
+            <TickCircle variant="Bold" color={Colors.success} />
+            <Text style={{ color: Colors.success }}>Correct SEI address</Text>
+          </Row>
         )}
 
         {sameAddressError && (
           <Paragraph style={{ textAlign: "center" }}>
             Sender and receiver cannot be the same address
           </Paragraph>
-        )}
-
-        {typedAddress && !sameAddressError && (
-          <AddressBox
-            address={{ name: "Correct address", address: typedAddress }}
-            onPress={select}
-            key={0}
-          />
         )}
 
         {focused && copiedText && copiedText !== typedAddress && (

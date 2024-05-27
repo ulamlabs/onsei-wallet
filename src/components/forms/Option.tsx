@@ -4,7 +4,7 @@ import { View } from "react-native";
 import { Text } from "../typography";
 
 type OptionProps = PropsWithChildren & {
-  label: string;
+  label: string | JSX.Element;
   icon?: ReactElement;
   disabled?: boolean;
 };

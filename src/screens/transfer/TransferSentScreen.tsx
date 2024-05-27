@@ -1,7 +1,8 @@
 import {
-  Box,
   Column,
   Headline,
+  Option,
+  OptionGroup,
   Paragraph,
   PrimaryButton,
   SafeLayoutBottom,
@@ -23,34 +24,8 @@ type TransferSentScreenProps = NativeStackScreenProps<
   "transferSent"
 >;
 
-type SummitBoxProps = {
-  title: string;
-  text: string;
-  onPress: () => void;
-};
-
-const SummitBox = ({ title, text, onPress }: SummitBoxProps) => (
-  <Box style={{ width: "100%", alignItems: "center", marginTop: 10 }}>
-    <View style={{ justifyContent: "flex-start" }}>
-      <Paragraph>{title}</Paragraph>
-      <Text style={{ textAlign: "left", fontFamily: FontWeights.bold }}>
-        {text}
-      </Text>
-    </View>
-    <TertiaryButton
-      title="View on SeiScan"
-      icon={ExportSquare}
-      onPress={onPress}
-      iconAllign="right"
-      textStyle={{ fontSize: FontSizes.sm, fontFamily: FontWeights.bold }}
-      iconSize={16}
-      style={{ paddingHorizontal: 0, paddingVertical: 0 }}
-    />
-  </Box>
-);
-
 const TransferSentScreen = ({ navigation, route }: TransferSentScreenProps) => {
-  const { tx, amount, token } = route.params;
+  const { tx, amount, symbol } = route.params;
   const success = useMemo(() => tx.code === 0, [tx]);
   const {
     settings: { node },
@@ -95,17 +70,47 @@ const TransferSentScreen = ({ navigation, route }: TransferSentScreenProps) => {
             ? "Transaction completed successfully."
             : "Click below to see why the transaction failed."}
         </Paragraph>
-        <SummitBox
-          onPress={handleShowDetails}
-          title={success ? "Amount sent" : "Transaction ID"}
-          text={
-            success
-              ? `${amount} ${token?.symbol}`
-              : trimAddress(tx.transactionHash)
-          }
-        />
+        <OptionGroup>
+          <Option label={success ? "Amount sent" : "Transaction ID"}>
+            <Text style={{ fontFamily: FontWeights.bold }}>
+              {success
+                ? `${amount} ${symbol}`
+                : trimAddress(tx.transactionHash)}
+            </Text>
+          </Option>
+        </OptionGroup>
       </Column>
-      <PrimaryButton title="Done" onPress={handleDone} />
+      <Column style={{ gap: 20 }}>
+        {success ? (
+          <>
+            <PrimaryButton title="Done" onPress={handleDone} />
+            <TertiaryButton
+              onPress={handleShowDetails}
+              textStyle={{
+                fontSize: FontSizes.sm,
+                fontFamily: FontWeights.bold,
+              }}
+              iconSize={16}
+              title="View details on SeiScan"
+              icon={ExportSquare}
+            />
+          </>
+        ) : (
+          <>
+            <PrimaryButton
+              textStyle={{
+                fontSize: FontSizes.sm,
+                fontFamily: FontWeights.bold,
+              }}
+              iconSize={16}
+              icon={ExportSquare}
+              title="View details on SeiScan"
+              onPress={handleShowDetails}
+            />
+            <TertiaryButton onPress={handleDone} title="Close" />
+          </>
+        )}
+      </Column>
     </SafeLayoutBottom>
   );
 };

@@ -6,12 +6,11 @@ import {
   Row,
   SafeLayout,
   SmallButton,
-  Text,
   TextInput,
 } from "@/components";
 import { useInputState } from "@/hooks";
 import { useTokensStore } from "@/store";
-import { Colors, FontWeights } from "@/styles";
+import { FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { parseAmount } from "@/utils";
 import { formatAmount } from "@/utils/formatAmount";
@@ -109,16 +108,12 @@ export default function TransferAmountScreen({
             style={{ flex: 0 }}
             token={token}
             decimalAmount={decimalAmount}
+            error={!hasFunds}
           />
           <Paragraph>
             Network fee: {decimalAmount ? "<$0.01" : "$0.00"}
           </Paragraph>
         </Column>
-        {!hasFunds && (
-          <Text style={{ color: Colors.danger, textAlign: "center" }}>
-            Insufficient funds
-          </Text>
-        )}
 
         <Column>
           <TextInput placeholder="Add memo (optional)" {...memoInput} />

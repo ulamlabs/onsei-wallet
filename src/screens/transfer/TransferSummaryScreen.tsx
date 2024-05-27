@@ -2,19 +2,22 @@ import {
   Loader,
   Option,
   OptionGroup,
+  Paragraph,
+  Row,
   SafeLayout,
   SwipeButton,
   Text,
 } from "@/components";
 import { estimateTransferFee } from "@/services/cosmos/tx";
-import { useTokensStore } from "@/store";
-import { Colors } from "@/styles";
+import { useModalStore, useTokensStore } from "@/store";
+import { Colors, FontSizes } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { formatAmount, trimAddress } from "@/utils";
 import { StdFee } from "@cosmjs/stargate";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { InfoCircle } from "iconsax-react-native";
 import { useEffect, useMemo, useState } from "react";
-import { View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import TransferAmount from "./TransferAmount";
 
 type TransferSummaryScreenProps = NativeStackScreenProps<
@@ -31,6 +34,7 @@ export default function TransferSummaryScreen({
   const [fee, setFee] = useState<StdFee | null>(null);
   const [estimationFailed, setEstimationFailed] = useState(false);
   const [scrollEnabled, setScrollEnabled] = useState(true);
+  const { alert } = useModalStore();
 
   useEffect(() => {
     getFeeEstimation();
@@ -99,6 +103,20 @@ export default function TransferSummaryScreen({
     return <Loader />;
   }
 
+  function showFeeInfo() {
+    alert({
+      title: "",
+      description: (
+        <Paragraph size="base">
+          A network fee is a blockchain charge for processing and confirming
+          transactions. Our wallet is free to use.
+        </Paragraph>
+      ),
+      icon: InfoCircle,
+      ok: "Got it",
+    });
+  }
+
   return (
     <SafeLayout refreshFn={getFeeEstimation} scrollEnabled={scrollEnabled}>
       <TransferAmount
@@ -117,11 +135,23 @@ export default function TransferSummaryScreen({
             </Text>
           </Option>
           {transfer.memo && (
-            <Option label="Network fee">
+            <Option label="Memo">
               <Text>{transfer.memo}</Text>
             </Option>
           )}
-          <Option label="Network fee">{getFeeElement()}</Option>
+          <Option
+            label={
+              <TouchableOpacity onPress={showFeeInfo}>
+                <Row style={{ gap: 8 }}>
+                  <Text style={{ fontSize: FontSizes.base }}>Network fee</Text>
+
+                  <InfoCircle size={16} color={Colors.text} />
+                </Row>
+              </TouchableOpacity>
+            }
+          >
+            {getFeeElement()}
+          </Option>
         </OptionGroup>
 
         {fee && !hasFundsForFee && (
