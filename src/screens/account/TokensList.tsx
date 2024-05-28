@@ -1,4 +1,4 @@
-import { Column, TertiaryButton } from "@/components";
+import { Column, Loader, TertiaryButton } from "@/components";
 import { useTokensStore } from "@/store";
 import { Colors, FontWeights } from "@/styles";
 import { NavigationProp } from "@/types";
@@ -9,14 +9,20 @@ import TokenBalanceBox from "../../components/TokenBalanceBox";
 export default function TokensList() {
   const navigation = useNavigation<NavigationProp>();
 
-  const { tokens } = useTokensStore();
+  const { tokens, initTokensLoading } = useTokensStore();
 
   return (
     <>
       <Column>
-        {tokens.map((token) => (
-          <TokenBalanceBox key={token.id} token={token} />
-        ))}
+        {initTokensLoading ? (
+          <Loader />
+        ) : (
+          <>
+            {tokens.map((token) => (
+              <TokenBalanceBox key={token.id} token={token} />
+            ))}
+          </>
+        )}
       </Column>
 
       <TertiaryButton

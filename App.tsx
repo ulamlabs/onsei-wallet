@@ -51,9 +51,9 @@ export default function App() {
   useEffect(() => {
     async function init() {
       await settingsStore.init(); // Settings must be initialized before everything else
-      await tokenRegistryStore.init();
       await Promise.all([
         accountsStore.init(),
+        tokenRegistryStore.init(),
         authStore.init(),
         addressStore.init(),
       ]);

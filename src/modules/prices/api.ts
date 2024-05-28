@@ -8,6 +8,8 @@ import {
   usdPrices,
 } from "./types";
 
+let coinGeckoIds = new Set<string>();
+
 export const geckoTerminalUrl = (address: string) =>
   `https://api.geckoterminal.com/api/v2/simple/networks/sei-network/token_price/${address}`;
 
@@ -25,15 +27,17 @@ export const getUSDPrices = async (tokens: CosmToken[]) => {
   const coinGeckoCategoryUrl =
     "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&category=sei-ecosystem";
 
-  const { data: coinGeckoCategory } =
-    await get<coinGeckoCategoryResponse[]>(coinGeckoCategoryUrl);
+  if (coinGeckoIds.size === 0) {
+    const { data: coinGeckoCategory } =
+      await get<coinGeckoCategoryResponse[]>(coinGeckoCategoryUrl);
 
-  const coinGeckoIdsSet = new Set(
-    coinGeckoCategory.map((coin) => coin.id.toLowerCase()),
-  );
+    coinGeckoIds = new Set(
+      coinGeckoCategory.map((coin) => coin.id.toLowerCase()),
+    );
+  }
 
   const tokensWithoutPrice = tokens.filter((token) => {
-    return !coinGeckoIdsSet.has(token.coingeckoId);
+    return !coinGeckoIds.has(token.coingeckoId);
   });
 
   const addresses = tokensWithoutPrice
@@ -79,12 +83,6 @@ export const getUSDPrices = async (tokens: CosmToken[]) => {
       )?.[address] || 0,
   }));
 
-  const structuredCoinGeckoCategory = coinGeckoCategory.map((coin) => ({
-    id: coin.id,
-    name: coin.name,
-    price: coin.current_price,
-  }));
-
   const structuredGeckoIdPrices = coinGeckoIdPrices.map((coin) => ({
     id: coin.id,
     name: coin.name,
@@ -92,7 +90,6 @@ export const getUSDPrices = async (tokens: CosmToken[]) => {
   }));
 
   const result: usdPrices[] = [
-    ...structuredCoinGeckoCategory,
     ...structuredAddressPrices,
     ...structuredGeckoIdPrices,
   ];
