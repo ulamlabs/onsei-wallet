@@ -3,82 +3,41 @@ import { useSettingsStore } from "@/store";
 import { useQuery } from "@tanstack/react-query";
 import { get } from "../api/api";
 import { combineTransactionsWithStorage } from "./storage";
-import { Transaction, TransactionData } from "./types";
-import { parseMultiSend, parseSend } from "./utils";
+import { Transaction, TransactionsData } from "./types";
+import { parseTx } from "./parsing";
+import { getTxEventQueries } from "./utils";
 
-const buildUrl = (queryParams: Record<string, string>): string => {
-  const baseUrl = `https://rest.${NODE_URL[useSettingsStore.getState().settings.node]}/cosmos/tx/v1beta1/txs`;
-  const queryString = Object.entries(queryParams)
-    .map(
-      ([key, value]) =>
-        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
-    )
-    .join("&");
-  return `${baseUrl}?${queryString}`;
+type GetTransactionsOptions = {
+  address: string;
+  limit?: number;
 };
 
-const getTransactions = async (address: string): Promise<Transaction[]> => {
-  const senderParams = {
-    events: `transfer.sender='${address}'`,
-    limit: "10",
-  };
+export const getTransactions = async (
+  options: GetTransactionsOptions,
+): Promise<Transaction[]> => {
+  const limit = options.limit ?? 10;
 
-  const receiverParams = {
-    events: `transfer.recipient='${address}'`,
-    limit: "10",
-  };
+  const node = useSettingsStore.getState().settings.node;
+  const url = `https://rest.${NODE_URL[node]}/cosmos/tx/v1beta1/txs`;
 
-  const sendUrl = buildUrl(senderParams);
-  const receivedUrl = buildUrl(receiverParams);
-  const [sendData, receivedData] = await Promise.all([
-    get<TransactionData>(sendUrl),
-    get<TransactionData>(receivedUrl),
-  ]);
-  const response: Transaction[] = [
-    ...sendData.data.tx_responses,
-    ...receivedData.data.tx_responses,
-  ]
-    .filter((resp) => resp.tx.body.messages[0] !== undefined)
-    .sort(
-      (a, b) =>
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
-    )
-    .map((resp) => {
-      const commonPath = resp.tx.body.messages[0];
-      const isMultiSend =
-        commonPath["@type"] === "/cosmos.bank.v1beta1.MsgMultiSend";
+  const events = getTxEventQueries(options.address);
 
-      const asset = "usei";
-      const date = new Date(resp.timestamp).toISOString();
+  const txs = await Promise.all(
+    events.map((events) =>
+      get<TransactionsData>(url, { params: { events, limit } }),
+    ),
+  );
 
-      if (isMultiSend) {
-        return {
-          ...parseMultiSend(commonPath, address),
-          asset,
-          date,
-          fee: BigInt((resp as any).gas_used),
-          status: "success",
-          hash: resp.txhash,
-        };
-      } else {
-        return {
-          ...parseSend(commonPath, address),
-          asset,
-          date,
-          fee: BigInt((resp as any).gas_used),
-          status: "success",
-          hash: resp.txhash,
-        };
-      }
-    });
-  return response;
+  return txs
+    .flatMap((tx) => tx.data.tx_responses.map(parseTx))
+    .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
 };
 
 export const useTransactions = (address: string) =>
   useQuery({
     queryKey: ["transactions", address],
     queryFn: () =>
-      getTransactions(address).then((response) =>
+      getTransactions({ address }).then((response) =>
         combineTransactionsWithStorage(address, response),
       ),
   });

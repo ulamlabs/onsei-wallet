@@ -6,6 +6,7 @@ import {
   SafeLayoutBottom,
   Text,
 } from "@/components";
+import { deliverTxResponseToTxResponse, parseTx } from "@/modules/transactions";
 import { storeNewTransaction } from "@/modules/transactions/storage";
 import { transferToken } from "@/services/cosmos/tx";
 import { useAccountsStore, useTokensStore } from "@/store";
@@ -51,17 +52,10 @@ export default function TransferSendingScreen({
   async function send() {
     try {
       const tx = await transferToken({ ...transfer, token, intAmount });
-      storeNewTransaction(activeAccount!.address, {
-        amount: intAmount,
-        asset: token.id,
-        date: new Date().toISOString(),
-        from: activeAccount!.address,
-        to: transfer.recipient,
-        type: "Send",
-        fee: tx.gasUsed,
-        status: tx.code === 0 ? "success" : "fail",
-        hash: tx.transactionHash,
-      });
+      storeNewTransaction(
+        activeAccount!.address,
+        parseTx(deliverTxResponseToTxResponse(tx)),
+      );
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       navigation.navigate("transferSent", { tx });
     } catch (error: any) {

@@ -1,0 +1,186 @@
+{
+  "tx": {
+    "body": {
+      "messages": [
+        {
+          "@type": "/cosmos.bank.v1beta1.MsgSend",
+          "from_address": "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
+          "to_address": "sei1h90zjqlfvqm3q7d6fhsmstulhz7wllnj6up5n5",
+          "amount": [
+            {
+              "denom": "usei",
+              "amount": "10000"
+            }
+          ]
+        }
+      ],
+      "memo": "",
+      "timeout_height": "0",
+      "extension_options": [],
+      "non_critical_extension_options": []
+    },
+    "auth_info": {
+      "signer_infos": [
+        {
+          "public_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "ApWGQ8i8R+70tWVeEwx63WPNQqCAPkzhZvHUEN6E7tA6"
+          },
+          "mode_info": {
+            "single": {
+              "mode": "SIGN_MODE_DIRECT"
+            }
+          },
+          "sequence": "61"
+        }
+      ],
+      "fee": {
+        "amount": [
+          {
+            "denom": "usei",
+            "amount": "10572"
+          }
+        ],
+        "gas_limit": "105719",
+        "payer": "",
+        "granter": ""
+      }
+    },
+    "signatures": [
+      "2NtIkqRU6CskfOeaSufWka8opw4abA8c2rh/rROT3+Q2hHEYDyNact7SiIS9h9a1AszgeRrbYuqwu5anBrikSQ=="
+    ]
+  },
+  "tx_response": {
+    "height": "91161032",
+    "txhash": "30EF7F34ECF094DBF73D6031C659AA2F15C7C32229DEA6DF39715BBC1D21FA3D",
+    "codespace": "",
+    "code": 0,
+    "data": "0A1E0A1C2F636F736D6F732E62616E6B2E763162657461312E4D736753656E64",
+    "raw_log": "[{\"events\":[{\"type\":\"coin_received\",\"attributes\":[{\"key\":\"receiver\",\"value\":\"sei1h90zjqlfvqm3q7d6fhsmstulhz7wllnj6up5n5\"},{\"key\":\"amount\",\"value\":\"10000usei\"}]},{\"type\":\"coin_spent\",\"attributes\":[{\"key\":\"spender\",\"value\":\"sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y\"},{\"key\":\"amount\",\"value\":\"10000usei\"}]},{\"type\":\"message\",\"attributes\":[{\"key\":\"action\",\"value\":\"/cosmos.bank.v1beta1.MsgSend\"},{\"key\":\"sender\",\"value\":\"sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y\"},{\"key\":\"module\",\"value\":\"bank\"}]},{\"type\":\"transfer\",\"attributes\":[{\"key\":\"recipient\",\"value\":\"sei1h90zjqlfvqm3q7d6fhsmstulhz7wllnj6up5n5\"},{\"key\":\"sender\",\"value\":\"sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y\"},{\"key\":\"amount\",\"value\":\"10000usei\"}]}]}]",
+    "logs": [
+      {
+        "msg_index": 0,
+        "log": "",
+        "events": [
+          {
+            "type": "coin_received",
+            "attributes": [
+              {
+                "key": "receiver",
+                "value": "sei1h90zjqlfvqm3q7d6fhsmstulhz7wllnj6up5n5"
+              },
+              {
+                "key": "amount",
+                "value": "10000usei"
+              }
+            ]
+          },
+          {
+            "type": "coin_spent",
+            "attributes": [
+              {
+                "key": "spender",
+                "value": "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y"
+              },
+              {
+                "key": "amount",
+                "value": "10000usei"
+              }
+            ]
+          },
+          {
+            "type": "message",
+            "attributes": [
+              {
+                "key": "action",
+                "value": "/cosmos.bank.v1beta1.MsgSend"
+              },
+              {
+                "key": "sender",
+                "value": "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y"
+              },
+              {
+                "key": "module",
+                "value": "bank"
+              }
+            ]
+          },
+          {
+            "type": "transfer",
+            "attributes": [
+              {
+                "key": "recipient",
+                "value": "sei1h90zjqlfvqm3q7d6fhsmstulhz7wllnj6up5n5"
+              },
+              {
+                "key": "sender",
+                "value": "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y"
+              },
+              {
+                "key": "amount",
+                "value": "10000usei"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "info": "",
+    "gas_wanted": "105719",
+    "gas_used": "87017",
+    "tx": {
+      "@type": "/cosmos.tx.v1beta1.Tx",
+      "body": {
+        "messages": [
+          {
+            "@type": "/cosmos.bank.v1beta1.MsgSend",
+            "from_address": "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
+            "to_address": "sei1h90zjqlfvqm3q7d6fhsmstulhz7wllnj6up5n5",
+            "amount": [
+              {
+                "denom": "usei",
+                "amount": "10000"
+              }
+            ]
+          }
+        ],
+        "memo": "",
+        "timeout_height": "0",
+        "extension_options": [],
+        "non_critical_extension_options": []
+      },
+      "auth_info": {
+        "signer_infos": [
+          {
+            "public_key": {
+              "@type": "/cosmos.crypto.secp256k1.PubKey",
+              "key": "ApWGQ8i8R+70tWVeEwx63WPNQqCAPkzhZvHUEN6E7tA6"
+            },
+            "mode_info": {
+              "single": {
+                "mode": "SIGN_MODE_DIRECT"
+              }
+            },
+            "sequence": "61"
+          }
+        ],
+        "fee": {
+          "amount": [
+            {
+              "denom": "usei",
+              "amount": "10572"
+            }
+          ],
+          "gas_limit": "105719",
+          "payer": "",
+          "granter": ""
+        }
+      },
+      "signatures": [
+        "2NtIkqRU6CskfOeaSufWka8opw4abA8c2rh/rROT3+Q2hHEYDyNact7SiIS9h9a1AszgeRrbYuqwu5anBrikSQ=="
+      ]
+    },
+    "timestamp": "2024-05-24T12:26:10Z",
+    "events": []
+  }
+}
