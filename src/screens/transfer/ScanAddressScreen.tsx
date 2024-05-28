@@ -38,12 +38,10 @@ export default function ScanAddressScreen({
 
   function render() {
     if (!permission) {
-      // Camera permissions are still loading.
       return <></>;
     }
 
     if (!permission.granted) {
-      // Camera permissions are not granted yet.
       return (
         <Column>
           <Text style={{ textAlign: "center" }}>

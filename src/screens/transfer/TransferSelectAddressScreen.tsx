@@ -130,6 +130,7 @@ export default function TransferSelectAddressScreen({
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             showClear
+            containerStyle={{ flex: 1 }}
           />
           <IconButton
             style={{ height: 51, width: 51 }}
