@@ -39,7 +39,7 @@ export default function SetWalletNameScreen({
   };
   return (
     <SafeLayout
-      noScroll={true}
+      staticView={true}
       style={{
         justifyContent: "space-between",
         maxHeight: "100%",

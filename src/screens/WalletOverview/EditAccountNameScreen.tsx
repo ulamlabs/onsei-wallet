@@ -1,4 +1,10 @@
-import { Paragraph, PrimaryButton, SafeLayout, TextInput } from "@/components";
+import {
+  Column,
+  Paragraph,
+  PrimaryButton,
+  SafeLayout,
+  TextInput,
+} from "@/components";
 import { useInputState } from "@/hooks";
 import { useAccountsStore } from "@/store";
 import { Colors } from "@/styles";
@@ -41,18 +47,22 @@ export default function EditAccountNameScreen({
   };
 
   return (
-    <SafeLayout style={{ paddingTop: 24 }} noScroll={true}>
-      <Paragraph style={{ marginBottom: 12 }}>
-        Give your wallet name to easily identify it. Names are stored locally
-        and can only be seen by you
-      </Paragraph>
-      <TextInput {...name} error={!!error} />
+    <SafeLayout style={{ paddingTop: 24 }} staticView={true}>
+      <Column>
+        <Paragraph style={{ marginBottom: 12 }}>
+          Give your wallet name to easily identify it. Names are stored locally
+          and can only be seen by you
+        </Paragraph>
+        <TextInput {...name} error={!!error} />
+        {error && (
+          <Paragraph style={{ color: Colors.danger }}>{error}</Paragraph>
+        )}
+      </Column>
       <PrimaryButton
         style={{ marginTop: 32 }}
         title="Save wallet name"
         onPress={editName}
       />
-      {error && <Paragraph style={{ color: Colors.danger }}>{error}</Paragraph>}
     </SafeLayout>
   );
 }

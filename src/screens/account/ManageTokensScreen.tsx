@@ -1,4 +1,3 @@
-import { SearchNormal } from "iconsax-react-native";
 import { Column, Loader, Paragraph, SafeLayout, TextInput } from "@/components";
 import { useInputState } from "@/hooks";
 import { CosmToken, fetchCW20Token } from "@/services/cosmos";
@@ -7,11 +6,12 @@ import {
   useTokenRegistryStore,
   useTokensStore,
 } from "@/store";
-import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
-import { useEffect, useState } from "react";
-import TokenToggleBox from "./TokenToggleBox";
 import { searchTokens } from "@/utils";
+import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
+import { SearchNormal } from "iconsax-react-native";
+import { useEffect, useState } from "react";
 import { FlatList, View } from "react-native";
+import TokenToggleBox from "./TokenToggleBox";
 
 const TOKENS_PER_PAGE = 20;
 
@@ -78,7 +78,7 @@ export default function ManageTokensScreen() {
   }
 
   return (
-    <SafeLayout noScroll={true}>
+    <SafeLayout staticView={true}>
       <Column style={{ flexGrow: 1 }}>
         <TextInput
           placeholder="Enter token name or contract address"

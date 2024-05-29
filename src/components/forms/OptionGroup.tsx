@@ -8,6 +8,7 @@ export default function OptionGroup({ children }: PropsWithChildren) {
         borderRadius: 22,
         gap: 1,
         overflow: "hidden",
+        width: "100%",
       }}
     >
       {children}

@@ -13,6 +13,8 @@ export type BaseButtonProps = {
   color?: string;
   iconColor?: string;
   iconVariant?: IconProps["variant"];
+  iconSize?: number;
+  iconAllign?: "left" | "right";
 };
 
 export default function BaseButton({
@@ -25,6 +27,8 @@ export default function BaseButton({
   color = Colors.text,
   iconColor = color,
   iconVariant = "Linear",
+  iconSize = 20,
+  iconAllign = "left",
 }: BaseButtonProps) {
   return (
     <Pressable
@@ -36,7 +40,7 @@ export default function BaseButton({
           paddingHorizontal: 24,
           paddingVertical: 18,
           borderRadius: 22,
-          flexDirection: "row",
+          flexDirection: iconAllign === "left" ? "row" : "row-reverse",
           gap: 8,
         },
         disabled ? { opacity: 0.3 } : {},
@@ -44,7 +48,7 @@ export default function BaseButton({
       ]}
       onPress={onPress}
     >
-      {Icon && <Icon color={iconColor} size={20} variant={iconVariant} />}
+      {Icon && <Icon color={iconColor} size={iconSize} variant={iconVariant} />}
       {title && (
         <Text style={[{ color, fontFamily: FontWeights.bold }, textStyle]}>
           {title}

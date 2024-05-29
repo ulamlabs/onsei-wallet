@@ -92,7 +92,9 @@ export default function ImportWalletScreen({
         {error && <Text style={{ color: Colors.danger }}>{error}</Text>}
 
         {loading ? (
-          <Loader />
+          <Row style={{ justifyContent: "center" }}>
+            <Loader />
+          </Row>
         ) : (
           <PrimaryButton
             title="Import"

@@ -1,7 +1,12 @@
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { CloseCircle, Icon } from "iconsax-react-native";
 import { useState } from "react";
-import ReactNative, { Pressable, View } from "react-native";
+import ReactNative, {
+  Pressable,
+  StyleProp,
+  View,
+  ViewStyle,
+} from "react-native";
 import { Text } from "../typography";
 
 type TextInputProps = ReactNative.TextInputProps & {
@@ -9,6 +14,7 @@ type TextInputProps = ReactNative.TextInputProps & {
   icon?: Icon;
   showClear?: boolean;
   error?: boolean;
+  containerStyle?: StyleProp<ViewStyle>;
 };
 
 export default function TextInput({
@@ -19,6 +25,7 @@ export default function TextInput({
   label,
   icon: Icon,
   error,
+  containerStyle,
   ...props
 }: TextInputProps) {
   const [focused, setFocused] = useState(false);
@@ -47,7 +54,7 @@ export default function TextInput({
   }
 
   return (
-    <View style={{ justifyContent: "center" }}>
+    <View style={[{ justifyContent: "center" }, containerStyle]}>
       {label && (
         <Text
           style={{

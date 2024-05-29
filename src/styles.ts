@@ -16,8 +16,10 @@ export const Colors = {
   activeTextInputBorderColor: "#4666A5",
   info: "#7983A7",
   success: "#3E925A",
+  success100: "#171F1A",
   warning: "#FFEE0A",
   danger: "#FF444E",
+  danger100: "#231616",
 };
 
 export const FontSizes = {

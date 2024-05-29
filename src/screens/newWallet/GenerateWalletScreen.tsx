@@ -6,6 +6,7 @@ import {
   MnemonicWords,
   Paragraph,
   PrimaryButton,
+  Row,
   SafeLayout,
   Text,
 } from "@/components";
@@ -85,9 +86,11 @@ export default function GenerateWalletScreen({
   }
 
   return (
-    <SafeLayout noScroll={true}>
+    <SafeLayout staticView={true}>
       {!wallet ? (
-        <Loader />
+        <Row style={{ justifyContent: "center" }}>
+          <Loader />
+        </Row>
       ) : (
         <Column style={{ height: "100%", justifyContent: "space-between" }}>
           <View>

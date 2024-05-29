@@ -1,21 +1,22 @@
 import {
-  Box,
   Column,
   NumericPad,
+  Paragraph,
   PrimaryButton,
   Row,
-  SecondaryButton,
-  Text,
   SafeLayout,
+  SmallButton,
+  TextInput,
 } from "@/components";
-import { Colors, FontWeights } from "@/styles";
+import { useInputState } from "@/hooks";
+import { useTokensStore } from "@/store";
+import { FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
-import { parseAmount, trimAddress } from "@/utils";
+import { parseAmount } from "@/utils";
 import { formatAmount } from "@/utils/formatAmount";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useMemo, useState } from "react";
 import TransferAmount from "./TransferAmount";
-import { useTokensStore } from "@/store";
 
 type TransferAmountScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -29,6 +30,7 @@ export default function TransferAmountScreen({
   const [decimalAmount, setDecimalAmount] = useState("");
   const { tokenMap, updateBalances } = useTokensStore();
   const { tokenId, recipient } = route.params;
+  const memoInput = useInputState();
 
   const token = useMemo(() => tokenMap.get(tokenId)!, [tokenId, tokenMap]);
 
@@ -46,6 +48,7 @@ export default function TransferAmountScreen({
       tokenId,
       recipient,
       intAmount: intAmount.toString(),
+      memo: memoInput.value,
     });
   }
 
@@ -91,36 +94,39 @@ export default function TransferAmountScreen({
   return (
     <SafeLayout refreshFn={updateBalances}>
       <Column style={{ flex: 1, gap: 24 }}>
-        <Box>
-          <Text style={{ color: Colors.text100 }}>To: </Text>
-          <Text>{trimAddress(recipient)}</Text>
-        </Box>
-
-        <TransferAmount token={token} decimalAmount={decimalAmount} />
-
-        {!hasFunds && (
-          <Text style={{ color: Colors.danger, textAlign: "center" }}>
-            Insufficient funds
-          </Text>
-        )}
-
         <Row style={{ alignItems: "center" }}>
-          <Column>
-            <Text style={{ color: Colors.text100, fontSize: 12 }}>
-              Available to send:
-            </Text>
-            <Text style={{ fontFamily: FontWeights.bold, fontSize: 16 }}>
-              {formatAmount(token.balance, token.decimals)} {token.symbol}
-            </Text>
-          </Column>
-          <SecondaryButton title="Max" onPress={onMax} />
+          <Paragraph style={{ fontFamily: FontWeights.regular, fontSize: 16 }}>
+            Balance: {formatAmount(token.balance, token.decimals)}{" "}
+            {token.symbol}
+          </Paragraph>
+          <SmallButton title="Max" onPress={onMax} />
         </Row>
+        <Column
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+        >
+          <TransferAmount
+            style={{ flex: 0 }}
+            token={token}
+            decimalAmount={decimalAmount}
+            error={!hasFunds}
+          />
+          <Paragraph>
+            Network fee: {decimalAmount ? "<$0.01" : "$0.00"}
+          </Paragraph>
+        </Column>
 
-        <PrimaryButton
-          title="Go to summary"
-          onPress={goToSummary}
-          disabled={!intAmount || !hasFunds}
-        />
+        <Column>
+          <TextInput
+            autoCorrect={false}
+            placeholder="Add memo (optional)"
+            {...memoInput}
+          />
+          <PrimaryButton
+            title="Go to summary"
+            onPress={goToSummary}
+            disabled={!intAmount || !hasFunds}
+          />
+        </Column>
 
         <NumericPad
           showDot={true}

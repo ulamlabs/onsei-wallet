@@ -1,20 +1,22 @@
 import {
   Column,
-  Headline,
-  Paragraph,
+  Option,
+  OptionGroup,
   PrimaryButton,
   SafeLayoutBottom,
   TertiaryButton,
+  Text,
 } from "@/components";
 import { NETWORK_NAMES } from "@/const";
 import { useSettingsStore } from "@/store";
-import { Colors } from "@/styles";
+import { FontSizes, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
-import { resetNavigationStack } from "@/utils";
+import { resetNavigationStack, trimAddress } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ExportSquare } from "iconsax-react-native";
 import { useMemo } from "react";
 import { Linking } from "react-native";
+import TransactionResultHeader from "./TransactionResultHeader";
 
 type TransferSentScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -25,52 +27,70 @@ export default function TransferSentScreen({
   navigation,
   route,
 }: TransferSentScreenProps) {
-  const { tx } = route.params;
-
+  const { tx, amount, symbol } = route.params;
   const success = useMemo(() => tx.code === 0, [tx]);
-
   const {
     settings: { node },
   } = useSettingsStore();
 
-  function showDetails() {
+  const handleDone = () => {
+    navigation.navigate("Home");
+    resetNavigationStack(navigation);
+  };
+
+  const handleShowDetails = () => {
     const network = NETWORK_NAMES[node];
     const url = `https://www.seiscan.app/${network}/txs/${tx.transactionHash}`;
     Linking.openURL(url);
-  }
-
-  function done() {
-    navigation.navigate("Home");
-    resetNavigationStack(navigation);
-  }
+  };
 
   return (
     <SafeLayoutBottom>
-      <Column style={{ flex: 1, justifyContent: "center" }}>
+      <Column
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      >
+        <TransactionResultHeader success={success} />
+        <OptionGroup>
+          <Option label={success ? "Amount sent" : "Transaction ID"}>
+            <Text style={{ fontFamily: FontWeights.bold }}>
+              {success
+                ? `${amount} ${symbol}`
+                : trimAddress(tx.transactionHash)}
+            </Text>
+          </Option>
+        </OptionGroup>
+      </Column>
+      <Column style={{ gap: 20 }}>
         {success ? (
           <>
-            <Headline>Sent!</Headline>
-            <Paragraph style={{ textAlign: "center" }}>
-              Transaction completed successfully
-            </Paragraph>
+            <PrimaryButton title="Done" onPress={handleDone} />
+            <TertiaryButton
+              onPress={handleShowDetails}
+              textStyle={{
+                fontSize: FontSizes.sm,
+                fontFamily: FontWeights.bold,
+              }}
+              iconSize={16}
+              title="View details on SeiScan"
+              icon={ExportSquare}
+            />
           </>
         ) : (
           <>
-            <Headline style={{ color: Colors.danger }}>Failed!</Headline>
-            <Paragraph style={{ textAlign: "center" }}>
-              Transaction failed to execute
-            </Paragraph>
-            <Paragraph style={{ textAlign: "center" }}>{tx.rawLog}</Paragraph>
+            <PrimaryButton
+              textStyle={{
+                fontSize: FontSizes.sm,
+                fontFamily: FontWeights.bold,
+              }}
+              iconSize={16}
+              icon={ExportSquare}
+              title="View details on SeiScan"
+              onPress={handleShowDetails}
+            />
+            <TertiaryButton onPress={handleDone} title="Close" />
           </>
         )}
-        <TertiaryButton
-          title="View details"
-          icon={ExportSquare}
-          onPress={showDetails}
-        />
       </Column>
-
-      <PrimaryButton title="Done" onPress={done} />
     </SafeLayoutBottom>
   );
 }

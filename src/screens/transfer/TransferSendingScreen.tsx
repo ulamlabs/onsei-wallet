@@ -2,20 +2,19 @@ import {
   Column,
   Headline,
   Loader,
-  PrimaryButton,
   SafeLayoutBottom,
-  Text,
+  TertiaryButton,
 } from "@/components";
 import { deliverTxResponseToTxResponse, parseTx } from "@/modules/transactions";
 import { storeNewTransaction } from "@/modules/transactions/storage";
 import { transferToken } from "@/services/cosmos/tx";
 import { useAccountsStore, useTokensStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
-import { resetNavigationStack } from "@/utils";
+import { formatAmount, resetNavigationStack } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { View } from "react-native";
+import TransactionResultHeader from "./TransactionResultHeader";
 
 type TransferSendingScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -51,13 +50,23 @@ export default function TransferSendingScreen({
 
   async function send() {
     try {
-      const tx = await transferToken({ ...transfer, token, intAmount });
+      const tx = await transferToken({
+        ...transfer,
+        token,
+        intAmount,
+        recipient: transfer.recipient.address,
+      });
       storeNewTransaction(
         activeAccount!.address,
         parseTx(deliverTxResponseToTxResponse(tx)),
       );
+      const amount = formatAmount(intAmount, token.decimals);
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
-      navigation.navigate("transferSent", { tx });
+      navigation.navigate("transferSent", {
+        tx,
+        amount,
+        symbol: token.symbol,
+      });
     } catch (error: any) {
       setError(error.toString());
     } finally {
@@ -79,8 +88,8 @@ export default function TransferSendingScreen({
     if (loading) {
       return (
         <>
-          <Loader size="large" />
-          <Headline>Sending...</Headline>
+          <Loader size="large" systemLoader={false} />
+          <Headline>Sending ...</Headline>
         </>
       );
     }
@@ -88,10 +97,8 @@ export default function TransferSendingScreen({
     if (error) {
       return (
         <>
-          <View style={{ justifyContent: "center", flex: 1 }}>
-            <Text>{error}</Text>
-          </View>
-          <PrimaryButton title="OK" onPress={done} />
+          <TransactionResultHeader success={false} customDescription={error} />
+          <TertiaryButton onPress={done} title="Close" />
         </>
       );
     }
@@ -101,7 +108,9 @@ export default function TransferSendingScreen({
 
   return (
     <SafeLayoutBottom>
-      <Column style={{ justifyContent: "center", flex: 1 }}>
+      <Column
+        style={{ justifyContent: "center", flex: 1, alignItems: "center" }}
+      >
         {getContent()}
       </Column>
     </SafeLayoutBottom>

@@ -17,7 +17,11 @@ export default function ModalAlert({ isVisible, alert }: ModalProps) {
     <Modal isVisible={isVisible}>
       <Column>
         {Icon && <Icon color={Colors.info} size={40} />}
-        <Headline style={{ textAlign: "left" }}>{alert.options.title}</Headline>
+        {alert.options.title && (
+          <Headline style={{ textAlign: "left" }}>
+            {alert.options.title}
+          </Headline>
+        )}
         <Paragraph>{alert.options.description}</Paragraph>
         <SecondaryButton
           title={alert.options.ok ?? "OK"}

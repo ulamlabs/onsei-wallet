@@ -2,21 +2,23 @@ import {
   Loader,
   Option,
   OptionGroup,
-  PrimaryButton,
+  Paragraph,
+  Row,
   SafeLayout,
+  SwipeButton,
   Text,
 } from "@/components";
-import TransferAmount from "./TransferAmount";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { NavigatorParamsList } from "@/types";
-import { trimAddress } from "@/utils";
-import { View } from "react-native";
-import { useTokensStore } from "@/store";
-import { useEffect, useMemo, useState } from "react";
 import { estimateTransferFee } from "@/services/cosmos/tx";
+import { useModalStore, useTokensStore } from "@/store";
+import { Colors, FontSizes } from "@/styles";
+import { NavigatorParamsList } from "@/types";
+import { formatAmount, trimAddress } from "@/utils";
 import { StdFee } from "@cosmjs/stargate";
-import { Colors } from "@/styles";
-import { formatAmount } from "@/utils";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { InfoCircle } from "iconsax-react-native";
+import { useEffect, useMemo, useState } from "react";
+import { TouchableOpacity, View } from "react-native";
+import TransferAmount from "./TransferAmount";
 
 type TransferSummaryScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -31,6 +33,8 @@ export default function TransferSummaryScreen({
   const { sei, updateBalances, tokenMap } = useTokensStore();
   const [fee, setFee] = useState<StdFee | null>(null);
   const [estimationFailed, setEstimationFailed] = useState(false);
+  const [scrollEnabled, setScrollEnabled] = useState(true);
+  const { alert } = useModalStore();
 
   useEffect(() => {
     getFeeEstimation();
@@ -69,7 +73,7 @@ export default function TransferSummaryScreen({
     setEstimationFailed(false);
 
     updateBalances([sei]);
-    estimateTransferFee(transfer.recipient, token, intAmount)
+    estimateTransferFee(transfer.recipient.address, token, intAmount)
       .then(setFee)
       .catch(() => setEstimationFailed(true));
   }
@@ -96,11 +100,25 @@ export default function TransferSummaryScreen({
       );
     }
 
-    return <Loader />;
+    return <Loader size="medium" />;
+  }
+
+  function showFeeInfo() {
+    alert({
+      title: "",
+      description: (
+        <Paragraph size="base">
+          A network fee is a blockchain charge for processing and confirming
+          transactions. Our wallet is free to use.
+        </Paragraph>
+      ),
+      icon: InfoCircle,
+      ok: "Got it",
+    });
   }
 
   return (
-    <SafeLayout refreshFn={getFeeEstimation}>
+    <SafeLayout refreshFn={getFeeEstimation} scrollEnabled={scrollEnabled}>
       <TransferAmount
         token={token}
         decimalAmount={formatAmount(intAmount, token.decimals, {
@@ -111,9 +129,29 @@ export default function TransferSummaryScreen({
       <View style={{ flex: 1 }}>
         <OptionGroup>
           <Option label="To">
-            <Text>{trimAddress(transfer.recipient)}</Text>
+            <Text>
+              {transfer.recipient.name} (
+              {trimAddress(transfer.recipient.address)})
+            </Text>
           </Option>
-          <Option label="Network fee">{getFeeElement()}</Option>
+          {transfer.memo && (
+            <Option label="Memo">
+              <Text>{transfer.memo}</Text>
+            </Option>
+          )}
+          <Option
+            label={
+              <TouchableOpacity onPress={showFeeInfo}>
+                <Row style={{ gap: 8 }}>
+                  <Text style={{ fontSize: FontSizes.base }}>Network fee</Text>
+
+                  <InfoCircle size={16} color={Colors.text} />
+                </Row>
+              </TouchableOpacity>
+            }
+          >
+            {getFeeElement()}
+          </Option>
         </OptionGroup>
 
         {fee && !hasFundsForFee && (
@@ -124,11 +162,10 @@ export default function TransferSummaryScreen({
           </Text>
         )}
       </View>
-
-      <PrimaryButton
-        title="Send"
-        onPress={send}
+      <SwipeButton
+        onSuccess={send}
         disabled={!fee || !hasFundsForFee}
+        setScrolling={setScrollEnabled}
       />
     </SafeLayout>
   );
