@@ -1,9 +1,7 @@
 import {
   Column,
-  Headline,
   Option,
   OptionGroup,
-  Paragraph,
   PrimaryButton,
   SafeLayoutBottom,
   TertiaryButton,
@@ -11,20 +9,24 @@ import {
 } from "@/components";
 import { NETWORK_NAMES } from "@/const";
 import { useSettingsStore } from "@/store";
-import { Colors, FontSizes, FontWeights } from "@/styles";
+import { FontSizes, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { resetNavigationStack, trimAddress } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { CloseCircle, ExportSquare, TickCircle } from "iconsax-react-native";
+import { ExportSquare } from "iconsax-react-native";
 import { useMemo } from "react";
-import { Linking, View } from "react-native";
+import { Linking } from "react-native";
+import TransactionResultHeader from "./TransactionResultHeader";
 
 type TransferSentScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
   "transferSent"
 >;
 
-const TransferSentScreen = ({ navigation, route }: TransferSentScreenProps) => {
+export default function TransferSentScreen({
+  navigation,
+  route,
+}: TransferSentScreenProps) {
   const { tx, amount, symbol } = route.params;
   const success = useMemo(() => tx.code === 0, [tx]);
   const {
@@ -47,29 +49,7 @@ const TransferSentScreen = ({ navigation, route }: TransferSentScreenProps) => {
       <Column
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       >
-        <View
-          style={{
-            padding: 20,
-            width: 128,
-            height: 128,
-            justifyContent: "center",
-            alignItems: "center",
-            borderRadius: 22,
-            backgroundColor: success ? Colors.success100 : Colors.danger100,
-          }}
-        >
-          {success ? (
-            <TickCircle variant="Bold" color={Colors.success} size={88} />
-          ) : (
-            <CloseCircle variant="Bold" color={Colors.danger} size={88} />
-          )}
-        </View>
-        <Headline>{success ? "It's Done!" : "Something went wrong"}</Headline>
-        <Paragraph size="base" style={{ textAlign: "center" }}>
-          {success
-            ? "Transaction completed successfully."
-            : "Click below to see why the transaction failed."}
-        </Paragraph>
+        <TransactionResultHeader success={success} />
         <OptionGroup>
           <Option label={success ? "Amount sent" : "Transaction ID"}>
             <Text style={{ fontFamily: FontWeights.bold }}>
@@ -113,6 +93,4 @@ const TransferSentScreen = ({ navigation, route }: TransferSentScreenProps) => {
       </Column>
     </SafeLayoutBottom>
   );
-};
-
-export default TransferSentScreen;
+}

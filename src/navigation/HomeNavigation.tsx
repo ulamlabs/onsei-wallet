@@ -1,4 +1,3 @@
-import { Text } from "@/components";
 import MnemonicScreen from "@/screens/MnemonicScreen";
 import ReceiveAssets from "@/screens/ReceiveAssets";
 import AccountSettingsScreen from "@/screens/WalletOverview/AccountSettingsScreen";
@@ -33,15 +32,14 @@ import {
 } from "@/screens/transfer";
 import ScanAddressScreen from "@/screens/transfer/ScanAddressScreen";
 import { Account, SavedAddress, Wallet } from "@/store";
-import { NavigationProp, NavigatorParamsList } from "@/types";
+import { NavigatorParamsList } from "@/types";
 import { trimAddress } from "@/utils";
 import { DeliverTxResponse, StdFee } from "@cosmjs/stargate";
-import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
-import { TouchableOpacity } from "react-native";
 import BottomBarsNavigation from "./BottomBarsNavigation";
 import { navigatorScreenOptions } from "./const";
+import CancelHeaderRight from "./header/CancelHeaderRight";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
 
 export type Recipient = {
@@ -90,13 +88,12 @@ export type HomeParamList = {
   };
   transferSent: { tx: DeliverTxResponse; amount?: string; symbol?: string };
   "Set Name": { nextRoute: "Import Wallet" | "Generate Wallet" };
-  "Scan QR code": { nextRoute: keyof NavigatorParamsList; tokenId: string };
+  "Scan QR code": { tokenId: string };
 };
 
 const { Navigator, Screen } = createNativeStackNavigator<HomeParamList>();
 
 export default function HomeNavigation() {
-  const navigation = useNavigation<NavigationProp>();
   return (
     <Navigator id="home" screenOptions={navigatorScreenOptions}>
       <Screen
@@ -179,11 +176,7 @@ export default function HomeNavigation() {
         component={TransferSummaryScreen}
         options={() => ({
           title: "Summary",
-          headerRight: () => (
-            <TouchableOpacity onPress={() => navigation.navigate("Home")}>
-              <Text>Cancel</Text>
-            </TouchableOpacity>
-          ),
+          headerRight: CancelHeaderRight,
         })}
       />
       <Screen

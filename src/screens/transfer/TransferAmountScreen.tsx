@@ -116,7 +116,11 @@ export default function TransferAmountScreen({
         </Column>
 
         <Column>
-          <TextInput placeholder="Add memo (optional)" {...memoInput} />
+          <TextInput
+            autoCorrect={false}
+            placeholder="Add memo (optional)"
+            {...memoInput}
+          />
           <PrimaryButton
             title="Go to summary"
             onPress={goToSummary}

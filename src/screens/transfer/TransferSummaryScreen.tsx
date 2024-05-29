@@ -100,7 +100,7 @@ export default function TransferSummaryScreen({
       );
     }
 
-    return <Loader />;
+    return <Loader size="medium" />;
   }
 
   function showFeeInfo() {

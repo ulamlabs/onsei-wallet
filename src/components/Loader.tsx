@@ -1,6 +1,6 @@
 import { Colors } from "@/styles";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Animated } from "react-native";
+import { Animated } from "react-native";
 import { Path, Svg } from "react-native-svg";
 
 type LoaderSizes = "small" | "medium" | "large" | "base";
@@ -21,7 +21,6 @@ const SIZE_TO_PX: Record<LoaderSizes, number> = {
 export default function Loader({
   size = "base",
   color = Colors.text,
-  systemLoader = true,
 }: LoaderProps) {
   const [rotation] = useState(new Animated.Value(0));
 
@@ -43,11 +42,16 @@ export default function Loader({
     outputRange: ["0deg", "360deg"],
   });
 
-  return systemLoader ? (
-    <ActivityIndicator size={SIZE_TO_PX[size]} color={color} />
-  ) : (
-    <Animated.View style={{ transform: [{ rotate: spin }] }}>
-      <Svg width={SIZE_TO_PX[size]} height={SIZE_TO_PX[size]} fill="none">
+  return (
+    <Animated.View
+      style={{
+        transform: [{ rotate: spin }],
+        aspectRatio: 1,
+        width: SIZE_TO_PX[size],
+        height: SIZE_TO_PX[size],
+      }}
+    >
+      <Svg width="100%" height="100%" fill="none" viewBox="0 0 97 96">
         <Path
           stroke={color}
           strokeLinecap="round"

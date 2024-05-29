@@ -8,6 +8,7 @@ import {
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
 import {
   BarcodeScanningResult,
   CameraView,
@@ -21,18 +22,21 @@ type Props = NativeStackScreenProps<NavigatorParamsList, "Scan QR code">;
 export default function ScanAddressScreen({
   navigation,
   route: {
-    params: { nextRoute, tokenId },
+    params: { tokenId },
   },
 }: Props) {
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
 
-  async function scann(result: BarcodeScanningResult) {
-    if (scanned) {
+  async function scan(result: BarcodeScanningResult) {
+    if (scanned || !isValidSeiCosmosAddress(result.data)) {
       return;
     }
     navigation.pop();
-    navigation.replace(nextRoute, { address: result.data, tokenId });
+    navigation.replace("transferSelectAddress", {
+      address: result.data,
+      tokenId,
+    });
     setScanned(true);
   }
 
@@ -45,15 +49,15 @@ export default function ScanAddressScreen({
       return (
         <Column>
           <Text style={{ textAlign: "center" }}>
-            We need your permission to show the camera
+            We need your permission to use the camera
           </Text>
-          <PrimaryButton onPress={requestPermission} title="grant permission" />
+          <PrimaryButton onPress={requestPermission} title="Grant Permission" />
         </Column>
       );
     }
 
     return (
-      <CameraView style={{ flex: 1 }} onBarcodeScanned={scann}>
+      <CameraView style={{ flex: 1 }} onBarcodeScanned={scan}>
         <Column
           style={{
             position: "absolute",

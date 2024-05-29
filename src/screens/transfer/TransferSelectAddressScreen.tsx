@@ -1,4 +1,5 @@
 import {
+  ClipboardAddressBox,
   Column,
   IconButton,
   Paragraph,
@@ -15,8 +16,7 @@ import { Colors, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
-import * as Clipboard from "expo-clipboard";
-import { CopySuccess, Scan, TickCircle } from "iconsax-react-native";
+import { Scan, TickCircle } from "iconsax-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { SectionList, View } from "react-native";
 import AddressBox from "./AddressBox";
@@ -37,23 +37,11 @@ export default function TransferSelectAddressScreen({
   const [yourAddresses, setYourAddresses] = useState(allAccounts);
   const [isInvalidAddress, setIsInvalidAddress] = useState(false);
   const [copiedText, setCopiedText] = useState("");
-  const [focused, setFocused] = useState(false);
+  const [addressFocused, setAddressFocused] = useState(false);
   const allAddresses = [
     ...allAddressBook.map((address) => address.address),
     ...allAccounts.map((account) => account.address),
   ];
-
-  const fetchCopiedText = async () => {
-    const text = await Clipboard.getStringAsync();
-    if (!isValidSeiCosmosAddress(text) || text === activeAccount?.address) {
-      return;
-    }
-    setCopiedText(text);
-  };
-
-  useEffect(() => {
-    fetchCopiedText();
-  }, []);
 
   useEffect(() => {
     const termLowered = searchInput.value.toLowerCase();
@@ -89,19 +77,19 @@ export default function TransferSelectAddressScreen({
     [typedAddress],
   );
 
-  function select(recipient: string) {
+  function select(recipientAddress: string) {
     const name = [...allAddressBook, ...allAccounts].find(
-      (address) => address.address === recipient,
+      (address) => address.address === recipientAddress,
     )?.name;
     navigation.navigate("transferAmount", {
       ...route.params,
-      recipient: { address: recipient, name },
+      recipient: { address: recipientAddress, name },
     });
   }
 
-  function validateTypedAddress(address: string = typedAddress) {
-    if (isValidSeiCosmosAddress(address)) {
-      select(address);
+  function validateTypedAddress() {
+    if (isValidSeiCosmosAddress(typedAddress)) {
+      select(typedAddress);
     } else {
       setIsInvalidAddress(true);
     }
@@ -109,7 +97,6 @@ export default function TransferSelectAddressScreen({
 
   function scanCode() {
     navigation.navigate("Scan QR code", {
-      nextRoute: "transferSelectAddress",
       tokenId: route.params.tokenId,
     });
   }
@@ -126,8 +113,8 @@ export default function TransferSelectAddressScreen({
             placeholder="Type name or address"
             {...searchInput}
             autoCorrect={false}
-            onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
+            onFocus={() => setAddressFocused(true)}
+            onBlur={() => setAddressFocused(false)}
             showClear
             containerStyle={{ flex: 1 }}
           />
@@ -155,18 +142,19 @@ export default function TransferSelectAddressScreen({
           </Paragraph>
         )}
 
-        {focused && copiedText && copiedText !== typedAddress && (
-          <AddressBox
-            address={{ name: "Paste from clipboard", address: copiedText }}
-            onPress={() => searchInput.onChangeText(copiedText)}
-            icon={<CopySuccess color={Colors.text100} />}
+        {addressFocused && (!copiedText || copiedText !== typedAddress) && (
+          <ClipboardAddressBox
+            onPaste={(content) => {
+              searchInput.onChangeText(content);
+              setCopiedText(content);
+            }}
           />
         )}
 
         {addressBook.length === 0 &&
           yourAddresses.length === 0 &&
           typedAddress &&
-          !allAddresses.some((address) => address === typedAddress) && (
+          !allAddresses.includes(typedAddress) && (
             <SmallButton
               onPress={addToAddressBook}
               title="Add to address book"
@@ -219,7 +207,7 @@ export default function TransferSelectAddressScreen({
       <View style={{ paddingTop: 24 }}>
         <PrimaryButton
           title="Next"
-          onPress={() => validateTypedAddress()}
+          onPress={validateTypedAddress}
           disabled={!searchInput.value || isInvalidAddress}
         />
       </View>

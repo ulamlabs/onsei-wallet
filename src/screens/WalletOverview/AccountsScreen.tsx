@@ -23,10 +23,12 @@ export default function AccountsScreen({ navigation }: AccountsScreenProps) {
       }}
       noScroll={true}
     >
-      <FlatList
-        data={accounts}
-        renderItem={({ item }) => <Account item={item} />}
-      />
+      <View style={{ flex: 1 }}>
+        <FlatList
+          data={accounts}
+          renderItem={({ item }) => <Account item={item} />}
+        />
+      </View>
 
       <View style={{ gap: 12, marginBottom: 0, paddingTop: 24 }}>
         <SecondaryButton

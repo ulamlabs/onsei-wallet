@@ -1,6 +1,12 @@
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { ArrowRight2 } from "iconsax-react-native";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   Animated,
   GestureResponderEvent,
@@ -17,7 +23,11 @@ type Props = {
   onSuccess: () => void;
 };
 
-const SwipeButton = ({ disabled, setScrolling, onSuccess }: Props) => {
+export default function SwipeButton({
+  disabled,
+  setScrolling,
+  onSuccess,
+}: Props) {
   const [translateX] = useState<Animated.Value & { _value?: number }>(
     new Animated.Value(0),
   );
@@ -27,9 +37,9 @@ const SwipeButton = ({ disabled, setScrolling, onSuccess }: Props) => {
   const [endReached, setEndReached] = useState(false);
   const scrollDistance = width - 76;
 
-  const arrowOpacity1 = useState(new Animated.Value(1))[0];
-  const arrowOpacity2 = useState(new Animated.Value(1))[0];
-  const arrowOpacity3 = useState(new Animated.Value(1))[0];
+  const arrowOpacity1 = useRef(new Animated.Value(1)).current;
+  const arrowOpacity2 = useRef(new Animated.Value(1)).current;
+  const arrowOpacity3 = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     setSwipeThreshold(0.7 * scrollDistance);
@@ -69,7 +79,6 @@ const SwipeButton = ({ disabled, setScrolling, onSuccess }: Props) => {
             }),
             Animated.timing(arrowOpacity3, {
               toValue: 1,
-              delay: 200,
               duration: 600,
               useNativeDriver: true,
             }),
@@ -218,6 +227,4 @@ const SwipeButton = ({ disabled, setScrolling, onSuccess }: Props) => {
       </Animated.View>
     </View>
   );
-};
-
-export default SwipeButton;
+}

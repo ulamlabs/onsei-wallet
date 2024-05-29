@@ -2,7 +2,6 @@ import {
   Column,
   Headline,
   Loader,
-  Paragraph,
   SafeLayoutBottom,
   TertiaryButton,
 } from "@/components";
@@ -10,14 +9,12 @@ import { deliverTxResponseToTxResponse, parseTx } from "@/modules/transactions";
 import { storeNewTransaction } from "@/modules/transactions/storage";
 import { transferToken } from "@/services/cosmos/tx";
 import { useAccountsStore, useTokensStore } from "@/store";
-import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { formatAmount, resetNavigationStack } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
-import { CloseCircle } from "iconsax-react-native";
 import { useEffect, useMemo, useState } from "react";
-import { View } from "react-native";
+import TransactionResultHeader from "./TransactionResultHeader";
 
 type TransferSendingScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -95,23 +92,7 @@ export default function TransferSendingScreen({
     if (error) {
       return (
         <>
-          <View
-            style={{
-              padding: 20,
-              width: 128,
-              height: 128,
-              justifyContent: "center",
-              alignItems: "center",
-              borderRadius: 22,
-              backgroundColor: Colors.danger100,
-            }}
-          >
-            <CloseCircle variant="Bold" color={Colors.danger} size={88} />
-          </View>
-          <Headline>Something went wrong</Headline>
-          <Paragraph size="base" style={{ textAlign: "center" }}>
-            {error}
-          </Paragraph>
+          <TransactionResultHeader success={false} customDescription={error} />
           <TertiaryButton onPress={done} title="Close" />
         </>
       );

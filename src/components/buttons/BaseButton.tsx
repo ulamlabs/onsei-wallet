@@ -40,7 +40,7 @@ export default function BaseButton({
           paddingHorizontal: 24,
           paddingVertical: 18,
           borderRadius: 22,
-          flexDirection: "row",
+          flexDirection: iconAllign === "left" ? "row" : "row-reverse",
           gap: 8,
         },
         disabled ? { opacity: 0.3 } : {},
@@ -48,16 +48,11 @@ export default function BaseButton({
       ]}
       onPress={onPress}
     >
-      {Icon && iconAllign === "left" && (
-        <Icon color={iconColor} size={iconSize} variant={iconVariant} />
-      )}
+      {Icon && <Icon color={iconColor} size={iconSize} variant={iconVariant} />}
       {title && (
         <Text style={[{ color, fontFamily: FontWeights.bold }, textStyle]}>
           {title}
         </Text>
-      )}
-      {Icon && iconAllign === "right" && (
-        <Icon color={iconColor} size={iconSize} variant={iconVariant} />
       )}
     </Pressable>
   );

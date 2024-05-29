@@ -1,12 +1,11 @@
+import { Colors, FontWeights } from "@/styles";
+import { trimAddress } from "@/utils";
+import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
+import * as Clipboard from "expo-clipboard";
 import React, { useEffect, useState } from "react";
+import { Pressable, View } from "react-native";
 import Box from "./Box";
 import { Text } from "./typography";
-import { Colors, FontWeights } from "@/styles";
-import { Pressable, View } from "react-native";
-import { CopySuccess } from "iconsax-react-native";
-import * as Clipboard from "expo-clipboard";
-import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
-import { trimAddress } from "@/utils";
 
 type Props = {
   onPaste: (content: string) => any;
@@ -39,7 +38,6 @@ export default function ClipboardAddressBox({ onPaste }: Props) {
             {trimAddress(clipboardContent)}
           </Text>
         </View>
-        <CopySuccess size={22} color={Colors.text} />
       </Box>
     </Pressable>
   );
