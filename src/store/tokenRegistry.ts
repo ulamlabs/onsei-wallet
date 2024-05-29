@@ -5,41 +5,51 @@ import { useSettingsStore } from "./settings";
 import { NETWORK_NAMES, NODE_URL } from "@/const";
 import { getUSDPrices, usdPrices } from "@/modules/prices";
 
+type TokenPrice = {
+  price: number;
+  timestamp: Date;
+};
+
 type TokenRegistryStore = {
-  tokenRegistry: CosmTokenWithPrice[];
-  cw20Registry: CosmTokenWithPrice[];
-  tokenRegistryMap: Map<string, CosmTokenWithPrice>;
+  tokenRegistry: CosmToken[];
+  cw20Registry: CosmToken[];
+  tokenRegistryMap: Map<string, CosmToken>;
+  tokenPricesMap: Map<string, TokenPrice>;
   registryRefreshPromise: Promise<void> | null;
   init: () => Promise<void>;
   addCW20ToRegistry: (newToken: CosmToken) => Promise<void>;
   getPrices: (tokens: CosmToken[]) => Promise<usdPrices[]>;
+  getTokensWithPrices: (tokenIds: string[]) => Promise<CosmTokenWithPrice[]>;
   refreshRegistryCache: () => Promise<void>;
   _refreshRegistryCache: () => Promise<void>;
 };
+
+const PRICE_STALE_TIME = 10 * 60 * 1000; // 10 minutes
 
 export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
   tokenRegistry: [],
   cw20Registry: [],
   tokenRegistryMap: new Map(),
+  tokenPricesMap: new Map(),
   registryRefreshPromise: null,
   init: async () => {
-    const cachedTokenRegistry = await loadFromStorage<CosmTokenWithPrice[]>(
+    const cachedTokenRegistry = await loadFromStorage<CosmToken[]>(
       getRegistryKey(),
       [],
     );
-    const cw20Registry = await loadFromStorage<CosmTokenWithPrice[]>(
+    const cw20Registry = await loadFromStorage<CosmToken[]>(
       getCW20RegistryKey(),
       [],
     );
     set({
       tokenRegistry: cachedTokenRegistry,
       cw20Registry,
+      registryRefreshPromise: get()._refreshRegistryCache(),
       tokenRegistryMap: tokensToMap(cachedTokenRegistry),
     });
-    await get()._refreshRegistryCache();
   },
   addCW20ToRegistry: async (newToken) => {
-    const { cw20Registry, tokenRegistry, getPrices } = get();
+    const { cw20Registry, tokenRegistry, tokenPricesMap, getPrices } = get();
     const exists = cw20Registry.find((t) => t.id === newToken.id);
     if (exists) {
       return;
@@ -49,23 +59,23 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
     const newTokenPrice =
       prices.find((p) => matchPriceToToken(newToken, p))?.price || 0;
 
-    const updatedRegistry = [
-      ...tokenRegistry,
-      { ...newToken, price: newTokenPrice },
-    ];
-    const updatedCW20Registry = [
-      ...cw20Registry,
-      { ...newToken, price: newTokenPrice },
-    ];
+    tokenPricesMap.set(newToken.id, {
+      price: newTokenPrice,
+      timestamp: new Date(),
+    });
+
+    const updatedRegistry = [...tokenRegistry, newToken];
+    const updatedCW20Registry = [...cw20Registry, newToken];
     saveToStorage(getRegistryKey(), updatedRegistry);
     saveToStorage(getCW20RegistryKey(), updatedCW20Registry);
     set({
       tokenRegistry: updatedRegistry,
       cw20Registry: updatedCW20Registry,
       tokenRegistryMap: tokensToMap(updatedRegistry),
+      tokenPricesMap,
     });
   },
-  getPrices: async (tokens: CosmToken[]) => {
+  getPrices: async (tokens) => {
     try {
       return await getUSDPrices(tokens);
     } catch (e) {
@@ -73,9 +83,54 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
       return [];
     }
   },
+  getTokensWithPrices: async (tokenIds) => {
+    const {
+      tokenRegistryMap,
+      tokenPricesMap,
+      registryRefreshPromise,
+      getPrices,
+    } = get();
+    const tokenPricesToUpdate = [];
+    const tokensWithPrices: CosmTokenWithPrice[] = [];
+
+    for (const tokenId of tokenIds) {
+      let token = tokenRegistryMap.get(tokenId);
+      if (!token && registryRefreshPromise) {
+        await registryRefreshPromise;
+        token = get().tokenRegistryMap.get(tokenId);
+      }
+
+      if (!token) {
+        continue;
+      }
+
+      const priceData = tokenPricesMap.get(tokenId);
+      if (
+        !priceData ||
+        new Date().getTime() - priceData.timestamp.getTime() > PRICE_STALE_TIME
+      ) {
+        tokenPricesToUpdate.push(token);
+        continue;
+      }
+      tokensWithPrices.push({ ...token, price: priceData.price });
+    }
+
+    if (tokenPricesToUpdate.length > 0) {
+      const newPrices = await getPrices(tokenPricesToUpdate);
+      const updatedPricesMap = new Map(tokenPricesMap);
+      for (const token of tokenPricesToUpdate) {
+        const price =
+          newPrices.find((p) => matchPriceToToken(token, p))?.price || 0;
+        updatedPricesMap.set(token.id, { price, timestamp: new Date() });
+        tokensWithPrices.push({ ...token, price });
+      }
+      set({ tokenPricesMap: updatedPricesMap });
+    }
+    return tokensWithPrices;
+  },
   refreshRegistryCache: async () => {
     const { _refreshRegistryCache: _refreshCache } = get();
-    set({ registryRefreshPromise: _refreshCache() });
+    set({ registryRefreshPromise: _refreshCache(), tokenPricesMap: new Map() });
   },
   _refreshRegistryCache: async () => {
     const [registryTokens, nativeTokens] = await Promise.all([
@@ -92,18 +147,11 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
       ...uniqueNativeTokens,
       ...get().cw20Registry,
     ];
-    const prices = await get().getPrices(tokenRegistry);
-
-    const tokenRegistryWithPrices = tokenRegistry.map((token) => ({
-      ...token,
-      price:
-        prices.find((price) => matchPriceToToken(token, price))?.price || 0,
-    })) as CosmTokenWithPrice[];
 
     saveToStorage(getRegistryKey(), tokenRegistry);
     set({
-      tokenRegistry: tokenRegistryWithPrices,
-      tokenRegistryMap: tokensToMap(tokenRegistryWithPrices),
+      tokenRegistry,
+      tokenRegistryMap: tokensToMap(tokenRegistry),
     });
   },
 }));
@@ -135,9 +183,7 @@ async function fetchNativeTokens(): Promise<CosmToken[]> {
   return tokens;
 }
 
-function tokensToMap(
-  tokens: CosmTokenWithPrice[],
-): Map<string, CosmTokenWithPrice> {
+function tokensToMap(tokens: CosmToken[]): Map<string, CosmToken> {
   return new Map(tokens.map((t) => [t.id, t]));
 }
 

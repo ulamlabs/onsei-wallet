@@ -20,7 +20,7 @@ const SEI_TOKEN: CosmTokenWithBalance = {
   symbol: "SEI",
   logo: require("../../assets/sei-logo.png"),
   balance: 0n,
-  coingeckoId: "sei-network",
+  coingeckoId: "usei",
   price: 0,
 };
 
@@ -32,15 +32,13 @@ type TokensStore = {
   blacklistedTokensIds: string[];
   tokenMap: Map<string, CosmTokenWithBalance>;
   accountAddress: string;
-  fetchBalancesPromise: Promise<any> | null;
+  initTokensLoading: boolean;
   loadTokens: (address: string) => Promise<void>;
   addToken: (token: CosmToken) => Promise<void>;
   removeToken: (token: CosmToken) => void;
   clearAddress: (address: string) => Promise<void>;
-  getTokenFromRegistry: (
-    tokenId: string,
-  ) => Promise<CosmTokenWithPrice | undefined>;
-  updateBalances: (tokens?: CosmTokenWithBalance[]) => Promise<void[]>;
+  getTokensFromRegistry: (tokenIds: string[]) => Promise<CosmTokenWithPrice[]>;
+  updateBalances: (tokens?: CosmTokenWithBalance[]) => Promise<void>;
   _updateCw20Balance: (tokenId: string) => Promise<void>;
   _updateNativeBalances: () => Promise<void>;
   _updateTokenLists: (
@@ -62,14 +60,14 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
   whitelistedTokensIds: [],
   blacklistedTokensIds: [],
   tokenMap: new Map(),
-  fetchBalancesPromise: null,
+  initTokensLoading: true,
   loadTokens: async (address) => {
     const { updateBalances, _updateStructures } = get();
     const { node } = useSettingsStore.getState().settings;
     const whitelistKey = getTokenWhitelistKey(address, node);
     const blacklistKey = getTokenBlacklistKey(address, node);
     const [whitelistedTokensIds, blacklistedTokensIds] = await Promise.all([
-      loadFromStorage<string[]>(whitelistKey, []),
+      loadFromStorage<string[]>(whitelistKey, ["usei"]),
       loadFromStorage<string[]>(blacklistKey, []),
     ]);
 
@@ -131,18 +129,9 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       return {};
     });
   },
-  getTokenFromRegistry: async (tokenId) => {
-    // eslint-disable-next-line prefer-const
-    let { tokenRegistryMap, registryRefreshPromise } =
-      useTokenRegistryStore.getState();
-
-    let token = tokenRegistryMap.get(tokenId);
-    if (!token || registryRefreshPromise) {
-      await registryRefreshPromise;
-      tokenRegistryMap = useTokenRegistryStore.getState().tokenRegistryMap;
-      token = tokenRegistryMap.get(tokenId);
-    }
-    return token;
+  getTokensFromRegistry: async (tokenIds) => {
+    const { getTokensWithPrices } = useTokenRegistryStore.getState();
+    return await getTokensWithPrices(tokenIds);
   },
   updateBalances: async (tokensToUpdate) => {
     // Will always update native token balances.
@@ -153,25 +142,26 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     }
 
     await get()._updateNativeBalances();
-    return Promise.all([
+    await Promise.all([
       ...cw20ToUpdate.map((token) => _updateCw20Balance(token.id)),
     ]);
+    set({ initTokensLoading: false });
   },
   _updateCw20Balance: async (tokenId) => {
     const { node } = useSettingsStore.getState().settings;
-    const { accountAddress, tokens, getTokenFromRegistry, _updateStructures } =
+    const { accountAddress, tokens, getTokensFromRegistry, _updateStructures } =
       get();
 
     const [token, balance] = await Promise.all([
-      getTokenFromRegistry(tokenId),
+      getTokensFromRegistry([tokenId]),
       fetchCW20TokenBalance(accountAddress, tokenId, node),
     ]);
-    if (!token) {
+    if (!token[0]) {
       return;
     }
 
     const tokenWithBalance = {
-      ...token,
+      ...token[0],
       balance,
     };
 
@@ -190,7 +180,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       cw20Tokens,
       _updateStructures,
       sei,
-      getTokenFromRegistry,
+      getTokensFromRegistry,
       whitelistedTokensIds,
       blacklistedTokensIds,
     } = get();
@@ -207,10 +197,14 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       }
     }
 
+    const tokensWithPrices = await getTokensFromRegistry(
+      balances.balances.map((b) => b.denom),
+    );
+
     const nativeTokens: CosmTokenWithBalance[] = [];
     for (const balanceData of balances.balances) {
       const balance = BigInt(balanceData.amount);
-      const token = await getTokenFromRegistry(balanceData.denom);
+      const token = tokensWithPrices.find((t) => t.id === balanceData.denom);
 
       if (token) {
         if (balanceData.denom === sei.id) {
