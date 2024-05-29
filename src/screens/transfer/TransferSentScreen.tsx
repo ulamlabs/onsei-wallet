@@ -55,13 +55,13 @@ const TransferSentScreen = ({ navigation, route }: TransferSentScreenProps) => {
             justifyContent: "center",
             alignItems: "center",
             borderRadius: 22,
-            backgroundColor: Colors.success100,
+            backgroundColor: success ? Colors.success100 : Colors.danger100,
           }}
         >
           {success ? (
             <TickCircle variant="Bold" color={Colors.success} size={88} />
           ) : (
-            <CloseCircle variant="Bold" color={Colors.success} size={88} />
+            <CloseCircle variant="Bold" color={Colors.danger} size={88} />
           )}
         </View>
         <Headline>{success ? "It's Done!" : "Something went wrong"}</Headline>

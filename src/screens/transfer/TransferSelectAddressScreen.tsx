@@ -74,7 +74,6 @@ export default function TransferSelectAddressScreen({
     const { address } = route.params;
     if (address) {
       searchInput.onChangeText(address);
-      validateTypedAddress(address);
     }
   }, [route.params.address]);
 

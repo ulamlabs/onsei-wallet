@@ -2,18 +2,20 @@ import {
   Column,
   Headline,
   Loader,
-  PrimaryButton,
+  Paragraph,
   SafeLayoutBottom,
-  Text,
+  TertiaryButton,
 } from "@/components";
 import { deliverTxResponseToTxResponse, parseTx } from "@/modules/transactions";
 import { storeNewTransaction } from "@/modules/transactions/storage";
 import { transferToken } from "@/services/cosmos/tx";
 import { useAccountsStore, useTokensStore } from "@/store";
+import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { formatAmount, resetNavigationStack } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
+import { CloseCircle } from "iconsax-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
 
@@ -93,10 +95,24 @@ export default function TransferSendingScreen({
     if (error) {
       return (
         <>
-          <View style={{ justifyContent: "center", flex: 1 }}>
-            <Text>{error}</Text>
+          <View
+            style={{
+              padding: 20,
+              width: 128,
+              height: 128,
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: 22,
+              backgroundColor: Colors.danger100,
+            }}
+          >
+            <CloseCircle variant="Bold" color={Colors.danger} size={88} />
           </View>
-          <PrimaryButton title="OK" onPress={done} />
+          <Headline>Something went wrong</Headline>
+          <Paragraph size="base" style={{ textAlign: "center" }}>
+            {error}
+          </Paragraph>
+          <TertiaryButton onPress={done} title="Close" />
         </>
       );
     }
@@ -106,7 +122,9 @@ export default function TransferSendingScreen({
 
   return (
     <SafeLayoutBottom>
-      <Column style={{ justifyContent: "center", flex: 1 }}>
+      <Column
+        style={{ justifyContent: "center", flex: 1, alignItems: "center" }}
+      >
         {getContent()}
       </Column>
     </SafeLayoutBottom>

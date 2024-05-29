@@ -19,6 +19,7 @@ export const Colors = {
   success100: "#171F1A",
   warning: "#FFEE0A",
   danger: "#FF444E",
+  danger100: "#E25656",
 };
 
 export const FontSizes = {
