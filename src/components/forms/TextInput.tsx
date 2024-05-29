@@ -1,6 +1,6 @@
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { CloseCircle, Icon } from "iconsax-react-native";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import ReactNative, { Pressable, View } from "react-native";
 import { Text } from "../typography";
 
@@ -21,7 +21,9 @@ export default function TextInput({
   error,
   ...props
 }: TextInputProps) {
+  const view = useRef<ReactNative.View>(null);
   const [focused, setFocused] = useState(false);
+  const [visible, setVisible] = useState(false);
   function clear() {
     if (onChangeText) {
       onChangeText("");
@@ -46,8 +48,20 @@ export default function TextInput({
     }
   }
 
+  function onLayout() {
+    view.current?.measure((x, y, width) => {
+      if (width > 0) {
+        setTimeout(() => {
+          setVisible(true);
+        }, 100);
+      } else {
+        setVisible(false);
+      }
+    });
+  }
+
   return (
-    <View style={{ justifyContent: "center" }}>
+    <View ref={view} style={{ justifyContent: "center" }} onLayout={onLayout}>
       {label && (
         <Text
           style={{
@@ -77,15 +91,17 @@ export default function TextInput({
           style,
         ]}
       >
-        <ReactNative.TextInput
-          placeholderTextColor={Colors.text100}
-          onChangeText={onChangeText}
-          value={value}
-          style={{ paddingVertical: 16, color: Colors.text }}
-          {...props}
-          onFocus={onFocus}
-          onBlur={onBlur}
-        />
+        {visible && (
+          <ReactNative.TextInput
+            placeholderTextColor={Colors.text100}
+            onChangeText={onChangeText}
+            value={value}
+            style={{ paddingVertical: 16, color: Colors.text }}
+            {...props}
+            onFocus={onFocus}
+            onBlur={onBlur}
+          />
+        )}
         {Icon && (
           <Icon
             size={16}

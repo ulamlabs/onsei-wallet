@@ -12,6 +12,10 @@ import { useAddressBookStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { useInputState } from "@/hooks";
 import AddressBookEntry from "./AddressBookEntry";
+import {
+  NativeSyntheticEvent,
+  TextInputFocusEventData,
+} from "react-native/types";
 
 type Props = NativeStackScreenProps<NavigatorParamsList, "Address Book">;
 
@@ -50,12 +54,22 @@ export default function AddressBook({ navigation }: Props) {
     }
   }, [searchInput.value]);
 
+  function onFocus(e: NativeSyntheticEvent<TextInputFocusEventData>) {
+    console.log("focused");
+    e.persist();
+    setTimeout(() => {
+      console.log("focusing manually");
+      e.target.focus();
+    }, 10);
+  }
+
   return (
     <SafeLayout>
       <TextInput
         placeholder="Search name or SEI address"
         icon={SearchNormal}
         autoCorrect={false}
+        onFocus={onFocus}
         {...searchInput}
         showClear
       />

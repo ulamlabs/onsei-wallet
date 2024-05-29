@@ -62,7 +62,7 @@ export default function SafeLayout({
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ backgroundColor: Colors.background }}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0} // 40 is perfect match for ios offset
+      keyboardVerticalOffset={40}
     >
       {noScroll ? (
         <View
@@ -74,7 +74,7 @@ export default function SafeLayout({
         <View style={[layoutStyle, style]}>
           <ScrollView
             contentContainerStyle={{ flexGrow: 1 }}
-            keyboardShouldPersistTaps="handled"
+            keyboardShouldPersistTaps="always"
             refreshControl={
               refreshFn && (
                 <RefreshControl
