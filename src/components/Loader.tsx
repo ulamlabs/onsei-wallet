@@ -47,15 +47,7 @@ export default function Loader({
     <ActivityIndicator size={SIZE_TO_PX[size]} color={color} />
   ) : (
     <Animated.View style={{ transform: [{ rotate: spin }] }}>
-      <Svg
-        width={SIZE_TO_PX[size]}
-        height={SIZE_TO_PX[size]}
-        fill="none"
-        style={{
-          left: "50%",
-          transform: [{ translateX: -SIZE_TO_PX[size] / 2 }],
-        }}
-      >
+      <Svg width={SIZE_TO_PX[size]} height={SIZE_TO_PX[size]} fill="none">
         <Path
           stroke={color}
           strokeLinecap="round"
