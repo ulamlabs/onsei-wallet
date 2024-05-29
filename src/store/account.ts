@@ -3,6 +3,7 @@ import {
   loadFromSecureStorage,
   loadFromStorage,
   removeFromSecureStorage,
+  removeFromStorage,
   saveToSecureStorage,
   saveToStorage,
 } from "@/utils";
@@ -59,6 +60,11 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
     set({ accounts, activeAccount });
   },
   setActiveAccount: (address) => {
+    if (!address) {
+      removeFromStorage("activeAccount");
+      return;
+    }
+
     const account = get().accounts.find((a) => a.address === address);
     set((state) => ({
       ...state,
