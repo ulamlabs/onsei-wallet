@@ -1,9 +1,9 @@
-import { CosmTokenWithBalance } from "@/services/cosmos";
+import { CosmToken, CosmTokenWithBalance } from "@/services/cosmos";
 
-export function searchTokens(
-  tokens: CosmTokenWithBalance[],
+export function searchTokens<T extends CosmToken | CosmTokenWithBalance>(
+  tokens: T[],
   searchTerm: string,
-): CosmTokenWithBalance[] {
+): T[] {
   const termLowered = searchTerm.toLowerCase();
   return tokens.filter(
     (t) =>

@@ -1,17 +1,13 @@
 import { NODES } from "@/const";
-import { getUSDPrices } from "@/modules/prices";
 import {
+  CosmToken,
   CosmTokenWithBalance,
+  CosmTokenWithPrice,
   fetchAccountBalances,
   fetchCW20TokenBalance,
 } from "@/services/cosmos";
 import { Node } from "@/types";
-import {
-  loadFromStorage,
-  matchPriceToToken,
-  removeFromStorage,
-  saveToStorage,
-} from "@/utils";
+import { loadFromStorage, removeFromStorage, saveToStorage } from "@/utils";
 import { create } from "zustand";
 import { useSettingsStore } from "./settings";
 import { useTokenRegistryStore } from "./tokenRegistry";
@@ -24,7 +20,7 @@ const SEI_TOKEN: CosmTokenWithBalance = {
   symbol: "SEI",
   logo: require("../../assets/sei-logo.png"),
   balance: 0n,
-  coingeckoId: "sei-network",
+  coingeckoId: "usei",
   price: 0,
 };
 
@@ -32,21 +28,27 @@ type TokensStore = {
   sei: CosmTokenWithBalance;
   tokens: CosmTokenWithBalance[];
   cw20Tokens: CosmTokenWithBalance[];
+  whitelistedTokensIds: Set<string>;
+  blacklistedTokensIds: Set<string>;
   tokenMap: Map<string, CosmTokenWithBalance>;
   accountAddress: string;
-  fetchBalancesPromise: Promise<any> | null;
+  initTokensLoading: boolean;
   loadTokens: (address: string) => Promise<void>;
-  addToken: (token: CosmTokenWithBalance) => void;
-  removeToken: (token: CosmTokenWithBalance) => void;
+  addToken: (token: CosmToken) => Promise<void>;
+  removeToken: (token: CosmToken) => void;
   clearAddress: (address: string) => Promise<void>;
-  updateBalances: (tokens?: CosmTokenWithBalance[]) => Promise<void[]>;
-  _updateCw20Balance: (token: CosmTokenWithBalance) => Promise<void>;
+  getTokensFromRegistry: (tokenIds: string[]) => Promise<CosmTokenWithPrice[]>;
+  updateBalances: (tokens?: CosmTokenWithBalance[]) => Promise<void>;
+  _updateCw20Balance: (tokenId: string) => Promise<void>;
   _updateNativeBalances: () => Promise<void>;
+  _updateTokenLists: (
+    tokenId: string,
+    action: "WHITELIST" | "BLACKLIST",
+  ) => Promise<void>;
   _updateStructures: (
     tokens: CosmTokenWithBalance[],
     options?: { save?: boolean },
   ) => void;
-  loadPrices: (tokens?: CosmTokenWithBalance[]) => Promise<void>;
 };
 
 export const useTokensStore = create<TokensStore>((set, get) => ({
@@ -55,37 +57,59 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
   sei: SEI_TOKEN,
   tokens: [],
   cw20Tokens: [],
+  whitelistedTokensIds: new Set(),
+  blacklistedTokensIds: new Set(),
   tokenMap: new Map(),
-  fetchBalancesPromise: null,
+  initTokensLoading: true,
   loadTokens: async (address) => {
-    const { updateBalances, _updateStructures, loadPrices } = get();
+    const { updateBalances, _updateStructures } = get();
     const { node } = useSettingsStore.getState().settings;
+    const whitelistKey = getTokenWhitelistKey(address, node);
+    const blacklistKey = getTokenBlacklistKey(address, node);
+    const [whitelistedTokensIds, blacklistedTokensIds] = await Promise.all([
+      loadFromStorage<string[]>(whitelistKey, ["usei"]),
+      loadFromStorage<string[]>(blacklistKey, []),
+    ]);
 
-    set({ accountAddress: address, tokens: [SEI_TOKEN] });
+    set({
+      accountAddress: address,
+      tokens: [SEI_TOKEN],
+      whitelistedTokensIds: new Set(whitelistedTokensIds),
+      blacklistedTokensIds: new Set(blacklistedTokensIds),
+    });
     const key = getTokensKey(address, node);
     let cw20Tokens = await loadFromStorage<CosmTokenWithBalance[]>(key, []);
     cw20Tokens = cw20Tokens.map(deserializeToken);
     _updateStructures([SEI_TOKEN, ...cw20Tokens]);
     await updateBalances();
-    loadPrices();
   },
   addToken: async (token) => {
     const {
       tokens,
-      _updateStructures,
-      _updateCw20Balance: updateBalance,
-      loadPrices,
+      _updateNativeBalances: updateNativeBalances,
+      _updateTokenLists: updateTokenLists,
+      _updateCw20Balance: updateCW20Balance,
     } = get();
+    if (token.type !== "cw20") {
+      await updateTokenLists(token.id, "WHITELIST");
+    }
     const exists = tokens.find((t) => t.id === token.id);
     if (exists) {
       return;
     }
-    _updateStructures([...tokens, token], { save: true });
-    await updateBalance(token);
-    loadPrices([token]);
+
+    if (token.type === "cw20") {
+      await useTokenRegistryStore.getState().addCW20ToRegistry(token);
+      await updateCW20Balance(token.id);
+    } else {
+      await updateNativeBalances();
+    }
   },
   removeToken: (token) => {
-    const { tokens, _updateStructures } = get();
+    const { tokens, _updateTokenLists, _updateStructures } = get();
+    if (token.type !== "cw20") {
+      _updateTokenLists(token.id, "BLACKLIST");
+    }
     const nextTokens = tokens.filter((t) => t.id !== token.id);
     _updateStructures(nextTokens, { save: true });
   },
@@ -105,72 +129,121 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       return {};
     });
   },
+  getTokensFromRegistry: async (tokenIds) => {
+    const { getTokensWithPrices } = useTokenRegistryStore.getState();
+    return await getTokensWithPrices(tokenIds);
+  },
   updateBalances: async (tokensToUpdate) => {
     // Will always update native token balances.
     const { cw20Tokens, _updateCw20Balance } = get();
-    let cw20ToUpdate = cw20Tokens;
+    let cw20ToUpdate: CosmTokenWithBalance[] = cw20Tokens;
     if (tokensToUpdate) {
       cw20ToUpdate = tokensToUpdate.filter((t) => t.type === "cw20");
     }
 
-    return Promise.all([
-      get()._updateNativeBalances(),
-      ...cw20ToUpdate.map((token) => _updateCw20Balance(token)),
+    await get()._updateNativeBalances();
+    await Promise.all([
+      ...cw20ToUpdate.map((token) => _updateCw20Balance(token.id)),
     ]);
+    set({ initTokensLoading: false });
   },
-  _updateCw20Balance: async (token) => {
+  _updateCw20Balance: async (tokenId) => {
     const { node } = useSettingsStore.getState().settings;
-    const { accountAddress } = get();
+    const { accountAddress, tokens, getTokensFromRegistry, _updateStructures } =
+      get();
 
-    const balance = await fetchCW20TokenBalance(accountAddress, token.id, node);
+    const [token, balance] = await Promise.all([
+      getTokensFromRegistry([tokenId]),
+      fetchCW20TokenBalance(accountAddress, tokenId, node),
+    ]);
+    if (!token[0]) {
+      return;
+    }
 
-    const { tokenMap, tokens, _updateStructures } = get();
-
-    token = {
-      ...tokenMap.get(token.id)!,
+    const tokenWithBalance = {
+      ...token[0],
       balance,
     };
 
-    const index = tokens.findIndex((t) => t.id === token.id);
+    const index = tokens.findIndex((t) => t.id === tokenWithBalance.id);
     if (index === -1) {
-      return;
+      tokens.push(tokenWithBalance);
+    } else {
+      tokens.splice(index, 1, tokenWithBalance);
     }
-    tokens.splice(index, 1, token);
 
     _updateStructures([...tokens], { save: true });
   },
   _updateNativeBalances: async () => {
-    const { accountAddress, cw20Tokens, _updateStructures, sei } = get();
+    const {
+      accountAddress,
+      cw20Tokens,
+      _updateStructures,
+      sei,
+      getTokensFromRegistry,
+      whitelistedTokensIds,
+      blacklistedTokensIds,
+    } = get();
     const { node } = useSettingsStore.getState().settings;
 
     const balances = await fetchAccountBalances(accountAddress, node);
 
-    const { registryRefreshPromise: refreshPromise } =
-      useTokenRegistryStore.getState();
+    balances.balances = balances.balances.filter(
+      (token) => !blacklistedTokensIds.has(token.denom),
+    );
+    for (const whitelistedID of whitelistedTokensIds) {
+      if (!balances.balances.find((token) => token.denom === whitelistedID)) {
+        balances.balances.push({ denom: whitelistedID, amount: "0" });
+      }
+    }
 
-    let { tokenRegistryMap } = useTokenRegistryStore.getState();
+    const tokensWithPrices = await getTokensFromRegistry(
+      balances.balances.map((b) => b.denom),
+    );
 
-    const newSei = { ...sei };
-    const nativeTokens: CosmTokenWithBalance[] = [newSei];
+    const nativeTokens: CosmTokenWithBalance[] = [];
     for (const balanceData of balances.balances) {
       const balance = BigInt(balanceData.amount);
-      if (balanceData.denom === sei.id) {
-        newSei.balance = balance;
-        continue;
-      }
-      let token = tokenRegistryMap.get(balanceData.denom);
+      const token = tokensWithPrices.find((t) => t.id === balanceData.denom);
 
-      if (!token && refreshPromise) {
-        await refreshPromise;
-        tokenRegistryMap = useTokenRegistryStore.getState().tokenRegistryMap;
-        token = tokenRegistryMap.get(balanceData.denom);
-      }
       if (token) {
-        nativeTokens.push({ ...token, balance });
+        if (balanceData.denom === sei.id) {
+          token.logo = sei.logo;
+        }
+        nativeTokens.push({ ...token, balance } as CosmTokenWithBalance);
       }
     }
 
     _updateStructures([...cw20Tokens, ...nativeTokens]);
+  },
+  _updateTokenLists: async (tokenId, action) => {
+    const {
+      accountAddress: address,
+      whitelistedTokensIds,
+      blacklistedTokensIds,
+    } = get();
+    const { node } = useSettingsStore.getState().settings;
+    const whitelistKey = getTokenWhitelistKey(address, node);
+    const blacklistKey = getTokenBlacklistKey(address, node);
+
+    const newWhitelist = whitelistedTokensIds;
+    const newBlacklist = blacklistedTokensIds;
+    if (action === "WHITELIST") {
+      newWhitelist.add(tokenId);
+      newBlacklist.delete(tokenId);
+    } else {
+      newWhitelist.delete(tokenId);
+      newBlacklist.add(tokenId);
+    }
+
+    set({
+      whitelistedTokensIds: newWhitelist,
+      blacklistedTokensIds: newBlacklist,
+    });
+    await Promise.all([
+      saveToStorage(whitelistKey, [...newWhitelist]),
+      saveToStorage(blacklistKey, [...newBlacklist]),
+    ]);
   },
   _updateStructures: (tokens, options) => {
     const { accountAddress } = get();
@@ -197,24 +270,18 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       saveToStorage(key, cw20Tokens.map(serializeToken));
     }
   },
-  loadPrices: async (tokens) => {
-    const { tokens: allTokens, _updateStructures } = get();
-    const loadTokens = tokens || allTokens;
-    const newPrices = await getUSDPrices(loadTokens);
-
-    const updatedTokens: CosmTokenWithBalance[] = allTokens.map((token) => ({
-      ...token,
-      price:
-        newPrices.find((price) => matchPriceToToken(token, price))?.price ||
-        token.price,
-    }));
-
-    _updateStructures([...updatedTokens]);
-  },
 }));
 
 function getTokensKey(address: string, node: Node | "") {
   return `cw20tokens-${node}-${address}.json`;
+}
+
+function getTokenWhitelistKey(address: string, node: Node | "") {
+  return `token-whitelist-${node}-${address}.json`;
+}
+
+function getTokenBlacklistKey(address: string, node: Node | "") {
+  return `token-blacklist-${node}-${address}.json`;
 }
 
 function tokensToMap(

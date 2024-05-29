@@ -6,15 +6,21 @@ import Box from "./Box";
 import TokenIcon from "./TokenIcon";
 import { Row } from "./layout";
 import { Text } from "./typography";
+import { trimAddress } from "@/utils";
 
 type TokenBoxProps = PropsWithChildren & {
   token: CosmToken;
+  showId?: boolean;
 };
 
-export default function TokenBox({ token, children }: TokenBoxProps) {
+export default function TokenBox({
+  token,
+  showId = false,
+  children,
+}: TokenBoxProps) {
   return (
     <Box>
-      <Row style={{ alignItems: "center", flexShrink: 1 }}>
+      <Row style={{ alignItems: "center", flexShrink: 1, paddingRight: 10 }}>
         <TokenIcon token={token} />
         <View style={{ flexShrink: 1 }}>
           <Text
@@ -22,15 +28,30 @@ export default function TokenBox({ token, children }: TokenBoxProps) {
           >
             {token.symbol}
           </Text>
-          <Text
-            style={{
-              color: Colors.text100,
-              flexShrink: 1,
-            }}
-            numberOfLines={1}
-          >
-            {token.name}
-          </Text>
+          <Row>
+            <Text
+              style={{
+                color: Colors.text100,
+                flexShrink: 1,
+              }}
+              numberOfLines={1}
+            >
+              {token.name}
+            </Text>
+            {showId && (
+              <View
+                style={{
+                  backgroundColor: Colors.background300,
+                  paddingHorizontal: 6,
+                  borderRadius: 8,
+                }}
+              >
+                <Text style={{ color: Colors.text100 }}>
+                  {trimAddress(token.id, { prefixCut: 3, suffixCut: 5 })}
+                </Text>
+              </View>
+            )}
+          </Row>
         </View>
       </Row>
       {children}

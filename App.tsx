@@ -52,8 +52,8 @@ export default function App() {
     async function init() {
       await settingsStore.init(); // Settings must be initialized before everything else
       await Promise.all([
-        tokenRegistryStore.init(),
         accountsStore.init(),
+        tokenRegistryStore.init(),
         authStore.init(),
         addressStore.init(),
       ]);

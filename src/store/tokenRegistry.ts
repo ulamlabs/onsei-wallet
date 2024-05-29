@@ -1,36 +1,136 @@
-import { CosmToken } from "@/services/cosmos";
-import { loadFromStorage, saveToStorage } from "@/utils";
+import { CosmToken, CosmTokenWithPrice } from "@/services/cosmos";
+import { loadFromStorage, matchPriceToToken, saveToStorage } from "@/utils";
 import { create } from "zustand";
 import { useSettingsStore } from "./settings";
 import { NETWORK_NAMES, NODE_URL } from "@/const";
+import { getUSDPrices, usdPrices } from "@/modules/prices";
+
+type TokenPrice = {
+  price: number;
+  timestamp: Date;
+};
 
 type TokenRegistryStore = {
   tokenRegistry: CosmToken[];
+  cw20Registry: CosmToken[];
   tokenRegistryMap: Map<string, CosmToken>;
+  tokenPricesMap: Map<string, TokenPrice>;
   registryRefreshPromise: Promise<void> | null;
   init: () => Promise<void>;
+  addCW20ToRegistry: (newToken: CosmToken) => Promise<void>;
+  getPrices: (tokens: CosmToken[]) => Promise<usdPrices[]>;
+  getTokensWithPrices: (tokenIds: string[]) => Promise<CosmTokenWithPrice[]>;
   refreshRegistryCache: () => Promise<void>;
   _refreshRegistryCache: () => Promise<void>;
 };
 
+const PRICE_STALE_TIME = 10 * 60 * 1000; // 10 minutes
+
 export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
   tokenRegistry: [],
+  cw20Registry: [],
   tokenRegistryMap: new Map(),
+  tokenPricesMap: new Map(),
   registryRefreshPromise: null,
   init: async () => {
     const cachedTokenRegistry = await loadFromStorage<CosmToken[]>(
       getRegistryKey(),
       [],
     );
+    const cw20Registry = await loadFromStorage<CosmToken[]>(
+      getCW20RegistryKey(),
+      [],
+    );
     set({
       tokenRegistry: cachedTokenRegistry,
+      cw20Registry,
       registryRefreshPromise: get()._refreshRegistryCache(),
       tokenRegistryMap: tokensToMap(cachedTokenRegistry),
     });
   },
+  addCW20ToRegistry: async (newToken) => {
+    const { cw20Registry, tokenRegistry, tokenPricesMap, getPrices } = get();
+    const exists = cw20Registry.find((t) => t.id === newToken.id);
+    if (exists) {
+      return;
+    }
+
+    const prices = await getPrices([newToken]);
+    const newTokenPrice =
+      prices.find((p) => matchPriceToToken(newToken, p))?.price || 0;
+
+    tokenPricesMap.set(newToken.id, {
+      price: newTokenPrice,
+      timestamp: new Date(),
+    });
+
+    const updatedRegistry = [...tokenRegistry, newToken];
+    const updatedCW20Registry = [...cw20Registry, newToken];
+    saveToStorage(getRegistryKey(), updatedRegistry);
+    saveToStorage(getCW20RegistryKey(), updatedCW20Registry);
+    set({
+      tokenRegistry: updatedRegistry,
+      cw20Registry: updatedCW20Registry,
+      tokenRegistryMap: tokensToMap(updatedRegistry),
+      tokenPricesMap,
+    });
+  },
+  getPrices: async (tokens) => {
+    try {
+      return await getUSDPrices(tokens);
+    } catch (e) {
+      console.error("error at fetching prices: ", e);
+      return [];
+    }
+  },
+  getTokensWithPrices: async (tokenIds) => {
+    const {
+      tokenRegistryMap,
+      tokenPricesMap,
+      registryRefreshPromise,
+      getPrices,
+    } = get();
+    const tokenPricesToUpdate = [];
+    const tokensWithPrices: CosmTokenWithPrice[] = [];
+
+    for (const tokenId of tokenIds) {
+      let token = tokenRegistryMap.get(tokenId);
+      if (!token && registryRefreshPromise) {
+        await registryRefreshPromise;
+        token = get().tokenRegistryMap.get(tokenId);
+      }
+
+      if (!token) {
+        continue;
+      }
+
+      const priceData = tokenPricesMap.get(tokenId);
+      if (
+        !priceData ||
+        new Date().getTime() - priceData.timestamp.getTime() > PRICE_STALE_TIME
+      ) {
+        tokenPricesToUpdate.push(token);
+        continue;
+      }
+      tokensWithPrices.push({ ...token, price: priceData.price });
+    }
+
+    if (tokenPricesToUpdate.length > 0) {
+      const newPrices = await getPrices(tokenPricesToUpdate);
+      const updatedPricesMap = new Map(tokenPricesMap);
+      for (const token of tokenPricesToUpdate) {
+        const price =
+          newPrices.find((p) => matchPriceToToken(token, p))?.price || 0;
+        updatedPricesMap.set(token.id, { price, timestamp: new Date() });
+        tokensWithPrices.push({ ...token, price });
+      }
+      set({ tokenPricesMap: updatedPricesMap });
+    }
+    return tokensWithPrices;
+  },
   refreshRegistryCache: async () => {
     const { _refreshRegistryCache: _refreshCache } = get();
-    set({ registryRefreshPromise: _refreshCache() });
+    set({ registryRefreshPromise: _refreshCache(), tokenPricesMap: new Map() });
   },
   _refreshRegistryCache: async () => {
     const [registryTokens, nativeTokens] = await Promise.all([
@@ -41,9 +141,18 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
     const uniqueNativeTokens = nativeTokens.filter(
       (t) => !registryTokensIds.has(t.id),
     );
-    const tokenRegistry = [...registryTokens, ...uniqueNativeTokens];
+
+    const tokenRegistry = [
+      ...registryTokens,
+      ...uniqueNativeTokens,
+      ...get().cw20Registry,
+    ];
+
     saveToStorage(getRegistryKey(), tokenRegistry);
-    set({ tokenRegistry, tokenRegistryMap: tokensToMap(tokenRegistry) });
+    set({
+      tokenRegistry,
+      tokenRegistryMap: tokensToMap(tokenRegistry),
+    });
   },
 }));
 
@@ -80,6 +189,10 @@ function tokensToMap(tokens: CosmToken[]): Map<string, CosmToken> {
 
 function getRegistryKey() {
   return `tokenRegistry-${getNode()}.json`;
+}
+
+function getCW20RegistryKey() {
+  return `tokenCW20Registry-${getNode()}.json`;
 }
 
 function getNode() {
