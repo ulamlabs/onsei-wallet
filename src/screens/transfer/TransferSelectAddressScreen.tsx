@@ -106,7 +106,7 @@ export default function TransferSelectAddressScreen({
   }
 
   return (
-    <SafeLayout noScroll={true}>
+    <SafeLayout staticView={true}>
       <Column>
         <Row style={{ gap: 10 }}>
           <TextInput

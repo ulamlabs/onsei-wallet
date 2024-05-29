@@ -47,7 +47,7 @@ export default function EditAccountNameScreen({
   };
 
   return (
-    <SafeLayout style={{ paddingTop: 24 }} noScroll={true}>
+    <SafeLayout style={{ paddingTop: 24 }} staticView={true}>
       <Column>
         <Paragraph style={{ marginBottom: 12 }}>
           Give your wallet name to easily identify it. Names are stored locally

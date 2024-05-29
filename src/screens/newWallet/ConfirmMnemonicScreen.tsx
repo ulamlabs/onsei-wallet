@@ -135,7 +135,7 @@ export default function ConfirmMnemonicScreen({
   }
 
   return (
-    <SafeLayout noScroll={true}>
+    <SafeLayout staticView={true}>
       <Column
         style={{ height: "100%", justifyContent: "space-between", gap: 50 }}
       >

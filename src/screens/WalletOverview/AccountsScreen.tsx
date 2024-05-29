@@ -21,7 +21,7 @@ export default function AccountsScreen({ navigation }: AccountsScreenProps) {
         maxHeight: "100%",
         paddingTop: 24,
       }}
-      noScroll={true}
+      staticView={true}
     >
       <View style={{ flex: 1 }}>
         <FlatList
