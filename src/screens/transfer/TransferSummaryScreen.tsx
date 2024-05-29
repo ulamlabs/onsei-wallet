@@ -164,7 +164,7 @@ export default function TransferSummaryScreen({
       </View>
       <SwipeButton
         onSuccess={send}
-        // disabled={!fee || !hasFundsForFee}
+        disabled={!fee || !hasFundsForFee}
         setScrolling={setScrollEnabled}
       />
     </SafeLayout>
