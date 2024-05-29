@@ -33,9 +33,10 @@ export default function TransactionResultHeader({
       </View>
       <Headline>{success ? "It's Done!" : "Something went wrong"}</Headline>
       <Paragraph size="base" style={{ textAlign: "center" }}>
-        {customDescription || success
-          ? "Transaction completed successfully."
-          : "Click below to see why the transaction failed."}
+        {customDescription ||
+          (success
+            ? "Transaction completed successfully."
+            : "Click below to see why the transaction failed.")}
       </Paragraph>
     </>
   );

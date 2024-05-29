@@ -36,7 +36,6 @@ export default function TransferSelectAddressScreen({
   const [addressBook, setAddressBook] = useState(allAddressBook);
   const [yourAddresses, setYourAddresses] = useState(allAccounts);
   const [isInvalidAddress, setIsInvalidAddress] = useState(false);
-  const [copiedText, setCopiedText] = useState("");
   const [addressFocused, setAddressFocused] = useState(false);
   const allAddresses = [
     ...allAddressBook.map((address) => address.address),
@@ -142,11 +141,11 @@ export default function TransferSelectAddressScreen({
           </Paragraph>
         )}
 
-        {addressFocused && (!copiedText || copiedText !== typedAddress) && (
+        {addressFocused && (
           <ClipboardAddressBox
             onPaste={(content) => {
               searchInput.onChangeText(content);
-              setCopiedText(content);
+              setAddressFocused(false);
             }}
           />
         )}

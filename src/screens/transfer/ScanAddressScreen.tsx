@@ -27,9 +27,14 @@ export default function ScanAddressScreen({
 }: Props) {
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
+  const [error, setError] = useState(false);
 
   async function scan(result: BarcodeScanningResult) {
-    if (scanned || !isValidSeiCosmosAddress(result.data)) {
+    if (scanned) {
+      return;
+    }
+    if (!isValidSeiCosmosAddress(result.data)) {
+      setError(true);
       return;
     }
     navigation.pop();
@@ -72,7 +77,7 @@ export default function ScanAddressScreen({
               width: "100%",
               borderWidth: 1,
               borderRadius: 22,
-              borderColor: Colors.text,
+              borderColor: error ? Colors.danger : Colors.text,
               aspectRatio: 1,
             }}
           />
@@ -86,6 +91,11 @@ export default function ScanAddressScreen({
           >
             Scan QR code to send funds
           </Paragraph>
+          {error && (
+            <Paragraph style={{ color: Colors.danger, textAlign: "center" }}>
+              It is not valid sei address
+            </Paragraph>
+          )}
         </Column>
       </CameraView>
     );
