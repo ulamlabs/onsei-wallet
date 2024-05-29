@@ -1,6 +1,6 @@
-import { getCosmWasmClient } from "@sei-js/cosmjs";
 import { NODE_URL } from "@/const";
 import { Node } from "@/types";
+import { getCosmWasmClient } from "@sei-js/cosmjs";
 
 export async function queryCW20<T>(
   contractAddress: string,

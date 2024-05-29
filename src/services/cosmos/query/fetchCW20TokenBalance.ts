@@ -1,6 +1,6 @@
-import { CW20BalanceInfo } from "./types";
 import { Node } from "@/types";
 import { queryCW20 } from "./queryCW20";
+import { CW20BalanceInfo } from "./types";
 
 export async function fetchCW20TokenBalance(
   accountAddress: string,
