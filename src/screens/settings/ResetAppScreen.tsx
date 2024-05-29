@@ -7,6 +7,7 @@ import {
 } from "@/components";
 import {
   useAccountsStore,
+  useAddressBookStore,
   useAuthStore,
   useOnboardingStore,
   useSettingsStore,
@@ -22,14 +23,15 @@ type ResetAppScreenProps = NativeStackScreenProps<
 export default function ResetAppScreen({ navigation }: ResetAppScreenProps) {
   const accountsStore = useAccountsStore();
   const authStore = useAuthStore();
+  const addressBookStore = useAddressBookStore();
   const onboardingStore = useOnboardingStore();
   const settingsStore = useSettingsStore();
 
   async function onRemove() {
-    // TODO clear address book
     await Promise.all([
       accountsStore.clearStore(),
       authStore.resetPin(),
+      addressBookStore.clearAddressBook(),
       settingsStore.reset(),
     ]);
     onboardingStore.startOnboarding();
