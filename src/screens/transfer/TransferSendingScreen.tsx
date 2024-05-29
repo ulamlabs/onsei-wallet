@@ -50,7 +50,12 @@ export default function TransferSendingScreen({
 
   async function send() {
     try {
-      const tx = await transferToken({ ...transfer, token, intAmount });
+      const tx = await transferToken({
+        ...transfer,
+        token,
+        intAmount,
+        recipient: transfer.recipient.address,
+      });
       storeNewTransaction(
         activeAccount!.address,
         parseTx(deliverTxResponseToTxResponse(tx)),
