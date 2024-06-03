@@ -31,6 +31,7 @@ import {
   TransferSummaryScreen,
 } from "@/screens/transfer";
 import ScanAddressScreen from "@/screens/transfer/ScanAddressScreen";
+import { TransactionDetails } from "@/screens/transactions";
 import { Account, SavedAddress, Wallet } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { trimAddress } from "@/utils";
@@ -41,6 +42,7 @@ import BottomBarsNavigation from "./BottomBarsNavigation";
 import { navigatorScreenOptions } from "./const";
 import CancelHeaderRight from "./header/CancelHeaderRight";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
+import { SerializedTx } from "@/modules/transactions";
 
 export type Recipient = {
   address: string;
@@ -85,10 +87,12 @@ export type HomeParamList = {
     recipient: Recipient;
     intAmount: string;
     fee: StdFee;
+    memo?: string;
   };
   transferSent: { tx: DeliverTxResponse; amount?: string; symbol?: string };
   "Set Name": { nextRoute: "Import Wallet" | "Generate Wallet" };
   "Scan QR code": { tokenId: string };
+  "Transaction details": { transaction: SerializedTx };
 };
 
 const { Navigator, Screen } = createNativeStackNavigator<HomeParamList>();
@@ -195,6 +199,7 @@ export default function HomeNavigation() {
         options={({ route }) => ({ title: route.params.nextRoute })}
       />
       <Screen name="Scan QR code" component={ScanAddressScreen} />
+      <Screen name="Transaction details" component={TransactionDetails} />
     </Navigator>
   );
 }

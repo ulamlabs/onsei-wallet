@@ -1,8 +1,8 @@
 import DashboardHeader from "@/navigation/header/DashboardHeader";
-import Transactions from "@/screens/Transactions";
+import Transactions from "@/screens/transactions/Transactions";
 import Dashboard from "@/screens/WalletOverview/Dashboard";
 import AddressBook from "@/screens/addressBook/AddressBookScreen";
-import { Book, Book1, Wallet2 } from "iconsax-react-native";
+import { ArrangeHorizontalSquare, Book, Wallet2 } from "iconsax-react-native";
 import React from "react";
 import { createBarNavigation } from "./bar";
 
@@ -23,13 +23,13 @@ export default function BottomBarsNavigation() {
         options={{ icon: Wallet2, headerTitle: DashboardHeader }}
       />
       <Screen
-        name="Address Book"
-        component={AddressBook}
-        options={{ icon: Book1 }}
-      />
-      <Screen
         name="Transactions"
         component={Transactions}
+        options={{ icon: ArrangeHorizontalSquare }}
+      />
+      <Screen
+        name="Address Book"
+        component={AddressBook}
         options={{ icon: Book }}
       />
     </Navigator>

@@ -1,12 +1,13 @@
 import { useSettingsStore } from "@/store";
 import { loadFromStorage, saveToStorage } from "@/utils";
-import { Transaction } from "./types";
+import { SerializedTx, Transaction } from "./types";
+import { deserializeTxn, serializeTxn } from "./utils";
 
 const TXN_HISTORY_COUNT = 100;
 
 export const getStoredTransactions = async (address: string) => {
   const key = getStorageKey(address);
-  const txns = await loadFromStorage<Transaction[]>(key, []);
+  const txns = await loadFromStorage<SerializedTx[]>(key, []);
   return txns.map(deserializeTxn);
 };
 
@@ -54,22 +55,4 @@ const saveTransactionsToStorage = async (
 const getStorageKey = (address: string) => {
   const node = useSettingsStore.getState().settings.node;
   return `transactions-${node}-${address}.json`;
-};
-
-const serializeTxn = (txn: Transaction) => {
-  return {
-    ...txn,
-    amount: txn.amount.toString(),
-    fee: txn.fee.toString(),
-    timestamp: txn.timestamp.toISOString(),
-  };
-};
-
-const deserializeTxn = (txn: Transaction) => {
-  return {
-    ...txn,
-    amount: BigInt(txn.amount),
-    fee: BigInt(txn.fee || 0),
-    timestamp: new Date(txn.timestamp),
-  };
 };

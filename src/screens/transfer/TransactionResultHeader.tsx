@@ -22,7 +22,7 @@ export default function TransactionResultHeader({
           justifyContent: "center",
           alignItems: "center",
           borderRadius: 22,
-          backgroundColor: success ? Colors.success100 : Colors.danger100,
+          backgroundColor: success ? Colors.success200 : Colors.danger200,
         }}
       >
         {success ? (

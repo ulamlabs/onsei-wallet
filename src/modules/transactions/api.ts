@@ -29,7 +29,7 @@ export const getTransactions = async (
   );
 
   return txs
-    .flatMap((tx) => tx.data.tx_responses.map(parseTx))
+    .flatMap((tx) => tx.data.tx_responses.map((tx) => parseTx(tx)))
     .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
 };
 

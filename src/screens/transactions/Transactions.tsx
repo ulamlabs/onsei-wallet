@@ -1,7 +1,8 @@
-import { Loader, Paragraph, SafeLayout, TransactionList } from "@/components";
+import { Loader, Paragraph, SafeLayout } from "@/components";
 import { useTransactions } from "@/modules/transactions";
 import { useAccountsStore, useTokensStore } from "@/store";
 import { View } from "react-native";
+import TransactionList from "./TransactionList";
 
 export default function Transactions() {
   const { activeAccount } = useAccountsStore();

@@ -144,7 +144,7 @@
             ]
           }
         ],
-        "memo": "",
+        "memo": "test memo",
         "timeout_height": "0",
         "extension_options": [],
         "non_critical_extension_options": []

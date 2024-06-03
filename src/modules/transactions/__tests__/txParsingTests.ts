@@ -22,6 +22,7 @@ it("parse createDenomMetadataTx", () => {
     type: "MsgSetDenomMetadata",
     contract: "",
     contractAction: "",
+    memo: "",
   });
 });
 
@@ -38,6 +39,7 @@ it("parse transferSeiTx", () => {
     amount: 10000n,
     from: "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
     to: "sei1h90zjqlfvqm3q7d6fhsmstulhz7wllnj6up5n5",
+    memo: "test memo",
   });
 });
 
@@ -54,6 +56,7 @@ it("parse transferSeiMultisendTx", () => {
     amount: 5000000n,
     from: "",
     to: "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
+    memo: "",
   });
 });
 
@@ -70,6 +73,7 @@ it("parse transferNativeTx", () => {
     amount: 15n,
     from: "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
     to: "sei1h90zjqlfvqm3q7d6fhsmstulhz7wllnj6up5n5",
+    memo: "",
   });
 });
 
@@ -86,6 +90,7 @@ it("parse transferCw20Tx", () => {
     amount: 5000000n,
     from: "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
     to: "sei1h90zjqlfvqm3q7d6fhsmstulhz7wllnj6up5n5",
+    memo: "",
   });
 });
 
@@ -103,6 +108,7 @@ it("parse transferIcs20Tx", () => {
     amount: 100n,
     from: "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
     to: "sei1h90zjqlfvqm3q7d6fhsmstulhz7wllnj6up5n5",
+    memo: "",
   });
 });
 
@@ -119,6 +125,7 @@ it("parse astroportSwapTx", () => {
     amount: 0n,
     from: "",
     to: "",
+    memo: "",
   });
 });
 
@@ -135,5 +142,6 @@ it("parse noEventsTx", () => {
     amount: 0n,
     from: "",
     to: "",
+    memo: "",
   });
 });
