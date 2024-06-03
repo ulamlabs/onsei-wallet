@@ -34,6 +34,7 @@ import {
   TransferSummaryScreen,
 } from "@/screens/transfer";
 import ScanAddressScreen from "@/screens/transfer/ScanAddressScreen";
+import TransactionSettingscreen from "@/screens/transfer/TransactionSettingsScreen";
 import { Account, SavedAddress, Wallet } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { trimAddress } from "@/utils";
@@ -44,6 +45,7 @@ import BottomBarsNavigation from "./BottomBarsNavigation";
 import { navigatorScreenOptions } from "./const";
 import CancelHeaderRight from "./header/CancelHeaderRight";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
+import SettingsHeaderRight from "./header/SettingsHeaderRight";
 
 export type Recipient = {
   address: string;
@@ -93,6 +95,7 @@ export type HomeParamList = {
   transferSent: { tx: DeliverTxResponse; amount?: string; symbol?: string };
   "Set Name": { nextRoute: "Import Wallet" | "Generate Wallet" };
   "Scan QR code": { tokenId: string };
+  "Transaction settings": { tokenId: string };
   "Pin Change Success": undefined;
   "Transaction details": { transaction: SerializedTx };
 };
@@ -184,7 +187,12 @@ export default function HomeNavigation() {
         component={TransferAmountScreen}
         options={({ route }) => ({
           title: `To: ${route.params.recipient.name || ""} (${trimAddress(route.params.recipient.address)})`,
+          headerRight: () => SettingsHeaderRight(route.params.tokenId),
         })}
+      />
+      <Screen
+        name="Transaction settings"
+        component={TransactionSettingscreen}
       />
       <Screen
         name="transferSummary"

@@ -1,4 +1,4 @@
-import { Column, Loader, TertiaryButton } from "@/components";
+import { Column, Loader, Row, TertiaryButton } from "@/components";
 import { useTokensStore } from "@/store";
 import { Colors, FontWeights } from "@/styles";
 import { NavigationProp } from "@/types";
@@ -15,7 +15,9 @@ export default function TokensList() {
     <>
       <Column>
         {initTokensLoading ? (
-          <Loader />
+          <Row style={{ justifyContent: "center" }}>
+            <Loader />
+          </Row>
         ) : (
           <>
             {tokens.map((token) => (

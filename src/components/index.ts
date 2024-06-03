@@ -2,6 +2,7 @@ import Biometrics from "./Biometrics";
 import Box from "./Box";
 import ClipboardAddressBox from "./ClipboardAddressBox";
 import CopyAddress from "./CopyAddress";
+import FeeBox from "./FeeBox";
 import Loader from "./Loader";
 import MnemonicWords from "./MnemonicWords";
 import NetworkFeeInfo from "./NetworkFeeInfo";
@@ -26,6 +27,7 @@ export {
   Box,
   ClipboardAddressBox,
   CopyAddress,
+  FeeBox,
   Loader,
   MnemonicWords,
   Modal,
