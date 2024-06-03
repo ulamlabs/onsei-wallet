@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/store";
 import { NavigationProp, NavigatorParamsList } from "@/types";
 import { useNavigation } from "@react-navigation/core";
 import { ArrowRight2 } from "iconsax-react-native";
@@ -11,6 +12,7 @@ export type LinkProps = {
   navigateTo: keyof NavigatorParamsList;
   disabled?: boolean;
   params?: NavigatorParamsList[keyof NavigatorParamsList];
+  askPin?: boolean;
 };
 
 export default function Link({
@@ -19,11 +21,17 @@ export default function Link({
   navigateTo,
   disabled,
   params,
+  askPin,
 }: LinkProps) {
   const navigation = useNavigation<NavigationProp>();
+  const { authorize } = useAuthStore();
   function onPress() {
-    if (!disabled) {
+    if (!disabled && !askPin) {
       navigation.navigate(navigateTo as any, params);
+    }
+
+    if (askPin && !disabled) {
+      authorize(navigation, navigateTo, params);
     }
   }
 

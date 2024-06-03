@@ -61,7 +61,7 @@ export type HomeParamList = {
   "Saved Address": { addressData?: SavedAddress; address?: string } | undefined;
   "Address Details": { addressData: SavedAddress };
   "Address Transactions": { addressData: SavedAddress };
-  "Your Mnemonic": { address: string };
+  "Your unique Recovery Phrase": { address: string };
   "Add Wallet": undefined;
   "Generate Wallet": { name: string } | undefined;
   "Import Wallet": { name: string } | undefined;
@@ -132,7 +132,7 @@ export default function HomeNavigation() {
           title: `${route.params.addressData.name}: Transactions`,
         })}
       />
-      <Screen name="Your Mnemonic" component={MnemonicScreen} />
+      <Screen name="Your unique Recovery Phrase" component={MnemonicScreen} />
       <Screen name="Add Wallet" component={AddWalletScreen} />
       <Screen
         name="Generate Wallet"

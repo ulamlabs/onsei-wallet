@@ -2,6 +2,7 @@ import { Colors, FontSizes, FontWeights } from "@/styles";
 import * as Clipboard from "expo-clipboard";
 import { Copy, TickCircle } from "iconsax-react-native";
 import React, { useState } from "react";
+import { StyleProp, ViewStyle } from "react-native";
 import TertiaryButton from "./TertiaryButton";
 
 type Props = {
@@ -9,6 +10,7 @@ type Props = {
   titleColor?: string;
   toCopy: string;
   onCopy?: () => any;
+  style?: StyleProp<ViewStyle>;
 };
 
 export default function CopyButton({
@@ -16,6 +18,7 @@ export default function CopyButton({
   titleColor = Colors.text,
   toCopy,
   onCopy,
+  style,
 }: Props) {
   const [copied, setCopied] = useState(false);
 
@@ -33,6 +36,7 @@ export default function CopyButton({
   if (copied) {
     return (
       <TertiaryButton
+        style={style}
         title="Copied"
         icon={TickCircle}
         iconColor={Colors.success}
@@ -45,6 +49,7 @@ export default function CopyButton({
 
   return (
     <TertiaryButton
+      style={style}
       title={title}
       icon={Copy}
       color={titleColor}
