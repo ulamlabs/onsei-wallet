@@ -160,7 +160,8 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
 async function fetchRegistry(): Promise<CosmToken[]> {
   const url =
     "https://raw.githubusercontent.com/sei-protocol/chain-registry/main/assetlist.json";
-  const data = await fetchWithRetry(url);
+  const response = await fetchWithRetry(url);
+  const data = await response.json();
   return data[getNetwork()].map(parseRegistryToken);
 }
 
@@ -171,7 +172,8 @@ async function fetchNativeTokens(): Promise<CosmToken[]> {
   const url = `https://rest.${NODE_URL[getNode()]}/cosmos/bank/v1beta1/denoms_metadata?${params}`;
   let tokens: CosmToken[] = [];
   while (true) {
-    const data = await fetchWithRetry(url);
+    const response = await fetchWithRetry(url);
+    const data = await response.json();
     tokens = [...tokens, ...data.metadatas.map(parseNativeTokenMetadata)];
     if (!data.pagination.nextKey) {
       break;
