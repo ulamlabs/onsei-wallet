@@ -33,8 +33,10 @@ export default function TransactionSettingscreen({
               The blockchain network charges the fee, and increasing it speeds
               up your transaction. Our wallet is free to use.
             </Paragraph>
-            <Column style={{ marginTop: 16 }}>
+            <Column style={{ marginTop: 16, gap: 10 }}>
               <FeeBox title="Low" tokenId={tokenId} />
+              <FeeBox title="Medium" tokenId={tokenId} />
+              <FeeBox title="High" tokenId={tokenId} />
             </Column>
           </View>
           <View>

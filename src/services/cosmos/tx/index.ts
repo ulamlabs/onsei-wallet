@@ -1,3 +1,3 @@
-export * from "./estimateTransferFee";
+export * from "./estimateTransferGas";
 export * from "./transferToken";
 export * from "./types";
