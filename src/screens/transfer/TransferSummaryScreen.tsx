@@ -7,8 +7,10 @@ import {
   SwipeButton,
   Text,
 } from "@/components";
+import { NETWORK_NAMES } from "@/const";
+import { useGas } from "@/modules/gas";
 import { estimateTransferFee } from "@/services/cosmos/tx";
-import { useTokensStore } from "@/store";
+import { useFeeStore, useSettingsStore, useTokensStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { formatAmount, trimAddress } from "@/utils";
@@ -32,6 +34,16 @@ export default function TransferSummaryScreen({
   const [fee, setFee] = useState<StdFee | null>(null);
   const [estimationFailed, setEstimationFailed] = useState(false);
   const [scrollEnabled, setScrollEnabled] = useState(true);
+  const {
+    settings: { node },
+  } = useSettingsStore();
+  const { selectedGasPrice } = useFeeStore();
+  const { data: gasData } = useGas();
+  const networkName = NETWORK_NAMES[node] as "pacific-1" | "atlantic-2";
+  const minGasPrice = gasData?.[networkName].min_gas_price;
+  const gas = minGasPrice
+    ? `${minGasPrice * selectedGasPrice.multiplier}usei`
+    : "0.1usei";
 
   useEffect(() => {
     getFeeEstimation();
@@ -70,7 +82,7 @@ export default function TransferSummaryScreen({
     setEstimationFailed(false);
 
     updateBalances([sei]);
-    estimateTransferFee(transfer.recipient.address, token, intAmount)
+    estimateTransferFee(transfer.recipient.address, token, intAmount, gas)
       .then(setFee)
       .catch(() => setEstimationFailed(true));
   }

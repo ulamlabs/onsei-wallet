@@ -1,5 +1,6 @@
 import {
   Column,
+  Loader,
   NumericPad,
   Paragraph,
   PrimaryButton,
@@ -8,14 +9,18 @@ import {
   SmallButton,
   TextInput,
 } from "@/components";
+import { NETWORK_NAMES } from "@/const";
 import { useInputState } from "@/hooks";
-import { useTokensStore } from "@/store";
-import { FontWeights } from "@/styles";
+import { useGas } from "@/modules/gas";
+import { estimateTransferFee } from "@/services/cosmos/tx";
+import { useFeeStore, useSettingsStore, useTokensStore } from "@/store";
+import { Colors, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { parseAmount } from "@/utils";
 import { formatAmount } from "@/utils/formatAmount";
+import { StdFee } from "@cosmjs/stargate";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import TransferAmount from "./TransferAmount";
 
 type TransferAmountScreenProps = NativeStackScreenProps<
@@ -31,6 +36,43 @@ export default function TransferAmountScreen({
   const { tokenMap, updateBalances } = useTokensStore();
   const { tokenId, recipient } = route.params;
   const memoInput = useInputState();
+  const [fee, setFee] = useState<StdFee | null>(null);
+  const [estimationFailed, setEstimationFailed] = useState(false);
+  const [loadingFee, setLoadingFee] = useState(false);
+  const {
+    settings: { node },
+  } = useSettingsStore();
+  const { selectedGasPrice } = useFeeStore();
+  const { data: gasData } = useGas();
+  const networkName = NETWORK_NAMES[node] as "pacific-1" | "atlantic-2";
+  const minGasPrice = gasData?.[networkName].min_gas_price;
+  const gas = minGasPrice
+    ? `${minGasPrice * selectedGasPrice.multiplier}usei`
+    : "0.1usei";
+
+  useEffect(() => {
+    if (!decimalAmount) {
+      return;
+    }
+    setLoadingFee(true);
+    setFee(null);
+    setEstimationFailed(false);
+
+    const id = setTimeout(() => {
+      getFeeEstimation();
+    }, 1500);
+
+    return () => {
+      clearTimeout(id);
+    };
+  }, [decimalAmount]);
+
+  const feeInt = useMemo(() => {
+    if (fee) {
+      return BigInt(fee.amount[0].amount);
+    }
+    return 0n;
+  }, [fee]);
 
   const token = useMemo(() => tokenMap.get(tokenId)!, [tokenId, tokenMap]);
 
@@ -91,8 +133,45 @@ export default function TransferAmountScreen({
     return <></>;
   }
 
+  async function getFeeEstimation() {
+    await estimateTransferFee(recipient.address, token, intAmount, gas)
+      .then(setFee)
+      .catch(() => setEstimationFailed(true))
+      .finally(() => setLoadingFee(false));
+  }
+
+  function getFeeElement() {
+    if (fee) {
+      const usdFee = +formatAmount(feeInt, token.decimals).replaceAll(",", "");
+      const displayedFee = token.price
+        ? token.price * usdFee < 0.01
+          ? `<$0.01`
+          : `$${usdFee.toFixed(2)}`
+        : formatAmount(feeInt, token.decimals);
+      return <Paragraph>{displayedFee}</Paragraph>;
+    }
+
+    if (estimationFailed) {
+      return (
+        <Paragraph style={{ color: Colors.danger }}>
+          Fee estimation failed
+        </Paragraph>
+      );
+    }
+    if (loadingFee) {
+      return <Loader size="medium" />;
+    }
+
+    return <Paragraph>$0.00</Paragraph>;
+  }
+
+  function refershFn() {
+    updateBalances();
+    getFeeEstimation();
+  }
+
   return (
-    <SafeLayout refreshFn={updateBalances}>
+    <SafeLayout refreshFn={refershFn}>
       <Column style={{ flex: 1, gap: 24 }}>
         <Row style={{ alignItems: "center" }}>
           <Paragraph style={{ fontFamily: FontWeights.regular, fontSize: 16 }}>
@@ -110,9 +189,7 @@ export default function TransferAmountScreen({
             decimalAmount={decimalAmount}
             error={!hasFunds}
           />
-          <Paragraph>
-            Network fee: {decimalAmount ? "<$0.01" : "$0.00"}
-          </Paragraph>
+          <Paragraph>Network fee: {getFeeElement()}</Paragraph>
         </Column>
 
         <Column>
