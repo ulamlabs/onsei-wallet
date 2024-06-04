@@ -6,14 +6,13 @@ import {
   Paragraph,
   PrimaryButton,
   SafeLayout,
-  Text,
 } from "@/components";
-import { useAccountsStore, useModalStore } from "@/store";
-import { Colors, FontWeights } from "@/styles";
+import { useCopyAlert } from "@/hooks";
+import { useAccountsStore } from "@/store";
+import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as Clipboard from "expo-clipboard";
-import { SecuritySafe } from "iconsax-react-native";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 
@@ -31,31 +30,19 @@ export default function MnemonicScreen({
   const { getMnemonic } = useAccountsStore();
   const [mnemonic, setMnemonic] = useState<string[]>([]);
   const [copied, setCopied] = useState(false);
-  const { alert } = useModalStore();
+  const showCopyAlert = useCopyAlert();
 
   useEffect(() => {
     setMnemonic(getMnemonic(address).split(" "));
-    return () => setMnemonic([]);
+    return () => {
+      setMnemonic([]);
+      Clipboard.setStringAsync("");
+    };
   }, [address, getMnemonic]);
 
   function onCopy() {
     setCopied(true);
-    alert({
-      title: "Paste it in safe place",
-      description: (
-        <>
-          <Text style={{ fontFamily: FontWeights.bold, color: Colors.text100 }}>
-            Password Manager
-          </Text>{" "}
-          <Text style={{ color: Colors.text100 }}>
-            is a great option. Visiting unsecured sites poses a risk to
-            clipboard data.
-          </Text>
-        </>
-      ),
-      ok: "Got it",
-      icon: SecuritySafe,
-    });
+    showCopyAlert();
   }
 
   function onDone() {

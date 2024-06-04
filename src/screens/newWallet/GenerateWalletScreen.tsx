@@ -8,15 +8,14 @@ import {
   PrimaryButton,
   Row,
   SafeLayout,
-  Text,
 } from "@/components";
+import { useCopyAlert } from "@/hooks";
 import { addSkipButton } from "@/navigation/header/NewWalletHeader";
-import { Wallet, useAccountsStore, useModalStore } from "@/store";
-import { Colors, FontWeights } from "@/styles";
+import { Wallet, useAccountsStore } from "@/store";
+import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as Clipboard from "expo-clipboard";
-import { SecuritySafe } from "iconsax-react-native";
 import { default as React, useEffect, useState } from "react";
 import { View } from "react-native";
 import { storeNewAccount } from "./storeNewAccount";
@@ -31,9 +30,9 @@ export default function GenerateWalletScreen({
   route,
 }: GenerateWalletProps) {
   const accountsStore = useAccountsStore();
-  const { alert } = useModalStore();
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [copied, setCopied] = useState(false);
+  const showCopyAlert = useCopyAlert();
 
   useEffect(() => {
     accountsStore.generateWallet().then(setWallet);
@@ -60,22 +59,7 @@ export default function GenerateWalletScreen({
 
   function onCopy() {
     setCopied(true);
-    alert({
-      title: "Paste it in safe place",
-      description: (
-        <>
-          <Text style={{ fontFamily: FontWeights.bold, color: Colors.text100 }}>
-            Password Manager
-          </Text>{" "}
-          <Text style={{ color: Colors.text100 }}>
-            is a great option. Visiting unsecured sites poses a risk to
-            clipboard data.
-          </Text>
-        </>
-      ),
-      ok: "Got it",
-      icon: SecuritySafe,
-    });
+    showCopyAlert();
   }
 
   function onNext() {
