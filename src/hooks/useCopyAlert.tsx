@@ -14,7 +14,7 @@ export function useCopyAlert() {
         <>
           <Text style={{ fontFamily: FontWeights.bold, color: Colors.text100 }}>
             Password Manager
-          </Text>
+          </Text>{" "}
           <Text style={{ color: Colors.text100 }}>
             is a great option. Visiting unsecured sites poses a risk to
             clipboard data.
