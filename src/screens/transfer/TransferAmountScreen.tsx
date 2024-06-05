@@ -153,7 +153,7 @@ export default function TransferAmountScreen({
       );
     }
     if (loadingFee) {
-      return <Loader size="medium" />;
+      return <Loader size="small" />;
     }
 
     return <Paragraph>$0.00</Paragraph>;
