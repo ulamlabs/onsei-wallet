@@ -7,7 +7,7 @@ type NetworkConfig = {
   min_gas_price: number;
 };
 
-type GasResponse = {
+export type GasResponse = {
   [network in NetworkNames]: NetworkConfig;
 };
 async function getGasPrices() {

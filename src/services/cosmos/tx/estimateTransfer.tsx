@@ -25,5 +25,12 @@ export async function estimateTransferFee(
   gasPrice: string,
 ): Promise<StdFee> {
   const gas = await estimateTransferGas(receiver, token, amount);
+  return estimateTransferFeeWithGas(gasPrice, gas);
+}
+
+export function estimateTransferFeeWithGas(
+  gasPrice: string,
+  gas: number,
+): StdFee {
   return calculateFee(Math.ceil(gas * GAS_MULTIPLIER), gasPrice);
 }

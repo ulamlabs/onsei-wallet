@@ -7,14 +7,12 @@ import {
   SwipeButton,
   Text,
 } from "@/components";
-import { NETWORK_NAMES } from "@/const";
-import { useGas } from "@/modules/gas";
+import { useGasPrice } from "@/hooks";
 import { estimateTransferFee } from "@/services/cosmos/tx";
-import { useFeeStore, useSettingsStore, useTokensStore } from "@/store";
+import { useFeeStore, useTokensStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
-import { formatAmount, trimAddress } from "@/utils";
-import { StdFee } from "@cosmjs/stargate";
+import { formatAmount, formatFee, trimAddress } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
@@ -31,22 +29,14 @@ export default function TransferSummaryScreen({
 }: TransferSummaryScreenProps) {
   const transfer = route.params;
   const { sei, updateBalances, tokenMap } = useTokensStore();
-  const [fee, setFee] = useState<StdFee | null>(null);
   const [estimationFailed, setEstimationFailed] = useState(false);
   const [scrollEnabled, setScrollEnabled] = useState(true);
-  const {
-    settings: { node },
-  } = useSettingsStore();
-  const { selectedGasPrice } = useFeeStore();
-  const { data: gasData } = useGas();
-  const networkName = NETWORK_NAMES[node] as "pacific-1" | "atlantic-2";
-  const minGasPrice = gasData?.[networkName].min_gas_price;
-  const gas = minGasPrice
-    ? `${minGasPrice * selectedGasPrice.multiplier}usei`
-    : "0.1usei";
+  const { fee, setFee } = useFeeStore();
+
+  const { gasPrice } = useGasPrice();
 
   useEffect(() => {
-    getFeeEstimation();
+    feeEstimation();
   }, []);
 
   const token = useMemo(
@@ -77,12 +67,12 @@ export default function TransferSummaryScreen({
     return seiLeft >= 0;
   }, [fee, sei.balance]);
 
-  function getFeeEstimation() {
+  function feeEstimation() {
     setFee(null);
     setEstimationFailed(false);
 
     updateBalances([sei]);
-    estimateTransferFee(transfer.recipient.address, token, intAmount, gas)
+    estimateTransferFee(transfer.recipient.address, token, intAmount, gasPrice)
       .then(setFee)
       .catch(() => setEstimationFailed(true));
   }
@@ -96,11 +86,7 @@ export default function TransferSummaryScreen({
 
   function getFeeElement() {
     if (fee) {
-      return (
-        <Text>
-          {formatAmount(feeInt, sei.decimals)} {sei.symbol}
-        </Text>
-      );
+      return <Text>{formatFee(feeInt, token)}</Text>;
     }
 
     if (estimationFailed) {
@@ -113,7 +99,7 @@ export default function TransferSummaryScreen({
   }
 
   return (
-    <SafeLayout refreshFn={getFeeEstimation} scrollEnabled={scrollEnabled}>
+    <SafeLayout refreshFn={feeEstimation} scrollEnabled={scrollEnabled}>
       <TransferAmount
         token={token}
         decimalAmount={formatAmount(intAmount, token.decimals, {

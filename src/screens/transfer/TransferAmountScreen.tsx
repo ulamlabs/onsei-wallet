@@ -9,16 +9,16 @@ import {
   SmallButton,
   TextInput,
 } from "@/components";
-import { NETWORK_NAMES } from "@/const";
-import { useInputState } from "@/hooks";
-import { useGas } from "@/modules/gas";
-import { estimateTransferFee } from "@/services/cosmos/tx";
-import { useFeeStore, useSettingsStore, useTokensStore } from "@/store";
+import { useGasPrice, useInputState } from "@/hooks";
+import {
+  estimateTransferFeeWithGas,
+  estimateTransferGas,
+} from "@/services/cosmos/tx";
+import { useFeeStore, useTokensStore } from "@/store";
 import { Colors, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
-import { parseAmount } from "@/utils";
+import { formatFee, parseAmount } from "@/utils";
 import { formatAmount } from "@/utils/formatAmount";
-import { StdFee } from "@cosmjs/stargate";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useMemo, useState } from "react";
 import TransferAmount from "./TransferAmount";
@@ -36,19 +36,10 @@ export default function TransferAmountScreen({
   const { tokenMap, updateBalances } = useTokensStore();
   const { tokenId, recipient } = route.params;
   const memoInput = useInputState();
-  const [fee, setFee] = useState<StdFee | null>(null);
   const [estimationFailed, setEstimationFailed] = useState(false);
   const [loadingFee, setLoadingFee] = useState(false);
-  const {
-    settings: { node },
-  } = useSettingsStore();
-  const { selectedGasPrice } = useFeeStore();
-  const { data: gasData } = useGas();
-  const networkName = NETWORK_NAMES[node] as "pacific-1" | "atlantic-2";
-  const minGasPrice = gasData?.[networkName].min_gas_price;
-  const gas = minGasPrice
-    ? `${minGasPrice * selectedGasPrice.multiplier}usei`
-    : "0.1usei";
+  const { fee, setFee, gas, setGas, setGasPrice } = useFeeStore();
+  const { gasPrice } = useGasPrice();
 
   useEffect(() => {
     if (!decimalAmount) {
@@ -58,14 +49,22 @@ export default function TransferAmountScreen({
     setFee(null);
     setEstimationFailed(false);
 
-    const id = setTimeout(() => {
-      getFeeEstimation();
+    const id = setTimeout(async () => {
+      await feeEstimation();
     }, 1500);
 
     return () => {
       clearTimeout(id);
     };
   }, [decimalAmount]);
+
+  useEffect(() => {
+    return () => {
+      setGasPrice("Low");
+      setFee(null);
+      setGas(0);
+    };
+  }, []);
 
   const feeInt = useMemo(() => {
     if (fee) {
@@ -133,22 +132,17 @@ export default function TransferAmountScreen({
     return <></>;
   }
 
-  async function getFeeEstimation() {
-    await estimateTransferFee(recipient.address, token, intAmount, gas)
-      .then(setFee)
+  async function feeEstimation() {
+    await estimateTransferGas(recipient.address, token, intAmount)
+      .then(setGas)
       .catch(() => setEstimationFailed(true))
       .finally(() => setLoadingFee(false));
+    setFee(estimateTransferFeeWithGas(gasPrice, gas));
   }
 
   function getFeeElement() {
     if (fee) {
-      const usdFee = +formatAmount(feeInt, token.decimals).replaceAll(",", "");
-      const displayedFee = token.price
-        ? token.price * usdFee < 0.01
-          ? `<$0.01`
-          : `$${usdFee.toFixed(2)}`
-        : formatAmount(feeInt, token.decimals);
-      return <Paragraph>{displayedFee}</Paragraph>;
+      return <Paragraph>{formatFee(feeInt, token)}</Paragraph>;
     }
 
     if (estimationFailed) {
@@ -167,7 +161,7 @@ export default function TransferAmountScreen({
 
   function refershFn() {
     updateBalances();
-    getFeeEstimation();
+    feeEstimation();
   }
 
   return (
@@ -201,7 +195,7 @@ export default function TransferAmountScreen({
           <PrimaryButton
             title="Go to summary"
             onPress={goToSummary}
-            disabled={!intAmount || !hasFunds}
+            disabled={!intAmount || !hasFunds || loadingFee}
           />
         </Column>
 
