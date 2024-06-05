@@ -1,9 +1,10 @@
+import { NETWORK_NAMES, NODE_URL } from "@/const";
+import { fetchWithRetry } from "@/modules/api";
+import { getUSDPrices, usdPrices } from "@/modules/prices";
 import { CosmToken, CosmTokenWithPrice } from "@/services/cosmos";
 import { loadFromStorage, matchPriceToToken, saveToStorage } from "@/utils";
 import { create } from "zustand";
 import { useSettingsStore } from "./settings";
-import { NETWORK_NAMES, NODE_URL } from "@/const";
-import { getUSDPrices, usdPrices } from "@/modules/prices";
 
 type TokenPrice = {
   price: number;
@@ -159,7 +160,7 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
 async function fetchRegistry(): Promise<CosmToken[]> {
   const url =
     "https://raw.githubusercontent.com/sei-protocol/chain-registry/main/assetlist.json";
-  const response = await fetch(url);
+  const response = await fetchWithRetry(url);
   const data = await response.json();
   return data[getNetwork()].map(parseRegistryToken);
 }
@@ -171,7 +172,7 @@ async function fetchNativeTokens(): Promise<CosmToken[]> {
   const url = `https://rest.${NODE_URL[getNode()]}/cosmos/bank/v1beta1/denoms_metadata?${params}`;
   let tokens: CosmToken[] = [];
   while (true) {
-    const response = await fetch(url);
+    const response = await fetchWithRetry(url);
     const data = await response.json();
     tokens = [...tokens, ...data.metadatas.map(parseNativeTokenMetadata)];
     if (!data.pagination.nextKey) {
