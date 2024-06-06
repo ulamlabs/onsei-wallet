@@ -15,7 +15,7 @@ export default function BiometricsDisableScreen({
 
   function disableBiometrics() {
     setSetting("auth.biometricsEnabled", false);
-    navigation.navigate("Security");
+    navigation.navigate("Security and privacy");
   }
 
   return (

@@ -1,6 +1,7 @@
 import {
   Column,
   DangerButton,
+  Headline,
   Paragraph,
   SafeLayout,
   TertiaryButton,
@@ -12,8 +13,11 @@ import {
   useOnboardingStore,
   useSettingsStore,
 } from "@/store";
+import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Trash } from "iconsax-react-native";
+import { View } from "react-native";
 
 type ResetAppScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -39,18 +43,46 @@ export default function ResetAppScreen({ navigation }: ResetAppScreenProps) {
 
   return (
     <SafeLayout>
-      <Column>
-        <Paragraph>
-          This will remove all application data including your wallets and
-          settings. Are you sure?
-        </Paragraph>
+      <Column style={{ minHeight: "100%", justifyContent: "space-between" }}>
+        <Column
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 32,
+          }}
+        >
+          <View
+            style={{
+              width: 108,
+              height: 108,
+              padding: 20,
+              backgroundColor: Colors.danger100,
+              borderRadius: 22,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Trash color={Colors.danger200} size={88} />
+          </View>
+          <Column style={{ gap: 8 }}>
+            <Headline>Reset and clear app</Headline>
+            <Paragraph style={{ textAlign: "center" }}>
+              Before you remove all accounts and data, make sure that your
+              sectret phrase are backed up.
+            </Paragraph>
+          </Column>
+        </Column>
 
-        <TertiaryButton
-          title="No, take me from here"
-          onPress={() => navigation.goBack()}
-        />
+        <Column>
+          <DangerButton
+            style={{ backgroundColor: Colors.danger200 }}
+            title="Reset app"
+            onPress={onRemove}
+          />
 
-        <DangerButton title="Yes, clear all app data" onPress={onRemove} />
+          <TertiaryButton title="Cancel" onPress={() => navigation.goBack()} />
+        </Column>
       </Column>
     </SafeLayout>
   );

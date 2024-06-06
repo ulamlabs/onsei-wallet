@@ -1,5 +1,5 @@
-import { Paragraph, RadioGroup, SafeLayout } from "@/components";
-import { NODES } from "@/const";
+import { RadioGroup, SafeLayout } from "@/components";
+import { NETWORK_NAMES, NODES } from "@/const";
 import { useTransactions } from "@/modules/transactions";
 import {
   useAccountsStore,
@@ -30,13 +30,22 @@ export default function NodeSettingsScreen() {
     }
   }
 
+  const options = NODES.map((name) => ({
+    name,
+    subtitle: NETWORK_NAMES[name],
+    description:
+      name === "MainNet"
+        ? "Make a real transactions on a blockchain with actual value."
+        : "Make a test transactions that have no real value.",
+  }));
+
   return (
     <SafeLayout>
-      <Paragraph style={{ textAlign: "center", marginBottom: 20 }}>
-        Select active node in the wallet
-      </Paragraph>
-
-      <RadioGroup options={NODES} activeOption={node} onChange={onNodeChange} />
+      <RadioGroup
+        options={options}
+        activeOption={node}
+        onChange={onNodeChange}
+      />
     </SafeLayout>
   );
 }

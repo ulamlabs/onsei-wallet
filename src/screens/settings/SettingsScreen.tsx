@@ -1,32 +1,36 @@
-import {
-  Column,
-  DangerButton,
-  OptionGroup,
-  Link,
-  SafeLayout,
-} from "@/components";
-import { useAuthStore } from "@/store";
-import { NavigatorParamsList } from "@/types";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Column, Link, OptionGroup, SafeLayout } from "@/components";
+import { useSettingsStore } from "@/store";
+import { Colors } from "@/styles";
+import { Global, SecuritySafe, Wallet } from "iconsax-react-native";
 
-type SettingsProps = NativeStackScreenProps<NavigatorParamsList, "Settings">;
-
-export default function SettingsScreen({ navigation }: SettingsProps) {
-  const authStore = useAuthStore();
-
-  async function onRemove() {
-    authStore.authorize(navigation, "Clear app data", undefined);
-  }
+export default function SettingsScreen() {
+  const {
+    settings: { node },
+  } = useSettingsStore();
 
   return (
     <SafeLayout>
-      <Column>
+      <Column style={{ gap: 32 }}>
         <OptionGroup>
-          <Link label="Security" navigateTo="Security" />
-          <Link label="Node Settings" navigateTo="Change Node" />
+          <Link
+            label="Manage Wallets"
+            navigateTo="Wallets"
+            icon={<Wallet size={22} color={Colors.text} />}
+          />
+          <Link
+            label="Network"
+            navigateTo="Select network"
+            icon={<Global size={22} color={Colors.text} />}
+            labelRight={node}
+          />
         </OptionGroup>
-
-        <DangerButton title="Clear app data" onPress={onRemove} />
+        <OptionGroup>
+          <Link
+            label="Security and privacy"
+            navigateTo="Security and privacy"
+            icon={<SecuritySafe size={22} color={Colors.text} />}
+          />
+        </OptionGroup>
       </Column>
     </SafeLayout>
   );

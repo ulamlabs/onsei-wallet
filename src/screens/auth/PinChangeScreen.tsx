@@ -24,7 +24,7 @@ export default function PinChangeScreen({ navigation }: ChangePinScreenProps) {
 
   function saveNewPin(pinHash: string) {
     authStore.setPinHash(pinHash);
-    navigation.navigate("Security");
+    navigation.navigate("Security and privacy");
   }
 
   if (!authorized) {

@@ -15,7 +15,7 @@ export default function PinDisableScreen({
 
   async function resetPin() {
     await authStore.resetPin();
-    navigation.navigate("Security");
+    navigation.navigate("Security and privacy");
   }
 
   return <ProtectedAction action={resetPin} disableBiometrics={true} />;

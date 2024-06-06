@@ -51,12 +51,12 @@ export type Recipient = {
 
 export type HomeParamList = {
   Home: undefined;
-  Security: undefined;
+  "Security and privacy": undefined;
   "Enable Passcode": { nextRoute: keyof NavigatorParamsList };
   "Disable Passcode": undefined;
   "Change Passcode": undefined;
   "Disable Face ID / Touch ID": undefined;
-  "Change Node": undefined;
+  "Select network": undefined;
   "Clear app data": undefined;
   Authorize: { nextRoute: keyof NavigatorParamsList; nextParams?: any };
   "Your SEI address": undefined;
@@ -105,8 +105,12 @@ export default function HomeNavigation() {
         component={BottomBarsNavigation}
         options={{ headerShown: false }}
       />
-      <Screen name="Security" component={SecuritySettingsScreen} />
-      <Screen name="Clear app data" component={ResetAppScreen} />
+      <Screen name="Security and privacy" component={SecuritySettingsScreen} />
+      <Screen
+        name="Clear app data"
+        component={ResetAppScreen}
+        options={{ title: "", headerBackVisible: false }}
+      />
       <Screen
         name="Enable Passcode"
         component={PinEnableScreen}
@@ -118,7 +122,7 @@ export default function HomeNavigation() {
         name="Disable Face ID / Touch ID"
         component={BiometricsDisableScreen}
       />
-      <Screen name="Change Node" component={NodeSettingsScreen} />
+      <Screen name="Select network" component={NodeSettingsScreen} />
       <Screen name="Authorize" component={AuthorizeScreen} />
       <Screen name="Your SEI address" component={ReceiveAssets} />
       <Screen

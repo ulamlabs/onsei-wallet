@@ -4,6 +4,8 @@ import { useNavigation } from "@react-navigation/core";
 import { ArrowRight2 } from "iconsax-react-native";
 import { ReactElement } from "react";
 import { Pressable } from "react-native";
+import { Row } from "../layout";
+import { Text } from "../typography";
 import Option from "./Option";
 
 export type LinkProps = {
@@ -13,6 +15,7 @@ export type LinkProps = {
   disabled?: boolean;
   params?: NavigatorParamsList[keyof NavigatorParamsList];
   askPin?: boolean;
+  labelRight?: string;
 };
 
 export default function Link({
@@ -22,6 +25,7 @@ export default function Link({
   disabled,
   params,
   askPin,
+  labelRight,
 }: LinkProps) {
   const navigation = useNavigation<NavigationProp>();
   const { authorize } = useAuthStore();
@@ -38,7 +42,10 @@ export default function Link({
   return (
     <Pressable onPress={onPress}>
       <Option label={label} icon={icon} disabled={disabled}>
-        <ArrowRight2 color="white" />
+        <Row>
+          {labelRight && <Text>{labelRight}</Text>}
+          <ArrowRight2 color="white" />
+        </Row>
       </Option>
     </Pressable>
   );
