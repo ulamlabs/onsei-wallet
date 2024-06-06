@@ -2,8 +2,9 @@ import { useAccountsStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import React, { useEffect, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { SafeLayout, TransactionList } from "@/components";
+import { SafeLayout } from "@/components";
 import { Transaction, useTransactions } from "@/modules/transactions";
+import { TransactionList } from "../transactions";
 
 type Props = NativeStackScreenProps<
   NavigatorParamsList,

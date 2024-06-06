@@ -1,8 +1,5 @@
-export type Transaction = {
-  amount: bigint;
-  fee: bigint;
+type TransactionBase = {
   token: string;
-  timestamp: Date;
   from: string;
   to: string;
   type: string;
@@ -10,6 +7,19 @@ export type Transaction = {
   hash: string;
   contract: string;
   contractAction: string;
+  memo: string;
+};
+
+export type Transaction = TransactionBase & {
+  amount: bigint;
+  fee: bigint;
+  timestamp: Date;
+};
+
+export type SerializedTx = TransactionBase & {
+  amount: string;
+  fee: string;
+  timestamp: string;
 };
 
 export type TransactionsData = {
@@ -23,6 +33,7 @@ export type TxResponse = {
   gas_wanted: string;
   code: number;
   events: TxEvent[];
+  tx?: TxData;
 };
 
 export type TxEvent = {
@@ -33,4 +44,18 @@ export type TxEvent = {
 export type TxEventAttribute = {
   key: string;
   value: string;
+};
+
+export type TxData = {
+  "@type": string;
+  body: TxBody;
+  signatures: string[];
+};
+
+export type TxBody = {
+  extension_options: string[];
+  memo: string;
+  messages: any[];
+  non_critical_extension_options: string[];
+  timeout_height: string;
 };

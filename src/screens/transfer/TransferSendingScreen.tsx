@@ -56,10 +56,19 @@ export default function TransferSendingScreen({
         intAmount,
         recipient: transfer.recipient.address,
       });
-      storeNewTransaction(
-        activeAccount!.address,
-        parseTx(deliverTxResponseToTxResponse(tx)),
+      const parsedTx = parseTx(
+        deliverTxResponseToTxResponse(tx),
+        transfer.memo,
       );
+      if (parsedTx.status === "fail") {
+        parsedTx.amount = BigInt(transfer.intAmount);
+        parsedTx.from = activeAccount!.address;
+        parsedTx.to = transfer.recipient.address;
+        parsedTx.token = transfer.tokenId;
+        parsedTx.type = "sent";
+      }
+
+      storeNewTransaction(activeAccount!.address, parsedTx);
       const amount = formatAmount(intAmount, token.decimals);
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       navigation.navigate("transferSent", {

@@ -4,7 +4,7 @@ import { View } from "react-native";
 import { Text } from "../typography";
 
 type OptionProps = PropsWithChildren & {
-  label: string | JSX.Element;
+  label?: string | JSX.Element;
   icon?: ReactElement;
   disabled?: boolean;
 };
@@ -28,10 +28,12 @@ export default function Option({
           ...(disabled ? { opacity: 0.3 } : {}),
         }}
       >
-        <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
-          {icon}
-          <Text style={{ color: "white", fontSize: 16 }}>{label}</Text>
-        </View>
+        {(label || icon) && (
+          <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
+            {icon}
+            <Text style={{ color: "white", fontSize: 16 }}>{label}</Text>
+          </View>
+        )}
         {children}
       </View>
     </View>

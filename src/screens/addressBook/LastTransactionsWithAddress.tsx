@@ -4,9 +4,10 @@ import { NavigationProp } from "@/types";
 import { WalletSearch } from "iconsax-react-native";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
-import { Column, TertiaryButton, Text, TransactionList } from "@/components";
+import { Column, TertiaryButton, Text } from "@/components";
 import { Transaction, useTransactions } from "@/modules/transactions";
 import { useNavigation } from "@react-navigation/native";
+import { TransactionList } from "../transactions";
 
 type Props = { addressData: SavedAddress };
 

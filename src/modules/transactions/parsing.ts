@@ -29,12 +29,13 @@ export function deliverTxResponseToTxResponse(
   };
 }
 
-export function parseTx(tx: TxResponse): Transaction {
+export function parseTx(tx: TxResponse, memo = ""): Transaction {
   return {
     timestamp: new Date(tx.timestamp),
     fee: BigInt(tx.gas_used),
     hash: tx.txhash,
     status: tx.code === 0 ? "success" : "fail",
+    memo: tx.tx?.body?.memo || memo,
     ...getParamsFromEvents(tx),
   };
 }
