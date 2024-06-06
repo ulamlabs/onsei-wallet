@@ -1,6 +1,6 @@
 import { useGasPrice } from "@/hooks";
 import { estimateTransferFeeWithGas } from "@/services/cosmos/tx";
-import { useFeeStore, useTokensStore } from "@/store";
+import { useSettingsStore, useTokensStore } from "@/store";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { formatAmount, formatFee } from "@/utils";
 import { useMemo } from "react";
@@ -13,11 +13,19 @@ type Props = {
   title: "Low" | "Medium" | "High";
   tokenId: string;
   selected?: boolean;
+  gas: number;
+  gasPrices: { speed: "Low" | "Medium" | "High"; multiplier: number }[];
 };
 
-export default function FeeBox({ title, tokenId, selected = false }: Props) {
+export default function FeeBox({
+  title,
+  tokenId,
+  selected = false,
+  gas,
+  gasPrices,
+}: Props) {
   const { tokenMap } = useTokensStore();
-  const { setGasPrice, gasPrices, gas, setFee } = useFeeStore();
+  const { setSetting } = useSettingsStore();
   const { minGasPrice } = useGasPrice();
 
   const token = useMemo(() => tokenMap.get(tokenId)!, [tokenId, tokenMap]);
@@ -36,8 +44,10 @@ export default function FeeBox({ title, tokenId, selected = false }: Props) {
   return (
     <Pressable
       onPress={() => {
-        setGasPrice(title);
-        setFee(fee);
+        setSetting("selectedGasPrice", {
+          speed: title,
+          multiplier: speedMultiplier,
+        });
       }}
     >
       <Box
@@ -58,9 +68,11 @@ export default function FeeBox({ title, tokenId, selected = false }: Props) {
             >
               {formatAmount(feeInt, token.decimals)} {token.symbol}
             </Text>
-            <Text style={{ fontSize: FontSizes.xs, color: Colors.text100 }}>
-              {formatFee(feeInt, token)}
-            </Text>
+            {token.price && (
+              <Text style={{ fontSize: FontSizes.xs, color: Colors.text100 }}>
+                {formatFee(feeInt, token)}
+              </Text>
+            )}
           </Column>
         </Row>
       </Box>

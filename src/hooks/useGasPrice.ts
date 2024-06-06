@@ -1,12 +1,11 @@
 import { NETWORK_NAMES } from "@/const";
 import { useGas } from "@/modules/gas";
-import { useFeeStore, useSettingsStore } from "@/store";
+import { useSettingsStore } from "@/store";
 
 export const useGasPrice = () => {
   const {
-    settings: { node },
+    settings: { node, selectedGasPrice },
   } = useSettingsStore();
-  const { selectedGasPrice } = useFeeStore();
   const { data: gasPrices } = useGas();
   const networkName = NETWORK_NAMES[node] as "pacific-1" | "atlantic-2";
   const minGasPrice = gasPrices?.[networkName].min_gas_price;

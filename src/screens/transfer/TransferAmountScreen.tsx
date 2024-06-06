@@ -14,11 +14,12 @@ import {
   estimateTransferFeeWithGas,
   estimateTransferGas,
 } from "@/services/cosmos/tx";
-import { useFeeStore, useTokensStore } from "@/store";
+import { useTokensStore } from "@/store";
 import { Colors, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { formatFee, parseAmount } from "@/utils";
 import { formatAmount } from "@/utils/formatAmount";
+import { StdFee } from "@cosmjs/stargate";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useMemo, useState } from "react";
 import TransferAmount from "./TransferAmount";
@@ -38,7 +39,8 @@ export default function TransferAmountScreen({
   const memoInput = useInputState();
   const [estimationFailed, setEstimationFailed] = useState(false);
   const [loadingFee, setLoadingFee] = useState(false);
-  const { fee, setFee, gas, setGas, setGasPrice } = useFeeStore();
+  const [fee, setFee] = useState<StdFee | null>(null);
+  const [gas, setGas] = useState(0);
   const { gasPrice } = useGasPrice();
 
   useEffect(() => {
@@ -60,11 +62,18 @@ export default function TransferAmountScreen({
 
   useEffect(() => {
     return () => {
-      setGasPrice("Low");
       setFee(null);
       setGas(0);
     };
   }, []);
+
+  useEffect(() => {
+    navigation.setParams({ gas });
+  }, [gas]);
+
+  useEffect(() => {
+    setFee(estimateTransferFeeWithGas(gasPrice, gas));
+  }, [gasPrice]);
 
   const feeInt = useMemo(() => {
     if (fee) {
@@ -142,7 +151,13 @@ export default function TransferAmountScreen({
 
   function getFeeElement() {
     if (fee) {
-      return <Paragraph>{formatFee(feeInt, token)}</Paragraph>;
+      return (
+        <Paragraph>
+          {token.price
+            ? formatFee(feeInt, token)
+            : formatAmount(feeInt, token.decimals)}
+        </Paragraph>
+      );
     }
 
     if (estimationFailed) {

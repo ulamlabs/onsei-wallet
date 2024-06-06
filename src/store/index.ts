@@ -1,7 +1,6 @@
 export * from "./account";
 export * from "./addressBook";
 export * from "./auth";
-export * from "./fee";
 export * from "./modal";
 export * from "./onboarding";
 export * from "./settings";

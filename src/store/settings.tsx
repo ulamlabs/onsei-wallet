@@ -7,6 +7,10 @@ const SETTINGS_KEY = "settings.json";
 const DEFAULT_SETTINGS = {
   "auth.biometricsEnabled": false,
   node: "TestNet" as Node,
+  selectedGasPrice: { speed: "Low", multiplier: 1 } as {
+    speed: "Low" | "Medium" | "High";
+    multiplier: number;
+  },
   allowNotifications: true,
 };
 

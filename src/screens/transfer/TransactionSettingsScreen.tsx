@@ -6,7 +6,7 @@ import {
   PrimaryButton,
   SafeLayout,
 } from "@/components";
-import { useFeeStore } from "@/store";
+import { useSettingsStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { View } from "react-native";
@@ -16,14 +16,24 @@ type TransactionSettingscreenProps = NativeStackScreenProps<
   "Transaction settings"
 >;
 
-function FeeBoxList({ tokenId }: { tokenId: string }) {
-  const { selectedGasPrice, gasPrices } = useFeeStore();
+function FeeBoxList({ tokenId, gas }: { tokenId: string; gas: number }) {
+  const {
+    settings: { selectedGasPrice },
+  } = useSettingsStore();
+  const gasPrices: { speed: "Low" | "Medium" | "High"; multiplier: number }[] =
+    [
+      { speed: "Low", multiplier: 1 },
+      { speed: "Medium", multiplier: 1.2 },
+      { speed: "High", multiplier: 1.3 },
+    ];
 
   return gasPrices.map((option) => (
     <FeeBox
+      gasPrices={gasPrices}
       key={option.speed.toLowerCase()}
-      title={option.speed}
+      title={option.speed as "Low" | "Medium" | "High"}
       tokenId={tokenId}
+      gas={gas}
       selected={selectedGasPrice.speed === option.speed}
     />
   ));
@@ -32,7 +42,7 @@ function FeeBoxList({ tokenId }: { tokenId: string }) {
 export default function TransactionSettingscreen({
   navigation,
   route: {
-    params: { tokenId },
+    params: { tokenId, gas },
   },
 }: TransactionSettingscreenProps) {
   return (
@@ -47,7 +57,7 @@ export default function TransactionSettingscreen({
             your transaction. Our wallet is free to use.
           </Paragraph>
           <Column style={{ marginTop: 16, gap: 10 }}>
-            <FeeBoxList tokenId={tokenId} />
+            <FeeBoxList tokenId={tokenId} gas={gas} />
           </Column>
         </View>
         <PrimaryButton

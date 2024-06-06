@@ -9,10 +9,11 @@ import {
 } from "@/components";
 import { useGasPrice } from "@/hooks";
 import { estimateTransferFee } from "@/services/cosmos/tx";
-import { useFeeStore, useTokensStore } from "@/store";
+import { useTokensStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { formatAmount, formatFee, trimAddress } from "@/utils";
+import { StdFee } from "@cosmjs/stargate";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
@@ -31,7 +32,7 @@ export default function TransferSummaryScreen({
   const { sei, updateBalances, tokenMap } = useTokensStore();
   const [estimationFailed, setEstimationFailed] = useState(false);
   const [scrollEnabled, setScrollEnabled] = useState(true);
-  const { fee, setFee } = useFeeStore();
+  const [fee, setFee] = useState<StdFee | null>(null);
 
   const { gasPrice } = useGasPrice();
 
@@ -86,7 +87,13 @@ export default function TransferSummaryScreen({
 
   function getFeeElement() {
     if (fee) {
-      return <Text>{formatFee(feeInt, token)}</Text>;
+      return (
+        <Text>
+          {token.price
+            ? formatFee(feeInt, token)
+            : formatAmount(feeInt, token.decimals)}
+        </Text>
+      );
     }
 
     if (estimationFailed) {
