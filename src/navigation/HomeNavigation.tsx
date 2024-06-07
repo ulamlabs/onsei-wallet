@@ -1,3 +1,4 @@
+import { SerializedTx } from "@/modules/transactions";
 import MnemonicScreen from "@/screens/MnemonicScreen";
 import ReceiveAssets from "@/screens/ReceiveAssets";
 import AccountSettingsScreen from "@/screens/WalletOverview/AccountSettingsScreen";
@@ -9,6 +10,7 @@ import AddressDetailsScreen from "@/screens/addressBook/AddressDetailsScreen";
 import TransactionsWithAddress from "@/screens/addressBook/TransactionsWithAddress";
 import { AuthorizeScreen, BiometricsDisableScreen } from "@/screens/auth";
 import PinChangeScreen from "@/screens/auth/PinChangeScreen";
+import PinChangeSuccessScreen from "@/screens/auth/PinChangeSuccessScreen";
 import PinDisableScreen from "@/screens/auth/PinDisableScreen";
 import PinEnableScreen from "@/screens/auth/PinEnableScreen";
 import {
@@ -22,6 +24,7 @@ import NodeSettingsScreen from "@/screens/settings/NodeSettingsScreen";
 import ResetAppScreen from "@/screens/settings/ResetAppScreen";
 import SecuritySettingsScreen from "@/screens/settings/SecuritySettingsScreen";
 import SettingsScreen from "@/screens/settings/SettingsScreen";
+import { TransactionDetails } from "@/screens/transactions";
 import {
   TransferAmountScreen,
   TransferSelectAddressScreen,
@@ -31,7 +34,6 @@ import {
   TransferSummaryScreen,
 } from "@/screens/transfer";
 import ScanAddressScreen from "@/screens/transfer/ScanAddressScreen";
-import { TransactionDetails } from "@/screens/transactions";
 import { Account, SavedAddress, Wallet } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { trimAddress } from "@/utils";
@@ -42,7 +44,6 @@ import BottomBarsNavigation from "./BottomBarsNavigation";
 import { navigatorScreenOptions } from "./const";
 import CancelHeaderRight from "./header/CancelHeaderRight";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
-import { SerializedTx } from "@/modules/transactions";
 
 export type Recipient = {
   address: string;
@@ -51,12 +52,12 @@ export type Recipient = {
 
 export type HomeParamList = {
   Home: undefined;
-  Security: undefined;
+  "Security and privacy": undefined;
   "Enable Passcode": { nextRoute: keyof NavigatorParamsList };
   "Disable Passcode": undefined;
   "Change Passcode": undefined;
   "Disable Face ID / Touch ID": undefined;
-  "Change Node": undefined;
+  "Select network": undefined;
   "Clear app data": undefined;
   Authorize: { nextRoute: keyof NavigatorParamsList; nextParams?: any };
   "Your SEI address": undefined;
@@ -92,6 +93,7 @@ export type HomeParamList = {
   transferSent: { tx: DeliverTxResponse; amount?: string; symbol?: string };
   "Set Name": { nextRoute: "Import Wallet" | "Generate Wallet" };
   "Scan QR code": { tokenId: string };
+  "Pin Change Success": undefined;
   "Transaction details": { transaction: SerializedTx };
 };
 
@@ -105,8 +107,12 @@ export default function HomeNavigation() {
         component={BottomBarsNavigation}
         options={{ headerShown: false }}
       />
-      <Screen name="Security" component={SecuritySettingsScreen} />
-      <Screen name="Clear app data" component={ResetAppScreen} />
+      <Screen name="Security and privacy" component={SecuritySettingsScreen} />
+      <Screen
+        name="Clear app data"
+        component={ResetAppScreen}
+        options={{ title: "", headerBackVisible: false }}
+      />
       <Screen
         name="Enable Passcode"
         component={PinEnableScreen}
@@ -115,10 +121,15 @@ export default function HomeNavigation() {
       <Screen name="Disable Passcode" component={PinDisableScreen} />
       <Screen name="Change Passcode" component={PinChangeScreen} />
       <Screen
+        name="Pin Change Success"
+        component={PinChangeSuccessScreen}
+        options={{ headerShown: false }}
+      />
+      <Screen
         name="Disable Face ID / Touch ID"
         component={BiometricsDisableScreen}
       />
-      <Screen name="Change Node" component={NodeSettingsScreen} />
+      <Screen name="Select network" component={NodeSettingsScreen} />
       <Screen name="Authorize" component={AuthorizeScreen} />
       <Screen name="Your SEI address" component={ReceiveAssets} />
       <Screen

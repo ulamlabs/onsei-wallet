@@ -1,16 +1,18 @@
-import { Headline, Paragraph } from "@/components";
 import { Colors } from "@/styles";
 import { CloseCircle, TickCircle } from "iconsax-react-native";
 import { View } from "react-native";
+import { Headline, Paragraph } from "./typography";
 
 type Props = {
   success?: boolean;
-  customDescription?: string;
+  description: string;
+  header?: string;
 };
 
-export default function TransactionResultHeader({
+export default function ResultHeader({
   success = true,
-  customDescription,
+  description,
+  header,
 }: Props) {
   return (
     <>
@@ -31,12 +33,11 @@ export default function TransactionResultHeader({
           <CloseCircle variant="Bold" color={Colors.danger} size={88} />
         )}
       </View>
-      <Headline>{success ? "It's Done!" : "Something went wrong"}</Headline>
+      <Headline>
+        {header || (success ? "It's Done!" : "Something went wrong")}
+      </Headline>
       <Paragraph size="base" style={{ textAlign: "center" }}>
-        {customDescription ||
-          (success
-            ? "Transaction completed successfully."
-            : "Click below to see why the transaction failed.")}
+        {description}
       </Paragraph>
     </>
   );

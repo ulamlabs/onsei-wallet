@@ -1,16 +1,21 @@
+import { Colors, FontSizes, FontWeights } from "@/styles";
 import { Pressable } from "react-native";
-import { Row } from "../layout";
-import PinDigit from "../pin/PinDigit";
-import { Text } from "../typography";
+import { Column, Row } from "../layout";
+import { Paragraph, Text } from "../typography";
+import RadioMarker from "./RadioMarker";
 
 type RadioProps<T extends string> = {
-  label: T;
+  title: T;
+  subtitle?: string;
+  description?: string;
   isActive: boolean;
   onPress: (option: T) => void;
 };
 
 export default function Radio<T extends string>({
-  label,
+  title,
+  subtitle,
+  description,
   isActive,
   onPress,
 }: RadioProps<T>) {
@@ -18,14 +23,33 @@ export default function Radio<T extends string>({
     if (isActive) {
       return;
     }
-    onPress(label);
+    onPress(title);
   }
 
   return (
-    <Pressable style={{ marginVertical: 3 }} onPress={onRadioPress}>
+    <Pressable
+      style={{
+        backgroundColor: Colors.background100,
+        paddingHorizontal: 22,
+        paddingVertical: 16,
+      }}
+      onPress={onRadioPress}
+    >
       <Row>
-        <Text>{label}</Text>
-        <PinDigit filled={isActive} error={false} />
+        <Column style={{ gap: 4 }}>
+          <Row style={{ justifyContent: "flex-start" }}>
+            <Text
+              style={{ fontSize: FontSizes.base, fontFamily: FontWeights.bold }}
+            >
+              {title}
+            </Text>
+            <Text>({subtitle})</Text>
+          </Row>
+          {description && (
+            <Paragraph style={{ maxWidth: 235 }}>{description}</Paragraph>
+          )}
+        </Column>
+        <RadioMarker filled={isActive} />
       </Row>
     </Pressable>
   );

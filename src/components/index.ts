@@ -1,37 +1,39 @@
 import Biometrics from "./Biometrics";
+import Box from "./Box";
 import ClipboardAddressBox from "./ClipboardAddressBox";
 import CopyAddress from "./CopyAddress";
 import Loader from "./Loader";
 import MnemonicWords from "./MnemonicWords";
 import NetworkFeeInfo from "./NetworkFeeInfo";
+import ResultHeader from "./ResultHeader";
 import ShakingView from "./ShakingView";
+import TokenBalanceBox from "./TokenBalanceBox";
+import TokenBox from "./TokenBox";
 import TokenIcon from "./TokenIcon";
 import Tooltip from "./Tooltip";
 import Modal from "./modals/Modal";
-import Box from "./Box";
-import TokenBox from "./TokenBox";
-import TokenBalanceBox from "./TokenBalanceBox";
 
-export { Pin } from "./pin";
 export * from "./buttons";
 export * from "./forms";
 export * from "./layout";
 export * from "./modals";
-export * from "./pin";
-export * from "./typography";
 export * from "./numericPad";
+export * from "./pin";
+export { Pin } from "./pin";
+export * from "./typography";
 export {
   Biometrics,
+  Box,
   ClipboardAddressBox,
   CopyAddress,
   Loader,
   MnemonicWords,
   Modal,
   NetworkFeeInfo,
+  ResultHeader,
   ShakingView,
+  TokenBalanceBox,
+  TokenBox,
   TokenIcon,
   Tooltip,
-  Box,
-  TokenBox,
-  TokenBalanceBox,
 };

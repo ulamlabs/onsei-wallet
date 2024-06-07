@@ -2,6 +2,7 @@ import {
   Column,
   Headline,
   Loader,
+  ResultHeader,
   SafeLayoutBottom,
   TertiaryButton,
 } from "@/components";
@@ -14,7 +15,6 @@ import { formatAmount, resetNavigationStack } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import TransactionResultHeader from "./TransactionResultHeader";
 
 type TransferSendingScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -106,7 +106,7 @@ export default function TransferSendingScreen({
     if (error) {
       return (
         <>
-          <TransactionResultHeader success={false} customDescription={error} />
+          <ResultHeader success={false} description={error} />
           <TertiaryButton onPress={done} title="Close" />
         </>
       );

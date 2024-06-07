@@ -1,15 +1,22 @@
+import {
+  Biometrics,
+  Column,
+  Link,
+  Option,
+  OptionGroup,
+  SafeLayout,
+  SwitchWithLabel,
+} from "@/components";
 import { useAuthStore, useModalStore, useSettingsStore } from "@/store";
-import { Biometrics, SafeLayout, OptionGroup } from "@/components";
-import { useMemo, useState } from "react";
-import { Link, SwitchWithLabel } from "@/components";
-import { Strongbox, Strongbox2, EmojiHappy } from "iconsax-react-native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
-import { View } from "react-native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useMemo, useState } from "react";
+import { Pressable, View } from "react-native";
 
 type SecuritySettingsScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
-  "Security"
+  "Security and privacy"
 >;
 
 export default function SecuritySettingsScreen({
@@ -24,7 +31,9 @@ export default function SecuritySettingsScreen({
 
   function onEnablePinChange(pinEnabled: boolean) {
     if (pinEnabled) {
-      navigation.navigate("Enable Passcode", { nextRoute: "Security" });
+      navigation.navigate("Enable Passcode", {
+        nextRoute: "Security and privacy",
+      });
     } else {
       navigation.navigate("Disable Passcode");
     }
@@ -51,37 +60,45 @@ export default function SecuritySettingsScreen({
     });
   }
 
+  async function onRemove() {
+    authStore.authorize(navigation, "Clear app data", undefined);
+  }
+
   return (
     <SafeLayout>
-      <OptionGroup>
-        <SwitchWithLabel
-          label="Enable passcode code"
-          icon={<Strongbox color="white" />}
-          onValueChange={onEnablePinChange}
-          value={pinEnabled}
-        />
-        <Link
-          icon={<Strongbox2 color="white" />}
-          label="Change passcode code"
-          navigateTo="Change Passcode"
-          disabled={!pinEnabled}
-        />
-        <View>
+      <Column style={{ gap: 32 }}>
+        <OptionGroup>
+          <View>
+            <SwitchWithLabel
+              label="Use biometric authentication"
+              onValueChange={toggleBiometrics}
+              value={pinEnabled && settings["auth.biometricsEnabled"]}
+              disabled={!pinEnabled}
+            />
+            {enablingBiometrics && (
+              <Biometrics
+                onSuccess={enableBiometrics}
+                onNotEnrolled={onBiometricsNotEnrolled}
+              />
+            )}
+          </View>
           <SwitchWithLabel
-            label="Enable Face ID / Touch ID"
-            icon={<EmojiHappy color="white" />}
-            onValueChange={toggleBiometrics}
-            value={pinEnabled && settings["auth.biometricsEnabled"]}
+            label="Use PIN"
+            onValueChange={onEnablePinChange}
+            value={pinEnabled}
+          />
+          <Link
+            label="Change PIN"
+            navigateTo="Change Passcode"
             disabled={!pinEnabled}
           />
-          {enablingBiometrics && (
-            <Biometrics
-              onSuccess={enableBiometrics}
-              onNotEnrolled={onBiometricsNotEnrolled}
-            />
-          )}
-        </View>
-      </OptionGroup>
+        </OptionGroup>
+        <OptionGroup>
+          <Pressable onPress={onRemove}>
+            <Option label="Reset app" labelStyle={{ color: Colors.danger }} />
+          </Pressable>
+        </OptionGroup>
+      </Column>
     </SafeLayout>
   );
 }

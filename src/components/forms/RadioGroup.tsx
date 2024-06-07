@@ -1,8 +1,9 @@
 import { Column } from "../layout";
+import OptionGroup from "./OptionGroup";
 import Radio from "./Radio";
 
 type RadioGroupProps<T extends string> = {
-  options: T[];
+  options: { name: T; description?: string; subtitle?: string }[];
   activeOption: T;
   onChange: (option: T) => void;
 };
@@ -13,15 +14,19 @@ export default function RadioGroup<T extends string>({
   onChange,
 }: RadioGroupProps<T>) {
   return (
-    <Column style={{ padding: 10 }}>
-      {options.map((option) => (
-        <Radio
-          key={option}
-          label={option}
-          isActive={activeOption === option}
-          onPress={() => onChange(option)}
-        />
-      ))}
+    <Column>
+      <OptionGroup>
+        {options.map((option) => (
+          <Radio
+            key={option.name}
+            title={option.name}
+            subtitle={option.subtitle}
+            description={option.description}
+            isActive={activeOption === option.name}
+            onPress={() => onChange(option.name)}
+          />
+        ))}
+      </OptionGroup>
     </Column>
   );
 }
