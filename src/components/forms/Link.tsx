@@ -44,8 +44,10 @@ export default function Link({
     <Pressable onPress={onPress}>
       <Option label={label} icon={icon} disabled={disabled}>
         <Row>
-          {labelRight && <Text>{labelRight}</Text>}
-          <ArrowRight2 color={Colors.text100} />
+          {labelRight && (
+            <Text style={{ color: Colors.text100 }}>{labelRight}</Text>
+          )}
+          <ArrowRight2 color={Colors.text} />
         </Row>
       </Option>
     </Pressable>
