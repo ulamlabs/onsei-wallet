@@ -27,7 +27,7 @@ export default function PinChangeSuccessScreen({ navigation }: Props) {
             justifyContent: "center",
             alignItems: "center",
             borderRadius: 22,
-            backgroundColor: Colors.success100,
+            backgroundColor: Colors.success200,
           }}
         >
           <TickCircle variant="Bold" color={Colors.success} size={88} />
