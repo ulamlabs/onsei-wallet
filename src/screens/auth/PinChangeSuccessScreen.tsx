@@ -1,15 +1,11 @@
 import {
   Column,
-  Headline,
-  Paragraph,
   PrimaryButton,
+  ResultHeader,
   SafeLayoutBottom,
 } from "@/components";
-import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { TickCircle } from "iconsax-react-native";
-import { View } from "react-native";
 
 type Props = NativeStackScreenProps<NavigatorParamsList, "Pin Change Success">;
 
@@ -19,23 +15,10 @@ export default function PinChangeSuccessScreen({ navigation }: Props) {
       <Column
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       >
-        <View
-          style={{
-            padding: 20,
-            width: 128,
-            height: 128,
-            justifyContent: "center",
-            alignItems: "center",
-            borderRadius: 22,
-            backgroundColor: Colors.success200,
-          }}
-        >
-          <TickCircle variant="Bold" color={Colors.success} size={88} />
-        </View>
-        <Headline>Passcode changed successfully</Headline>
-        <Paragraph size="base" style={{ textAlign: "center" }}>
-          Keep your passcode safe and never share it.
-        </Paragraph>
+        <ResultHeader
+          header="Passcode changed successfully"
+          description="Keep your passcode safe and never share it."
+        />
       </Column>
       <PrimaryButton
         title="Done"

@@ -3,6 +3,7 @@ import {
   Option,
   OptionGroup,
   PrimaryButton,
+  ResultHeader,
   SafeLayoutBottom,
   TertiaryButton,
   Text,
@@ -16,7 +17,6 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ExportSquare } from "iconsax-react-native";
 import { useMemo } from "react";
 import { Linking } from "react-native";
-import TransactionResultHeader from "./TransactionResultHeader";
 
 type TransferSentScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -49,7 +49,7 @@ export default function TransferSentScreen({
       <Column
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       >
-        <TransactionResultHeader success={success} />
+        <ResultHeader success={success} />
         <OptionGroup>
           <Option label={success ? "Amount sent" : "Transaction ID"}>
             <Text style={{ fontFamily: FontWeights.bold }}>

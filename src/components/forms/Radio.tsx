@@ -1,4 +1,4 @@
-import { FontSizes, FontWeights } from "@/styles";
+import { Colors, FontSizes, FontWeights } from "@/styles";
 import { Pressable } from "react-native";
 import { Column, Row } from "../layout";
 import { Paragraph, Text } from "../typography";
@@ -27,7 +27,14 @@ export default function Radio<T extends string>({
   }
 
   return (
-    <Pressable style={{ marginVertical: 3 }} onPress={onRadioPress}>
+    <Pressable
+      style={{
+        backgroundColor: Colors.background100,
+        paddingHorizontal: 22,
+        paddingVertical: 16,
+      }}
+      onPress={onRadioPress}
+    >
       <Row>
         <Column style={{ gap: 4 }}>
           <Row style={{ justifyContent: "flex-start" }}>

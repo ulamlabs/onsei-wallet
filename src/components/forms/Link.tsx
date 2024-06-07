@@ -1,4 +1,5 @@
 import { useAuthStore } from "@/store";
+import { Colors } from "@/styles";
 import { NavigationProp, NavigatorParamsList } from "@/types";
 import { useNavigation } from "@react-navigation/core";
 import { ArrowRight2 } from "iconsax-react-native";
@@ -44,7 +45,7 @@ export default function Link({
       <Option label={label} icon={icon} disabled={disabled}>
         <Row>
           {labelRight && <Text>{labelRight}</Text>}
-          <ArrowRight2 color="white" />
+          <ArrowRight2 color={Colors.text100} />
         </Row>
       </Option>
     </Pressable>

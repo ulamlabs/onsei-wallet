@@ -5,12 +5,14 @@ import { View } from "react-native";
 
 type Props = {
   success?: boolean;
-  customDescription?: string;
+  description?: string;
+  header?: string;
 };
 
-export default function TransactionResultHeader({
+export default function ResultHeader({
   success = true,
-  customDescription,
+  description,
+  header,
 }: Props) {
   return (
     <>
@@ -31,9 +33,11 @@ export default function TransactionResultHeader({
           <CloseCircle variant="Bold" color={Colors.danger} size={88} />
         )}
       </View>
-      <Headline>{success ? "It's Done!" : "Something went wrong"}</Headline>
+      <Headline>
+        {header || (success ? "It's Done!" : "Something went wrong")}
+      </Headline>
       <Paragraph size="base" style={{ textAlign: "center" }}>
-        {customDescription ||
+        {description ||
           (success
             ? "Transaction completed successfully."
             : "Click below to see why the transaction failed.")}
