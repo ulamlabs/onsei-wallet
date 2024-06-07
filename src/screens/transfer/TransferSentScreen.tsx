@@ -49,7 +49,14 @@ export default function TransferSentScreen({
       <Column
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       >
-        <ResultHeader success={success} />
+        <ResultHeader
+          success={success}
+          description={
+            success
+              ? "Transaction completed successfully."
+              : "Click below to see why the transaction failed."
+          }
+        />
         <OptionGroup>
           <Option label={success ? "Amount sent" : "Transaction ID"}>
             <Text style={{ fontFamily: FontWeights.bold }}>

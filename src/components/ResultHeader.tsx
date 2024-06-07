@@ -1,11 +1,11 @@
-import { Headline, Paragraph } from "@/components";
 import { Colors } from "@/styles";
 import { CloseCircle, TickCircle } from "iconsax-react-native";
 import { View } from "react-native";
+import { Headline, Paragraph } from "./typography";
 
 type Props = {
   success?: boolean;
-  description?: string;
+  description: string;
   header?: string;
 };
 
@@ -37,10 +37,7 @@ export default function ResultHeader({
         {header || (success ? "It's Done!" : "Something went wrong")}
       </Headline>
       <Paragraph size="base" style={{ textAlign: "center" }}>
-        {description ||
-          (success
-            ? "Transaction completed successfully."
-            : "Click below to see why the transaction failed.")}
+        {description}
       </Paragraph>
     </>
   );
