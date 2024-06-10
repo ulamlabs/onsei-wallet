@@ -1,6 +1,7 @@
 export * from "./calculateTokenUsdBalance";
 export * from "./calculateTotalBalance";
 export * from "./capitalize";
+export * from "./checkFundsForFee";
 export * from "./chunkArray";
 export * from "./formatAmount";
 export * from "./formatFee";

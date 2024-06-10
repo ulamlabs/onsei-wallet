@@ -17,7 +17,7 @@ import {
 import { useTokensStore } from "@/store";
 import { Colors, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
-import { parseAmount } from "@/utils";
+import { checkFundsForFee, parseAmount } from "@/utils";
 import { formatAmount } from "@/utils/formatAmount";
 import { StdFee } from "@cosmjs/stargate";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -42,6 +42,7 @@ export default function TransferAmountScreen({
   const [fee, setFee] = useState<StdFee | null>(null);
   const [gas, setGas] = useState(0);
   const { gasPrice } = useGasPrice();
+  const [loadingMaxAmount, setLoadingMaxAmount] = useState(false);
 
   const token = useMemo(() => tokenMap.get(tokenId)!, [tokenId, tokenMap]);
 
@@ -54,7 +55,21 @@ export default function TransferAmountScreen({
     return token.balance >= intAmount;
   }, [intAmount]);
 
+  const feeInt = useMemo(() => {
+    if (fee) {
+      return BigInt(fee.amount[0].amount);
+    }
+    return 0n;
+  }, [fee]);
+
+  const hasFundsForFee = useMemo(() => {
+    return checkFundsForFee(fee, sei.balance, tokenId, sei.id, intAmount);
+  }, [fee, sei.balance]);
+
   useEffect(() => {
+    if (loadingMaxAmount) {
+      return;
+    }
     if (!decimalAmount) {
       setFee(null);
       return;
@@ -90,15 +105,11 @@ export default function TransferAmountScreen({
   }, [gas]);
 
   useEffect(() => {
+    if (!gas) {
+      return;
+    }
     setFee(estimateTransferFeeWithGas(gasPrice, gas));
   }, [gasPrice]);
-
-  const feeInt = useMemo(() => {
-    if (fee) {
-      return BigInt(fee.amount[0].amount);
-    }
-    return 0n;
-  }, [fee]);
 
   function goToSummary() {
     navigation.navigate("transferSummary", {
@@ -110,12 +121,34 @@ export default function TransferAmountScreen({
     });
   }
 
-  function onMax() {
-    setDecimalAmount(
-      formatAmount(token.balance, token.decimals, {
-        noDecimalSeparator: true,
-      }),
-    );
+  async function onMax() {
+    try {
+      if (token.id !== sei.id) {
+        setDecimalAmount(
+          formatAmount(token.balance, token.decimals, {
+            noDecimalSeparator: true,
+          }),
+        );
+        return;
+      }
+
+      setLoadingMaxAmount(true);
+      const fee = await feeEstimation(token.balance);
+      if (!fee) {
+        throw new Error("Fee estimation failed");
+      }
+
+      const feeInt = BigInt(fee.amount[0].amount);
+      const maxAmount = token.balance - feeInt;
+      setDecimalAmount(
+        formatAmount(maxAmount, token.decimals, { noDecimalSeparator: true }),
+      );
+      setFee(fee);
+    } catch (error) {
+      setEstimationFailed(true);
+    } finally {
+      setLoadingMaxAmount(false);
+    }
   }
 
   function onDigit(digit: string) {
@@ -149,18 +182,29 @@ export default function TransferAmountScreen({
     return <></>;
   }
 
-  async function feeEstimation() {
-    estimateTransferGas(recipient.address, token, intAmount)
-      .then((gas) => {
-        setGas(gas);
-        const estimatedFee = estimateTransferFeeWithGas(gasPrice, gas);
-        setFee(estimatedFee);
-      })
-      .catch(() => setEstimationFailed(true))
-      .finally(() => setLoadingFee(false));
+  async function feeEstimation(amount: bigint = intAmount) {
+    try {
+      const gas = await estimateTransferGas(recipient.address, token, amount);
+      setGas(gas);
+      const estimatedFee = estimateTransferFeeWithGas(gasPrice, gas);
+      setFee(estimatedFee);
+      return estimatedFee;
+    } catch (error) {
+      setEstimationFailed(true);
+    } finally {
+      setLoadingFee(false);
+    }
   }
 
   function getFeeElement() {
+    if (!hasFundsForFee && fee) {
+      return (
+        <Paragraph style={{ color: Colors.danger }}>
+          Insufficient funds for fee
+        </Paragraph>
+      );
+    }
+
     if (fee) {
       return <Paragraph>{formatAmount(feeInt, sei.decimals)} SEI</Paragraph>;
     }
@@ -202,6 +246,7 @@ export default function TransferAmountScreen({
             token={token}
             decimalAmount={decimalAmount}
             error={!hasFunds}
+            loading={loadingMaxAmount}
           />
           <Paragraph>Network fee: {getFeeElement()}</Paragraph>
         </Column>
@@ -215,7 +260,7 @@ export default function TransferAmountScreen({
           <PrimaryButton
             title="Go to summary"
             onPress={goToSummary}
-            disabled={!intAmount || !hasFunds || loadingFee}
+            disabled={!intAmount || !hasFunds || loadingFee || !hasFundsForFee}
           />
         </Column>
 

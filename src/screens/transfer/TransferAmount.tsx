@@ -1,4 +1,4 @@
-import { Column, Paragraph, Row, Text } from "@/components";
+import { Column, Loader, Paragraph, Row, Text } from "@/components";
 import { CosmTokenWithBalance } from "@/services/cosmos";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { formatDecimalSeparator, formatUsdBalance } from "@/utils";
@@ -10,6 +10,7 @@ type TransferAmountProps = {
   decimalAmount: string;
   style?: StyleProp<ViewStyle>;
   error?: boolean;
+  loading?: boolean;
 };
 
 export default function TransferAmount({
@@ -17,6 +18,7 @@ export default function TransferAmount({
   decimalAmount,
   style,
   error,
+  loading,
 }: TransferAmountProps) {
   const formattedAmount = useMemo(() => {
     const [whole, fraction] = decimalAmount.split(".");
@@ -28,6 +30,9 @@ export default function TransferAmount({
   }, [decimalAmount]);
 
   function getContent() {
+    if (loading) {
+      return <Loader size="large" />;
+    }
     if (decimalAmount) {
       return (
         <Text

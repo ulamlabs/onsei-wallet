@@ -12,7 +12,7 @@ import { estimateTransferFee } from "@/services/cosmos/tx";
 import { useTokensStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
-import { formatAmount, trimAddress } from "@/utils";
+import { checkFundsForFee, formatAmount, trimAddress } from "@/utils";
 import { StdFee } from "@cosmjs/stargate";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useMemo, useState } from "react";
@@ -58,14 +58,13 @@ export default function TransferSummaryScreen({
   }, [fee]);
 
   const hasFundsForFee = useMemo(() => {
-    if (!fee) {
-      return false;
-    }
-    let seiLeft = sei.balance - feeInt;
-    if (token.id === sei.id) {
-      seiLeft -= intAmount;
-    }
-    return seiLeft >= 0;
+    return checkFundsForFee(
+      fee,
+      sei.balance,
+      transfer.tokenId,
+      sei.id,
+      intAmount,
+    );
   }, [fee, sei.balance]);
 
   function feeEstimation() {
