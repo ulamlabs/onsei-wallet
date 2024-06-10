@@ -12,7 +12,7 @@ import { estimateTransferFee } from "@/services/cosmos/tx";
 import { useTokensStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
-import { formatAmount, formatFee, trimAddress } from "@/utils";
+import { formatAmount, trimAddress } from "@/utils";
 import { StdFee } from "@cosmjs/stargate";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useMemo, useState } from "react";
@@ -37,7 +37,7 @@ export default function TransferSummaryScreen({
   const { gasPrice } = useGasPrice();
 
   useEffect(() => {
-    feeEstimation();
+    setFee(transfer.fee || null);
   }, []);
 
   const token = useMemo(
@@ -87,13 +87,7 @@ export default function TransferSummaryScreen({
 
   function getFeeElement() {
     if (fee) {
-      return (
-        <Text>
-          {token.price
-            ? formatFee(feeInt, token)
-            : formatAmount(feeInt, token.decimals)}
-        </Text>
-      );
+      return <Text>{formatAmount(feeInt, sei.decimals)} SEI</Text>;
     }
 
     if (estimationFailed) {

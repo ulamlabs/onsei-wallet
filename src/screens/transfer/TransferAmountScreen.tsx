@@ -17,7 +17,7 @@ import {
 import { useTokensStore } from "@/store";
 import { Colors, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
-import { formatFee, parseAmount } from "@/utils";
+import { parseAmount } from "@/utils";
 import { formatAmount } from "@/utils/formatAmount";
 import { StdFee } from "@cosmjs/stargate";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -34,7 +34,7 @@ export default function TransferAmountScreen({
   route,
 }: TransferAmountScreenProps) {
   const [decimalAmount, setDecimalAmount] = useState("");
-  const { tokenMap, updateBalances } = useTokensStore();
+  const { tokenMap, updateBalances, sei } = useTokensStore();
   const { tokenId, recipient } = route.params;
   const memoInput = useInputState();
   const [estimationFailed, setEstimationFailed] = useState(false);
@@ -43,8 +43,20 @@ export default function TransferAmountScreen({
   const [gas, setGas] = useState(0);
   const { gasPrice } = useGasPrice();
 
+  const token = useMemo(() => tokenMap.get(tokenId)!, [tokenId, tokenMap]);
+
+  const intAmount = useMemo(
+    () => parseAmount(decimalAmount, token.decimals),
+    [decimalAmount],
+  );
+
+  const hasFunds = useMemo(() => {
+    return token.balance >= intAmount;
+  }, [intAmount]);
+
   useEffect(() => {
     if (!decimalAmount) {
+      setFee(null);
       return;
     }
     setLoadingFee(true);
@@ -68,6 +80,12 @@ export default function TransferAmountScreen({
   }, []);
 
   useEffect(() => {
+    navigation.setParams({
+      disabled: !decimalAmount || !hasFunds || loadingFee,
+    });
+  }, [loadingFee, hasFunds, decimalAmount]);
+
+  useEffect(() => {
     navigation.setParams({ gas });
   }, [gas]);
 
@@ -82,23 +100,13 @@ export default function TransferAmountScreen({
     return 0n;
   }, [fee]);
 
-  const token = useMemo(() => tokenMap.get(tokenId)!, [tokenId, tokenMap]);
-
-  const intAmount = useMemo(
-    () => parseAmount(decimalAmount, token.decimals),
-    [decimalAmount],
-  );
-
-  const hasFunds = useMemo(() => {
-    return token.balance >= intAmount;
-  }, [intAmount]);
-
   function goToSummary() {
     navigation.navigate("transferSummary", {
       tokenId,
       recipient,
       intAmount: intAmount.toString(),
       memo: memoInput.value,
+      fee,
     });
   }
 
@@ -142,22 +150,19 @@ export default function TransferAmountScreen({
   }
 
   async function feeEstimation() {
-    await estimateTransferGas(recipient.address, token, intAmount)
-      .then(setGas)
+    estimateTransferGas(recipient.address, token, intAmount)
+      .then((gas) => {
+        setGas(gas);
+        const estimatedFee = estimateTransferFeeWithGas(gasPrice, gas);
+        setFee(estimatedFee);
+      })
       .catch(() => setEstimationFailed(true))
       .finally(() => setLoadingFee(false));
-    setFee(estimateTransferFeeWithGas(gasPrice, gas));
   }
 
   function getFeeElement() {
     if (fee) {
-      return (
-        <Paragraph>
-          {token.price
-            ? formatFee(feeInt, token)
-            : formatAmount(feeInt, token.decimals)}
-        </Paragraph>
-      );
+      return <Paragraph>{formatAmount(feeInt, sei.decimals)} SEI</Paragraph>;
     }
 
     if (estimationFailed) {
@@ -171,7 +176,7 @@ export default function TransferAmountScreen({
       return <Loader size="small" />;
     }
 
-    return <Paragraph>$0.00</Paragraph>;
+    return <Paragraph>0 SEI</Paragraph>;
   }
 
   function refershFn() {

@@ -16,7 +16,7 @@ type TransactionSettingscreenProps = NativeStackScreenProps<
   "Transaction settings"
 >;
 
-function FeeBoxList({ tokenId, gas }: { tokenId: string; gas: number }) {
+function FeeBoxList({ gas }: { gas: number }) {
   const {
     settings: { selectedGasPrice },
   } = useSettingsStore();
@@ -32,7 +32,6 @@ function FeeBoxList({ tokenId, gas }: { tokenId: string; gas: number }) {
       gasPrices={gasPrices}
       key={option.speed.toLowerCase()}
       title={option.speed as "Low" | "Medium" | "High"}
-      tokenId={tokenId}
       gas={gas}
       selected={selectedGasPrice.speed === option.speed}
     />
@@ -42,7 +41,7 @@ function FeeBoxList({ tokenId, gas }: { tokenId: string; gas: number }) {
 export default function TransactionSettingscreen({
   navigation,
   route: {
-    params: { tokenId, gas },
+    params: { gas },
   },
 }: TransactionSettingscreenProps) {
   return (
@@ -57,7 +56,7 @@ export default function TransactionSettingscreen({
             your transaction. Our wallet is free to use.
           </Paragraph>
           <Column style={{ marginTop: 16, gap: 10 }}>
-            <FeeBoxList tokenId={tokenId} gas={gas} />
+            <FeeBoxList gas={gas} />
           </Column>
         </View>
         <PrimaryButton
