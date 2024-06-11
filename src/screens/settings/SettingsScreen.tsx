@@ -1,12 +1,28 @@
-import { Column, Link, OptionGroup, SafeLayout } from "@/components";
+import {
+  Column,
+  Link,
+  OptionGroup,
+  SafeLayout,
+  SwitchWithLabel,
+} from "@/components";
 import { useSettingsStore } from "@/store";
 import { Colors } from "@/styles";
-import { Global, SecuritySafe, Wallet } from "iconsax-react-native";
+import {
+  Global,
+  Notification,
+  SecuritySafe,
+  Wallet,
+} from "iconsax-react-native";
 
 export default function SettingsScreen() {
   const {
-    settings: { node },
+    settings: { node, allowNotifications },
+    setSetting,
   } = useSettingsStore();
+
+  const toggleNotifications = () => {
+    setSetting("allowNotifications", !allowNotifications);
+  };
 
   return (
     <SafeLayout>
@@ -22,6 +38,12 @@ export default function SettingsScreen() {
             navigateTo="Select network"
             icon={<Global size={22} color={Colors.text} />}
             labelRight={node}
+          />
+          <SwitchWithLabel
+            icon={<Notification size={22} color={Colors.text} />}
+            label="Allow notifications"
+            value={allowNotifications}
+            onChange={toggleNotifications}
           />
         </OptionGroup>
         <OptionGroup>

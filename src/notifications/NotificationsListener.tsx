@@ -1,6 +1,6 @@
 import { useAppIsActive } from "@/hooks";
-import { useAccountsStore, useTokensStore } from "@/store";
-import { useEffect, useMemo, useState } from "react";
+import { useAccountsStore, useSettingsStore, useTokensStore } from "@/store";
+import { useEffect, useState } from "react";
 import { NotificationsWebsocket } from "./NotificationsWebsocket";
 import { registerBackgroundTxPooler } from "./background";
 import { grantNotificationsPermission } from "./pushNotifications";
@@ -25,32 +25,32 @@ function useRefreshOnActivation() {
 
 export default function NotificationsListener() {
   const { accounts } = useAccountsStore();
+  const {
+    settings: { allowNotifications },
+  } = useSettingsStore();
 
   useRefreshOnActivation();
 
-  const allowNotificationsStatus = useMemo(
-    () => accounts.map((account) => account.allowNotifications),
-    [accounts],
-  );
-
   useEffect(() => {
+    if (!allowNotifications) {
+      return;
+    }
     registerBackgroundTxPooler();
     grantNotificationsPermission();
-  }, [allowNotificationsStatus]);
+  }, [allowNotifications]);
+
+  if (!allowNotifications) {
+    return;
+  }
 
   return (
     <>
-      {accounts.map((account) => {
-        if (!account.allowNotifications) {
-          return;
-        }
-        return (
-          <NotificationsWebsocket
-            address={account.address}
-            key={account.address}
-          />
-        );
-      })}
+      {accounts.map((account) => (
+        <NotificationsWebsocket
+          address={account.address}
+          key={account.address}
+        />
+      ))}
     </>
   );
 }
