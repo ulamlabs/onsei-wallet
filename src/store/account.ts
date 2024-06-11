@@ -16,6 +16,7 @@ export type Account = {
   name: string;
   address: string;
   passphraseSkipped: boolean;
+  allowNotifications: boolean;
 };
 
 export type Wallet = {
@@ -39,6 +40,7 @@ export type AccountsStore = {
   getMnemonic: (name: string) => string;
   restoreWallet: (mnemonic: string) => Promise<Wallet>;
   editAccountName: (address: string, newName: string) => void;
+  toggleNotifications: (address: string) => void;
 };
 
 export const useAccountsStore = create<AccountsStore>((set, get) => ({
@@ -98,6 +100,7 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
       name,
       address: wallet.address,
       passphraseSkipped,
+      allowNotifications: true,
     };
     set((state) => {
       const accounts = [...state.accounts, account];
@@ -140,6 +143,19 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
     if (activeAccount?.address === address) {
       setActiveAccount(address);
     }
+  },
+  toggleNotifications: (address) => {
+    set((state) => {
+      const updatedAccounts = state.accounts.map((acc) => {
+        if (acc.address === address) {
+          return { ...acc, allowNotifications: !acc.allowNotifications };
+        }
+        return acc;
+      });
+      saveToStorage("accounts", updatedAccounts);
+
+      return { ...state, accounts: updatedAccounts };
+    });
   },
 }));
 

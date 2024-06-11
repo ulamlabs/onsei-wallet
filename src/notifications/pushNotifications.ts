@@ -4,7 +4,11 @@ import {
   storeNewTransaction,
 } from "@/modules/transactions/storage";
 import { CosmToken, fetchCW20Token } from "@/services/cosmos";
-import { useSettingsStore, useTokenRegistryStore } from "@/store";
+import {
+  useSettingsStore,
+  useTokenRegistryStore,
+  useTokensStore,
+} from "@/store";
 import { formatAmount, trimAddress } from "@/utils";
 import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
 import * as Notifications from "expo-notifications";
@@ -27,14 +31,15 @@ export async function grantNotificationsPermission() {
 export async function notifyTx(
   tx: Transaction,
   addresses: Set<string>,
+  isActive?: boolean,
 ): Promise<boolean> {
   const { tokenRegistryMap } = useTokenRegistryStore.getState();
+  const { updateBalances } = useTokensStore.getState();
 
   if (!tx.token || !tx.to) {
     // We only care about incoming token transfers. We can't reliably link the tx to the account for other tx types.
     return false;
   }
-
   if (!tokenRegistryMap.has(tx.token)) {
     await addTokenToRegistry(tx.token);
   }
@@ -58,6 +63,10 @@ export async function notifyTx(
     content: { title, data: { txhash: tx.hash } },
     trigger: { seconds: 1 },
   });
+
+  if (isActive) {
+    await updateBalances();
+  }
 
   return true;
 }
@@ -86,6 +95,7 @@ async function addTokenToRegistry(tokenId: string) {
   } = useSettingsStore.getState();
 
   const { addCW20ToRegistry } = useTokenRegistryStore.getState();
+  const { addToken } = useTokensStore.getState();
 
   if (!isValidSeiCosmosAddress(tokenId)) {
     return;
@@ -100,5 +110,6 @@ async function addTokenToRegistry(tokenId: string) {
   }
 
   // TODO We should add the token to the account, not only to the registry. The issue is that we can do it easily only for the active account.
+  await addToken(token);
   await addCW20ToRegistry(token);
 }

@@ -7,6 +7,7 @@ import {
   OptionGroup,
   Row,
   SafeLayout,
+  SwitchWithLabel,
   TertiaryButton,
 } from "@/components";
 import { NETWORK_NAMES } from "@/const";
@@ -28,7 +29,8 @@ export default function AccountSettingsScreen({
     params: { address },
   },
 }: AccountSettingsProps) {
-  const { accounts, deleteAccount, activeAccount } = useAccountsStore();
+  const { accounts, deleteAccount, activeAccount, toggleNotifications } =
+    useAccountsStore();
   const { ask } = useModalStore();
   const account = accounts.find((account) => account.address === address);
   const {
@@ -60,6 +62,13 @@ export default function AccountSettingsScreen({
     Linking.openURL(url);
   };
 
+  const toggleNotificationsHandler = () => {
+    if (!account) {
+      return;
+    }
+    toggleNotifications(account.address);
+  };
+
   return (
     <SafeLayout>
       <Column style={{ justifyContent: "space-between", minHeight: "100%" }}>
@@ -85,6 +94,11 @@ export default function AccountSettingsScreen({
               navigateTo={"Your unique Recovery Phrase"}
               params={{ address }}
               askPin
+            />
+            <SwitchWithLabel
+              label="Allow notifications"
+              value={account?.allowNotifications}
+              onChange={toggleNotificationsHandler}
             />
           </OptionGroup>
           {activeAccount?.address !== address && (

@@ -62,21 +62,3 @@ const getStorageKey = (address: string) => {
   const node = useSettingsStore.getState().settings.node;
   return `transactions-${node}-${address}.json`;
 };
-
-const serializeTxn = (txn: Transaction) => {
-  return {
-    ...txn,
-    amount: txn.amount.toString(),
-    fee: txn.fee.toString(),
-    timestamp: txn.timestamp.toISOString(),
-  };
-};
-
-const deserializeTxn = (txn: Transaction) => {
-  return {
-    ...txn,
-    amount: BigInt(txn.amount),
-    fee: BigInt(txn.fee || 0),
-    timestamp: new Date(txn.timestamp ?? 0),
-  };
-};
