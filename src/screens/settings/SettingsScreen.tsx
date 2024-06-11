@@ -8,6 +8,7 @@ import {
 import { useSettingsStore } from "@/store";
 import { Colors } from "@/styles";
 import {
+  Blend,
   CardEdit,
   Global,
   Notification,
@@ -17,7 +18,7 @@ import {
 
 export default function SettingsScreen() {
   const {
-    settings: { node, allowNotifications },
+    settings: { node, ["walletConnet.sessions"]: sessions, allowNotifications },
     setSetting,
   } = useSettingsStore();
 
@@ -51,6 +52,14 @@ export default function SettingsScreen() {
             label="Allow notifications"
             value={allowNotifications}
             onChange={toggleNotifications}
+          />
+          <Link
+            label="Connected Apps"
+            navigateTo="Connected Apps"
+            icon={<Blend size={22} color={Colors.text} />}
+            labelRight={
+              sessions?.length > 0 ? sessions.length.toString() : undefined
+            }
           />
         </OptionGroup>
         <OptionGroup>

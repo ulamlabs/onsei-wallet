@@ -1,3 +1,4 @@
+import "@walletconnect/react-native-compat"; // This has to be on top on the imports. WalletConnet's functions won't work otherwise
 import { Modals, SafeLayout } from "@/components";
 import { Toasts } from "@/components/toasts";
 import { useAppIsActive, useInactivityLock } from "@/hooks";
@@ -30,6 +31,7 @@ import { View } from "react-native";
 import { usePreventScreenCapture } from "expo-screen-capture";
 import { EyeSlash } from "iconsax-react-native";
 import { Colors } from "@/styles";
+import { Web3WalletController } from "@/web3wallet";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -146,6 +148,7 @@ export default function App() {
           <Modals />
           <Toasts />
           {ready && <NotificationsListener />}
+          <Web3WalletController />
         </SafeAreaProvider>
       </NavigationContainer>
     </QueryClientProvider>

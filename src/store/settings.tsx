@@ -1,6 +1,7 @@
 import { FeeTier } from "@/components/FeeBox";
 import { Node } from "@/types";
 import { loadFromStorage, removeFromStorage, saveToStorage } from "@/utils";
+import { WalletConnectSession } from "@/web3wallet/types";
 import { create } from "zustand";
 
 const SETTINGS_KEY = "settings.json";
@@ -10,8 +11,8 @@ const DEFAULT_SETTINGS = {
   node: "TestNet" as Node,
   globalGasPrice: "Low" as FeeTier,
   localGasPrice: "Low" as FeeTier,
-
   allowNotifications: true,
+  "walletConnet.sessions": [] as WalletConnectSession[],
 };
 
 type Settings = typeof DEFAULT_SETTINGS;

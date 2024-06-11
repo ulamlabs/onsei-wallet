@@ -5,6 +5,7 @@ import { DangerButton, PrimaryButton, TertiaryButton } from "../buttons";
 import { Column } from "../layout";
 import { Headline, Paragraph } from "../typography";
 import Modal from "./Modal";
+import { View } from "react-native";
 
 type ModalProps = PropsWithChildren & {
   isVisible: boolean;
@@ -34,13 +35,17 @@ export default function ModalQuestion({ isVisible, question }: ModalProps) {
         <Headline style={question.options.headerStyle}>
           {question.options.title}
         </Headline>
-        <Paragraph>{question.options.question}</Paragraph>
-        <TertiaryButton title={secondaryTitle} onPress={onSecondaryPress} />
+        {typeof question.options.question === "string" ? (
+          <Paragraph>{question.options.question}</Paragraph>
+        ) : (
+          <View>{question.options.question}</View>
+        )}
         {question.options.danger ? (
           <DangerButton title={primaryTitle} onPress={onPrimaryPress} />
         ) : (
           <PrimaryButton title={primaryTitle} onPress={onPrimaryPress} />
         )}
+        <TertiaryButton title={secondaryTitle} onPress={onSecondaryPress} />
       </Column>
     </Modal>
   );

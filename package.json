@@ -14,7 +14,9 @@
   "dependencies": {
     "@cosmjs/stargate": "^0.32.3",
     "@craftzdog/react-native-buffer": "^6.0.5",
+    "@ethersproject/shims": "^5.7.0",
     "@expo/metro-config": "~0.18.1",
+    "@json-rpc-tools/utils": "^1.7.6",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/netinfo": "11.3.1",
     "@react-native/metro-config": "^0.74.81",
@@ -24,10 +26,14 @@
     "@react-navigation/native-stack": "^6.9.26",
     "@sei-js/cosmjs": "^1.0.5",
     "@tanstack/react-query": "^5.35.1",
+    "@walletconnect/core": "^2.13.1",
+    "@walletconnect/react-native-compat": "^2.13.1",
+    "@walletconnect/web3wallet": "^1.12.1",
     "axios": "^1.6.8",
     "crypto-browserify": "^3.12.0",
     "date-fns": "^3.6.0",
     "decimal.js": "^10.0.0",
+    "ethers": "^5.7.2",
     "expo": "~51.0.7",
     "expo-background-fetch": "~12.0.1",
     "expo-camera": "~15.0.9",
@@ -58,7 +64,8 @@
     "stream-browserify": "^3.0.0",
     "text-encoding": "^0.7.0",
     "zustand": "^4.5.2",
-    "expo-screen-capture": "~6.0.1"
+    "expo-screen-capture": "~6.0.1",
+    "expo-application": "~5.9.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -68,6 +75,7 @@
     "@types/text-encoding": "^0.0.39",
     "@typescript-eslint/eslint-plugin": "^7.7.1",
     "@typescript-eslint/parser": "^7.7.1",
+    "@walletconnect/jsonrpc-types": "^1.0.4",
     "babel-plugin-module-resolver": "^5.0.2",
     "eslint": "8.57.0",
     "eslint-config-prettier": "^9.1.0",

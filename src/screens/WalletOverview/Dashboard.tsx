@@ -26,6 +26,7 @@ import {
   ArrowDown2,
   ArrowUp,
   InfoCircle,
+  ScanBarcode,
   Setting2,
 } from "iconsax-react-native";
 import React from "react";
@@ -52,6 +53,9 @@ export default function Dashboard({ navigation }: DashboardProps) {
   function onSend() {
     setSetting("localGasPrice", globalGasPrice);
     navigation.navigate("transferSelectToken");
+  }
+  function onScan() {
+    navigation.push("Connect Wallet");
   }
   async function onRefresh() {
     await refreshRegistryCache();
@@ -151,11 +155,23 @@ export default function Dashboard({ navigation }: DashboardProps) {
             marginVertical: 30,
           }}
         >
-          <SecondaryButton title="Send" onPress={onSend} icon={ArrowUp} />
+          <SecondaryButton
+            title="Send"
+            style={{ paddingHorizontal: 20 }}
+            onPress={onSend}
+            icon={ArrowUp}
+          />
           <SecondaryButton
             title="Receive"
+            style={{ paddingHorizontal: 20 }}
             onPress={onReceive}
             icon={ArrowDown}
+          />
+          <SecondaryButton
+            title="Scan"
+            style={{ paddingHorizontal: 20 }}
+            onPress={onScan}
+            icon={ScanBarcode}
           />
         </Row>
         <TokensList />
