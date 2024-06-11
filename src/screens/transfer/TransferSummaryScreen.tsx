@@ -72,7 +72,13 @@ export default function TransferSummaryScreen({
     setEstimationFailed(false);
 
     updateBalances([sei]);
-    estimateTransferFee(transfer.recipient.address, token, intAmount, gasPrice)
+    estimateTransferFee(
+      transfer.recipient.address,
+      token,
+      intAmount,
+      gasPrice,
+      transfer.signingClientAndSender,
+    )
       .then(setFee)
       .catch(() => setEstimationFailed(true));
   }

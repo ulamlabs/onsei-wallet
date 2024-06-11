@@ -14,12 +14,13 @@ import {
   estimateTransferFeeWithGas,
   estimateTransferGas,
 } from "@/services/cosmos/tx";
+import { getSigningClientAndSender } from "@/services/cosmos/tx/getSigningClientAndSender";
 import { useTokensStore } from "@/store";
 import { Colors, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { checkFundsForFee, parseAmount } from "@/utils";
 import { formatAmount } from "@/utils/formatAmount";
-import { StdFee } from "@cosmjs/stargate";
+import { SigningStargateClient, StdFee } from "@cosmjs/stargate";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useMemo, useState } from "react";
 import TransferAmount from "./TransferAmount";
@@ -43,8 +44,22 @@ export default function TransferAmountScreen({
   const [gas, setGas] = useState(0);
   const { gasPrice } = useGasPrice();
   const [loadingMaxAmount, setLoadingMaxAmount] = useState(false);
+  const [signingClientAndSender, setSigningClientAndSender] = useState<
+    [SigningStargateClient, string] | undefined
+  >(undefined);
 
   const token = useMemo(() => tokenMap.get(tokenId)!, [tokenId, tokenMap]);
+
+  useEffect(() => {
+    getSigningClientAndSender()
+      .then((data) => {
+        setSigningClientAndSender(data);
+      })
+      .catch(console.error);
+    return () => {
+      setSigningClientAndSender(undefined);
+    };
+  }, []);
 
   const intAmount = useMemo(
     () => parseAmount(decimalAmount, token.decimals),
@@ -80,7 +95,7 @@ export default function TransferAmountScreen({
 
     const id = setTimeout(async () => {
       await feeEstimation();
-    }, 1500);
+    }, 500);
 
     return () => {
       clearTimeout(id);
@@ -118,6 +133,7 @@ export default function TransferAmountScreen({
       intAmount: intAmount.toString(),
       memo: memoInput.value,
       fee,
+      signingClientAndSender,
     });
   }
 
@@ -184,7 +200,12 @@ export default function TransferAmountScreen({
 
   async function feeEstimation(amount: bigint = intAmount) {
     try {
-      const gas = await estimateTransferGas(recipient.address, token, amount);
+      const gas = await estimateTransferGas(
+        recipient.address,
+        token,
+        amount,
+        signingClientAndSender || undefined,
+      );
       setGas(gas);
       const estimatedFee = estimateTransferFeeWithGas(gasPrice, gas);
       setFee(estimatedFee);
@@ -223,54 +244,64 @@ export default function TransferAmountScreen({
     return <Paragraph>0 SEI</Paragraph>;
   }
 
-  function refershFn() {
+  function refreshFn() {
     updateBalances();
     feeEstimation();
   }
 
   return (
-    <SafeLayout refreshFn={refershFn}>
-      <Column style={{ flex: 1, gap: 24 }}>
-        <Row style={{ alignItems: "center" }}>
-          <Paragraph style={{ fontFamily: FontWeights.regular, fontSize: 16 }}>
-            Balance: {formatAmount(token.balance, token.decimals)}{" "}
-            {token.symbol}
-          </Paragraph>
-          <SmallButton title="Max" onPress={onMax} />
+    <SafeLayout refreshFn={refreshFn}>
+      {!signingClientAndSender ? (
+        <Row style={{ flex: 1, justifyContent: "center" }}>
+          <Loader size="large" />
         </Row>
-        <Column
-          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-        >
-          <TransferAmount
-            style={{ flex: 0 }}
-            token={token}
-            decimalAmount={decimalAmount}
-            error={!hasFunds}
-            loading={loadingMaxAmount}
-          />
-          <Paragraph>Network fee: {getFeeElement()}</Paragraph>
-        </Column>
+      ) : (
+        <Column style={{ flex: 1, gap: 24 }}>
+          <Row style={{ alignItems: "center" }}>
+            <Paragraph
+              style={{ fontFamily: FontWeights.regular, fontSize: 16 }}
+            >
+              Balance: {formatAmount(token.balance, token.decimals)}{" "}
+              {token.symbol}
+            </Paragraph>
+            <SmallButton title="Max" onPress={onMax} />
+          </Row>
+          <Column
+            style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+          >
+            <TransferAmount
+              style={{ flex: 0 }}
+              token={token}
+              decimalAmount={decimalAmount}
+              error={!hasFunds}
+              loading={loadingMaxAmount}
+            />
+            <Paragraph>Network fee: {getFeeElement()}</Paragraph>
+          </Column>
 
-        <Column>
-          <TextInput
-            autoCorrect={false}
-            placeholder="Add memo (optional)"
-            {...memoInput}
-          />
-          <PrimaryButton
-            title="Go to summary"
-            onPress={goToSummary}
-            disabled={!intAmount || !hasFunds || loadingFee || !hasFundsForFee}
+          <Column>
+            <TextInput
+              autoCorrect={false}
+              placeholder="Add memo (optional)"
+              {...memoInput}
+            />
+            <PrimaryButton
+              title="Go to summary"
+              onPress={goToSummary}
+              disabled={
+                !intAmount || !hasFunds || loadingFee || !hasFundsForFee
+              }
+            />
+          </Column>
+
+          <NumericPad
+            showDot={true}
+            onDigit={onDigit}
+            onDelete={onDelete}
+            style="condensed"
           />
         </Column>
-
-        <NumericPad
-          showDot={true}
-          onDigit={onDigit}
-          onDelete={onDelete}
-          style="condensed"
-        />
-      </Column>
+      )}
     </SafeLayout>
   );
 }

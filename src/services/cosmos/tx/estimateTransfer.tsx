@@ -1,4 +1,4 @@
-import { StdFee, calculateFee } from "@cosmjs/stargate";
+import { SigningStargateClient, StdFee, calculateFee } from "@cosmjs/stargate";
 import { CosmToken } from "../types";
 import { getSigningClientAndSender } from "./getSigningClientAndSender";
 import { getSendAnyTokensMsg } from "./transferToken";
@@ -11,8 +11,9 @@ export async function estimateTransferGas(
   receiver: string,
   token: CosmToken,
   amount: bigint,
+  preloadedData?: [SigningStargateClient, string],
 ): Promise<number> {
-  const [client, sender] = await getSigningClientAndSender();
+  const [client, sender] = preloadedData || (await getSigningClientAndSender());
   const msg = getSendAnyTokensMsg(sender, receiver, token, amount.toString());
   const gas = await client.simulate(sender, [msg], undefined);
   return gas;
@@ -23,8 +24,9 @@ export async function estimateTransferFee(
   token: CosmToken,
   amount: bigint,
   gasPrice: string,
+  preloadedData?: [SigningStargateClient, string],
 ): Promise<StdFee> {
-  const gas = await estimateTransferGas(receiver, token, amount);
+  const gas = await estimateTransferGas(receiver, token, amount, preloadedData);
   return estimateTransferFeeWithGas(gasPrice, gas);
 }
 

@@ -38,7 +38,11 @@ import TransactionSettingscreen from "@/screens/transfer/TransactionSettingsScre
 import { Account, SavedAddress, Wallet } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { trimAddress } from "@/utils";
-import { DeliverTxResponse, StdFee } from "@cosmjs/stargate";
+import {
+  DeliverTxResponse,
+  SigningStargateClient,
+  StdFee,
+} from "@cosmjs/stargate";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import BottomBarsNavigation from "./BottomBarsNavigation";
@@ -90,6 +94,7 @@ export type HomeParamList = {
     intAmount: string;
     memo?: string;
     fee?: StdFee | null;
+    signingClientAndSender?: [SigningStargateClient, string];
   };
   transferSending: {
     tokenId: string;

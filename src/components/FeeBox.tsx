@@ -1,4 +1,4 @@
-import { useGasPrice } from "@/hooks";
+import { createGasPrice, useGasPrice } from "@/hooks";
 import { estimateTransferFeeWithGas } from "@/services/cosmos/tx";
 import { useSettingsStore, useTokensStore } from "@/store";
 import { Colors, FontSizes, FontWeights } from "@/styles";
@@ -29,9 +29,7 @@ export default function FeeBox({
     (gp) => gp.speed === title,
   )!.multiplier;
 
-  const gasPrice = minGasPrice
-    ? `${minGasPrice * speedMultiplier}usei`
-    : "0.1usei";
+  const gasPrice = createGasPrice(minGasPrice, speedMultiplier);
 
   const fee = estimateTransferFeeWithGas(gasPrice, gas);
 
