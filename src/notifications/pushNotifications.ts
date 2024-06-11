@@ -5,6 +5,7 @@ import {
 } from "@/modules/transactions/storage";
 import { CosmToken, fetchCW20Token } from "@/services/cosmos";
 import {
+  useAccountsStore,
   useSettingsStore,
   useTokenRegistryStore,
   useTokensStore,
@@ -41,7 +42,7 @@ export async function notifyTx(
     return false;
   }
   if (!tokenRegistryMap.has(tx.token)) {
-    await addTokenToRegistry(tx.token);
+    await addTokenToRegistry(tx.token, tx.to);
   }
 
   if (addresses.has(tx.sender)) {
@@ -89,13 +90,14 @@ function getTitle(tx: Transaction, addresses: Set<string>): string {
   return trimAddress(tx.hash);
 }
 
-async function addTokenToRegistry(tokenId: string) {
+async function addTokenToRegistry(tokenId: string, to: string) {
   const {
     settings: { node },
   } = useSettingsStore.getState();
 
   const { addCW20ToRegistry } = useTokenRegistryStore.getState();
   const { addToken } = useTokensStore.getState();
+  const { activeAccount } = useAccountsStore.getState();
 
   if (!isValidSeiCosmosAddress(tokenId)) {
     return;
@@ -110,6 +112,9 @@ async function addTokenToRegistry(tokenId: string) {
   }
 
   // TODO We should add the token to the account, not only to the registry. The issue is that we can do it easily only for the active account.
-  await addToken(token);
+  if (to === activeAccount?.address) {
+    await addToken(token);
+  }
+
   await addCW20ToRegistry(token);
 }
