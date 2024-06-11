@@ -133,7 +133,6 @@ export default function TransferAmountScreen({
       intAmount: intAmount.toString(),
       memo: memoInput.value,
       fee,
-      signingClientAndSender,
     });
   }
 
