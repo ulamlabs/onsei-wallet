@@ -55,7 +55,7 @@ export type TxData = {
 };
 
 export type TxAuthInfo = {
-  fee: { amount: { amount: number }[] };
+  fee: { amount: { amount: string; denom: string }[] };
 };
 
 export type TxBody = {

@@ -24,6 +24,9 @@ it("parse createDenomMetadataTx", () => {
     contractAction: "",
     sender: "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
     memo: "",
+    auth_info: {
+      amount: [{ amount: "21740", denom: "usei" }],
+    },
   });
 });
 
@@ -42,6 +45,9 @@ it("parse transferSeiTx", () => {
     to: "sei1h90zjqlfvqm3q7d6fhsmstulhz7wllnj6up5n5",
     sender: "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
     memo: "test memo",
+    auth_info: {
+      amount: [{ amount: "87017", denom: "usei" }],
+    },
   });
 });
 
@@ -60,6 +66,9 @@ it("parse transferSeiMultisendTx", () => {
     to: "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
     sender: "sei1qhu8qamnlql3c3gfv985xs255fr208qs987qzh",
     memo: "",
+    auth_info: {
+      amount: [{ amount: "87753", denom: "usei" }],
+    },
   });
 });
 
@@ -78,6 +87,9 @@ it("parse transferNativeTx", () => {
     to: "sei1h90zjqlfvqm3q7d6fhsmstulhz7wllnj6up5n5",
     sender: "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
     memo: "",
+    auth_info: {
+      amount: [{ amount: "94282", denom: "usei" }],
+    },
   });
 });
 
@@ -96,6 +108,9 @@ it("parse transferCw20Tx", () => {
     to: "sei1h90zjqlfvqm3q7d6fhsmstulhz7wllnj6up5n5",
     sender: "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
     memo: "",
+    auth_info: {
+      amount: [{ amount: "152889", denom: "usei" }],
+    },
   });
 });
 
@@ -115,6 +130,9 @@ it("parse transferIcs20Tx", () => {
     to: "sei1h90zjqlfvqm3q7d6fhsmstulhz7wllnj6up5n5",
     sender: "sei14y5ar52zcg0jxencdxpqf65kld33m70fr3wf7y",
     memo: "",
+    auth_info: {
+      amount: [{ amount: "94627", denom: "usei" }],
+    },
   });
 });
 
@@ -133,6 +151,9 @@ it("parse astroportSwapTx", () => {
     to: "",
     sender: "sei1f8se40xdwnaaj66hsndt2ch8ppusah4yuw8s9p",
     memo: "",
+    auth_info: {
+      amount: [{ amount: "781174", denom: "usei" }],
+    },
   });
 });
 
@@ -151,5 +172,8 @@ it("parse noEventsTx", () => {
     to: "",
     sender: "",
     memo: "",
+    auth_info: {
+      amount: [{ amount: "87017", denom: "usei" }],
+    },
   });
 });
