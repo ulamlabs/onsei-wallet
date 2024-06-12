@@ -1,6 +1,10 @@
 import { NODE_URL } from "@/const";
 import { useAppIsActive } from "@/hooks";
-import { parseTx, websocketTxToTxResponse } from "@/modules/transactions";
+import {
+  parseTx,
+  useTransactions,
+  websocketTxToTxResponse,
+} from "@/modules/transactions";
 import { useAccountsStore, useSettingsStore } from "@/store";
 import { useEffect, useRef } from "react";
 import { notifyTx } from "./pushNotifications";
@@ -8,6 +12,7 @@ import { notifyTx } from "./pushNotifications";
 export function NotificationsWebsocket({ address }: { address: string }) {
   const { accounts } = useAccountsStore();
   const isActive = useAppIsActive();
+  const { refetch } = useTransactions(address);
 
   const {
     settings: { node },
@@ -58,7 +63,7 @@ export function NotificationsWebsocket({ address }: { address: string }) {
     if (data.result?.data && data.result?.events) {
       const tx = parseTx(websocketTxToTxResponse(data.result));
       const addresses = new Set(accounts.map((account) => account.address));
-      notifyTx(tx, addresses, isActive);
+      notifyTx(tx, addresses, isActive, refetch);
     }
   }
 

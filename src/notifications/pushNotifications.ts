@@ -12,7 +12,9 @@ import {
 } from "@/store";
 import { formatAmount, trimAddress } from "@/utils";
 import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
+import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 import * as Notifications from "expo-notifications";
+import { Platform } from "react-native";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -23,6 +25,12 @@ Notifications.setNotificationHandler({
 });
 
 export async function grantNotificationsPermission() {
+  if (Platform.OS === "android") {
+    Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+    });
+  }
   const { status } = await Notifications.getPermissionsAsync();
   let finalStatus = status;
   if (status !== "granted") {
@@ -36,6 +44,9 @@ export async function notifyTx(
   tx: Transaction,
   addresses: Set<string>,
   isActive?: boolean,
+  updateTransactions?: (
+    options?: RefetchOptions | undefined,
+  ) => Promise<QueryObserverResult<Transaction[], Error>>,
 ): Promise<boolean> {
   const { tokenRegistryMap } = useTokenRegistryStore.getState();
   const { updateBalances } = useTokensStore.getState();
@@ -76,6 +87,7 @@ export async function notifyTx(
 
   if (isActive) {
     await updateBalances();
+    updateTransactions && (await updateTransactions());
   }
 
   return true;

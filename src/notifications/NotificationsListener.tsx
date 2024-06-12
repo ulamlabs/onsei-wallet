@@ -36,7 +36,6 @@ export default function NotificationsListener() {
     if (!allowNotifications) {
       return;
     }
-    registerBackgroundTxPooler();
     grantNotificationsPermission().then((status) => {
       if (status !== "granted") {
         setSetting("allowNotifications", false);
@@ -44,6 +43,7 @@ export default function NotificationsListener() {
       }
       setSetting("allowNotifications", true);
     });
+    registerBackgroundTxPooler();
   }, [allowNotifications]);
 
   if (!allowNotifications) {
