@@ -7,6 +7,7 @@ const SETTINGS_KEY = "settings.json";
 const DEFAULT_SETTINGS = {
   "auth.biometricsEnabled": false,
   node: "TestNet" as Node,
+  allowNotifications: true,
 };
 
 type Settings = typeof DEFAULT_SETTINGS;
@@ -21,9 +22,11 @@ type SettingsStore = {
 export const useSettingsStore = create<SettingsStore>((set) => ({
   settings: { ...DEFAULT_SETTINGS },
   init: async () => {
-    const settings = await loadFromStorage<Settings>(SETTINGS_KEY, {
-      ...DEFAULT_SETTINGS,
-    });
+    const storedSettings = await loadFromStorage<Partial<Settings>>(
+      SETTINGS_KEY,
+      { ...DEFAULT_SETTINGS },
+    );
+    const settings = { ...DEFAULT_SETTINGS, ...storedSettings };
     set({ settings });
   },
   setSetting: (key, value) => {

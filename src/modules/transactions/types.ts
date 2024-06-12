@@ -7,6 +7,7 @@ type TransactionBase = {
   hash: string;
   contract: string;
   contractAction: string;
+  sender: string;
   memo: string;
 };
 

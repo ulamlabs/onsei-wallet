@@ -3,7 +3,14 @@ import { Transaction, TxEvent, TxResponse } from "./types";
 
 type TransactionEventParams = Pick<
   Transaction,
-  "type" | "token" | "amount" | "from" | "to" | "contract" | "contractAction"
+  | "type"
+  | "token"
+  | "amount"
+  | "from"
+  | "to"
+  | "contract"
+  | "contractAction"
+  | "sender"
 >;
 
 export function deliverTxResponseToTxResponse(
@@ -29,6 +36,19 @@ export function deliverTxResponseToTxResponse(
   };
 }
 
+export function websocketTxToTxResponse(tx: any): TxResponse {
+  const result = tx.data.value.TxResult.result;
+  return {
+    code: 0,
+    events: result.events,
+    gas_used: result.gas_used.toString(),
+    gas_wanted: result.gas_wanted.toString(),
+    // Timestamp is missing in websocket data. We might pull it from the block data in the future but using the current date is good enough as websockets are "real time".
+    timestamp: new Date().toISOString(),
+    txhash: tx.events["tx.hash"][0] ?? "",
+  };
+}
+
 export function parseTx(tx: TxResponse, memo = ""): Transaction {
   return {
     timestamp: new Date(tx.timestamp),
@@ -46,6 +66,7 @@ function getParamsFromEvents(tx: TxResponse): TransactionEventParams {
   const action = events["message.action"] ?? "";
 
   const result: TransactionEventParams = {
+    sender: events["signer.sei_addr"] ?? events["message.sender"] ?? "",
     type: action.split(".").at(-1) ?? "",
     contract: "",
     contractAction: events["wasm.action"] ?? "",

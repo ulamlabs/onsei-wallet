@@ -1,5 +1,5 @@
 import { useSettingsStore } from "@/store";
-import { loadFromStorage, saveToStorage } from "@/utils";
+import { loadFromStorage, saveToStorage, unique } from "@/utils";
 import { SerializedTx, Transaction } from "./types";
 import { deserializeTxn, serializeTxn } from "./utils";
 
@@ -24,19 +24,17 @@ export const combineTransactionsWithStorage = async (
   fetchedTransactions: Transaction[],
 ) => {
   const savedTxns = await getStoredTransactions(address);
-  const knownHashes = new Set(savedTxns.map((t) => t.hash));
 
-  for (const txn of fetchedTransactions) {
-    if (!knownHashes.has(txn.hash)) {
-      savedTxns.push(txn);
-    }
+  const txsToSave = unique(
+    [...savedTxns, ...fetchedTransactions],
+    (tx) => tx.hash,
+  );
+
+  if (savedTxns.length !== txsToSave.length) {
+    await saveTransactionsToStorage(address, txsToSave);
   }
 
-  if (savedTxns.length !== knownHashes.size) {
-    await saveTransactionsToStorage(address, savedTxns);
-  }
-
-  return savedTxns;
+  return txsToSave;
 };
 
 const saveTransactionsToStorage = async (
@@ -50,6 +48,14 @@ const saveTransactionsToStorage = async (
   }
 
   await saveToStorage(key, transactions.map(serializeTxn));
+};
+
+export const getAllKnownTransactionHashes = async (addresses: string[]) => {
+  // A very inefficient way to do this but it's rarely executed so it's good enough.
+  const txsPerAccount = await Promise.all(
+    addresses.map((address) => getStoredTransactions(address)),
+  );
+  return new Set(txsPerAccount.flat().map((tx) => tx.hash));
 };
 
 const getStorageKey = (address: string) => {

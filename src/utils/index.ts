@@ -13,3 +13,4 @@ export * from "./secureStorage";
 export * from "./shuffle";
 export * from "./storage";
 export * from "./trimAddress";
+export * from "./unique";
