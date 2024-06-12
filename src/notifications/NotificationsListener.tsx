@@ -37,11 +37,7 @@ export default function NotificationsListener() {
       return;
     }
     grantNotificationsPermission().then((status) => {
-      if (status !== "granted") {
-        setSetting("allowNotifications", false);
-        return;
-      }
-      setSetting("allowNotifications", true);
+      setSetting("allowNotifications", status === "granted");
     });
     registerBackgroundTxPooler();
   }, [allowNotifications]);
