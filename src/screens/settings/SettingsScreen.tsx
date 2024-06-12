@@ -8,6 +8,7 @@ import {
 import { useSettingsStore } from "@/store";
 import { Colors } from "@/styles";
 import {
+  CardEdit,
   Global,
   Notification,
   SecuritySafe,
@@ -38,6 +39,11 @@ export default function SettingsScreen() {
             navigateTo="Select network"
             icon={<Global size={22} color={Colors.text} />}
             labelRight={node}
+          />
+          <Link
+            label="Transactions settings"
+            navigateTo="Transaction settings"
+            icon={<CardEdit size={22} color={Colors.text} />}
           />
           <SwitchWithLabel
             icon={<Notification size={22} color={Colors.text} />}

@@ -9,6 +9,7 @@ import {
 import { useSettingsStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useState } from "react";
 import { View } from "react-native";
 
 type TransactionSettingscreenProps = NativeStackScreenProps<
@@ -16,34 +17,51 @@ type TransactionSettingscreenProps = NativeStackScreenProps<
   "Transaction settings"
 >;
 
-function FeeBoxList({ gas }: { gas: number }) {
-  const {
-    settings: { selectedGasPrice },
-  } = useSettingsStore();
-  const gasPrices: { speed: "Low" | "Medium" | "High"; multiplier: number }[] =
-    [
-      { speed: "Low", multiplier: 1 },
-      { speed: "Medium", multiplier: 1.2 },
-      { speed: "High", multiplier: 1.3 },
-    ];
+const gasPrices: { speed: "Low" | "Medium" | "High"; multiplier: number }[] = [
+  { speed: "Low", multiplier: 1 },
+  { speed: "Medium", multiplier: 1.2 },
+  { speed: "High", multiplier: 1.3 },
+];
 
+function FeeBoxList({
+  gas,
+  selectedSpeed,
+  selectSpeed,
+}: {
+  selectedSpeed: "Low" | "Medium" | "High";
+  selectSpeed: (speed: "Low" | "Medium" | "High") => void;
+  gas?: number;
+}) {
   return gasPrices.map((option) => (
     <FeeBox
       gasPrices={gasPrices}
       key={option.speed.toLowerCase()}
       title={option.speed as "Low" | "Medium" | "High"}
       gas={gas}
-      selected={selectedGasPrice.speed === option.speed}
+      selected={selectedSpeed === option.speed}
+      onPress={() => selectSpeed(option.speed as "Low" | "Medium" | "High")}
     />
   ));
 }
 
 export default function TransactionSettingscreen({
   navigation,
-  route: {
-    params: { gas },
-  },
+  route: { params },
 }: TransactionSettingscreenProps) {
+  const {
+    settings: { selectedGasPrice },
+    setSetting,
+  } = useSettingsStore();
+  const [selectedSpeed, setSelectedSpeed] = useState(selectedGasPrice.speed);
+
+  const saveSettings = () => {
+    setSetting(
+      "selectedGasPrice",
+      gasPrices.find((gp) => gp.speed === selectedSpeed)!,
+    );
+    navigation.goBack();
+  };
+
   return (
     <SafeLayout>
       <Column style={{ minHeight: "100%", justifyContent: "space-between" }}>
@@ -56,13 +74,14 @@ export default function TransactionSettingscreen({
             your transaction. Our wallet is free to use.
           </Paragraph>
           <Column style={{ marginTop: 16, gap: 10 }}>
-            <FeeBoxList gas={gas} />
+            <FeeBoxList
+              gas={params?.gas}
+              selectedSpeed={selectedSpeed}
+              selectSpeed={setSelectedSpeed}
+            />
           </Column>
         </View>
-        <PrimaryButton
-          title="Save settings"
-          onPress={() => navigation.goBack()}
-        />
+        <PrimaryButton title="Save settings" onPress={saveSettings} />
       </Column>
     </SafeLayout>
   );

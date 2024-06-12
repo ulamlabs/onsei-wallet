@@ -59,6 +59,7 @@ export default function TransferSendingScreen({
       const parsedTx = parseTx(
         deliverTxResponseToTxResponse(tx),
         transfer.memo,
+        transfer.fee.amount[0].amount,
       );
       if (parsedTx.status === "fail") {
         parsedTx.amount = BigInt(transfer.intAmount);

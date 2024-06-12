@@ -15,7 +15,7 @@ import {
   estimateTransferGas,
 } from "@/services/cosmos/tx";
 import { getSigningClientAndSender } from "@/services/cosmos/tx/getSigningClientAndSender";
-import { useTokensStore } from "@/store";
+import { useSettingsStore, useTokensStore } from "@/store";
 import { Colors, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { checkFundsForFee, parseAmount } from "@/utils";
@@ -47,6 +47,10 @@ export default function TransferAmountScreen({
   const [signingClientAndSender, setSigningClientAndSender] = useState<
     [SigningStargateClient, string] | undefined
   >(undefined);
+  const {
+    settings: { selectedGasPrice },
+    setSetting,
+  } = useSettingsStore();
 
   const token = useMemo(() => tokenMap.get(tokenId)!, [tokenId, tokenMap]);
 
@@ -56,8 +60,10 @@ export default function TransferAmountScreen({
         setSigningClientAndSender(data);
       })
       .catch(console.error);
+    const globalSpeed = selectedGasPrice;
     return () => {
       setSigningClientAndSender(undefined);
+      setSetting("selectedGasPrice", globalSpeed);
     };
   }, []);
 
@@ -65,7 +71,6 @@ export default function TransferAmountScreen({
     () => parseAmount(decimalAmount, token.decimals),
     [decimalAmount],
   );
-
   const hasFunds = useMemo(() => {
     return token.balance >= intAmount;
   }, [intAmount]);
@@ -79,7 +84,7 @@ export default function TransferAmountScreen({
 
   const hasFundsForFee = useMemo(() => {
     return checkFundsForFee(fee, sei.balance, tokenId, sei.id, intAmount);
-  }, [fee, sei.balance]);
+  }, [fee, sei.balance, intAmount]);
 
   useEffect(() => {
     if (loadingMaxAmount) {
@@ -87,6 +92,7 @@ export default function TransferAmountScreen({
     }
     if (!decimalAmount) {
       setFee(null);
+      setLoadingFee(false);
       return;
     }
     setLoadingFee(true);
@@ -95,7 +101,7 @@ export default function TransferAmountScreen({
 
     const id = setTimeout(async () => {
       await feeEstimation();
-    }, 500);
+    }, 700);
 
     return () => {
       clearTimeout(id);
@@ -108,12 +114,6 @@ export default function TransferAmountScreen({
       setGas(0);
     };
   }, []);
-
-  useEffect(() => {
-    navigation.setParams({
-      disabled: !decimalAmount || !hasFunds || loadingFee,
-    });
-  }, [loadingFee, hasFunds, decimalAmount]);
 
   useEffect(() => {
     navigation.setParams({ gas });
@@ -215,7 +215,6 @@ export default function TransferAmountScreen({
       setLoadingFee(false);
     }
   }
-
   function getFeeElement() {
     if (!hasFundsForFee && fee) {
       return (
@@ -225,16 +224,12 @@ export default function TransferAmountScreen({
       );
     }
 
-    if (fee) {
+    if (fee && decimalAmount) {
       return <Paragraph>{formatAmount(feeInt, sei.decimals)} SEI</Paragraph>;
     }
 
     if (estimationFailed) {
-      return (
-        <Paragraph style={{ color: Colors.danger }}>
-          Fee estimation failed
-        </Paragraph>
-      );
+      return <Paragraph>-</Paragraph>;
     }
     if (loadingFee) {
       return <Loader size="small" />;

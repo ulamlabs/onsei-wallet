@@ -1,6 +1,6 @@
 import { createGasPrice, useGasPrice } from "@/hooks";
 import { estimateTransferFeeWithGas } from "@/services/cosmos/tx";
-import { useSettingsStore, useTokensStore } from "@/store";
+import { useTokensStore } from "@/store";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { formatAmount, formatFee } from "@/utils";
 import { Pressable } from "react-native";
@@ -11,8 +11,9 @@ import { Text } from "./typography";
 type Props = {
   title: "Low" | "Medium" | "High";
   selected?: boolean;
-  gas: number;
+  gas?: number;
   gasPrices: { speed: "Low" | "Medium" | "High"; multiplier: number }[];
+  onPress: () => void;
 };
 
 export default function FeeBox({
@@ -20,30 +21,44 @@ export default function FeeBox({
   selected = false,
   gas,
   gasPrices,
+  onPress,
 }: Props) {
   const { sei } = useTokensStore();
-  const { setSetting } = useSettingsStore();
   const { minGasPrice } = useGasPrice();
 
   const speedMultiplier = gasPrices.find(
     (gp) => gp.speed === title,
   )!.multiplier;
 
-  const gasPrice = createGasPrice(minGasPrice, speedMultiplier);
+  const getFeeInt = () => {
+    if (!gas) {
+      return;
+    }
+    const gasPrice = createGasPrice(minGasPrice, speedMultiplier);
 
-  const fee = estimateTransferFeeWithGas(gasPrice, gas);
+    const fee = estimateTransferFeeWithGas(gasPrice, gas);
 
-  const feeInt = BigInt(fee.amount[0].amount);
+    const feeInt = BigInt(fee.amount[0].amount);
+    return feeInt;
+  };
+
+  const feeInt = getFeeInt();
+
+  const displayTitle = () => {
+    switch (title) {
+      case "Low":
+        return "Lowest fee";
+      case "Medium":
+        return "Balanced";
+      case "High":
+        return "Fastest";
+      default:
+        return title;
+    }
+  };
 
   return (
-    <Pressable
-      onPress={() => {
-        setSetting("selectedGasPrice", {
-          speed: title,
-          multiplier: speedMultiplier,
-        });
-      }}
-    >
+    <Pressable onPress={onPress}>
       <Box
         style={{
           borderWidth: 1,
@@ -54,17 +69,26 @@ export default function FeeBox({
           <Text
             style={{ fontSize: FontSizes.base, fontFamily: FontWeights.bold }}
           >
-            {title}
+            {displayTitle()}
           </Text>
-          <Column style={{ gap: 2, alignItems: "flex-end" }}>
-            <Text
-              style={{ fontSize: FontSizes.base, fontFamily: FontWeights.bold }}
-            >
-              {formatAmount(feeInt, sei.decimals)} SEI
-            </Text>
-            <Text style={{ fontSize: FontSizes.xs, color: Colors.text100 }}>
-              {formatFee(feeInt, sei)}
-            </Text>
+          <Column style={{ gap: 2, alignItems: "flex-end", minHeight: 39 }}>
+            {feeInt ? (
+              <>
+                <Text
+                  style={{
+                    fontSize: FontSizes.base,
+                    fontFamily: FontWeights.bold,
+                  }}
+                >
+                  {formatAmount(feeInt, sei.decimals)} SEI
+                </Text>
+                <Text style={{ fontSize: FontSizes.xs, color: Colors.text100 }}>
+                  {formatFee(feeInt, sei)}
+                </Text>
+              </>
+            ) : (
+              <></>
+            )}
           </Column>
         </Row>
       </Box>

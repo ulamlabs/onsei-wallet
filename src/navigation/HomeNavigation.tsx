@@ -82,7 +82,6 @@ export type HomeParamList = {
     tokenId: string;
     recipient: Recipient;
     gas?: number;
-    disabled?: boolean;
   };
   transferSummary: {
     tokenId: string;
@@ -101,7 +100,7 @@ export type HomeParamList = {
   transferSent: { tx: DeliverTxResponse; amount?: string; symbol?: string };
   "Set Name": { nextRoute: "Import Wallet" | "Generate Wallet" };
   "Scan QR code": { tokenId: string };
-  "Transaction settings": { gas: number };
+  "Transaction settings": { gas?: number };
   "Pin Change Success": undefined;
   "Transaction details": { transaction: SerializedTx };
 };
@@ -193,8 +192,7 @@ export default function HomeNavigation() {
         component={TransferAmountScreen}
         options={({ route }) => ({
           title: `To: ${route.params.recipient.name || ""} (${trimAddress(route.params.recipient.address)})`,
-          headerRight: () =>
-            SettingsHeaderRight(route.params.gas || 0, route.params?.disabled),
+          headerRight: () => SettingsHeaderRight(route.params.gas || 0),
         })}
       />
       <Screen
