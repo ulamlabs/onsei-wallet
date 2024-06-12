@@ -1,6 +1,7 @@
 import { Colors, FontWeights } from "@/styles";
 import { Icon, IconProps } from "iconsax-react-native";
 import { Pressable, StyleProp, TextStyle, ViewStyle } from "react-native";
+import Loader from "../Loader";
 import { Text } from "../typography";
 
 export type BaseButtonProps = {
@@ -15,6 +16,7 @@ export type BaseButtonProps = {
   iconVariant?: IconProps["variant"];
   iconSize?: number;
   iconAllign?: "left" | "right";
+  loading?: boolean;
 };
 
 export default function BaseButton({
@@ -29,16 +31,17 @@ export default function BaseButton({
   iconVariant = "Linear",
   iconSize = 20,
   iconAllign = "left",
+  loading = false,
 }: BaseButtonProps) {
   return (
     <Pressable
-      disabled={disabled}
+      disabled={disabled || loading}
       style={[
         {
           alignItems: "center",
           justifyContent: "center",
           paddingHorizontal: 24,
-          paddingVertical: 18,
+          paddingVertical: loading ? 16 : 18,
           borderRadius: 22,
           flexDirection: iconAllign === "left" ? "row" : "row-reverse",
           gap: 8,
@@ -48,11 +51,19 @@ export default function BaseButton({
       ]}
       onPress={onPress}
     >
-      {Icon && <Icon color={iconColor} size={iconSize} variant={iconVariant} />}
-      {title && (
-        <Text style={[{ color, fontFamily: FontWeights.bold }, textStyle]}>
-          {title}
-        </Text>
+      {loading ? (
+        <Loader size="medium" color={Colors.background} />
+      ) : (
+        <>
+          {Icon && (
+            <Icon color={iconColor} size={iconSize} variant={iconVariant} />
+          )}
+          {title && (
+            <Text style={[{ color, fontFamily: FontWeights.bold }, textStyle]}>
+              {title}
+            </Text>
+          )}
+        </>
       )}
     </Pressable>
   );

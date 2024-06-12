@@ -20,6 +20,7 @@ export default function CustomSwitch({
         false: Colors.activeInputBorderColor,
       }}
       ios_backgroundColor={Colors.activeInputBorderColor}
+      thumbColor={Colors.text}
       disabled={disabled}
       {...props}
     />

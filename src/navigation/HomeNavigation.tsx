@@ -4,7 +4,7 @@ import ReceiveAssets from "@/screens/ReceiveAssets";
 import AccountSettingsScreen from "@/screens/WalletOverview/AccountSettingsScreen";
 import AccountsScreen from "@/screens/WalletOverview/AccountsScreen";
 import EditAccountNameScreen from "@/screens/WalletOverview/EditAccountNameScreen";
-import { ManageTokensScreen } from "@/screens/account";
+import { ManageTokensScreen } from "@/screens/tokens";
 import AddOrEditAddress from "@/screens/addressBook/AddOrEditAddress";
 import AddressDetailsScreen from "@/screens/addressBook/AddressDetailsScreen";
 import TransactionsWithAddress from "@/screens/addressBook/TransactionsWithAddress";
