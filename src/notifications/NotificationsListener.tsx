@@ -27,6 +27,7 @@ export default function NotificationsListener() {
   const { accounts } = useAccountsStore();
   const {
     settings: { allowNotifications },
+    setSetting,
   } = useSettingsStore();
 
   useRefreshOnActivation();
@@ -36,7 +37,13 @@ export default function NotificationsListener() {
       return;
     }
     registerBackgroundTxPooler();
-    grantNotificationsPermission();
+    grantNotificationsPermission().then((status) => {
+      if (status !== "granted") {
+        setSetting("allowNotifications", false);
+        return;
+      }
+      setSetting("allowNotifications", true);
+    });
   }, [allowNotifications]);
 
   if (!allowNotifications) {

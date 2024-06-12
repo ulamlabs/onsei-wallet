@@ -24,9 +24,12 @@ Notifications.setNotificationHandler({
 
 export async function grantNotificationsPermission() {
   const { status } = await Notifications.getPermissionsAsync();
+  let finalStatus = status;
   if (status !== "granted") {
-    await Notifications.requestPermissionsAsync();
+    const { status } = await Notifications.requestPermissionsAsync();
+    finalStatus = status;
   }
+  return finalStatus;
 }
 
 export async function notifyTx(
@@ -36,13 +39,19 @@ export async function notifyTx(
 ): Promise<boolean> {
   const { tokenRegistryMap } = useTokenRegistryStore.getState();
   const { updateBalances } = useTokensStore.getState();
+  const { activeAccount } = useAccountsStore.getState();
 
   if (!tx.token || !tx.to) {
     // We only care about incoming token transfers. We can't reliably link the tx to the account for other tx types.
     return false;
   }
+
+  if (tx.to === activeAccount?.address) {
+    await addTokenToTokens(tx.token);
+  }
+
   if (!tokenRegistryMap.has(tx.token)) {
-    await addTokenToRegistry(tx.token, tx.to);
+    await addTokenToRegistry(tx.token);
   }
 
   if (addresses.has(tx.sender)) {
@@ -90,31 +99,45 @@ function getTitle(tx: Transaction, addresses: Set<string>): string {
   return trimAddress(tx.hash);
 }
 
-async function addTokenToRegistry(tokenId: string, to: string) {
-  const {
-    settings: { node },
-  } = useSettingsStore.getState();
-
-  const { addCW20ToRegistry } = useTokenRegistryStore.getState();
-  const { addToken } = useTokensStore.getState();
-  const { activeAccount } = useAccountsStore.getState();
-
+async function fetchAndValidateToken(
+  tokenId: string,
+): Promise<CosmToken | undefined> {
   if (!isValidSeiCosmosAddress(tokenId)) {
     return;
   }
 
-  let token: CosmToken;
+  const {
+    settings: { node },
+  } = useSettingsStore.getState();
+
   try {
-    token = await fetchCW20Token(tokenId, node);
+    const token = await fetchCW20Token(tokenId, node);
+    return token;
   } catch {
     // It doesn't have to be a valid CW20 token.
     return;
   }
+}
 
-  // TODO We should add the token to the account, not only to the registry. The issue is that we can do it easily only for the active account.
-  if (to === activeAccount?.address) {
-    await addToken(token);
+async function addTokenToRegistry(tokenId: string) {
+  const { addCW20ToRegistry } = useTokenRegistryStore.getState();
+
+  const token = await fetchAndValidateToken(tokenId);
+  if (token) {
+    await addCW20ToRegistry(token);
+  }
+}
+
+async function addTokenToTokens(tokenId: string) {
+  const { tokenMap, blacklistedTokensIds } = useTokensStore.getState();
+  if (tokenMap.has(tokenId) || blacklistedTokensIds.has(tokenId)) {
+    return;
   }
 
-  await addCW20ToRegistry(token);
+  const { addToken } = useTokensStore.getState();
+
+  const token = await fetchAndValidateToken(tokenId);
+  if (token) {
+    await addToken(token);
+  }
 }
