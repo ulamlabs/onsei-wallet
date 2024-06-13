@@ -1,4 +1,11 @@
-import { Column, Loader, Paragraph, SafeLayout, TextInput } from "@/components";
+import {
+  Column,
+  Loader,
+  Paragraph,
+  PrimaryButton,
+  SafeLayout,
+  TextInput,
+} from "@/components";
 import { useInputState } from "@/hooks";
 import { CosmToken, fetchCW20Token } from "@/services/cosmos";
 import {
@@ -6,7 +13,9 @@ import {
   useTokenRegistryStore,
   useTokensStore,
 } from "@/store";
+import { NavigatorParamsList } from "@/types";
 import { searchTokens } from "@/utils";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
 import { SearchNormal } from "iconsax-react-native";
 import { useEffect, useState } from "react";
@@ -15,14 +24,20 @@ import TokenToggleBox from "./TokenToggleBox";
 
 const TOKENS_PER_PAGE = 20;
 
-export default function ManageTokensScreen() {
+type Props = NativeStackScreenProps<NavigatorParamsList, "Manage Token List">;
+
+export default function ManageTokensScreen({ navigation }: Props) {
   const searchInput = useInputState();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const tokensStore = useTokensStore();
   const { tokenRegistry } = useTokenRegistryStore();
   const [tokens, setTokens] = useState<CosmToken[]>([]);
-  const [addingToken, setAddingToken] = useState("");
+  const [addedTokens, setAddedTokens] = useState<CosmToken[]>([]);
+  const [addedTokensIds, setAddedTokensIds] = useState<string[]>([]);
+  const [removedTokens, setRemovedTokens] = useState<CosmToken[]>([]);
+  const [removedTokensIds, setRemovedTokensIds] = useState<string[]>([]);
+  const [saving, setSaving] = useState(false);
   const {
     settings: { node },
   } = useSettingsStore();
@@ -67,14 +82,37 @@ export default function ManageTokensScreen() {
     }
   }
 
+  function isSelected(tokenId: string) {
+    return (
+      (tokensStore.tokenMap.has(tokenId) &&
+        !removedTokensIds.includes(tokenId)) ||
+      addedTokensIds.includes(tokenId)
+    );
+  }
+
   async function onToggle(token: CosmToken) {
-    if (tokensStore.tokenMap.has(token.id)) {
-      tokensStore.removeToken(token);
+    if (isSelected(token.id)) {
+      setRemovedTokens([...removedTokens, token]);
+      setRemovedTokensIds([...removedTokensIds, token.id]);
+      if (addedTokensIds.includes(token.id)) {
+        setAddedTokens(addedTokens.filter((t) => t.id !== token.id));
+        setAddedTokensIds(addedTokensIds.filter((tId) => tId !== token.id));
+      }
     } else {
-      setAddingToken(token.id);
-      await tokensStore.addToken(token);
-      setAddingToken("");
+      setAddedTokens([...addedTokens, token]);
+      setAddedTokensIds([...addedTokensIds, token.id]);
+      if (removedTokensIds.includes(token.id)) {
+        setRemovedTokens(removedTokens.filter((t) => t.id !== token.id));
+        setRemovedTokensIds(removedTokensIds.filter((tId) => tId !== token.id));
+      }
     }
+  }
+
+  async function onSave() {
+    setSaving(true);
+    tokensStore.removeTokens(removedTokens);
+    await tokensStore.addTokens(addedTokens);
+    navigation.goBack();
   }
 
   return (
@@ -109,10 +147,7 @@ export default function ManageTokensScreen() {
                 <TokenToggleBox
                   token={token}
                   key={token.id}
-                  selected={
-                    tokensStore.tokenMap.has(token.id) ||
-                    addingToken === token.id
-                  }
+                  selected={isSelected(token.id)}
                   onToggle={() => onToggle(token)}
                 />
               </View>
@@ -122,6 +157,13 @@ export default function ManageTokensScreen() {
           />
         </View>
       </Column>
+
+      <PrimaryButton
+        title="Save changes"
+        onPress={onSave}
+        style={{ marginTop: 24 }}
+        loading={saving}
+      />
     </SafeLayout>
   );
 }

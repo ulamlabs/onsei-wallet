@@ -1,7 +1,6 @@
 import {
   Column,
   Headline,
-  Loader,
   Paragraph,
   PrimaryButton,
   Row,
@@ -91,18 +90,14 @@ export default function ImportWalletScreen({
         />
         {error && <Text style={{ color: Colors.danger }}>{error}</Text>}
 
-        {loading ? (
-          <Row style={{ justifyContent: "center" }}>
-            <Loader />
-          </Row>
-        ) : (
-          <PrimaryButton
-            title="Import"
-            onPress={onButtonPress}
-            style={{ marginTop: 24 }}
-            disabled={!mnemonicInput.value}
-          />
-        )}
+        <PrimaryButton
+          title="Import"
+          onPress={onButtonPress}
+          style={{ marginTop: 24 }}
+          disabled={!mnemonicInput.value}
+          loading={loading}
+        />
+
         <Row style={{ justifyContent: "flex-start" }}>
           <Lock color={Colors.info} />
           <Paragraph

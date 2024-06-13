@@ -34,15 +34,15 @@ type TokensStore = {
   accountAddress: string;
   initTokensLoading: boolean;
   loadTokens: (address: string) => Promise<void>;
-  addToken: (token: CosmToken) => Promise<void>;
-  removeToken: (token: CosmToken) => void;
+  addTokens: (tokensToAdd: CosmToken[]) => Promise<void>;
+  removeTokens: (tokensToRemove: CosmToken[]) => void;
   clearAddress: (address: string) => Promise<void>;
   getTokensFromRegistry: (tokenIds: string[]) => Promise<CosmTokenWithPrice[]>;
   updateBalances: (tokens?: CosmTokenWithBalance[]) => Promise<void>;
   _updateCw20Balance: (tokenId: string) => Promise<void>;
   _updateNativeBalances: () => Promise<void>;
   _updateTokenLists: (
-    tokenId: string,
+    tokenIds: string[],
     action: "WHITELIST" | "BLACKLIST",
   ) => Promise<void>;
   _updateStructures: (
@@ -83,34 +83,43 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     _updateStructures([SEI_TOKEN, ...cw20Tokens]);
     await updateBalances();
   },
-  addToken: async (token) => {
+  addTokens: async (tokensToAdd) => {
     const {
       tokens,
       _updateNativeBalances: updateNativeBalances,
       _updateTokenLists: updateTokenLists,
       _updateCw20Balance: updateCW20Balance,
     } = get();
-    if (token.type !== "cw20") {
-      await updateTokenLists(token.id, "WHITELIST");
-    }
-    const exists = tokens.find((t) => t.id === token.id);
-    if (exists) {
-      return;
+    const nativeIds = getNativeIds(tokensToAdd);
+    if (nativeIds.length > 0) {
+      await updateTokenLists(nativeIds, "WHITELIST");
     }
 
-    if (token.type === "cw20") {
-      await useTokenRegistryStore.getState().addCW20ToRegistry(token);
-      await updateCW20Balance(token.id);
-    } else {
+    const knownIds = new Set(tokens.map((t) => t.id));
+    const cwToAdd = tokensToAdd.filter(
+      (t) => !knownIds.has(t.id) && t.type === "cw20",
+    );
+    const nativesToAdd = tokensToAdd.filter(
+      (t) => !knownIds.has(t.id) && t.type !== "cw20",
+    );
+
+    for (const cw of cwToAdd) {
+      await useTokenRegistryStore.getState().addCW20ToRegistry(cw);
+      await updateCW20Balance(cw.id);
+    }
+    if (nativesToAdd.length > 0) {
       await updateNativeBalances();
     }
   },
-  removeToken: (token) => {
+  removeTokens: (tokensToRemove) => {
     const { tokens, _updateTokenLists, _updateStructures } = get();
-    if (token.type !== "cw20") {
-      _updateTokenLists(token.id, "BLACKLIST");
+    const nativeIds = getNativeIds(tokensToRemove);
+    if (nativeIds.length > 0) {
+      _updateTokenLists(nativeIds, "BLACKLIST");
     }
-    const nextTokens = tokens.filter((t) => t.id !== token.id);
+
+    const removedIds = new Set(tokensToRemove.map((t) => t.id));
+    const nextTokens = tokens.filter((t) => !removedIds.has(t.id));
     _updateStructures(nextTokens, { save: true });
   },
   clearAddress: async (address) => {
@@ -216,7 +225,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
 
     _updateStructures([...cw20Tokens, ...nativeTokens]);
   },
-  _updateTokenLists: async (tokenId, action) => {
+  _updateTokenLists: async (tokenIds, action) => {
     const {
       accountAddress: address,
       whitelistedTokensIds,
@@ -228,12 +237,14 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
 
     const newWhitelist = whitelistedTokensIds;
     const newBlacklist = blacklistedTokensIds;
-    if (action === "WHITELIST") {
-      newWhitelist.add(tokenId);
-      newBlacklist.delete(tokenId);
-    } else {
-      newWhitelist.delete(tokenId);
-      newBlacklist.add(tokenId);
+    for (const tokenId of tokenIds) {
+      if (action === "WHITELIST") {
+        newWhitelist.add(tokenId);
+        newBlacklist.delete(tokenId);
+      } else {
+        newWhitelist.delete(tokenId);
+        newBlacklist.add(tokenId);
+      }
     }
 
     set({
@@ -296,4 +307,8 @@ function serializeToken(token: CosmTokenWithBalance): CosmTokenWithBalance {
 
 function deserializeToken(token: CosmTokenWithBalance): CosmTokenWithBalance {
   return { ...token, balance: BigInt(token.balance) };
+}
+
+function getNativeIds(tokens: CosmToken[]) {
+  return tokens.filter((t) => t.type !== "cw20").map((t) => t.id);
 }

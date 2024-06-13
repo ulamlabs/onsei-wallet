@@ -20,7 +20,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { DirectboxReceive, DirectboxSend } from "iconsax-react-native";
 import React from "react";
 import { View } from "react-native";
-import { TokensList } from "../account";
+import { TokensList } from "../tokens";
 
 type DashboardProps = NativeStackScreenProps<NavigatorParamsList, "Wallet">;
 
