@@ -17,7 +17,7 @@ import { Colors, FontSizes, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { calculateTotalBalance } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { DirectboxReceive, DirectboxSend } from "iconsax-react-native";
+import { ArrowUp, ArrowDown } from "iconsax-react-native";
 import React from "react";
 import { TokensList } from "../tokens";
 
@@ -86,12 +86,8 @@ export default function Dashboard({ navigation }: DashboardProps) {
           marginVertical: 30,
         }}
       >
-        <SecondaryButton
-          title="Receive"
-          onPress={onReceive}
-          icon={DirectboxReceive}
-        />
-        <SecondaryButton title="Send" onPress={onSend} icon={DirectboxSend} />
+        <SecondaryButton title="Send" onPress={onSend} icon={ArrowUp} />
+        <SecondaryButton title="Receive" onPress={onReceive} icon={ArrowDown} />
       </Row>
       <TokensList />
     </SafeLayout>

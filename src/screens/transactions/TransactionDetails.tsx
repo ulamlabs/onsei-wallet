@@ -34,12 +34,12 @@ export default function TransactionDetails({
   },
 }: Props) {
   const { activeAccount } = useAccountsStore();
-  const { sei, tokenMap } = useTokensStore();
+  const { sei } = useTokensStore();
   const {
     settings: { node },
   } = useSettingsStore();
   const txn = deserializeTxn(transaction);
-  const token = getTokenFromTxn(txn, tokenMap);
+  const token = getTokenFromTxn(txn);
 
   const sentOrReceived = useMemo(
     () => getSentOrReceived(txn, activeAccount!.address),
@@ -146,17 +146,19 @@ export default function TransactionDetails({
           )}
         </OptionGroup>
 
-        <TertiaryButton
-          onPress={onShowDetails}
-          textStyle={{
-            fontSize: FontSizes.sm,
-            fontFamily: FontWeights.bold,
-          }}
-          style={{ marginTop: "auto" }}
-          iconSize={16}
-          title="View details on SeiScan"
-          icon={ExportSquare}
-        />
+        {txn.status === "success" && (
+          <TertiaryButton
+            onPress={onShowDetails}
+            textStyle={{
+              fontSize: FontSizes.sm,
+              fontFamily: FontWeights.bold,
+            }}
+            style={{ marginTop: "auto" }}
+            iconSize={16}
+            title="View details on SeiScan"
+            icon={ExportSquare}
+          />
+        )}
       </Column>
     </SafeLayout>
   );
