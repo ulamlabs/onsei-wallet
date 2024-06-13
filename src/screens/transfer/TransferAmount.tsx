@@ -31,7 +31,7 @@ export default function TransferAmount({
 
   function getContent() {
     if (loading) {
-      return <Loader size="large" />;
+      return <Loader size="big" />;
     }
     if (decimalAmount) {
       return (

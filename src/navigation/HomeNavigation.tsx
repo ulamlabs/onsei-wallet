@@ -100,7 +100,7 @@ export type HomeParamList = {
   transferSent: { tx: DeliverTxResponse; amount?: string; symbol?: string };
   "Set Name": { nextRoute: "Import Wallet" | "Generate Wallet" };
   "Scan QR code": { tokenId: string };
-  "Transaction settings": { gas?: number };
+  "Transaction settings": { global?: boolean; gas?: number };
   "Pin Change Success": undefined;
   "Transaction details": { transaction: SerializedTx };
 };

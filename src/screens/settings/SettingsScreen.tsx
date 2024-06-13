@@ -44,6 +44,7 @@ export default function SettingsScreen() {
             label="Transactions settings"
             navigateTo="Transaction settings"
             icon={<CardEdit size={22} color={Colors.text} />}
+            params={{ global: true }}
           />
           <SwitchWithLabel
             icon={<Notification size={22} color={Colors.text} />}

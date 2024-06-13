@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Animated } from "react-native";
 import { Path, Svg } from "react-native-svg";
 
-type LoaderSizes = "small" | "medium" | "large" | "base";
+type LoaderSizes = "small" | "medium" | "large" | "base" | "big";
 
 type LoaderProps = {
   size?: LoaderSizes;
@@ -15,6 +15,7 @@ const SIZE_TO_PX: Record<LoaderSizes, number> = {
   small: 16,
   medium: 24,
   base: 40,
+  big: 50,
   large: 96,
 };
 

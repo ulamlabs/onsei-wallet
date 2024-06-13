@@ -1,3 +1,4 @@
+import { FeeTier } from "@/components/FeeBox";
 import { Node } from "@/types";
 import { loadFromStorage, removeFromStorage, saveToStorage } from "@/utils";
 import { create } from "zustand";
@@ -7,9 +8,9 @@ const SETTINGS_KEY = "settings.json";
 const DEFAULT_SETTINGS = {
   "auth.biometricsEnabled": false,
   node: "TestNet" as Node,
-  selectedGasPrice: { speed: "Low", multiplier: 1 } as {
-    speed: "Low" | "Medium" | "High";
-    multiplier: number;
+  selectedGasPrice: {
+    global: "Low" as FeeTier,
+    local: "Low" as FeeTier,
   },
   allowNotifications: true,
 };

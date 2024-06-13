@@ -15,7 +15,7 @@ import {
   estimateTransferGas,
 } from "@/services/cosmos/tx";
 import { getSigningClientAndSender } from "@/services/cosmos/tx/getSigningClientAndSender";
-import { useSettingsStore, useTokensStore } from "@/store";
+import { useTokensStore } from "@/store";
 import { Colors, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { checkFundsForFee, parseAmount } from "@/utils";
@@ -47,10 +47,6 @@ export default function TransferAmountScreen({
   const [signingClientAndSender, setSigningClientAndSender] = useState<
     [SigningStargateClient, string] | undefined
   >(undefined);
-  const {
-    settings: { selectedGasPrice },
-    setSetting,
-  } = useSettingsStore();
 
   const token = useMemo(() => tokenMap.get(tokenId)!, [tokenId, tokenMap]);
 
@@ -60,10 +56,10 @@ export default function TransferAmountScreen({
         setSigningClientAndSender(data);
       })
       .catch(console.error);
-    const globalSpeed = selectedGasPrice;
+
     return () => {
-      setSigningClientAndSender(undefined);
-      setSetting("selectedGasPrice", globalSpeed);
+      setFee(null);
+      setGas(0);
     };
   }, []);
 
@@ -90,7 +86,7 @@ export default function TransferAmountScreen({
     if (loadingMaxAmount) {
       return;
     }
-    if (!decimalAmount) {
+    if (!decimalAmount || intAmount > token.balance) {
       setFee(null);
       setLoadingFee(false);
       return;
@@ -107,13 +103,6 @@ export default function TransferAmountScreen({
       clearTimeout(id);
     };
   }, [decimalAmount]);
-
-  useEffect(() => {
-    return () => {
-      setFee(null);
-      setGas(0);
-    };
-  }, []);
 
   useEffect(() => {
     navigation.setParams({ gas });

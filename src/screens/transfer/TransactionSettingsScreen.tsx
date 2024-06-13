@@ -6,6 +6,7 @@ import {
   PrimaryButton,
   SafeLayout,
 } from "@/components";
+import { FeeTier, GasPrices } from "@/components/FeeBox";
 import { useSettingsStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -17,31 +18,29 @@ type TransactionSettingscreenProps = NativeStackScreenProps<
   "Transaction settings"
 >;
 
-const gasPrices: { speed: "Low" | "Medium" | "High"; multiplier: number }[] = [
-  { speed: "Low", multiplier: 1 },
-  { speed: "Medium", multiplier: 1.2 },
-  { speed: "High", multiplier: 1.3 },
-];
-
-function FeeBoxList({
-  gas,
-  selectedSpeed,
-  selectSpeed,
-}: {
-  selectedSpeed: "Low" | "Medium" | "High";
-  selectSpeed: (speed: "Low" | "Medium" | "High") => void;
+type FeeBoxListProps = {
+  selectedSpeed: FeeTier;
+  selectSpeed: (speed: FeeTier) => void;
   gas?: number;
-}) {
-  return gasPrices.map((option) => (
-    <FeeBox
-      gasPrices={gasPrices}
-      key={option.speed.toLowerCase()}
-      title={option.speed as "Low" | "Medium" | "High"}
-      gas={gas}
-      selected={selectedSpeed === option.speed}
-      onPress={() => selectSpeed(option.speed as "Low" | "Medium" | "High")}
-    />
-  ));
+};
+
+const gasPrices: GasPrices = ["Low", "Medium", "High"];
+
+function FeeBoxList({ gas, selectedSpeed, selectSpeed }: FeeBoxListProps) {
+  return (
+    <>
+      {gasPrices.map((option) => (
+        <FeeBox
+          gasPrices={gasPrices}
+          key={option.toLowerCase()}
+          title={option as FeeTier}
+          gas={gas}
+          selected={selectedSpeed === option}
+          onPress={() => selectSpeed(option as FeeTier)}
+        />
+      ))}
+    </>
+  );
 }
 
 export default function TransactionSettingscreen({
@@ -52,15 +51,19 @@ export default function TransactionSettingscreen({
     settings: { selectedGasPrice },
     setSetting,
   } = useSettingsStore();
-  const [selectedSpeed, setSelectedSpeed] = useState(selectedGasPrice.speed);
+  const [selectedSpeed, setSelectedSpeed] = useState(
+    params.global ? selectedGasPrice.global : selectedGasPrice.local,
+  );
 
-  const saveSettings = () => {
-    setSetting(
-      "selectedGasPrice",
-      gasPrices.find((gp) => gp.speed === selectedSpeed)!,
-    );
+  function saveSettings() {
+    const updatedSetting = {
+      ...selectedGasPrice,
+      [params.global ? "global" : "local"]: selectedSpeed,
+    };
+
+    setSetting("selectedGasPrice", updatedSetting);
     navigation.goBack();
-  };
+  }
 
   return (
     <SafeLayout>

@@ -17,8 +17,9 @@ async function getGasPrices() {
   return data;
 }
 
-export const useGas = () =>
-  useQuery({
-    queryKey: ["transactions"],
+export function useGas() {
+  return useQuery({
+    queryKey: ["gas"],
     queryFn: getGasPrices,
   });
+}

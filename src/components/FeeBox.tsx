@@ -2,18 +2,28 @@ import { createGasPrice, useGasPrice } from "@/hooks";
 import { estimateTransferFeeWithGas } from "@/services/cosmos/tx";
 import { useTokensStore } from "@/store";
 import { Colors, FontSizes, FontWeights } from "@/styles";
-import { formatAmount, formatFee } from "@/utils";
+import { formatAmount, formatFee, getSpeedMultiplier } from "@/utils";
 import { Pressable } from "react-native";
 import Box from "./Box";
 import { Column, Row } from "./layout";
 import { Text } from "./typography";
 
+export type FeeTier = "Low" | "Medium" | "High";
+
+export type GasPrices = ["Low", "Medium", "High"];
+
 type Props = {
-  title: "Low" | "Medium" | "High";
+  title: FeeTier;
   selected?: boolean;
   gas?: number;
-  gasPrices: { speed: "Low" | "Medium" | "High"; multiplier: number }[];
+  gasPrices: GasPrices;
   onPress: () => void;
+};
+
+const FEE_TITLES = {
+  Low: "Lowest fee",
+  Medium: "Balanced",
+  High: "Fastest",
 };
 
 export default function FeeBox({
@@ -26,11 +36,11 @@ export default function FeeBox({
   const { sei } = useTokensStore();
   const { minGasPrice } = useGasPrice();
 
-  const speedMultiplier = gasPrices.find(
-    (gp) => gp.speed === title,
-  )!.multiplier;
+  const speedMultiplier = getSpeedMultiplier(
+    gasPrices.find((gp) => gp === title)!,
+  );
 
-  const getFeeInt = () => {
+  function getFeeInt() {
     if (!gas) {
       return;
     }
@@ -38,24 +48,10 @@ export default function FeeBox({
 
     const fee = estimateTransferFeeWithGas(gasPrice, gas);
 
-    const feeInt = BigInt(fee.amount[0].amount);
-    return feeInt;
-  };
+    return BigInt(fee.amount[0].amount);
+  }
 
   const feeInt = getFeeInt();
-
-  const displayTitle = () => {
-    switch (title) {
-      case "Low":
-        return "Lowest fee";
-      case "Medium":
-        return "Balanced";
-      case "High":
-        return "Fastest";
-      default:
-        return title;
-    }
-  };
 
   return (
     <Pressable onPress={onPress}>
@@ -69,7 +65,7 @@ export default function FeeBox({
           <Text
             style={{ fontSize: FontSizes.base, fontFamily: FontWeights.bold }}
           >
-            {displayTitle()}
+            {FEE_TITLES[title]}
           </Text>
           <Column style={{ gap: 2, alignItems: "flex-end", minHeight: 39 }}>
             {feeInt ? (
@@ -83,7 +79,7 @@ export default function FeeBox({
                   {formatAmount(feeInt, sei.decimals)} SEI
                 </Text>
                 <Text style={{ fontSize: FontSizes.xs, color: Colors.text100 }}>
-                  {formatFee(feeInt, sei)}
+                  {sei.price && formatFee(feeInt, sei)}
                 </Text>
               </>
             ) : (
