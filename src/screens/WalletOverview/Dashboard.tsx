@@ -13,13 +13,12 @@ import {
   useTokenRegistryStore,
   useTokensStore,
 } from "@/store";
-import { Colors } from "@/styles";
+import { Colors, FontSizes, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { calculateTotalBalance } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { DirectboxReceive, DirectboxSend } from "iconsax-react-native";
 import React from "react";
-import { View } from "react-native";
 import { TokensList } from "../tokens";
 
 type DashboardProps = NativeStackScreenProps<NavigatorParamsList, "Wallet">;
@@ -51,18 +50,21 @@ export default function Dashboard({ navigation }: DashboardProps) {
     return (
       <>
         {node === "TestNet" && (
-          <View
+          <Row
             style={{
-              borderRadius: 50,
-              backgroundColor: Colors.warning,
-              paddingHorizontal: 20,
-              paddingVertical: 6,
+              backgroundColor: Colors.markerBackground,
+              paddingVertical: 12,
+              justifyContent: "center",
+              width: "100%",
+              borderRadius: 22,
             }}
           >
-            <Text style={{ fontSize: 12, color: Colors.background }}>
-              TestNet
+            <Text
+              style={{ fontSize: FontSizes.base, fontFamily: FontWeights.bold }}
+            >
+              Testnet mode
             </Text>
-          </View>
+          </Row>
         )}
         <Headline size="2xl" style={{ marginBottom: 0 }}>
           ${calculateTotalBalance(tokens)}

@@ -22,6 +22,7 @@ export const Colors = {
   danger: "#FF444E",
   danger100: "#E25656",
   danger200: "#231616",
+  markerBackground: "#4865CB",
 };
 
 export const FontSizes = {
