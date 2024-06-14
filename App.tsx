@@ -1,9 +1,11 @@
 import { Modals } from "@/components";
+import { Toast } from "@/components/toasts";
 import { useInactivityLock } from "@/hooks";
 import { QueryClientProvider } from "@/modules/query";
 import HomeNavigation from "@/navigation/HomeNavigation";
 import LockNavigation from "@/navigation/LockNavigation";
 import OnboardingNavigation from "@/navigation/OnboardingNavigation";
+import { NotificationsListener } from "@/notifications";
 import {
   useAccountsStore,
   useAddressBookStore,
@@ -21,7 +23,6 @@ import "globals";
 import { useEffect, useMemo, useState } from "react";
 import "react-native-get-random-values";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { NotificationsListener } from "@/notifications";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -101,6 +102,7 @@ export default function App() {
           <StatusBar style="light" />
           {getContent()}
           <Modals />
+          <Toast isVisible />
           {ready && <NotificationsListener />}
         </SafeAreaProvider>
       </NavigationContainer>
