@@ -56,11 +56,15 @@ export default function Dashboard({ navigation }: DashboardProps) {
               paddingVertical: 12,
               justifyContent: "center",
               width: "100%",
-              borderRadius: 22,
+              borderRadius: 12,
             }}
           >
             <Text
-              style={{ fontSize: FontSizes.base, fontFamily: FontWeights.bold }}
+              style={{
+                fontSize: FontSizes.base,
+                fontFamily: FontWeights.bold,
+                color: Colors.markerText,
+              }}
             >
               Testnet mode
             </Text>

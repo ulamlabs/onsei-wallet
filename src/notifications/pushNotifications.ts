@@ -146,10 +146,10 @@ async function addTokenToTokens(tokenId: string) {
     return;
   }
 
-  const { addToken } = useTokensStore.getState();
+  const { addTokens } = useTokensStore.getState();
 
   const token = await fetchAndValidateToken(tokenId);
   if (token) {
-    await addToken(token);
+    await addTokens([token]);
   }
 }
