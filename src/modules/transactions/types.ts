@@ -51,6 +51,11 @@ export type TxData = {
   "@type": string;
   body: TxBody;
   signatures: string[];
+  auth_info: TxAuthInfo;
+};
+
+export type TxAuthInfo = {
+  fee: { amount: { amount: string; denom: string }[] };
 };
 
 export type TxBody = {

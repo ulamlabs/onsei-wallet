@@ -216,8 +216,8 @@ export default function SwipeButton({
             justifyContent: "center",
             alignItems: "center",
             position: "absolute",
-            left: 8,
-            top: 8,
+            left: 6,
+            top: 6,
           },
           animatedStyle,
         ]}

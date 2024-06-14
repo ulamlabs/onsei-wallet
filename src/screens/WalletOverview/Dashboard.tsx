@@ -28,6 +28,10 @@ export default function Dashboard({ navigation }: DashboardProps) {
   const { updateBalances, tokens } = useTokensStore();
   const { refreshRegistryCache } = useTokenRegistryStore();
   const {
+    settings: { globalGasPrice },
+    setSetting,
+  } = useSettingsStore();
+  const {
     settings: { node },
   } = useSettingsStore();
 
@@ -35,6 +39,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
     navigation.push("Your SEI address");
   }
   function onSend() {
+    setSetting("localGasPrice", globalGasPrice);
     navigation.push("transferSelectToken");
   }
   async function onRefresh() {

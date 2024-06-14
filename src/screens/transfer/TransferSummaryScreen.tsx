@@ -7,11 +7,12 @@ import {
   SwipeButton,
   Text,
 } from "@/components";
+import { useGasPrice } from "@/hooks";
 import { estimateTransferFee } from "@/services/cosmos/tx";
 import { useTokensStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
-import { formatAmount, trimAddress } from "@/utils";
+import { checkFundsForFee, formatAmount, trimAddress } from "@/utils";
 import { StdFee } from "@cosmjs/stargate";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useMemo, useState } from "react";
@@ -29,12 +30,14 @@ export default function TransferSummaryScreen({
 }: TransferSummaryScreenProps) {
   const transfer = route.params;
   const { sei, updateBalances, tokenMap } = useTokensStore();
-  const [fee, setFee] = useState<StdFee | null>(null);
   const [estimationFailed, setEstimationFailed] = useState(false);
   const [scrollEnabled, setScrollEnabled] = useState(true);
+  const [fee, setFee] = useState<StdFee | null>(null);
+
+  const { gasPrice } = useGasPrice();
 
   useEffect(() => {
-    getFeeEstimation();
+    setFee(transfer.fee || null);
   }, []);
 
   const token = useMemo(
@@ -55,22 +58,21 @@ export default function TransferSummaryScreen({
   }, [fee]);
 
   const hasFundsForFee = useMemo(() => {
-    if (!fee) {
-      return false;
-    }
-    let seiLeft = sei.balance - feeInt;
-    if (token.id === sei.id) {
-      seiLeft -= intAmount;
-    }
-    return seiLeft >= 0;
+    return checkFundsForFee(
+      fee,
+      sei.balance,
+      transfer.tokenId,
+      sei.id,
+      intAmount,
+    );
   }, [fee, sei.balance]);
 
-  function getFeeEstimation() {
+  function feeEstimation() {
     setFee(null);
     setEstimationFailed(false);
 
     updateBalances([sei]);
-    estimateTransferFee(transfer.recipient.address, token, intAmount)
+    estimateTransferFee(transfer.recipient.address, token, intAmount, gasPrice)
       .then(setFee)
       .catch(() => setEstimationFailed(true));
   }
@@ -84,11 +86,7 @@ export default function TransferSummaryScreen({
 
   function getFeeElement() {
     if (fee) {
-      return (
-        <Text>
-          {formatAmount(feeInt, sei.decimals)} {sei.symbol}
-        </Text>
-      );
+      return <Text>{formatAmount(feeInt, sei.decimals)} SEI</Text>;
     }
 
     if (estimationFailed) {
@@ -101,7 +99,7 @@ export default function TransferSummaryScreen({
   }
 
   return (
-    <SafeLayout refreshFn={getFeeEstimation} scrollEnabled={scrollEnabled}>
+    <SafeLayout refreshFn={feeEstimation} scrollEnabled={scrollEnabled}>
       <TransferAmount
         token={token}
         decimalAmount={formatAmount(intAmount, token.decimals, {

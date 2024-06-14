@@ -14,7 +14,7 @@ it("parse createDenomMetadataTx", () => {
     amount: 0n,
     token: "",
     timestamp: new Date("2024-05-16T09:56:03Z"),
-    fee: 21740n,
+    fee: 20000n,
     from: "",
     hash: "3E10693DDA076C33EB2303430C30C739940ADB3DEC15A9B4AB2D719BE4EDD507",
     status: "success",
@@ -30,7 +30,7 @@ it("parse createDenomMetadataTx", () => {
 it("parse transferSeiTx", () => {
   expect(parseTx(transferSeiTx.tx_response)).toEqual({
     timestamp: new Date("2024-05-24T12:26:10Z"),
-    fee: 87017n,
+    fee: 10572n,
     hash: "30EF7F34ECF094DBF73D6031C659AA2F15C7C32229DEA6DF39715BBC1D21FA3D",
     status: "success",
     type: "MsgSend",
@@ -48,7 +48,7 @@ it("parse transferSeiTx", () => {
 it("parse transferSeiMultisendTx", () => {
   expect(parseTx(transferSeiMultisendTx.tx_response)).toEqual({
     timestamp: new Date("2024-05-24T13:07:46Z"),
-    fee: 87753n,
+    fee: 700000n,
     hash: "F87CA38A0320FE45E74A97A442569C1CC7ABFB28EB14E3A931A10DEBD600B6E4",
     status: "success",
     type: "MsgMultiSend",
@@ -66,7 +66,7 @@ it("parse transferSeiMultisendTx", () => {
 it("parse transferNativeTx", () => {
   expect(parseTx(transferNativeTx.tx_response)).toEqual({
     timestamp: new Date("2024-05-24T12:25:16Z"),
-    fee: 94282n,
+    fee: 11589n,
     hash: "FA546FC8324F53A5B6A7B48311FBDB4A994DBC42D2AE8E001AB8198C6CE25186",
     status: "success",
     type: "MsgSend",
@@ -84,7 +84,7 @@ it("parse transferNativeTx", () => {
 it("parse transferCw20Tx", () => {
   expect(parseTx(transferCw20Tx.tx_response)).toEqual({
     timestamp: new Date("2024-05-24T12:18:51Z"),
-    fee: 152889n,
+    fee: 19794n,
     hash: "EDE6501BB685B2B71347B2DD540FB55A51ACD4BE37A99E47390FB491414C64D7",
     status: "success",
     type: "MsgExecuteContract",
@@ -102,7 +102,7 @@ it("parse transferCw20Tx", () => {
 it("parse transferIcs20Tx", () => {
   expect(parseTx(transferIcs20Tx.tx_response)).toEqual({
     timestamp: new Date("2024-05-24T12:27:52Z"),
-    fee: 94627n,
+    fee: 11639n,
     hash: "E82207A25B682CCAB1445986FC88556A1185C3797BFE1BA9932B20027E88E872",
     status: "success",
     type: "MsgSend",
@@ -121,7 +121,7 @@ it("parse transferIcs20Tx", () => {
 it("parse astroportSwapTx", () => {
   expect(parseTx(astroportSwapTx.tx_response)).toEqual({
     timestamp: new Date("2024-05-24T12:25:50Z"),
-    fee: 781174n,
+    fee: 20050n,
     hash: "A78922D7DD2EA124E488024FFEEC6CA5DB92B4F4AD0D9E1E585CD7EAC2F0F13A",
     status: "success",
     type: "MsgExecuteContract",
@@ -139,7 +139,7 @@ it("parse astroportSwapTx", () => {
 it("parse noEventsTx", () => {
   expect(parseTx(noEventsTx.tx_response)).toEqual({
     timestamp: new Date("2024-05-24T12:26:10Z"),
-    fee: 87017n,
+    fee: 10572n,
     hash: "30EF7F34ECF094DBF73D6031C659AA2F15C7C32229DEA6DF39715BBC1D21FA3D",
     status: "success",
     type: "",

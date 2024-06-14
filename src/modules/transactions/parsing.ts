@@ -49,10 +49,15 @@ export function websocketTxToTxResponse(tx: any): TxResponse {
   };
 }
 
-export function parseTx(tx: TxResponse, memo = ""): Transaction {
+export function parseTx(
+  tx: TxResponse,
+  memo = "",
+  simulatedFee = "",
+): Transaction {
+  const fee = simulatedFee || tx.tx?.auth_info?.fee.amount[0].amount;
   return {
     timestamp: new Date(tx.timestamp),
-    fee: BigInt(tx.gas_used),
+    fee: fee ? BigInt(fee) : 0n,
     hash: tx.txhash,
     status: tx.code === 0 ? "success" : "fail",
     memo: tx.tx?.body?.memo || memo,
