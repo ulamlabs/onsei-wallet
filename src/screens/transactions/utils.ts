@@ -1,14 +1,17 @@
 import { format, isToday } from "date-fns";
 import { Transaction } from "@/modules/transactions";
 import { CosmTokenWithBalance } from "@/services/cosmos";
-import { useAccountsStore, useAddressBookStore } from "@/store";
+import {
+  useAccountsStore,
+  useAddressBookStore,
+  useTokenRegistryStore,
+} from "@/store";
 
 export type SentOrReceived = "sent" | "received" | "";
 
 const unknownToken = {
   symbol: "?",
   decimals: 6,
-  price: 0,
   balance: 0n,
 };
 
@@ -31,11 +34,14 @@ export function getSentOrReceived(
   return "";
 }
 
-export function getTokenFromTxn(
-  txn: Transaction,
-  tokenMap: Map<string, CosmTokenWithBalance>,
-) {
-  return tokenMap.get(txn.token) || unknownToken;
+export function getTokenFromTxn(txn: Transaction) {
+  const { tokenRegistryMap, tokenPricesMap } = useTokenRegistryStore.getState();
+
+  return {
+    ...unknownToken,
+    ...tokenRegistryMap.get(txn.token),
+    price: tokenPricesMap.get(txn.token)?.price || 0,
+  } as CosmTokenWithBalance;
 }
 
 export function getTxnDate(txn: Transaction) {

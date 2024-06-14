@@ -1,13 +1,18 @@
 import { isToday } from "date-fns";
 import { Transaction } from "@/modules/transactions";
-import { useAccountsStore, useTokensStore } from "@/store";
+import { useAccountsStore } from "@/store";
 import { Colors, FontSizes, FontWeights } from "@/styles";
-import { formatAmount } from "@/utils";
+import { capitalize, formatAmount } from "@/utils";
 import { trimAddress } from "@/utils/trimAddress";
-import { Pressable, TextStyle, View } from "react-native";
+import { Pressable, View } from "react-native";
 import { Column, Option, OptionGroup, Row, Text } from "@/components";
 import { useMemo } from "react";
-import { CloseCircle, Receive } from "iconsax-react-native";
+import {
+  CloseCircle,
+  ArrowDown,
+  ArrowSwapHorizontal,
+  Coin,
+} from "iconsax-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "@/types";
 import {
@@ -29,9 +34,8 @@ type TransactionListProps = {
 const DAY = 24 * 60 * 60 * 1000;
 
 function TransactionBox({ txn }: TransactionRenderProps) {
-  const { tokenMap } = useTokensStore();
   const { activeAccount } = useAccountsStore();
-  const token = getTokenFromTxn(txn, tokenMap);
+  const token = getTokenFromTxn(txn);
 
   const sentOrReceived = useMemo(
     () => getSentOrReceived(txn, activeAccount!.address),
@@ -49,10 +53,14 @@ function TransactionBox({ txn }: TransactionRenderProps) {
   }, [txn]);
 
   const addressDisplay = useMemo(() => {
-    if (sentOrReceived === "") {
+    if (sentOrReceived === "" && !txn.contractAction) {
       return "";
     }
-    const address = sentOrReceived === "sent" ? txn.to : txn.from;
+    const address = txn.contractAction
+      ? txn.contract
+      : sentOrReceived === "sent"
+        ? txn.to
+        : txn.from;
     const knownAddress = getKnownAddress(address);
 
     if (knownAddress) {
@@ -67,7 +75,7 @@ function TransactionBox({ txn }: TransactionRenderProps) {
     if (txn.status === "fail") {
       return Colors.danger100;
     }
-    return sentOrReceived === "sent" ? Colors.text : Colors.success100;
+    return sentOrReceived === "received" ? Colors.success100 : Colors.text;
   }, [sentOrReceived, txn]);
 
   const Icon = useMemo(() => {
@@ -75,8 +83,12 @@ function TransactionBox({ txn }: TransactionRenderProps) {
       return CloseCircle;
     }
     if (sentOrReceived !== "") {
-      return Receive;
+      return ArrowDown;
     }
+    if (txn.contractAction) {
+      return ArrowSwapHorizontal;
+    }
+    return Coin;
   }, [txn]);
 
   function getContent() {
@@ -86,11 +98,7 @@ function TransactionBox({ txn }: TransactionRenderProps) {
           <View>
             <Text>{addressDisplay}</Text>
             <Text style={{ color: Colors.text100, fontSize: FontSizes.xs }}>
-              {sentOrReceived.replace(
-                sentOrReceived[0],
-                sentOrReceived[0].toUpperCase(),
-              )}
-              , {formattedDate}
+              {capitalize(sentOrReceived)}, {formattedDate}
             </Text>
           </View>
 
@@ -104,23 +112,27 @@ function TransactionBox({ txn }: TransactionRenderProps) {
     }
 
     if (txn.contractAction) {
-      const chipStyle: TextStyle = {
-        backgroundColor: Colors.background,
-        padding: 5,
-        borderRadius: 5,
-      };
       return (
-        <View>
-          <Row style={{ justifyContent: "flex-start" }}>
-            <Text>Execute</Text>
-            <Text style={chipStyle}>{txn.contractAction}</Text>
-            <Text>on</Text>
-            <Text style={chipStyle}>{trimAddress(txn.contract)}</Text>
-          </Row>
-          <Text style={{ color: Colors.text100, fontSize: FontSizes.xs }}>
-            {formattedDate}
-          </Text>
-        </View>
+        <Row style={{ flex: 1 }}>
+          <View>
+            <Text>{addressDisplay}</Text>
+            <Text style={{ color: Colors.text100, fontSize: FontSizes.xs }}>
+              Executed, {formattedDate}
+            </Text>
+          </View>
+          <View
+            style={{
+              paddingVertical: 6,
+              paddingHorizontal: 10,
+              backgroundColor: Colors.background400,
+              borderRadius: 12,
+            }}
+          >
+            <Text style={{ color: Colors.text100 }}>
+              {capitalize(txn.contractAction)}
+            </Text>
+          </View>
+        </Row>
       );
     }
 
