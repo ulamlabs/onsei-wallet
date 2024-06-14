@@ -6,7 +6,7 @@ import {
   PrimaryButton,
   SafeLayout,
 } from "@/components";
-import { FeeTier, GasPrices } from "@/components/FeeBox";
+import { FeeTier } from "@/components/FeeBox";
 import { useSettingsStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -24,19 +24,18 @@ type FeeBoxListProps = {
   gas?: number;
 };
 
-const gasPrices: GasPrices = ["Low", "Medium", "High"];
+const gasPrices: FeeTier[] = ["Low", "Medium", "High"];
 
 function FeeBoxList({ gas, selectedSpeed, selectSpeed }: FeeBoxListProps) {
   return (
     <>
       {gasPrices.map((option) => (
         <FeeBox
-          gasPrices={gasPrices}
           key={option.toLowerCase()}
-          title={option as FeeTier}
+          title={option}
           gas={gas}
           selected={selectedSpeed === option}
-          onPress={() => selectSpeed(option as FeeTier)}
+          onPress={() => selectSpeed(option)}
         />
       ))}
     </>
@@ -48,20 +47,18 @@ export default function TransactionSettingscreen({
   route: { params },
 }: TransactionSettingscreenProps) {
   const {
-    settings: { selectedGasPrice },
+    settings: { localGasPrice, globalGasPrice },
     setSetting,
   } = useSettingsStore();
   const [selectedSpeed, setSelectedSpeed] = useState(
-    params.global ? selectedGasPrice.global : selectedGasPrice.local,
+    params.global ? globalGasPrice : localGasPrice,
   );
 
   function saveSettings() {
-    const updatedSetting = {
-      ...selectedGasPrice,
-      [params.global ? "global" : "local"]: selectedSpeed,
-    };
-
-    setSetting("selectedGasPrice", updatedSetting);
+    setSetting(
+      params.global ? "globalGasPrice" : "localGasPrice",
+      selectedSpeed,
+    );
     navigation.goBack();
   }
 

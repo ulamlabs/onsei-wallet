@@ -58,6 +58,7 @@ export default function TransferAmountScreen({
       .catch(console.error);
 
     return () => {
+      setSigningClientAndSender(undefined);
       setFee(null);
       setGas(0);
     };

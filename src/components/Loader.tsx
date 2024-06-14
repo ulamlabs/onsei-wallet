@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Animated } from "react-native";
 import { Path, Svg } from "react-native-svg";
 
-type LoaderSizes = "small" | "medium" | "large" | "base" | "big";
+type LoaderSizes = "small" | "medium" | "base" | "big" | "large";
 
 type LoaderProps = {
   size?: LoaderSizes;

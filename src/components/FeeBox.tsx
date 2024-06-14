@@ -10,13 +10,10 @@ import { Text } from "./typography";
 
 export type FeeTier = "Low" | "Medium" | "High";
 
-export type GasPrices = ["Low", "Medium", "High"];
-
 type Props = {
   title: FeeTier;
   selected?: boolean;
   gas?: number;
-  gasPrices: GasPrices;
   onPress: () => void;
 };
 
@@ -30,15 +27,12 @@ export default function FeeBox({
   title,
   selected = false,
   gas,
-  gasPrices,
   onPress,
 }: Props) {
   const { sei } = useTokensStore();
   const { minGasPrice } = useGasPrice();
 
-  const speedMultiplier = getSpeedMultiplier(
-    gasPrices.find((gp) => gp === title)!,
-  );
+  const speedMultiplier = getSpeedMultiplier(title);
 
   function getFeeInt() {
     if (!gas) {

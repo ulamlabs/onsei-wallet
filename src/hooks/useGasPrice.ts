@@ -12,14 +12,14 @@ export function createGasPrice(
 
 export function useGasPrice() {
   const {
-    settings: { node, selectedGasPrice },
+    settings: { node, localGasPrice },
   } = useSettingsStore();
   const { data: gasPrices } = useGas();
   const networkName = NETWORK_NAMES[node] as "pacific-1" | "atlantic-2";
   const minGasPrice = gasPrices?.[networkName].min_gas_price;
   const gasPrice = createGasPrice(
     minGasPrice,
-    getSpeedMultiplier(selectedGasPrice.local),
+    getSpeedMultiplier(localGasPrice),
   );
 
   return { gasPrice, minGasPrice };

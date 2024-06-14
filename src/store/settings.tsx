@@ -8,10 +8,9 @@ const SETTINGS_KEY = "settings.json";
 const DEFAULT_SETTINGS = {
   "auth.biometricsEnabled": false,
   node: "TestNet" as Node,
-  selectedGasPrice: {
-    global: "Low" as FeeTier,
-    local: "Low" as FeeTier,
-  },
+  globalGasPrice: "Low" as FeeTier,
+  localGasPrice: "Low" as FeeTier,
+
   allowNotifications: true,
 };
 
