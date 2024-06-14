@@ -1,5 +1,5 @@
 import { Modals } from "@/components";
-import { Toast } from "@/components/toasts";
+import { Toasts } from "@/components/toasts";
 import { useInactivityLock } from "@/hooks";
 import { QueryClientProvider } from "@/modules/query";
 import HomeNavigation from "@/navigation/HomeNavigation";
@@ -12,8 +12,10 @@ import {
   useAuthStore,
   useOnboardingStore,
   useSettingsStore,
+  useToastStore,
   useTokenRegistryStore,
 } from "@/store";
+import NetInfo from "@react-native-community/netinfo";
 import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
@@ -28,6 +30,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [ready, setReady] = useState(false);
+  const [isConnected, setConnected] = useState(true);
   const [fontsLoaded, fontError] = useFonts({
     light: require("./assets/fonts/Satoshi-Light.otf"),
     regular: require("./assets/fonts/Satoshi-Regular.otf"),
@@ -36,6 +39,8 @@ export default function App() {
     black: require("./assets/fonts/Satoshi-Black.otf"),
   });
   useInactivityLock();
+
+  const { info, success } = useToastStore();
 
   const accountsStore = useAccountsStore();
   const authStore = useAuthStore();
@@ -51,6 +56,16 @@ export default function App() {
   }, [ready, fontsLoaded, fontError]);
 
   useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      if (!state.isConnected) {
+        info({ description: "No internet connection" });
+        setConnected(false);
+      }
+      if (state.isConnected && !isConnected) {
+        success({ description: "Internet connection restored" });
+        setConnected(true);
+      }
+    });
     async function init() {
       await settingsStore.init(); // Settings must be initialized before everything else
       await Promise.all([
@@ -63,6 +78,9 @@ export default function App() {
     }
 
     init();
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   const hasAccounts = useMemo(
@@ -102,7 +120,7 @@ export default function App() {
           <StatusBar style="light" />
           {getContent()}
           <Modals />
-          <Toast isVisible />
+          <Toasts />
           {ready && <NotificationsListener />}
         </SafeAreaProvider>
       </NavigationContainer>

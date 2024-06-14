@@ -5,7 +5,7 @@ import {
   useTransactions,
   websocketTxToTxResponse,
 } from "@/modules/transactions";
-import { useAccountsStore, useSettingsStore } from "@/store";
+import { useAccountsStore, useSettingsStore, useToastStore } from "@/store";
 import { useEffect, useRef } from "react";
 import { notifyTx } from "./pushNotifications";
 
@@ -13,6 +13,7 @@ export function NotificationsWebsocket({ address }: { address: string }) {
   const { accounts } = useAccountsStore();
   const isActive = useAppIsActive();
   const { refetch } = useTransactions(address);
+  const { error } = useToastStore();
 
   const {
     settings: { node },
@@ -68,7 +69,7 @@ export function NotificationsWebsocket({ address }: { address: string }) {
   }
 
   function onError(e: WebSocketErrorEvent) {
-    console.error("websocket error", e.message);
+    error({ description: e.message });
   }
 
   function onClose(e: WebSocketCloseEvent) {
