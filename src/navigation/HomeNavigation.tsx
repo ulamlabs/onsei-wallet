@@ -4,7 +4,6 @@ import ReceiveAssets from "@/screens/ReceiveAssets";
 import AccountSettingsScreen from "@/screens/WalletOverview/AccountSettingsScreen";
 import AccountsScreen from "@/screens/WalletOverview/AccountsScreen";
 import EditAccountNameScreen from "@/screens/WalletOverview/EditAccountNameScreen";
-import { ManageTokensScreen } from "@/screens/tokens";
 import AddOrEditAddress from "@/screens/addressBook/AddOrEditAddress";
 import AddressDetailsScreen from "@/screens/addressBook/AddressDetailsScreen";
 import TransactionsWithAddress from "@/screens/addressBook/TransactionsWithAddress";
@@ -24,6 +23,7 @@ import NodeSettingsScreen from "@/screens/settings/NodeSettingsScreen";
 import ResetAppScreen from "@/screens/settings/ResetAppScreen";
 import SecuritySettingsScreen from "@/screens/settings/SecuritySettingsScreen";
 import SettingsScreen from "@/screens/settings/SettingsScreen";
+import { ManageTokensScreen } from "@/screens/tokens";
 import { TransactionDetails } from "@/screens/transactions";
 import {
   TransferAmountScreen,
@@ -44,6 +44,7 @@ import React from "react";
 import BottomBarsNavigation from "./BottomBarsNavigation";
 import { navigatorScreenOptions } from "./const";
 import CancelHeaderRight from "./header/CancelHeaderRight";
+import DefaultHeaderTitle from "./header/DefaultHeaderTitle";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
 import SettingsHeaderRight from "./header/SettingsHeaderRight";
 
@@ -109,7 +110,13 @@ const { Navigator, Screen } = createNativeStackNavigator<HomeParamList>();
 
 export default function HomeNavigation() {
   return (
-    <Navigator id="home" screenOptions={navigatorScreenOptions}>
+    <Navigator
+      id="home"
+      screenOptions={{
+        ...navigatorScreenOptions,
+        headerTitle: (props) => <DefaultHeaderTitle title={props.children} />,
+      }}
+    >
       <Screen
         name="Home"
         component={BottomBarsNavigation}
