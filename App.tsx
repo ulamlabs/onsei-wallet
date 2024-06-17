@@ -15,14 +15,14 @@ import {
   useToastStore,
   useTokenRegistryStore,
 } from "@/store";
-import NetInfo from "@react-native-community/netinfo";
+import { useNetInfo } from "@react-native-community/netinfo";
 import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import "fastestsmallesttextencoderdecoder";
 import "globals";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "react-native-get-random-values";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -30,7 +30,6 @@ SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [ready, setReady] = useState(false);
-  const [isConnected, setConnected] = useState(true);
   const [fontsLoaded, fontError] = useFonts({
     light: require("./assets/fonts/Satoshi-Light.otf"),
     regular: require("./assets/fonts/Satoshi-Regular.otf"),
@@ -39,6 +38,20 @@ export default function App() {
     black: require("./assets/fonts/Satoshi-Black.otf"),
   });
   useInactivityLock();
+  const { isConnected } = useNetInfo();
+  const prevConnectionState = useRef<boolean | null>(null);
+
+  useEffect(() => {
+    if (isConnected === false && !prevConnectionState.current) {
+      info({ description: "No internet connection" });
+      prevConnectionState.current = false;
+    }
+    if (isConnected && prevConnectionState.current === false) {
+      success({ description: "Internet connection restored" });
+      prevConnectionState.current = true;
+      init();
+    }
+  }, [isConnected]);
 
   const { info, success } = useToastStore();
 
@@ -55,32 +68,19 @@ export default function App() {
     }
   }, [ready, fontsLoaded, fontError]);
 
-  useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener((state) => {
-      if (!state.isConnected) {
-        info({ description: "No internet connection" });
-        setConnected(false);
-      }
-      if (state.isConnected && !isConnected) {
-        success({ description: "Internet connection restored" });
-        setConnected(true);
-      }
-    });
-    async function init() {
-      await settingsStore.init(); // Settings must be initialized before everything else
-      await Promise.all([
-        accountsStore.init(),
-        tokenRegistryStore.init(),
-        authStore.init(),
-        addressStore.init(),
-      ]);
-      setReady(true);
-    }
+  async function init() {
+    await settingsStore.init(); // Settings must be initialized before everything else
+    await Promise.all([
+      accountsStore.init(),
+      tokenRegistryStore.init(),
+      authStore.init(),
+      addressStore.init(),
+    ]);
+    setReady(true);
+  }
 
+  useEffect(() => {
     init();
-    return () => {
-      unsubscribe();
-    };
   }, []);
 
   const hasAccounts = useMemo(

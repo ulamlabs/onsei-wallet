@@ -1,91 +1,102 @@
 import { Toasts } from "@/store";
-import { Colors } from "@/styles";
-import { scale } from "@/utils";
+import { Colors, FontWeights } from "@/styles";
 import { PropsWithChildren, useEffect, useRef } from "react";
-import {
-  Animated,
-  Pressable,
-  SafeAreaView,
-  StyleProp,
-  View,
-  ViewStyle,
-} from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Animated, Pressable, StyleProp, View, ViewStyle } from "react-native";
 import { Path, Svg } from "react-native-svg";
 import { Row } from "../layout";
+import { Text } from "../typography";
 
 type Props = PropsWithChildren & {
-  isVisible: boolean;
   style?: StyleProp<ViewStyle>;
   toast: Toasts;
+  icon: JSX.Element;
+  textColor?: string;
 };
 
-export default function Toast({ isVisible, children, style, toast }: Props) {
+export default function Toast({
+  children,
+  style,
+  toast,
+  icon,
+  textColor,
+}: Props) {
   const translateY = useRef(new Animated.Value(200)).current;
 
   useEffect(() => {
     const id = setTimeout(() => {
-      toast.resolve();
+      hideToast();
     }, 5000);
     return () => clearTimeout(id);
   }, [toast]);
 
   useEffect(() => {
     Animated.timing(translateY, {
-      toValue: isVisible ? 0 : 200,
+      toValue: 0,
       duration: 300,
       useNativeDriver: true,
     }).start();
-  }, [isVisible]);
+  }, []);
 
-  const insets = useSafeAreaInsets();
+  function hideToast() {
+    Animated.timing(translateY, {
+      toValue: 200,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      toast.resolve();
+    });
+  }
+
   return (
-    <SafeAreaView
-      style={{
-        position: "absolute",
-        justifyContent: "center",
-        alignItems: "center",
-        bottom: 110,
-        left: Math.max(scale(16), insets.left),
-        right: Math.max(scale(16), insets.right),
-      }}
+    <Animated.View
+      style={[
+        {
+          backgroundColor: Colors.toastBackground,
+          padding: 22,
+          borderRadius: 22,
+          width: "100%",
+          transform: [{ translateY }],
+          borderColor: Colors.toastBorder,
+          borderWidth: 1,
+        },
+        style,
+      ]}
     >
-      <Animated.View
-        style={[
-          {
-            backgroundColor: Colors.toastBackground,
-            padding: 22,
-            borderRadius: 22,
-            width: "100%",
-            transform: [{ translateY }],
-            borderColor: Colors.toastBorder,
-            borderWidth: 1,
-          },
-          style,
-        ]}
-      >
-        <Row>
-          <View style={{ maxWidth: "70%" }}>{children}</View>
-          <Pressable onPress={() => toast.resolve()}>
-            <Svg width="12" height="12" viewBox="0 0 14 14" fill="none">
-              <Path
-                d="M0.999512 1L12.9995 13"
-                stroke={Colors.text}
-                strokeWidth="1.28571"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <Path
-                d="M0.998047 13L12.998 1"
-                stroke={Colors.text}
-                strokeWidth="1.28571"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </Svg>
-          </Pressable>
-        </Row>
-      </Animated.View>
-    </SafeAreaView>
+      <Row>
+        <View style={[{ maxWidth: "70%" }]}>
+          <Row>
+            <Row style={{ gap: 10 }}>
+              {icon}
+              <Text
+                style={{
+                  color: textColor || Colors.toastInfoText,
+                  fontFamily: FontWeights.medium,
+                }}
+              >
+                {children}
+              </Text>
+            </Row>
+          </Row>
+        </View>
+        <Pressable onPress={hideToast}>
+          <Svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+            <Path
+              d="M0.999512 1L12.9995 13"
+              stroke={Colors.text}
+              strokeWidth="1.28571"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <Path
+              d="M0.998047 13L12.998 1"
+              stroke={Colors.text}
+              strokeWidth="1.28571"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </Svg>
+        </Pressable>
+      </Row>
+    </Animated.View>
   );
 }
