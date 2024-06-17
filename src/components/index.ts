@@ -6,6 +6,7 @@ import FeeBox from "./FeeBox";
 import Loader from "./Loader";
 import MnemonicWords from "./MnemonicWords";
 import NetworkFeeInfo from "./NetworkFeeInfo";
+import NoBackupIcon from "./NoBackupIcon";
 import ResultHeader from "./ResultHeader";
 import ShakingView from "./ShakingView";
 import TokenBalanceBox from "./TokenBalanceBox";
@@ -32,6 +33,7 @@ export {
   MnemonicWords,
   Modal,
   NetworkFeeInfo,
+  NoBackupIcon,
   ResultHeader,
   ShakingView,
   TokenBalanceBox,

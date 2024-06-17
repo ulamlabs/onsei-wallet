@@ -34,6 +34,7 @@ export type AccountsStore = {
     wallet: Wallet,
     passphraseSkipped: boolean,
   ) => Promise<void>;
+  confirmMnemonic: (address: string) => void;
   deleteAccount: (name: string) => Promise<void>;
   clearStore: () => Promise<void>;
   getMnemonic: (name: string) => string;
@@ -101,6 +102,15 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
     };
     set((state) => {
       const accounts = [...state.accounts, account];
+      saveToStorage("accounts", accounts);
+      return { ...state, accounts };
+    });
+  },
+  confirmMnemonic: (address) => {
+    const accounts = get().accounts;
+    const account = accounts.find((a) => a.address === address)!;
+    account.passphraseSkipped = false;
+    set((state) => {
       saveToStorage("accounts", accounts);
       return { ...state, accounts };
     });

@@ -1,9 +1,9 @@
-import { CopyAddress, Paragraph, Row } from "@/components";
+import { CopyAddress, NoBackupIcon, Paragraph, Row } from "@/components";
 import { useAccountsStore } from "@/store";
 import { Colors, FontWeights } from "@/styles";
 import { NavigationProp } from "@/types";
 import { useNavigation } from "@react-navigation/native";
-import { ArrowDown2, Setting2, Warning2 } from "iconsax-react-native";
+import { ArrowDown2, Setting2 } from "iconsax-react-native";
 import { TouchableOpacity } from "react-native";
 
 export default function DashboardHeader() {
@@ -27,6 +27,7 @@ export default function DashboardHeader() {
         style={{ flexDirection: "row", gap: 4 }}
       >
         <Row style={{ gap: 4 }}>
+          {activeAccount?.passphraseSkipped && <NoBackupIcon />}
           <Paragraph
             style={{
               color: Colors.text,
@@ -36,10 +37,6 @@ export default function DashboardHeader() {
           >
             {activeAccount?.name}
           </Paragraph>
-          {/* Temporary solution until we get designs */}
-          {activeAccount?.passphraseSkipped && (
-            <Warning2 size={16} color={Colors.danger} />
-          )}
           <ArrowDown2 color={Colors.text} />
         </Row>
       </TouchableOpacity>

@@ -12,7 +12,7 @@ import { addSkipButton } from "@/navigation/header/NewWalletHeader";
 import { useAccountsStore } from "@/store/account";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
-import { getNumberName, shuffle } from "@/utils";
+import { getNumberName, resetNavigationStack, shuffle } from "@/utils";
 import { EnglishMnemonic } from "@cosmjs/crypto";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
@@ -28,7 +28,7 @@ type ConfirmMnemoProps = NativeStackScreenProps<
 export default function ConfirmMnemonicScreen({
   navigation,
   route: {
-    params: { wallet },
+    params: { wallet, name, backup },
   },
 }: ConfirmMnemoProps) {
   const accountsStore = useAccountsStore();
@@ -79,7 +79,9 @@ export default function ConfirmMnemonicScreen({
   }, [loading]);
 
   useEffect(() => {
-    addSkipButton(navigation, onSkip);
+    if (!backup) {
+      addSkipButton(navigation, onSkip);
+    }
   }, [navigation]);
 
   function onSkip() {
@@ -97,7 +99,19 @@ export default function ConfirmMnemonicScreen({
     }
 
     try {
-      await storeNewAccount(accountsStore, navigation, wallet, skipValidation);
+      if (backup) {
+        accountsStore.confirmMnemonic(wallet.address);
+        navigation.navigate("Home");
+        resetNavigationStack(navigation);
+      } else {
+        await storeNewAccount(
+          accountsStore,
+          navigation,
+          wallet,
+          skipValidation,
+          name,
+        );
+      }
     } catch (e: any) {
       console.error("Error on wallet import:", e);
       setError(e.message);
