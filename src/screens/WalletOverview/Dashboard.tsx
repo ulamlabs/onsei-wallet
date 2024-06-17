@@ -17,7 +17,7 @@ import { Colors, FontSizes, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { calculateTotalBalance } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ArrowUp, ArrowDown } from "iconsax-react-native";
+import { ArrowDown, ArrowUp, InfoCircle } from "iconsax-react-native";
 import React from "react";
 import { TokensList } from "../tokens";
 
@@ -48,6 +48,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
   }
 
   function render() {
+    const hasTokensWithoutPrice = tokens.some((token) => !token.price);
     if (!activeAccount) {
       return <Loader />;
     }
@@ -78,6 +79,22 @@ export default function Dashboard({ navigation }: DashboardProps) {
         <Headline size="2xl" style={{ marginBottom: 0 }}>
           ${calculateTotalBalance(tokens)}
         </Headline>
+        {hasTokensWithoutPrice && (
+          <Row
+            style={{
+              gap: 6,
+              paddingHorizontal: 16,
+              paddingVertical: 8,
+              backgroundColor: Colors.background100,
+              borderRadius: 30,
+            }}
+          >
+            <InfoCircle size={16} color={Colors.text100} />
+            <Text style={{ color: Colors.text100 }}>
+              Excludes unknown value assets
+            </Text>
+          </Row>
+        )}
       </>
     );
   }
