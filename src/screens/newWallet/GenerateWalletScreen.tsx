@@ -66,7 +66,10 @@ export default function GenerateWalletScreen({
     if (copied) {
       Clipboard.setStringAsync(""); // Clear the clipboard
     }
-    navigation.push("Confirm Mnemonic", { wallet: wallet! });
+    navigation.push("Confirm Mnemonic", {
+      wallet: wallet!,
+      name: route.params?.name,
+    });
   }
 
   return (
