@@ -39,10 +39,9 @@ export default function SafeLayout({
     paddingLeft: Math.max(scale(16), insets.left),
     paddingRight: Math.max(scale(16), insets.right),
   };
-
   if (!navigation.getId()) {
     // No ID means we're in the BottomBarsNavigation, which can overlay content
-    layoutStyle.paddingBottom = (layoutStyle.paddingBottom as number) + 150; // Height of BottomBarsNavigator
+    layoutStyle.paddingBottom = (layoutStyle.paddingBottom as number) * 3.6; // This value works on emulators and physical devices
   }
 
   const onRefresh = useCallback(async () => {
