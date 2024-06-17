@@ -6,6 +6,7 @@ import { ToastComponentsProps } from "./types";
 export default function ToastSuccess({
   description,
   toast,
+  duration,
 }: ToastComponentsProps) {
   return (
     <Toast
@@ -14,6 +15,7 @@ export default function ToastSuccess({
         borderColor: Colors.toastSuccessBorder,
         backgroundColor: Colors.toastSuccessBackground,
       }}
+      duration={duration}
       icon={<TickCircle size={18} color={Colors.toastSuccessText} />}
       textColor={Colors.toastSuccessText}
     >

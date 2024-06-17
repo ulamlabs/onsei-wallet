@@ -9,6 +9,7 @@ import { Text } from "../typography";
 type Props = PropsWithChildren & {
   style?: StyleProp<ViewStyle>;
   toast: Toasts;
+  duration?: number;
   icon: JSX.Element;
   textColor?: string;
 };
@@ -19,13 +20,14 @@ export default function Toast({
   toast,
   icon,
   textColor,
+  duration,
 }: Props) {
   const translateY = useRef(new Animated.Value(200)).current;
 
   useEffect(() => {
     const id = setTimeout(() => {
       hideToast();
-    }, 5000);
+    }, duration || 5000);
     return () => clearTimeout(id);
   }, [toast]);
 

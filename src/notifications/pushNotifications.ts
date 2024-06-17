@@ -7,6 +7,7 @@ import { CosmToken, fetchCW20Token } from "@/services/cosmos";
 import {
   useAccountsStore,
   useSettingsStore,
+  useToastStore,
   useTokenRegistryStore,
   useTokensStore,
 } from "@/store";
@@ -25,6 +26,7 @@ Notifications.setNotificationHandler({
 });
 
 export async function grantNotificationsPermission() {
+  const { info } = useToastStore.getState();
   if (Platform.OS === "android") {
     Notifications.setNotificationChannelAsync("default", {
       name: "default",
@@ -34,9 +36,18 @@ export async function grantNotificationsPermission() {
   const { status } = await Notifications.getPermissionsAsync();
   let finalStatus = status;
   if (status !== "granted") {
-    const { status } = await Notifications.requestPermissionsAsync();
+    const { status, canAskAgain } =
+      await Notifications.requestPermissionsAsync();
+    if (!canAskAgain) {
+      info({
+        description:
+          "You have disabled notifications. You can enable them in your device settings.",
+        duration: 7000,
+      });
+    }
     finalStatus = status;
   }
+
   return finalStatus;
 }
 
