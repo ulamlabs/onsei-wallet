@@ -64,11 +64,14 @@ export type HomeParamList = {
   "Saved Address": { addressData?: SavedAddress; address?: string } | undefined;
   "Address Details": { addressData: SavedAddress };
   "Address Transactions": { addressData: SavedAddress };
-  "Your unique Recovery Phrase": { address: string };
+  "Your unique Recovery Phrase": {
+    address: string;
+    needsConfirmation?: boolean;
+  };
   "Add Wallet": undefined;
   "Generate Wallet": { name: string } | undefined;
   "Import Wallet": { name: string } | undefined;
-  "Confirm Mnemonic": { wallet: Wallet };
+  "Confirm Mnemonic": { wallet: Wallet; name?: string; backup?: boolean };
   Settings: undefined;
   Wallets: undefined;
   "Wallet settings": { address: string };
@@ -147,7 +150,15 @@ export default function HomeNavigation() {
           title: `${route.params.addressData.name}: Transactions`,
         })}
       />
-      <Screen name="Your unique Recovery Phrase" component={MnemonicScreen} />
+      <Screen
+        name="Your unique Recovery Phrase"
+        options={({
+          route: {
+            params: { needsConfirmation },
+          },
+        }) => (needsConfirmation ? newWalletScreenOptions({ step: 1 }) : {})}
+        component={MnemonicScreen}
+      />
       <Screen name="Add Wallet" component={AddWalletScreen} />
       <Screen
         name="Generate Wallet"

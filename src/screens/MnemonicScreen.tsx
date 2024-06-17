@@ -23,7 +23,7 @@ type Props = NativeStackScreenProps<
 
 export default function MnemonicScreen({
   route: {
-    params: { address },
+    params: { address, needsConfirmation },
   },
   navigation,
 }: Props) {
@@ -49,7 +49,14 @@ export default function MnemonicScreen({
     if (copied) {
       Clipboard.setStringAsync(""); // Clear the clipboard
     }
-    navigation.goBack();
+    if (needsConfirmation) {
+      navigation.push("Confirm Mnemonic", {
+        wallet: { mnemonic: mnemonic.join(" "), address },
+        backup: true,
+      });
+    } else {
+      navigation.goBack();
+    }
   }
 
   return (
@@ -71,7 +78,10 @@ export default function MnemonicScreen({
               onCopy={onCopy}
             />
           </View>
-          <PrimaryButton title="Done" onPress={onDone} />
+          <PrimaryButton
+            title={needsConfirmation ? "OK, stored safely" : "Done"}
+            onPress={onDone}
+          />
         </Column>
       ) : (
         <Loader />

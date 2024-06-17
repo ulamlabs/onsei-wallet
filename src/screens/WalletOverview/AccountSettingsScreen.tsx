@@ -4,17 +4,19 @@ import {
   Headline,
   IconButton,
   Link,
+  NoBackupIcon,
   OptionGroup,
   Row,
   SafeLayout,
   TertiaryButton,
+  Text,
 } from "@/components";
 import { NETWORK_NAMES } from "@/const";
 import { useAccountsStore, useModalStore, useSettingsStore } from "@/store";
-import { FontSizes, FontWeights } from "@/styles";
+import { Colors, FontSizes, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Edit2, ExportSquare } from "iconsax-react-native";
+import { Edit2, ExportSquare, SecuritySafe } from "iconsax-react-native";
 import { Linking, View } from "react-native";
 
 type AccountSettingsProps = NativeStackScreenProps<
@@ -80,13 +82,45 @@ export default function AccountSettingsScreen({
             />
           </Row>
           <OptionGroup>
-            <Link
-              label="Show recovery phrase"
-              navigateTo={"Your unique Recovery Phrase"}
-              params={{ address }}
-              askPin
-            />
+            {account?.passphraseSkipped ? (
+              <Link
+                label="Recovery phrase"
+                icon={<NoBackupIcon />}
+                navigateTo={"Your unique Recovery Phrase"}
+                params={{ address, needsConfirmation: true }}
+                labelRight="Back up"
+                askPin
+              />
+            ) : (
+              <Link
+                label="Show recovery phrase"
+                navigateTo={"Your unique Recovery Phrase"}
+                params={{ address }}
+                askPin
+              />
+            )}
           </OptionGroup>
+          {account?.passphraseSkipped && (
+            <Row
+              style={{
+                marginTop: 32,
+                paddingHorizontal: 22,
+                paddingVertical: 16,
+                backgroundColor: Colors.warningBackground,
+                borderRadius: 22,
+                borderWidth: 1,
+                borderColor: Colors.warningBorder,
+                flex: 1,
+              }}
+            >
+              <SecuritySafe size={22} color={Colors.warningText} />
+              <Text style={{ flex: 1, color: Colors.warningText }}>
+                Back up your Recovery Phrase to restore your wallet if you lose
+                your device.
+              </Text>
+            </Row>
+          )}
+
           {activeAccount?.address !== address && (
             <DangerButton
               title="Remove Wallet"
