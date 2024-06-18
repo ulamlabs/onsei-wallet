@@ -1,4 +1,4 @@
-import { useSettingsStore } from "@/store";
+import { useAccountsStore, useSettingsStore } from "@/store";
 import {
   loadFromStorage,
   removeFromStorage,
@@ -71,4 +71,11 @@ const getStorageKey = (address: string) => {
 export const clearTransactionsForAddress = async (address: string) => {
   const key = getStorageKey(address);
   await removeFromStorage(key);
+};
+
+export const clearAllTransactions = async () => {
+  const addresses = useAccountsStore
+    .getState()
+    .accounts.map((acc) => acc.address);
+  await Promise.all(addresses.map(clearTransactionsForAddress));
 };
