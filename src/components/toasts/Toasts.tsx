@@ -36,13 +36,13 @@ export default function Toasts() {
     >
       {toastsStore.toasts.map((toast: ToastsType) => {
         const ToastComponent = toastComponents[toast.type];
-        return ToastComponent ? (
+        return (
           <ToastComponent
             key={toast.id}
             description={toast.options.description}
             toast={toast}
           />
-        ) : null;
+        );
       })}
     </SafeAreaView>
   );

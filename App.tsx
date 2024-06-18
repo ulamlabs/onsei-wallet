@@ -14,6 +14,7 @@ import {
   useSettingsStore,
   useToastStore,
   useTokenRegistryStore,
+  useTokensStore,
 } from "@/store";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { NavigationContainer } from "@react-navigation/native";
@@ -40,6 +41,18 @@ export default function App() {
   useInactivityLock();
   const { isConnected } = useNetInfo();
   const prevConnectionState = useRef<boolean | null>(null);
+  const { updateBalances } = useTokensStore();
+  const accountsStore = useAccountsStore();
+  const authStore = useAuthStore();
+  const addressStore = useAddressBookStore();
+  const onboardingStore = useOnboardingStore();
+  const settingsStore = useSettingsStore();
+  const tokenRegistryStore = useTokenRegistryStore();
+
+  async function onRestore() {
+    await tokenRegistryStore.refreshRegistryCache();
+    updateBalances();
+  }
 
   useEffect(() => {
     if (isConnected === false && !prevConnectionState.current) {
@@ -49,18 +62,11 @@ export default function App() {
     if (isConnected && prevConnectionState.current === false) {
       success({ description: "Internet connection restored" });
       prevConnectionState.current = true;
-      init();
+      onRestore();
     }
   }, [isConnected]);
 
   const { info, success } = useToastStore();
-
-  const accountsStore = useAccountsStore();
-  const authStore = useAuthStore();
-  const addressStore = useAddressBookStore();
-  const onboardingStore = useOnboardingStore();
-  const settingsStore = useSettingsStore();
-  const tokenRegistryStore = useTokenRegistryStore();
 
   useEffect(() => {
     if (ready && (fontsLoaded || fontError)) {
