@@ -1,5 +1,10 @@
-import { useSettingsStore } from "@/store";
-import { loadFromStorage, saveToStorage, unique } from "@/utils";
+import { useAccountsStore, useSettingsStore } from "@/store";
+import {
+  loadFromStorage,
+  removeFromStorage,
+  saveToStorage,
+  unique,
+} from "@/utils";
 import { SerializedTx, Transaction } from "./types";
 import { deserializeTxn, serializeTxn } from "./utils";
 
@@ -61,4 +66,16 @@ export const getAllKnownTransactionHashes = async (addresses: string[]) => {
 const getStorageKey = (address: string) => {
   const node = useSettingsStore.getState().settings.node;
   return `transactions-${node}-${address}.json`;
+};
+
+export const clearTransactionsForAddress = async (address: string) => {
+  const key = getStorageKey(address);
+  await removeFromStorage(key);
+};
+
+export const clearAllTransactions = async () => {
+  const addresses = useAccountsStore
+    .getState()
+    .accounts.map((acc) => acc.address);
+  await Promise.all(addresses.map(clearTransactionsForAddress));
 };

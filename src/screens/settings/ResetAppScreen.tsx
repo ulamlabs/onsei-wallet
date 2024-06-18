@@ -6,6 +6,7 @@ import {
   SafeLayout,
   TertiaryButton,
 } from "@/components";
+import { clearAllTransactions } from "@/modules/transactions/storage";
 import {
   useAccountsStore,
   useAddressBookStore,
@@ -37,6 +38,7 @@ export default function ResetAppScreen({ navigation }: ResetAppScreenProps) {
       authStore.resetPin(),
       addressBookStore.clearAddressBook(),
       settingsStore.reset(),
+      clearAllTransactions(),
     ]);
     onboardingStore.startOnboarding();
   }

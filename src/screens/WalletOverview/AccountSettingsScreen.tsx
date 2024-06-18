@@ -12,6 +12,7 @@ import {
   Text,
 } from "@/components";
 import { NETWORK_NAMES } from "@/const";
+import { clearTransactionsForAddress } from "@/modules/transactions/storage";
 import { useAccountsStore, useModalStore, useSettingsStore } from "@/store";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
@@ -51,6 +52,7 @@ export default function AccountSettingsScreen({
       danger: true,
     });
     if (yesno) {
+      clearTransactionsForAddress(account.address);
       await deleteAccount(account.address);
       navigation.goBack();
     }
