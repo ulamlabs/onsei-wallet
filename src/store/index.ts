@@ -4,5 +4,6 @@ export * from "./auth";
 export * from "./modal";
 export * from "./onboarding";
 export * from "./settings";
+export * from "./toast";
 export * from "./tokenRegistry";
 export * from "./tokens";

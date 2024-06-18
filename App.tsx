@@ -1,27 +1,31 @@
 import { Modals } from "@/components";
+import { Toasts } from "@/components/toasts";
 import { useInactivityLock } from "@/hooks";
 import { QueryClientProvider } from "@/modules/query";
 import HomeNavigation from "@/navigation/HomeNavigation";
 import LockNavigation from "@/navigation/LockNavigation";
 import OnboardingNavigation from "@/navigation/OnboardingNavigation";
+import { NotificationsListener } from "@/notifications";
 import {
   useAccountsStore,
   useAddressBookStore,
   useAuthStore,
   useOnboardingStore,
   useSettingsStore,
+  useToastStore,
   useTokenRegistryStore,
+  useTokensStore,
 } from "@/store";
+import { useNetInfo } from "@react-native-community/netinfo";
 import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import "fastestsmallesttextencoderdecoder";
 import "globals";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "react-native-get-random-values";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { NotificationsListener } from "@/notifications";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -35,7 +39,9 @@ export default function App() {
     black: require("./assets/fonts/Satoshi-Black.otf"),
   });
   useInactivityLock();
-
+  const { isConnected } = useNetInfo();
+  const prevConnectionState = useRef<boolean | null>(null);
+  const { updateBalances } = useTokensStore();
   const accountsStore = useAccountsStore();
   const authStore = useAuthStore();
   const addressStore = useAddressBookStore();
@@ -43,24 +49,43 @@ export default function App() {
   const settingsStore = useSettingsStore();
   const tokenRegistryStore = useTokenRegistryStore();
 
+  async function onRestore() {
+    await tokenRegistryStore.refreshRegistryCache();
+    updateBalances();
+  }
+
+  useEffect(() => {
+    if (isConnected === false && !prevConnectionState.current) {
+      info({ description: "No internet connection" });
+      prevConnectionState.current = false;
+    }
+    if (isConnected && prevConnectionState.current === false) {
+      success({ description: "Internet connection restored" });
+      prevConnectionState.current = true;
+      onRestore();
+    }
+  }, [isConnected]);
+
+  const { info, success } = useToastStore();
+
   useEffect(() => {
     if (ready && (fontsLoaded || fontError)) {
       SplashScreen.hideAsync();
     }
   }, [ready, fontsLoaded, fontError]);
 
-  useEffect(() => {
-    async function init() {
-      await settingsStore.init(); // Settings must be initialized before everything else
-      await Promise.all([
-        accountsStore.init(),
-        tokenRegistryStore.init(),
-        authStore.init(),
-        addressStore.init(),
-      ]);
-      setReady(true);
-    }
+  async function init() {
+    await settingsStore.init(); // Settings must be initialized before everything else
+    await Promise.all([
+      accountsStore.init(),
+      tokenRegistryStore.init(),
+      authStore.init(),
+      addressStore.init(),
+    ]);
+    setReady(true);
+  }
 
+  useEffect(() => {
     init();
   }, []);
 
@@ -101,6 +126,7 @@ export default function App() {
           <StatusBar style="light" />
           {getContent()}
           <Modals />
+          <Toasts />
           {ready && <NotificationsListener />}
         </SafeAreaProvider>
       </NavigationContainer>

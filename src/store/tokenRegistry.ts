@@ -5,6 +5,7 @@ import { CosmToken, CosmTokenWithPrice } from "@/services/cosmos";
 import { loadFromStorage, matchPriceToToken, saveToStorage } from "@/utils";
 import { create } from "zustand";
 import { useSettingsStore } from "./settings";
+import { useToastStore } from "./toast";
 
 type TokenPrice = {
   price: number;
@@ -160,9 +161,16 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
 async function fetchRegistry(): Promise<CosmToken[]> {
   const url =
     "https://raw.githubusercontent.com/sei-protocol/chain-registry/main/assetlist.json";
-  const response = await fetchWithRetry(url);
-  const data = await response.json();
-  return data[getNetwork()].map(parseRegistryToken);
+  try {
+    const response = await fetchWithRetry(url);
+    const data = await response.json();
+    return data[getNetwork()].map(parseRegistryToken);
+  } catch (error) {
+    useToastStore
+      .getState()
+      .error({ description: "Failed to fetch registry data" });
+    throw error;
+  }
 }
 
 async function fetchNativeTokens(): Promise<CosmToken[]> {
@@ -171,14 +179,21 @@ async function fetchNativeTokens(): Promise<CosmToken[]> {
   });
   const url = `https://rest.${NODE_URL[getNode()]}/cosmos/bank/v1beta1/denoms_metadata?${params}`;
   let tokens: CosmToken[] = [];
-  while (true) {
-    const response = await fetchWithRetry(url);
-    const data = await response.json();
-    tokens = [...tokens, ...data.metadatas.map(parseNativeTokenMetadata)];
-    if (!data.pagination.nextKey) {
-      break;
+  try {
+    while (true) {
+      const response = await fetchWithRetry(url);
+      const data = await response.json();
+      tokens = [...tokens, ...data.metadatas.map(parseNativeTokenMetadata)];
+      if (!data.pagination.nextKey) {
+        break;
+      }
+      params.set("pagination.key", data.pagination.nextKey);
     }
-    params.set("pagination.key", data.pagination.nextKey);
+  } catch (error) {
+    useToastStore
+      .getState()
+      .error({ description: "Failed to fetch native tokens" });
+    throw error;
   }
 
   return tokens;

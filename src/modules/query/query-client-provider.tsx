@@ -1,3 +1,4 @@
+import { useToastStore } from "@/store";
 import * as ReactQuery from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { GC_TIME, SHORT_STALE_TIME } from "./consts";
@@ -11,6 +12,7 @@ const queryClient = new ReactQuery.QueryClient({
       // @ts-expect-error error: Error -> error: AxiosError
       retry: (failureCount, error: AxiosError) => {
         if (failureCount >= 3) {
+          useToastStore.getState().error({ description: error.message });
           return false;
         }
         if (

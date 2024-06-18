@@ -27,6 +27,18 @@ export const Colors = {
   danger200: "#231616",
   markerBackground: "#151E3C",
   markerText: "#5177FF",
+  toastBackground: "#15142C",
+  toastBorder: "#26254C",
+  toastInfoText: "#9DD0FF",
+  toastErrorText: "#FF8787",
+  toastErrorBorder: "#4C2525",
+  toastErrorBackground: "#2C1414",
+  toastWarningText: "#E7D48F",
+  toastWarningBorder: "#322D1E",
+  toastWarningBackground: "#201313",
+  toastSuccessText: "#9BE78F",
+  toastSuccessBorder: "#1F311C",
+  toastSuccessBackground: "#121E15",
 };
 
 export const FontSizes = {
