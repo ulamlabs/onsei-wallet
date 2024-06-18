@@ -3,6 +3,7 @@ import {
   CopyAddress,
   Headline,
   Loader,
+  NoBackupIcon,
   Paragraph,
   Row,
   SafeLayout,
@@ -25,7 +26,6 @@ import {
   ArrowUp,
   InfoCircle,
   Setting2,
-  Warning2,
 } from "iconsax-react-native";
 import React from "react";
 import { TouchableOpacity } from "react-native";
@@ -79,6 +79,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
             style={{ flexDirection: "row", gap: 4 }}
           >
             <Row style={{ gap: 4 }}>
+              {activeAccount?.passphraseSkipped && <NoBackupIcon />}
               <Paragraph
                 style={{
                   color: Colors.text,
@@ -88,10 +89,6 @@ export default function Dashboard({ navigation }: DashboardProps) {
               >
                 {activeAccount?.name}
               </Paragraph>
-              {/* Temporary solution until we get designs */}
-              {activeAccount?.passphraseSkipped && (
-                <Warning2 size={16} color={Colors.danger} />
-              )}
               <ArrowDown2 color={Colors.text} />
             </Row>
           </TouchableOpacity>
