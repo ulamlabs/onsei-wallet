@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 export type ToastOptions = {
   description: string;
+  duration?: number;
 };
 
 export type ToastsTypes = "info" | "error" | "success" | "warning";

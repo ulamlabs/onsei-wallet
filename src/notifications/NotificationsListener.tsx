@@ -34,6 +34,7 @@ export default function NotificationsListener() {
 
   useEffect(() => {
     if (!allowNotifications) {
+      setSetting("allowNotifications", false);
       return;
     }
     grantNotificationsPermission().then((status) => {

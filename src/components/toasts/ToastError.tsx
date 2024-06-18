@@ -6,6 +6,7 @@ import { ToastComponentsProps } from "./types";
 export default function ToastError({
   description,
   toast,
+  duration,
 }: ToastComponentsProps) {
   return (
     <Toast
@@ -14,6 +15,7 @@ export default function ToastError({
         borderColor: Colors.toastErrorBorder,
         backgroundColor: Colors.toastErrorBackground,
       }}
+      duration={duration}
       icon={<CloseCircle size={18} color={Colors.toastErrorText} />}
       textColor={Colors.toastErrorText}
     >

@@ -41,6 +41,7 @@ export default function Toasts() {
             key={toast.id}
             description={toast.options.description}
             toast={toast}
+            duration={toast.options.duration}
           />
         );
       })}
