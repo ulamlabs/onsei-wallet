@@ -1,6 +1,5 @@
 import {
   Column,
-  DangerButton,
   Headline,
   IconButton,
   Link,
@@ -16,7 +15,7 @@ import { useAccountsStore, useModalStore, useSettingsStore } from "@/store";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Edit2, ExportSquare, SecuritySafe } from "iconsax-react-native";
+import { Edit2, ExportSquare, SecuritySafe, Trash } from "iconsax-react-native";
 import { Linking, View } from "react-native";
 
 type AccountSettingsProps = NativeStackScreenProps<
@@ -42,7 +41,7 @@ export default function AccountSettingsScreen({
       return;
     }
     const yesno = await ask({
-      title: "Remove account?",
+      title: "Remove wallet?",
       question:
         "Are you sure you want to remove this wallet?\nThis action cannot be reversed.",
       yes: "Yes, remove the wallet",
@@ -122,10 +121,13 @@ export default function AccountSettingsScreen({
           )}
 
           {activeAccount?.address !== address && (
-            <DangerButton
+            <TertiaryButton
               title="Remove Wallet"
-              onPress={onRemove}
+              icon={Trash}
+              color={Colors.danger}
               style={{ marginTop: 20 }}
+              textStyle={{ fontFamily: FontWeights.bold }}
+              onPress={onRemove}
             />
           )}
         </View>
