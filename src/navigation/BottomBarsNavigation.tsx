@@ -1,11 +1,11 @@
-import DashboardHeader from "@/navigation/header/DashboardHeader";
 import Dashboard from "@/screens/WalletOverview/Dashboard";
 import AddressBook from "@/screens/addressBook/AddressBookScreen";
 import Transactions from "@/screens/transactions/Transactions";
+import { Colors } from "@/styles";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { ArrangeHorizontalSquare, Book, Wallet2 } from "iconsax-react-native";
 import React from "react";
-import { createBarNavigation } from "./bar";
-import DefaultHeaderTitle from "./header/DefaultHeaderTitle";
+import Bar from "./bar/Bar";
 
 export type BottomTabsParamList = {
   Wallet: undefined;
@@ -13,30 +13,39 @@ export type BottomTabsParamList = {
   Transactions: { address: string };
 };
 
-const { Navigator, Screen } = createBarNavigation<BottomTabsParamList>();
+const { Navigator, Screen } =
+  createMaterialTopTabNavigator<BottomTabsParamList>();
 
 export default function BottomBarsNavigation() {
   return (
-    <Navigator>
+    <Navigator tabBar={(props) => <Bar {...props} />} tabBarPosition="bottom">
       <Screen
         name="Wallet"
         component={Dashboard}
-        options={{ icon: Wallet2, headerTitle: DashboardHeader }}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Wallet2 color={focused ? Colors.text : Colors.text100} />
+          ),
+        }}
       />
       <Screen
         name="Transactions"
         component={Transactions}
         options={{
-          icon: ArrangeHorizontalSquare,
-          headerTitle: () => <DefaultHeaderTitle title="Transactions" />,
+          tabBarIcon: ({ focused }) => (
+            <ArrangeHorizontalSquare
+              color={focused ? Colors.text : Colors.text100}
+            />
+          ),
         }}
       />
       <Screen
         name="Address Book"
         component={AddressBook}
         options={{
-          icon: Book,
-          headerTitle: () => <DefaultHeaderTitle title="Address Bookk" />,
+          tabBarIcon: ({ focused }) => (
+            <Book color={focused ? Colors.text : Colors.text100} />
+          ),
         }}
       />
     </Navigator>

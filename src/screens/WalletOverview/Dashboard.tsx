@@ -1,7 +1,9 @@
 import {
   Column,
+  CopyAddress,
   Headline,
   Loader,
+  Paragraph,
   Row,
   SafeLayout,
   SecondaryButton,
@@ -17,8 +19,16 @@ import { Colors, FontSizes, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { calculateTotalBalance } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ArrowDown, ArrowUp, InfoCircle } from "iconsax-react-native";
+import {
+  ArrowDown,
+  ArrowDown2,
+  ArrowUp,
+  InfoCircle,
+  Setting2,
+  Warning2,
+} from "iconsax-react-native";
 import React from "react";
+import { TouchableOpacity } from "react-native";
 import { TokensList } from "../tokens";
 
 type DashboardProps = NativeStackScreenProps<NavigatorParamsList, "Wallet">;
@@ -55,6 +65,38 @@ export default function Dashboard({ navigation }: DashboardProps) {
 
     return (
       <>
+        <Row
+          style={{
+            width: "100%",
+            marginBottom: 24,
+          }}
+        >
+          <TouchableOpacity onPress={openSettings}>
+            <Setting2 size={22} color={Colors.text100} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.push("Wallets")}
+            style={{ flexDirection: "row", gap: 4 }}
+          >
+            <Row style={{ gap: 4 }}>
+              <Paragraph
+                style={{
+                  color: Colors.text,
+                  fontSize: 18,
+                  fontFamily: FontWeights.bold,
+                }}
+              >
+                {activeAccount?.name}
+              </Paragraph>
+              {/* Temporary solution until we get designs */}
+              {activeAccount?.passphraseSkipped && (
+                <Warning2 size={16} color={Colors.danger} />
+              )}
+              <ArrowDown2 color={Colors.text} />
+            </Row>
+          </TouchableOpacity>
+          <CopyAddress />
+        </Row>
         {node === "TestNet" && (
           <Row
             style={{
@@ -97,6 +139,10 @@ export default function Dashboard({ navigation }: DashboardProps) {
         )}
       </>
     );
+  }
+
+  function openSettings() {
+    navigation.push("Settings");
   }
 
   return (

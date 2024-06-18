@@ -1,5 +1,6 @@
 import { Loader, Paragraph, SafeLayout } from "@/components";
 import { useTransactions } from "@/modules/transactions";
+import DefaultHeaderTitle from "@/navigation/header/DefaultHeaderTitle";
 import { useAccountsStore, useTokensStore } from "@/store";
 import { View } from "react-native";
 import TransactionList from "./TransactionList";
@@ -20,6 +21,7 @@ export default function Transactions() {
 
   return (
     <SafeLayout refreshFn={refreshApp}>
+      <DefaultHeaderTitle title="Transactions" style={{ marginBottom: 24 }} />
       <View>
         {isLoading ? (
           <Loader />
