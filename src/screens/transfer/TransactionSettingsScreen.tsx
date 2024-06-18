@@ -70,8 +70,8 @@ export default function TransactionSettingscreen({
             Transaction fee
           </Headline>
           <Paragraph>
-            The blockchain network charges the fee, and increasing it speeds up
-            your transaction. Our wallet is free to use.
+            The blockchain network charges the fee, and increasing it boosts the
+            transaction priority. Our wallet is free to use.
           </Paragraph>
           <Column style={{ marginTop: 16, gap: 10 }}>
             <FeeBoxList

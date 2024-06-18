@@ -17,12 +17,6 @@ type Props = {
   onPress: () => void;
 };
 
-const FEE_TITLES = {
-  Low: "Lowest fee",
-  Medium: "Balanced",
-  High: "Fastest",
-};
-
 export default function FeeBox({
   title,
   selected = false,
@@ -59,7 +53,7 @@ export default function FeeBox({
           <Text
             style={{ fontSize: FontSizes.base, fontFamily: FontWeights.bold }}
           >
-            {FEE_TITLES[title]}
+            {title}
           </Text>
           <Column style={{ gap: 2, alignItems: "flex-end", minHeight: 39 }}>
             {feeInt ? (

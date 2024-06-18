@@ -145,6 +145,9 @@ export default function TransferAmountScreen({
 
       const feeInt = BigInt(fee.amount[0].amount);
       const maxAmount = token.balance - feeInt;
+      if (maxAmount < 0) {
+        throw new Error("Insufficient funds for fee");
+      }
       setDecimalAmount(
         formatAmount(maxAmount, token.decimals, { noDecimalSeparator: true }),
       );
