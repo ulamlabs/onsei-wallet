@@ -12,11 +12,11 @@ import {
   Text,
 } from "@/components";
 import { NETWORK_NAMES } from "@/const";
+import { clearTransactionsForAddress } from "@/modules/transactions/storage";
 import { useAccountsStore, useModalStore, useSettingsStore } from "@/store";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useQueryClient } from "@tanstack/react-query";
 import { Edit2, ExportSquare, SecuritySafe } from "iconsax-react-native";
 import { Linking, View } from "react-native";
 
@@ -38,8 +38,6 @@ export default function AccountSettingsScreen({
     settings: { node },
   } = useSettingsStore();
 
-  const queryClient = useQueryClient();
-
   async function onRemove() {
     if (!account) {
       return;
@@ -54,9 +52,7 @@ export default function AccountSettingsScreen({
       danger: true,
     });
     if (yesno) {
-      queryClient.removeQueries({
-        queryKey: ["transactions", account.address],
-      });
+      clearTransactionsForAddress(account.address);
       await deleteAccount(account.address);
       navigation.goBack();
     }
