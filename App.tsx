@@ -5,7 +5,6 @@ import { QueryClientProvider } from "@/modules/query";
 import HomeNavigation from "@/navigation/HomeNavigation";
 import LockNavigation from "@/navigation/LockNavigation";
 import OnboardingNavigation from "@/navigation/OnboardingNavigation";
-import { NotificationsListener } from "@/notifications";
 import {
   useAccountsStore,
   useAddressBookStore,
@@ -127,7 +126,6 @@ export default function App() {
           {getContent()}
           <Modals />
           <Toasts />
-          {ready && <NotificationsListener />}
         </SafeAreaProvider>
       </NavigationContainer>
     </QueryClientProvider>
