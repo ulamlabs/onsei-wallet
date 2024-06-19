@@ -19,7 +19,8 @@
         "usesNonExemptEncryption": false
       },
       "infoPlist": {
-        "NSFaceIDUsageDescription": "This app stores users's private keys and the access should be Face ID protected."
+        "NSFaceIDUsageDescription": "This app stores users's private keys and the access should be Face ID protected.",
+        "UIBackgroundModes": ["fetch", "remote-notification"]
       },
       "buildNumber": "2"
     },

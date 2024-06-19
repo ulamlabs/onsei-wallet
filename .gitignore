@@ -37,3 +37,6 @@ yarn-error.*
 # android build
 android/
 my-upload-key.keystore
+
+# ios build
+ios/
