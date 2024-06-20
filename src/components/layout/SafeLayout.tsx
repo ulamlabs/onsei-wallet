@@ -1,7 +1,5 @@
 import { Colors } from "@/styles";
-import { NavigationProp } from "@/types";
 import { scale, verticalScale } from "@/utils";
-import { useNavigation } from "@react-navigation/native";
 import React, { PropsWithChildren, useCallback, useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -30,7 +28,6 @@ export default function SafeLayout({
   scrollEnabled = true,
 }: LayoutProps) {
   const [refreshing, setRefreshing] = useState(false);
-  const navigation = useNavigation<NavigationProp>();
   const insets = useSafeAreaInsets();
   const layoutStyle: ViewStyle = {
     minHeight: "100%",
