@@ -18,7 +18,11 @@ const { Navigator, Screen } =
 
 export default function BottomBarsNavigation() {
   return (
-    <Navigator tabBar={(props) => <Bar {...props} />} tabBarPosition="bottom">
+    <Navigator
+      initialRouteName="Wallet"
+      tabBar={(props) => <Bar {...props} />}
+      tabBarPosition="bottom"
+    >
       <Screen
         name="Wallet"
         component={Dashboard}
