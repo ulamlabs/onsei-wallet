@@ -1,16 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
   Column,
   IconButton,
   Paragraph,
+  Row,
   SafeLayout,
+  Text,
   TextInput,
 } from "@/components";
-import { Add, SearchNormal } from "iconsax-react-native";
-import { useAddressBookStore } from "@/store";
-import { NavigatorParamsList } from "@/types";
 import { useInputState } from "@/hooks";
+import DashboardHeader from "@/navigation/header/DashboardHeader";
+import { useAddressBookStore } from "@/store";
+import { FontSizes, FontWeights } from "@/styles";
+import { NavigatorParamsList } from "@/types";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Add, SearchNormal } from "iconsax-react-native";
+import React, { useEffect, useState } from "react";
 import AddressBookEntry from "./AddressBookEntry";
 
 type Props = NativeStackScreenProps<NavigatorParamsList, "Address Book">;
@@ -19,18 +23,6 @@ export default function AddressBook({ navigation }: Props) {
   const { addressBook } = useAddressBookStore();
   const [displayedAddresses, setDisplayedAddresses] = useState(addressBook);
   const searchInput = useInputState();
-
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <IconButton
-          style={{ marginRight: 16, backgroundColor: "transparent" }}
-          icon={Add}
-          onPress={() => navigation.push("Saved Address")}
-        />
-      ),
-    });
-  }, []);
 
   useEffect(() => {
     setDisplayedAddresses(addressBook);
@@ -51,28 +43,51 @@ export default function AddressBook({ navigation }: Props) {
   }, [searchInput.value]);
 
   return (
-    <SafeLayout>
-      <TextInput
-        placeholder="Search name or SEI address"
-        icon={SearchNormal}
-        autoCorrect={false}
-        {...searchInput}
-        showClear
-      />
-
-      <Column style={{ marginTop: 24 }}>
-        {displayedAddresses.map((addressData) => (
-          <AddressBookEntry
-            key={addressData.address}
-            addressData={addressData}
+    <>
+      <DashboardHeader>
+        <Column>
+          <Row
+            style={{
+              minWidth: "100%",
+              justifyContent: "space-between",
+            }}
+          >
+            <Text
+              style={{ fontSize: FontSizes.lg, fontFamily: FontWeights.bold }}
+            >
+              Address Book
+            </Text>
+            <IconButton
+              style={{ backgroundColor: "transparent" }}
+              icon={Add}
+              onPress={() => navigation.push("Saved Address")}
+            />
+          </Row>
+          <TextInput
+            style={{ marginBottom: 0 }}
+            placeholder="Search name or SEI address"
+            icon={SearchNormal}
+            autoCorrect={false}
+            {...searchInput}
+            showClear
           />
-        ))}
-        {searchInput.value && displayedAddresses.length === 0 && (
-          <Paragraph style={{ textAlign: "center" }}>
-            No addresses matching the criteria
-          </Paragraph>
-        )}
-      </Column>
-    </SafeLayout>
+        </Column>
+      </DashboardHeader>
+      <SafeLayout style={{ paddingTop: 24, paddingBottom: 140 }}>
+        <Column>
+          {displayedAddresses.map((addressData) => (
+            <AddressBookEntry
+              key={addressData.address}
+              addressData={addressData}
+            />
+          ))}
+          {searchInput.value && displayedAddresses.length === 0 && (
+            <Paragraph style={{ textAlign: "center" }}>
+              No addresses matching the criteria
+            </Paragraph>
+          )}
+        </Column>
+      </SafeLayout>
+    </>
   );
 }

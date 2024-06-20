@@ -1,46 +1,23 @@
-import { CopyAddress, NoBackupIcon, Paragraph, Row } from "@/components";
-import { useAccountsStore } from "@/store";
-import { Colors, FontWeights } from "@/styles";
-import { NavigationProp } from "@/types";
-import { useNavigation } from "@react-navigation/native";
-import { ArrowDown2, Setting2 } from "iconsax-react-native";
-import { TouchableOpacity } from "react-native";
+import { Row } from "@/components";
+import { Colors } from "@/styles";
+import { scale, verticalScale } from "@/utils";
+import { PropsWithChildren } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export default function DashboardHeader() {
-  const { activeAccount } = useAccountsStore();
-  const navigation = useNavigation<NavigationProp>();
+export default function DashboardHeader({ children }: PropsWithChildren) {
+  const insets = useSafeAreaInsets();
 
-  function openSettings() {
-    navigation.push("Settings");
-  }
   return (
     <Row
       style={{
         width: "100%",
+        paddingTop: Math.max(verticalScale(50), insets.top),
+        backgroundColor: Colors.background,
+        paddingLeft: Math.max(scale(16), insets.left),
+        paddingRight: Math.max(scale(16), insets.right),
       }}
     >
-      <TouchableOpacity onPress={openSettings}>
-        <Setting2 size={22} color={Colors.text100} />
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => navigation.push("Wallets")}
-        style={{ flexDirection: "row", gap: 4 }}
-      >
-        <Row style={{ gap: 4 }}>
-          {activeAccount?.passphraseSkipped && <NoBackupIcon />}
-          <Paragraph
-            style={{
-              color: Colors.text,
-              fontSize: 18,
-              fontFamily: FontWeights.bold,
-            }}
-          >
-            {activeAccount?.name}
-          </Paragraph>
-          <ArrowDown2 color={Colors.text} />
-        </Row>
-      </TouchableOpacity>
-      <CopyAddress />
+      {children}
     </Row>
   );
 }

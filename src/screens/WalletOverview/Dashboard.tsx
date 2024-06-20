@@ -1,12 +1,16 @@
 import {
   Column,
+  CopyAddress,
   Headline,
   Loader,
+  NoBackupIcon,
+  Paragraph,
   Row,
   SafeLayout,
   SecondaryButton,
   Text,
 } from "@/components";
+import DashboardHeader from "@/navigation/header/DashboardHeader";
 import {
   useAccountsStore,
   useSettingsStore,
@@ -17,8 +21,15 @@ import { Colors, FontSizes, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { calculateTotalBalance } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ArrowDown, ArrowUp, InfoCircle } from "iconsax-react-native";
+import {
+  ArrowDown,
+  ArrowDown2,
+  ArrowUp,
+  InfoCircle,
+  Setting2,
+} from "iconsax-react-native";
 import React from "react";
+import { TouchableOpacity } from "react-native";
 import { TokensList } from "../tokens";
 
 type DashboardProps = NativeStackScreenProps<NavigatorParamsList, "Wallet">;
@@ -99,19 +110,56 @@ export default function Dashboard({ navigation }: DashboardProps) {
     );
   }
 
+  function openSettings() {
+    navigation.push("Settings");
+  }
+
   return (
-    <SafeLayout refreshFn={onRefresh}>
-      <Column style={{ alignItems: "center" }}>{render()}</Column>
-      <Row
-        style={{
-          justifyContent: "space-around",
-          marginVertical: 30,
-        }}
+    <>
+      <DashboardHeader>
+        <TouchableOpacity onPress={openSettings}>
+          <Setting2 size={22} color={Colors.text100} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.push("Wallets")}
+          style={{ flexDirection: "row", gap: 4 }}
+        >
+          <Row style={{ gap: 4 }}>
+            {activeAccount?.passphraseSkipped && <NoBackupIcon />}
+            <Paragraph
+              style={{
+                color: Colors.text,
+                fontSize: 18,
+                fontFamily: FontWeights.bold,
+              }}
+            >
+              {activeAccount?.name}
+            </Paragraph>
+            <ArrowDown2 color={Colors.text} />
+          </Row>
+        </TouchableOpacity>
+        <CopyAddress />
+      </DashboardHeader>
+      <SafeLayout
+        style={{ paddingTop: 24, paddingBottom: 65 }}
+        refreshFn={onRefresh}
       >
-        <SecondaryButton title="Send" onPress={onSend} icon={ArrowUp} />
-        <SecondaryButton title="Receive" onPress={onReceive} icon={ArrowDown} />
-      </Row>
-      <TokensList />
-    </SafeLayout>
+        <Column style={{ alignItems: "center" }}>{render()}</Column>
+        <Row
+          style={{
+            justifyContent: "space-around",
+            marginVertical: 30,
+          }}
+        >
+          <SecondaryButton title="Send" onPress={onSend} icon={ArrowUp} />
+          <SecondaryButton
+            title="Receive"
+            onPress={onReceive}
+            icon={ArrowDown}
+          />
+        </Row>
+        <TokensList />
+      </SafeLayout>
+    </>
   );
 }
