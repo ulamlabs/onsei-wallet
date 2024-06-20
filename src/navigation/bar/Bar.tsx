@@ -9,7 +9,8 @@ import {
   ParamListBase,
   TabNavigationState,
 } from "@react-navigation/native";
-import { View } from "react-native";
+import { useEffect, useRef } from "react";
+import { Animated, View } from "react-native";
 import BarItem from "./BarItem";
 import { BAR_BORDER_RADIUS, BAR_HEIGHT, BAR_PADDING } from "./const";
 
@@ -22,7 +23,22 @@ type BarProps = {
   >;
 };
 
-export default function Bar({ state, descriptors, navigation }: BarProps) {
+export default function Bar({
+  state,
+  descriptors,
+  navigation,
+  state: { index },
+}: BarProps) {
+  const translateX = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(translateX, {
+      toValue: index * 123,
+      duration: 150,
+      useNativeDriver: true,
+    }).start();
+  }, [index]);
+
   return (
     <Row
       style={{
@@ -60,6 +76,18 @@ export default function Bar({ state, descriptors, navigation }: BarProps) {
               key={route.key}
             />
           ))}
+          <Animated.View
+            style={{
+              position: "absolute",
+              bottom: 0,
+              height: "100%",
+              transform: [{ translateX }],
+              width: 107,
+              borderRadius: 28,
+              backgroundColor: Colors.background,
+              zIndex: -1,
+            }}
+          />
         </View>
       </View>
     </Row>

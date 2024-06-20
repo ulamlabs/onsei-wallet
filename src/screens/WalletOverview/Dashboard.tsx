@@ -10,6 +10,7 @@ import {
   SecondaryButton,
   Text,
 } from "@/components";
+import DashboardHeader from "@/navigation/header/DashboardHeader";
 import {
   useAccountsStore,
   useSettingsStore,
@@ -65,35 +66,6 @@ export default function Dashboard({ navigation }: DashboardProps) {
 
     return (
       <>
-        <Row
-          style={{
-            width: "100%",
-            marginBottom: 24,
-          }}
-        >
-          <TouchableOpacity onPress={openSettings}>
-            <Setting2 size={22} color={Colors.text100} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.push("Wallets")}
-            style={{ flexDirection: "row", gap: 4 }}
-          >
-            <Row style={{ gap: 4 }}>
-              {activeAccount?.passphraseSkipped && <NoBackupIcon />}
-              <Paragraph
-                style={{
-                  color: Colors.text,
-                  fontSize: 18,
-                  fontFamily: FontWeights.bold,
-                }}
-              >
-                {activeAccount?.name}
-              </Paragraph>
-              <ArrowDown2 color={Colors.text} />
-            </Row>
-          </TouchableOpacity>
-          <CopyAddress />
-        </Row>
         {node === "TestNet" && (
           <Row
             style={{
@@ -143,18 +115,51 @@ export default function Dashboard({ navigation }: DashboardProps) {
   }
 
   return (
-    <SafeLayout refreshFn={onRefresh}>
-      <Column style={{ alignItems: "center" }}>{render()}</Column>
-      <Row
-        style={{
-          justifyContent: "space-around",
-          marginVertical: 30,
-        }}
+    <>
+      <DashboardHeader>
+        <TouchableOpacity onPress={openSettings}>
+          <Setting2 size={22} color={Colors.text100} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.push("Wallets")}
+          style={{ flexDirection: "row", gap: 4 }}
+        >
+          <Row style={{ gap: 4 }}>
+            {activeAccount?.passphraseSkipped && <NoBackupIcon />}
+            <Paragraph
+              style={{
+                color: Colors.text,
+                fontSize: 18,
+                fontFamily: FontWeights.bold,
+              }}
+            >
+              {activeAccount?.name}
+            </Paragraph>
+            <ArrowDown2 color={Colors.text} />
+          </Row>
+        </TouchableOpacity>
+        <CopyAddress />
+      </DashboardHeader>
+      <SafeLayout
+        style={{ paddingTop: 24, paddingBottom: 65 }}
+        refreshFn={onRefresh}
       >
-        <SecondaryButton title="Send" onPress={onSend} icon={ArrowUp} />
-        <SecondaryButton title="Receive" onPress={onReceive} icon={ArrowDown} />
-      </Row>
-      <TokensList />
-    </SafeLayout>
+        <Column style={{ alignItems: "center" }}>{render()}</Column>
+        <Row
+          style={{
+            justifyContent: "space-around",
+            marginVertical: 30,
+          }}
+        >
+          <SecondaryButton title="Send" onPress={onSend} icon={ArrowUp} />
+          <SecondaryButton
+            title="Receive"
+            onPress={onReceive}
+            icon={ArrowDown}
+          />
+        </Row>
+        <TokensList />
+      </SafeLayout>
+    </>
   );
 }

@@ -39,11 +39,6 @@ export default function SafeLayout({
     paddingLeft: Math.max(scale(16), insets.left),
     paddingRight: Math.max(scale(16), insets.right),
   };
-  if (!navigation.getId()) {
-    // No ID means we're in the BottomBarsNavigation, which can overlay content
-    (layoutStyle.paddingTop = Math.max(verticalScale(50), insets.top)),
-      (layoutStyle.paddingBottom = 0); // This value works on emulators and physical devices
-  }
 
   const onRefresh = useCallback(async () => {
     if (!refreshFn) {

@@ -1,5 +1,6 @@
 import { Loader, Paragraph, SafeLayout } from "@/components";
 import { useTransactions } from "@/modules/transactions";
+import DashboardHeader from "@/navigation/header/DashboardHeader";
 import DefaultHeaderTitle from "@/navigation/header/DefaultHeaderTitle";
 import { useAccountsStore, useTokensStore } from "@/store";
 import { View } from "react-native";
@@ -20,25 +21,29 @@ export default function Transactions() {
   }
 
   return (
-    <SafeLayout refreshFn={refreshApp}>
-      <DefaultHeaderTitle title="Transactions" style={{ marginBottom: 24 }} />
-      <View>
-        {isLoading ? (
-          <Loader />
-        ) : error ? (
-          <Paragraph>Something went wrong</Paragraph>
-        ) : (
-          <View>
-            {transactions && transactions?.length > 0 ? (
-              <TransactionList transactions={transactions} />
-            ) : (
-              <Paragraph style={{ textAlign: "center" }}>
-                No transactions yet
-              </Paragraph>
-            )}
-          </View>
-        )}
-      </View>
-    </SafeLayout>
+    <>
+      <DashboardHeader>
+        <DefaultHeaderTitle title="Transactions" />
+      </DashboardHeader>
+      <SafeLayout style={{ paddingBottom: 65 }} refreshFn={refreshApp}>
+        <View>
+          {isLoading ? (
+            <Loader />
+          ) : error ? (
+            <Paragraph>Something went wrong</Paragraph>
+          ) : (
+            <View>
+              {transactions && transactions?.length > 0 ? (
+                <TransactionList transactions={transactions} />
+              ) : (
+                <Paragraph style={{ textAlign: "center" }}>
+                  No transactions yet
+                </Paragraph>
+              )}
+            </View>
+          )}
+        </View>
+      </SafeLayout>
+    </>
   );
 }

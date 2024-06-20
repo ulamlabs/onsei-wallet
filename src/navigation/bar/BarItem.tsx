@@ -53,7 +53,6 @@ export default function BarItem({
           justifyContent: "center",
           width: 107,
           borderRadius: 28,
-          backgroundColor: isFocused ? Colors.background : Colors.background200,
           paddingHorizontal: 16,
           paddingVertical: 10,
           gap: 2,

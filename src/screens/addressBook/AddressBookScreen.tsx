@@ -8,6 +8,7 @@ import {
   TextInput,
 } from "@/components";
 import { useInputState } from "@/hooks";
+import DashboardHeader from "@/navigation/header/DashboardHeader";
 import { useAddressBookStore } from "@/store";
 import { FontSizes, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
@@ -42,43 +43,51 @@ export default function AddressBook({ navigation }: Props) {
   }, [searchInput.value]);
 
   return (
-    <SafeLayout>
-      <Row
-        style={{
-          minWidth: "100%",
-          marginBottom: 24,
-          justifyContent: "space-between",
-        }}
-      >
-        <Text style={{ fontSize: FontSizes.lg, fontFamily: FontWeights.bold }}>
-          Address Book
-        </Text>
-        <IconButton
-          style={{ backgroundColor: "transparent" }}
-          icon={Add}
-          onPress={() => navigation.push("Saved Address")}
-        />
-      </Row>
-      <TextInput
-        placeholder="Search name or SEI address"
-        icon={SearchNormal}
-        autoCorrect={false}
-        {...searchInput}
-        showClear
-      />
-      <Column style={{ marginTop: 24 }}>
-        {displayedAddresses.map((addressData) => (
-          <AddressBookEntry
-            key={addressData.address}
-            addressData={addressData}
+    <>
+      <DashboardHeader>
+        <Column>
+          <Row
+            style={{
+              minWidth: "100%",
+              justifyContent: "space-between",
+            }}
+          >
+            <Text
+              style={{ fontSize: FontSizes.lg, fontFamily: FontWeights.bold }}
+            >
+              Address Book
+            </Text>
+            <IconButton
+              style={{ backgroundColor: "transparent" }}
+              icon={Add}
+              onPress={() => navigation.push("Saved Address")}
+            />
+          </Row>
+          <TextInput
+            style={{ marginBottom: 0 }}
+            placeholder="Search name or SEI address"
+            icon={SearchNormal}
+            autoCorrect={false}
+            {...searchInput}
+            showClear
           />
-        ))}
-        {searchInput.value && displayedAddresses.length === 0 && (
-          <Paragraph style={{ textAlign: "center" }}>
-            No addresses matching the criteria
-          </Paragraph>
-        )}
-      </Column>
-    </SafeLayout>
+        </Column>
+      </DashboardHeader>
+      <SafeLayout style={{ paddingTop: 24, paddingBottom: 140 }}>
+        <Column>
+          {displayedAddresses.map((addressData) => (
+            <AddressBookEntry
+              key={addressData.address}
+              addressData={addressData}
+            />
+          ))}
+          {searchInput.value && displayedAddresses.length === 0 && (
+            <Paragraph style={{ textAlign: "center" }}>
+              No addresses matching the criteria
+            </Paragraph>
+          )}
+        </Column>
+      </SafeLayout>
+    </>
   );
 }

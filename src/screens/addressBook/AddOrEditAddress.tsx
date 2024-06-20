@@ -67,7 +67,12 @@ export default function AddOrEditAddress({ navigation, route }: Props) {
   }
 
   return (
-    <SafeLayout>
+    <SafeLayout
+      style={{
+        justifyContent: "space-between",
+        maxHeight: "100%",
+      }}
+    >
       <View style={{ flex: 1, justifyContent: "space-between" }}>
         <Column style={{ gap: 16 }}>
           <TextInput
@@ -101,14 +106,13 @@ export default function AddOrEditAddress({ navigation, route }: Props) {
               {error}
             </Text>
           )}
-          <PrimaryButton
-            title="Save address"
-            style={{ marginTop: 20 }}
-            disabled={!nameInput.value || !addressInput.value}
-            onPress={onSubmit}
-          />
         </Column>
       </View>
+      <PrimaryButton
+        title="Save address"
+        disabled={!nameInput.value || !addressInput.value}
+        onPress={onSubmit}
+      />
     </SafeLayout>
   );
 }
