@@ -1,4 +1,5 @@
 import { NODES } from "@/const";
+import { TokenBalance } from "@/modules/transactions";
 import {
   CosmToken,
   CosmTokenWithBalance,
@@ -198,16 +199,20 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     const balances = await fetchAccountBalances(accountAddress, node);
 
     balances.balances = balances.balances.filter(
-      (token) => !blacklistedTokensIds.has(token.denom),
+      (token: TokenBalance) => !blacklistedTokensIds.has(token.denom),
     );
     for (const whitelistedID of whitelistedTokensIds) {
-      if (!balances.balances.find((token) => token.denom === whitelistedID)) {
+      if (
+        !balances.balances.find(
+          (token: TokenBalance) => token.denom === whitelistedID,
+        )
+      ) {
         balances.balances.push({ denom: whitelistedID, amount: "0" });
       }
     }
 
     const tokensWithPrices = await getTokensFromRegistry(
-      balances.balances.map((b) => b.denom),
+      balances.balances.map((b: TokenBalance) => b.denom),
     );
 
     const nativeTokens: CosmTokenWithBalance[] = [];

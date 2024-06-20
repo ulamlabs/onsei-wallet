@@ -54,8 +54,13 @@ export type TxData = {
   auth_info: TxAuthInfo;
 };
 
+export type TokenBalance = {
+  amount: string;
+  denom: string;
+};
+
 export type TxAuthInfo = {
-  fee: { amount: { amount: string; denom: string }[] };
+  fee: { amount: TokenBalance[] };
 };
 
 export type TxBody = {
