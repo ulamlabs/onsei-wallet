@@ -1,27 +1,27 @@
-import { isToday } from "date-fns";
+import { Column, Option, OptionGroup, Row, Text } from "@/components";
 import { Transaction } from "@/modules/transactions";
+import { serializeTxn } from "@/modules/transactions/utils";
 import { useAccountsStore } from "@/store";
 import { Colors, FontSizes, FontWeights } from "@/styles";
+import { NavigationProp } from "@/types";
 import { capitalize, formatAmount } from "@/utils";
 import { trimAddress } from "@/utils/trimAddress";
-import { Pressable, View } from "react-native";
-import { Column, Option, OptionGroup, Row, Text } from "@/components";
-import { useMemo } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { isToday } from "date-fns";
 import {
-  CloseCircle,
   ArrowDown,
   ArrowSwapHorizontal,
+  CloseCircle,
   Coin,
 } from "iconsax-react-native";
-import { useNavigation } from "@react-navigation/native";
-import { NavigationProp } from "@/types";
+import { useMemo } from "react";
+import { Pressable, View } from "react-native";
 import {
   getKnownAddress,
   getSentOrReceived,
   getTokenFromTxn,
   getTxnDate,
 } from "./utils";
-import { serializeTxn } from "@/modules/transactions/utils";
 
 type TransactionRenderProps = {
   txn: Transaction;
@@ -214,7 +214,7 @@ export default function TransactionList({
               <Pressable
                 key={id}
                 onPress={() =>
-                  navigation.push("Transaction details", {
+                  navigation.navigate("Transaction details", {
                     transaction: serializeTxn(txn),
                   })
                 }

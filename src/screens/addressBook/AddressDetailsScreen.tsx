@@ -1,10 +1,3 @@
-import { useAccountsStore, useAddressBookStore, useModalStore } from "@/store";
-import { Colors, FontWeights } from "@/styles";
-import { NavigatorParamsList } from "@/types";
-import { trimAddress } from "@/utils";
-import { Edit2, Trash } from "iconsax-react-native";
-import React, { useEffect } from "react";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
   Column,
   CopyButton,
@@ -14,6 +7,13 @@ import {
   TertiaryButton,
 } from "@/components";
 import { useTransactions } from "@/modules/transactions";
+import { useAccountsStore, useAddressBookStore, useModalStore } from "@/store";
+import { Colors, FontWeights } from "@/styles";
+import { NavigatorParamsList } from "@/types";
+import { trimAddress } from "@/utils";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Edit2, Trash } from "iconsax-react-native";
+import React, { useEffect } from "react";
 import LastTransactionsWithAddress from "./LastTransactionsWithAddress";
 
 type Props = NativeStackScreenProps<NavigatorParamsList, "Address Details">;
@@ -35,7 +35,7 @@ export default function AddressDetailsScreen({
         <IconButton
           style={{ backgroundColor: "transparent", paddingRight: 0 }}
           icon={Edit2}
-          onPress={() => navigation.push("Saved Address", { addressData })}
+          onPress={() => navigation.navigate("Saved Address", { addressData })}
         />
       ),
     });

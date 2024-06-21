@@ -1,12 +1,12 @@
-import { create } from "zustand";
-import * as SecureStore from "expo-secure-store";
-import { NavigationProp, NavigatorParamsList } from "@/types";
 import {
-  AUTH_TIMEOUT_SECONDS,
   AUTH_MAX_ATTEMPTS,
   AUTH_MAX_TIMEOUT_SECONDS,
+  AUTH_TIMEOUT_SECONDS,
 } from "@/const";
+import { NavigationProp, NavigatorParamsList } from "@/types";
 import { loadFromStorage, removeFromStorage, saveToStorage } from "@/utils";
+import * as SecureStore from "expo-secure-store";
+import { create } from "zustand";
 
 type Fails = {
   attempts: number;

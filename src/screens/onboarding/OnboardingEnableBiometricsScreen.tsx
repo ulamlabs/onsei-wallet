@@ -61,7 +61,7 @@ export function OnboardingEnableBiometricsScreen({
 
         <TertiaryButton
           title="Skip biometrics protection"
-          onPress={() => navigation.push("Finish Onboarding")}
+          onPress={() => navigation.navigate("Finish Onboarding")}
         />
       </Column>
     </SafeLayoutBottom>

@@ -1,12 +1,12 @@
+import { Column, TertiaryButton, Text } from "@/components";
+import { Transaction, useTransactions } from "@/modules/transactions";
 import { SavedAddress, useAccountsStore } from "@/store";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { NavigationProp } from "@/types";
+import { useNavigation } from "@react-navigation/native";
 import { WalletSearch } from "iconsax-react-native";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
-import { Column, TertiaryButton, Text } from "@/components";
-import { Transaction, useTransactions } from "@/modules/transactions";
-import { useNavigation } from "@react-navigation/native";
 import { TransactionList } from "../transactions";
 
 type Props = { addressData: SavedAddress };
@@ -39,7 +39,7 @@ export default function LastTransactionsWithAddress({ addressData }: Props) {
               color={Colors.text100}
               textStyle={{ fontFamily: FontWeights.bold }}
               onPress={() =>
-                navigation.push("Address Transactions", { addressData })
+                navigation.navigate("Address Transactions", { addressData })
               }
             />
           )}
