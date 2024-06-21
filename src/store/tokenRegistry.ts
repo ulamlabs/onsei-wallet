@@ -83,7 +83,7 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
       return await getUSDPrices(tokens);
     } catch (e) {
       console.error("error at fetching prices: ", e);
-      error({ description: `error at fetching prices: ${e}` });
+      error({ description: "Error at fetching prices" });
       return [];
     }
   },

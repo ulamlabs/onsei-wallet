@@ -48,7 +48,8 @@ export default function SafeLayout({
     try {
       await refreshFn();
     } catch (e: any) {
-      error({ description: e.toString() });
+      console.error(e);
+      error({ description: "Something went wrong while refreshing" });
     } finally {
       setRefreshing(false);
     }

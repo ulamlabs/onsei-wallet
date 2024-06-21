@@ -186,7 +186,8 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
 
       _updateStructures([...tokens], { save: true });
     } catch (error: any) {
-      errorToast({ description: error.toString() });
+      console.error("error at updating cw20 balance: ", error);
+      errorToast({ description: "Error at updating CW20 balance" });
     }
   },
   _updateNativeBalances: async () => {
@@ -240,7 +241,8 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
 
       _updateStructures([...cw20Tokens, ...nativeTokens]);
     } catch (error: any) {
-      errorToast({ description: error.toString() });
+      console.error("error at updating native balances: ", error);
+      errorToast({ description: "Error at updating native balances" });
     }
   },
   _updateTokenLists: async (tokenIds, action) => {
