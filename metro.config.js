@@ -1,12 +1,13 @@
 const { mergeConfig } = require("@react-native/metro-config");
 const { getDefaultConfig } = require("@expo/metro-config");
+const cryptoModule = process.env.EXPO_PUBLIC_CRYPTO;
 
 const defaultConfig = getDefaultConfig(__dirname);
 const customConfig = {
   resolver: {
     extraNodeModules: {
-      stream: require.resolve("readable-stream"),
-      crypto: require.resolve("crypto-browserify"),
+      stream: require.resolve("stream-browserify"),
+      crypto: require.resolve(cryptoModule),
     },
   },
   transformer: {
