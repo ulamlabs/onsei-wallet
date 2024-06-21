@@ -1,6 +1,6 @@
-import { Modals } from "@/components";
+import { Modals, SafeLayout } from "@/components";
 import { Toasts } from "@/components/toasts";
-import { useInactivityLock } from "@/hooks";
+import { useAppIsActive, useInactivityLock } from "@/hooks";
 import { QueryClientProvider } from "@/modules/query";
 import HomeNavigation from "@/navigation/HomeNavigation";
 import LockNavigation from "@/navigation/LockNavigation";
@@ -26,6 +26,10 @@ import "globals";
 import { useEffect, useMemo, useRef, useState } from "react";
 import "react-native-get-random-values";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { View } from "react-native";
+import { usePreventScreenCapture } from "expo-screen-capture";
+import { EyeSlash } from "iconsax-react-native";
+import { Colors } from "@/styles";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -39,6 +43,7 @@ export default function App() {
     black: require("./assets/fonts/Satoshi-Black.otf"),
   });
   useInactivityLock();
+  usePreventScreenCapture();
   const { isConnected } = useNetInfo();
   const prevConnectionState = useRef<boolean | null>(null);
   const { updateBalances } = useTokensStore();
@@ -48,6 +53,7 @@ export default function App() {
   const onboardingStore = useOnboardingStore();
   const settingsStore = useSettingsStore();
   const tokenRegistryStore = useTokenRegistryStore();
+  const isAppActive = useAppIsActive();
 
   async function onRestore() {
     await tokenRegistryStore.refreshRegistryCache();
@@ -101,6 +107,18 @@ export default function App() {
   }, [ready, onboardingStore, hasAccounts]);
 
   function getContent() {
+    if (!isAppActive) {
+      return (
+        <SafeLayout>
+          <View
+            style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
+          >
+            <EyeSlash color={Colors.text} size={100} />
+          </View>
+        </SafeLayout>
+      );
+    }
+
     if (!ready || !fontsLoaded || fontError) {
       return <></>;
     }
