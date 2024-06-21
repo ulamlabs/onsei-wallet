@@ -78,10 +78,12 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
     });
   },
   getPrices: async (tokens) => {
+    const { error } = useToastStore.getState();
     try {
       return await getUSDPrices(tokens);
     } catch (e) {
       console.error("error at fetching prices: ", e);
+      error({ description: `error at fetching prices: ${e}` });
       return [];
     }
   },

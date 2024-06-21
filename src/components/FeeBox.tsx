@@ -15,6 +15,7 @@ type Props = {
   selected?: boolean;
   gas?: number;
   onPress: () => void;
+  global?: boolean;
 };
 
 export default function FeeBox({
@@ -22,9 +23,10 @@ export default function FeeBox({
   selected = false,
   gas,
   onPress,
+  global,
 }: Props) {
   const { sei } = useTokensStore();
-  const { minGasPrice } = useGasPrice();
+  const { minGasPrice } = useGasPrice(global);
 
   const speedMultiplier = getSpeedMultiplier(title);
 

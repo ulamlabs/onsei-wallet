@@ -1,3 +1,4 @@
+import { useToastStore } from "@/store";
 import { Colors } from "@/styles";
 import { scale, verticalScale } from "@/utils";
 import React, { PropsWithChildren, useCallback, useState } from "react";
@@ -36,6 +37,7 @@ export default function SafeLayout({
     paddingLeft: Math.max(scale(16), insets.left),
     paddingRight: Math.max(scale(16), insets.right),
   };
+  const { error } = useToastStore();
 
   const onRefresh = useCallback(async () => {
     if (!refreshFn) {
@@ -45,8 +47,8 @@ export default function SafeLayout({
     setRefreshing(true);
     try {
       await refreshFn();
-    } catch (e) {
-      console.error(e);
+    } catch (e: any) {
+      error({ description: e.toString() });
     } finally {
       setRefreshing(false);
     }

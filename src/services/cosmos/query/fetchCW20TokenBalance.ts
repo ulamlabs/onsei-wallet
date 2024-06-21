@@ -7,11 +7,15 @@ export async function fetchCW20TokenBalance(
   contractAddress: string,
   node: Node,
 ): Promise<bigint> {
-  const query = { balance: { address: accountAddress } };
-  const balanceInfo = await queryCW20<CW20BalanceInfo>(
-    contractAddress,
-    query,
-    node,
-  );
-  return BigInt(balanceInfo.balance);
+  try {
+    const query = { balance: { address: accountAddress } };
+    const balanceInfo = await queryCW20<CW20BalanceInfo>(
+      contractAddress,
+      query,
+      node,
+    );
+    return BigInt(balanceInfo.balance);
+  } catch (error: any) {
+    throw error.message;
+  }
 }
