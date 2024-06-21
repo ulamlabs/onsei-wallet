@@ -59,6 +59,9 @@ export default function GenerateWalletScreen({
 
   async function onCopy() {
     const yesno = await showCopyAlert();
+    if (yesno) {
+      setCopied(true);
+    }
     return yesno;
   }
 

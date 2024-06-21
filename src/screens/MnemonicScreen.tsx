@@ -42,6 +42,9 @@ export default function MnemonicScreen({
 
   async function onCopy() {
     const yesno = await showCopyAlert();
+    if (yesno) {
+      setCopied(true);
+    }
     return yesno;
   }
 
