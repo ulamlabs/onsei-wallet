@@ -21,7 +21,7 @@
       "infoPlist": {
         "NSFaceIDUsageDescription": "This app stores users's private keys and the access should be Face ID protected."
       },
-      "buildNumber": "2"
+      "buildNumber": "3"
     },
     "android": {
       "adaptiveIcon": {
@@ -29,7 +29,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.ulamlabs.seiwallet",
-      "versionCode": 7
+      "versionCode": 9
     },
     "web": {
       "favicon": "./assets/favicon.png"

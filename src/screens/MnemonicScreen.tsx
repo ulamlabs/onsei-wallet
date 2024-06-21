@@ -50,7 +50,7 @@ export default function MnemonicScreen({
       Clipboard.setStringAsync(""); // Clear the clipboard
     }
     if (needsConfirmation) {
-      navigation.push("Confirm Mnemonic", {
+      navigation.navigate("Confirm Mnemonic", {
         wallet: { mnemonic: mnemonic.join(" "), address },
         backup: true,
       });

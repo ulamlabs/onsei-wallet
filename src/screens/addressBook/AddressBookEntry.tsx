@@ -1,3 +1,4 @@
+import { Box, Text } from "@/components";
 import { SavedAddress } from "@/store";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { NavigationProp } from "@/types";
@@ -6,7 +7,6 @@ import { useNavigation } from "@react-navigation/native";
 import { ArrowRight2 } from "iconsax-react-native";
 import React from "react";
 import { Pressable, View } from "react-native";
-import { Box, Text } from "@/components";
 
 type Props = {
   addressData: SavedAddress;
@@ -17,7 +17,7 @@ export default function AddressBookEntry({ addressData }: Props) {
 
   return (
     <Pressable
-      onPress={() => navigation.push("Address Details", { addressData })}
+      onPress={() => navigation.navigate("Address Details", { addressData })}
     >
       <Box>
         <View>
