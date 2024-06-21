@@ -1,15 +1,15 @@
+import { Column, PrimaryButton, TertiaryButton } from "@/components";
 import { NavigationProp } from "@/types";
 import { useNavigation } from "@react-navigation/native";
-import { PrimaryButton, TertiaryButton, Column } from "@/components";
 
 export default function AddWallet() {
   const navigation = useNavigation<NavigationProp>();
 
   function onCreateNew() {
-    navigation.push("Generate Wallet");
+    navigation.navigate("Generate Wallet");
   }
   function onImport() {
-    navigation.push("Import Wallet");
+    navigation.navigate("Import Wallet");
   }
 
   return (

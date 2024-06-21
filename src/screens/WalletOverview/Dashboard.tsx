@@ -47,11 +47,11 @@ export default function Dashboard({ navigation }: DashboardProps) {
   } = useSettingsStore();
 
   function onReceive() {
-    navigation.push("Your SEI address");
+    navigation.navigate("Your SEI address");
   }
   function onSend() {
     setSetting("localGasPrice", globalGasPrice);
-    navigation.push("transferSelectToken");
+    navigation.navigate("transferSelectToken");
   }
   async function onRefresh() {
     await refreshRegistryCache();
@@ -111,7 +111,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
   }
 
   function openSettings() {
-    navigation.push("Settings");
+    navigation.navigate("Settings");
   }
 
   return (
@@ -121,7 +121,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
           <Setting2 size={22} color={Colors.text100} />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.push("Wallets")}
+          onPress={() => navigation.navigate("Wallets")}
           style={{ flexDirection: "row", gap: 4 }}
         >
           <Row style={{ gap: 4 }}>

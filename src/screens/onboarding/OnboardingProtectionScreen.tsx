@@ -36,7 +36,7 @@ export default function OnboardingProtectionScreen({
 
         <TertiaryButton
           title="Add protection later"
-          onPress={() => navigation.push("Finish Onboarding")}
+          onPress={() => navigation.navigate("Finish Onboarding")}
         />
       </Column>
     </SafeLayoutBottom>
