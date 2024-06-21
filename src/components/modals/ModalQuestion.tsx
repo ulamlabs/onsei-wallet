@@ -1,9 +1,10 @@
-import { PropsWithChildren, useMemo } from "react";
-import Modal from "./Modal";
 import { Question } from "@/store";
-import { Headline, Paragraph } from "../typography";
+import { Colors } from "@/styles";
+import { PropsWithChildren, useMemo } from "react";
 import { DangerButton, PrimaryButton, TertiaryButton } from "../buttons";
 import { Column } from "../layout";
+import { Headline, Paragraph } from "../typography";
+import Modal from "./Modal";
 
 type ModalProps = PropsWithChildren & {
   isVisible: boolean;
@@ -11,6 +12,7 @@ type ModalProps = PropsWithChildren & {
 };
 
 export default function ModalQuestion({ isVisible, question }: ModalProps) {
+  const Icon = question.options.icon;
   const [primaryTitle, secondaryTitle] = useMemo(() => {
     return question.options.primary === "yes"
       ? [question.options.yes, question.options.no]
@@ -27,8 +29,11 @@ export default function ModalQuestion({ isVisible, question }: ModalProps) {
 
   return (
     <Modal isVisible={isVisible}>
-      <Column>
-        <Headline>{question.options.title}</Headline>
+      <Column style={{ marginBottom: 24 }}>
+        {Icon && <Icon color={Colors.info} size={40} />}
+        <Headline style={question.options.headerStyle}>
+          {question.options.title}
+        </Headline>
         <Paragraph>{question.options.question}</Paragraph>
         <TertiaryButton title={secondaryTitle} onPress={onSecondaryPress} />
         {question.options.danger ? (

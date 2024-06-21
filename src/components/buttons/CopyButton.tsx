@@ -10,6 +10,7 @@ type Props = {
   titleColor?: string;
   toCopy: string;
   onCopy?: () => any;
+  asyncCopy?: () => Promise<boolean>;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -19,8 +20,16 @@ export default function CopyButton({
   toCopy,
   onCopy,
   style,
+  asyncCopy,
 }: Props) {
   const [copied, setCopied] = useState(false);
+
+  async function onAsyncCopy() {
+    const yesno = await asyncCopy!();
+    if (yesno) {
+      onPress();
+    }
+  }
 
   function onPress() {
     Clipboard.setStringAsync(toCopy);
@@ -57,7 +66,7 @@ export default function CopyButton({
         fontSize: FontSizes.sm,
         fontFamily: FontWeights.bold,
       }}
-      onPress={onPress}
+      onPress={asyncCopy ? onAsyncCopy : onPress}
     />
   );
 }

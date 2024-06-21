@@ -40,9 +40,12 @@ export default function MnemonicScreen({
     };
   }, [address, getMnemonic]);
 
-  function onCopy() {
-    setCopied(true);
-    showCopyAlert();
+  async function onCopy() {
+    const yesno = await showCopyAlert();
+    if (yesno) {
+      setCopied(true);
+    }
+    return yesno;
   }
 
   function onDone() {
@@ -75,7 +78,7 @@ export default function MnemonicScreen({
               title="Copy to clipboard"
               titleColor={Colors.text100}
               toCopy={mnemonic.join(" ")}
-              onCopy={onCopy}
+              asyncCopy={onCopy}
             />
           </View>
           <PrimaryButton

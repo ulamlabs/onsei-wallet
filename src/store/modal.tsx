@@ -1,5 +1,6 @@
 import { Icon } from "iconsax-react-native";
 import { ReactElement } from "react";
+import { StyleProp, TextStyle } from "react-native";
 import { create } from "zustand";
 
 export type AlertOptions = {
@@ -11,11 +12,13 @@ export type AlertOptions = {
 
 export type AskOptions = {
   title: string;
-  question: string;
+  question: string | ReactElement;
   yes: string;
   no: string;
   primary: "yes" | "no";
+  icon?: Icon;
   danger?: boolean;
+  headerStyle?: StyleProp<TextStyle>;
 };
 
 export type Question = {
