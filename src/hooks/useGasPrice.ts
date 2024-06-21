@@ -13,15 +13,15 @@ export function createGasPrice(
 }
 
 export function useGasPrice(global?: boolean) {
-  if (global) {
-    return { gasPrice: "0usei", minGasPrice: 0 };
-  }
   const {
     settings: { node, localGasPrice },
   } = useSettingsStore();
   const { data: gasPrices, error } = useGas();
   const navigation = useNavigation<NavigationProp>();
   const { error: errorToast } = useToastStore();
+  if (global) {
+    return { gasPrice: "0usei", minGasPrice: 0 };
+  }
 
   if (error) {
     navigation.goBack();
