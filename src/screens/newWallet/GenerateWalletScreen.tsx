@@ -57,9 +57,9 @@ export default function GenerateWalletScreen({
     );
   }
 
-  function onCopy() {
-    setCopied(true);
-    showCopyAlert();
+  async function onCopy() {
+    const yesno = await showCopyAlert();
+    return yesno;
   }
 
   function onNext() {
@@ -94,8 +94,8 @@ export default function GenerateWalletScreen({
             <CopyButton
               title="Copy to clipboard"
               titleColor={Colors.text100}
-              toCopy={wallet!.mnemonic}
-              onCopy={onCopy}
+              toCopy={wallet.mnemonic}
+              asyncCopy={onCopy}
             />
           </View>
           <PrimaryButton title="OK, stored safely" onPress={onNext} />

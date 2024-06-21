@@ -5,12 +5,12 @@ import React from "react";
 import { Text } from "react-native";
 
 export function useCopyAlert() {
-  const { alert } = useModalStore();
+  const { ask } = useModalStore();
 
-  const showCopyAlert = () => {
-    alert({
+  const showCopyAlert = async () => {
+    const yesno = await ask({
       title: "Paste it in a safe place",
-      description: (
+      question: (
         <>
           <Text style={{ fontFamily: FontWeights.bold, color: Colors.text100 }}>
             Password Manager
@@ -21,9 +21,13 @@ export function useCopyAlert() {
           </Text>
         </>
       ),
-      ok: "Got it",
+      yes: "Got it",
+      no: "Cancel",
+      primary: "yes",
       icon: SecuritySafe,
+      headerStyle: { textAlign: "left" },
     });
+    return yesno;
   };
 
   return showCopyAlert;
