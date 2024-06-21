@@ -60,7 +60,7 @@ function TransactionBox({ txn }: TransactionRenderProps) {
       ? txn.contract
       : sentOrReceived === "sent"
         ? txn.to
-        : txn.from;
+        : txn.sender;
     const knownAddress = getKnownAddress(address);
 
     if (knownAddress) {
