@@ -12,7 +12,10 @@ const queryClient = new ReactQuery.QueryClient({
       // @ts-expect-error error: Error -> error: AxiosError
       retry: (failureCount, error: AxiosError) => {
         if (failureCount >= 3) {
-          useToastStore.getState().error({ description: error.message });
+          console.error("Failed to fetch data after 3 attempts", error.message);
+          useToastStore.getState().error({
+            description: "Number of attempts exceeded. Try again later.",
+          });
           return false;
         }
         if (
@@ -21,6 +24,10 @@ const queryClient = new ReactQuery.QueryClient({
         ) {
           return true;
         }
+        console.error("Failed to fetch data", error.message);
+        useToastStore
+          .getState()
+          .error({ description: "Failed to fetch data. Try again later." });
         return false;
       },
     },

@@ -7,8 +7,8 @@ export async function queryCW20<T>(
   query: any,
   node: Node,
 ): Promise<T> {
-  const client = await getCosmWasmClient("https://rpc." + NODE_URL[node]);
   try {
+    const client = await getCosmWasmClient("https://rpc." + NODE_URL[node]);
     return await client.queryContractSmart(contractAddress, query);
   } catch (error: any) {
     const message = error.toString();

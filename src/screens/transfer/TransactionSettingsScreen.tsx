@@ -22,11 +22,17 @@ type FeeBoxListProps = {
   selectedSpeed: FeeTier;
   selectSpeed: (speed: FeeTier) => void;
   gas?: number;
+  global?: boolean;
 };
 
 const gasPrices: FeeTier[] = ["Low", "Medium", "High"];
 
-function FeeBoxList({ gas, selectedSpeed, selectSpeed }: FeeBoxListProps) {
+function FeeBoxList({
+  gas,
+  selectedSpeed,
+  selectSpeed,
+  global,
+}: FeeBoxListProps) {
   return (
     <>
       {gasPrices.map((option) => (
@@ -36,6 +42,7 @@ function FeeBoxList({ gas, selectedSpeed, selectSpeed }: FeeBoxListProps) {
           gas={gas}
           selected={selectedSpeed === option}
           onPress={() => selectSpeed(option)}
+          global={global}
         />
       ))}
     </>
@@ -78,6 +85,7 @@ export default function TransactionSettingscreen({
               gas={params?.gas}
               selectedSpeed={selectedSpeed}
               selectSpeed={setSelectedSpeed}
+              global={params.global}
             />
           </Column>
         </View>

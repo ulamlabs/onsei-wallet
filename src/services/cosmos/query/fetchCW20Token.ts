@@ -1,7 +1,7 @@
-import { CW20MarketingInfo, CW20TokenInfo } from "./types";
 import { Node } from "@/types";
-import { queryCW20 } from "./queryCW20";
 import { CosmToken } from "../types";
+import { queryCW20 } from "./queryCW20";
+import { CW20MarketingInfo, CW20TokenInfo } from "./types";
 
 export async function fetchCW20Token(
   contractAddress: string,

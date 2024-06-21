@@ -11,6 +11,7 @@ import { Node } from "@/types";
 import { loadFromStorage, removeFromStorage, saveToStorage } from "@/utils";
 import { create } from "zustand";
 import { useSettingsStore } from "./settings";
+import { useToastStore } from "./toast";
 import { useTokenRegistryStore } from "./tokenRegistry";
 
 const SEI_TOKEN: CosmTokenWithBalance = {
@@ -161,28 +162,33 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     const { node } = useSettingsStore.getState().settings;
     const { accountAddress, tokens, getTokensFromRegistry, _updateStructures } =
       get();
+    const { error: errorToast } = useToastStore.getState();
+    try {
+      const [token, balance] = await Promise.all([
+        getTokensFromRegistry([tokenId]),
+        fetchCW20TokenBalance(accountAddress, tokenId, node),
+      ]);
+      if (!token[0]) {
+        return;
+      }
 
-    const [token, balance] = await Promise.all([
-      getTokensFromRegistry([tokenId]),
-      fetchCW20TokenBalance(accountAddress, tokenId, node),
-    ]);
-    if (!token[0]) {
-      return;
+      const tokenWithBalance = {
+        ...token[0],
+        balance,
+      };
+
+      const index = tokens.findIndex((t) => t.id === tokenWithBalance.id);
+      if (index === -1) {
+        tokens.push(tokenWithBalance);
+      } else {
+        tokens.splice(index, 1, tokenWithBalance);
+      }
+
+      _updateStructures([...tokens], { save: true });
+    } catch (error: any) {
+      console.error("error at updating cw20 balance: ", error);
+      errorToast({ description: "Error at updating CW20 balance" });
     }
-
-    const tokenWithBalance = {
-      ...token[0],
-      balance,
-    };
-
-    const index = tokens.findIndex((t) => t.id === tokenWithBalance.id);
-    if (index === -1) {
-      tokens.push(tokenWithBalance);
-    } else {
-      tokens.splice(index, 1, tokenWithBalance);
-    }
-
-    _updateStructures([...tokens], { save: true });
   },
   _updateNativeBalances: async () => {
     const {
@@ -194,41 +200,50 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       whitelistedTokensIds,
       blacklistedTokensIds,
     } = get();
-    const { node } = useSettingsStore.getState().settings;
+    const { error: errorToast } = useToastStore.getState();
+    try {
+      const { node } = useSettingsStore.getState().settings;
 
-    const balances = await fetchAccountBalances(accountAddress, node);
-
-    balances.balances = balances.balances.filter(
-      (token: TokenBalance) => !blacklistedTokensIds.has(token.denom),
-    );
-    for (const whitelistedID of whitelistedTokensIds) {
-      if (
-        !balances.balances.find(
-          (token: TokenBalance) => token.denom === whitelistedID,
-        )
-      ) {
-        balances.balances.push({ denom: whitelistedID, amount: "0" });
+      const balances = await fetchAccountBalances(accountAddress, node);
+      if (!balances) {
+        return;
       }
-    }
 
-    const tokensWithPrices = await getTokensFromRegistry(
-      balances.balances.map((b: TokenBalance) => b.denom),
-    );
-
-    const nativeTokens: CosmTokenWithBalance[] = [];
-    for (const balanceData of balances.balances) {
-      const balance = BigInt(balanceData.amount);
-      const token = tokensWithPrices.find((t) => t.id === balanceData.denom);
-
-      if (token) {
-        if (balanceData.denom === sei.id) {
-          token.logo = sei.logo;
+      balances.balances = balances.balances.filter(
+        (token: TokenBalance) => !blacklistedTokensIds.has(token.denom),
+      );
+      for (const whitelistedID of whitelistedTokensIds) {
+        if (
+          !balances.balances.find(
+            (token: TokenBalance) => token.denom === whitelistedID,
+          )
+        ) {
+          balances.balances.push({ denom: whitelistedID, amount: "0" });
         }
-        nativeTokens.push({ ...token, balance } as CosmTokenWithBalance);
       }
-    }
 
-    _updateStructures([...cw20Tokens, ...nativeTokens]);
+      const tokensWithPrices = await getTokensFromRegistry(
+        balances.balances.map((b: TokenBalance) => b.denom),
+      );
+
+      const nativeTokens: CosmTokenWithBalance[] = [];
+      for (const balanceData of balances.balances) {
+        const balance = BigInt(balanceData.amount);
+        const token = tokensWithPrices.find((t) => t.id === balanceData.denom);
+
+        if (token) {
+          if (balanceData.denom === sei.id) {
+            token.logo = sei.logo;
+          }
+          nativeTokens.push({ ...token, balance } as CosmTokenWithBalance);
+        }
+      }
+
+      _updateStructures([...cw20Tokens, ...nativeTokens]);
+    } catch (error: any) {
+      console.error("error at updating native balances: ", error);
+      errorToast({ description: "Error at updating native balances" });
+    }
   },
   _updateTokenLists: async (tokenIds, action) => {
     const {
