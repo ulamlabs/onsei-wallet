@@ -1,10 +1,15 @@
+import { hexStringtoUint8, uint8ToBase64 } from "@/utils";
 import { MsgExecuteContractEncodeObject } from "@cosmjs/cosmwasm-stargate";
 import { EncodeObject } from "@cosmjs/proto-signing";
 import { DeliverTxResponse, MsgSendEncodeObject } from "@cosmjs/stargate";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { CosmToken } from "../types";
-import { getSigningClientAndSender } from "./getSigningClientAndSender";
-import { Transfer } from "./types";
+import {
+  getAminoSigningClientAndSender,
+  getDirectSigningClientAndSender,
+  getSigningClientAndSender,
+} from "./getSigningClientAndSender";
+import { AminoTxnParams, DirectTxnParams, Transfer } from "./types";
 
 export function getSendAnyTokensMsg(
   fromAddress: string,
@@ -73,4 +78,48 @@ export async function transferToken(
     transfer.fee,
     transfer.memo,
   );
+}
+
+export async function signGetAccountTxn() {
+  const [client] = await getDirectSigningClientAndSender();
+  const acc = await client.getAccounts();
+
+  return [
+    {
+      algo: acc[0].algo,
+      address: acc[0].address,
+      pubkey: Buffer.from(acc[0].pubkey).toString("base64"),
+    },
+  ];
+}
+
+export async function signAminoTxn(params: AminoTxnParams) {
+  const [client, sender] = await getAminoSigningClientAndSender();
+  if (params.signerAddress !== sender) {
+    throw new Error("Requested account is not an active one.");
+  }
+
+  return await client.signAmino(params.signerAddress, params.signDoc);
+}
+
+export async function signDirectTxn(params: DirectTxnParams) {
+  const [client, sender] = await getDirectSigningClientAndSender();
+  if (params.signerAddress !== sender) {
+    throw new Error("Requested account is not an active one.");
+  }
+
+  // WC docs claim these should be uint arrays, while they're being sent as strings.
+  params.signDoc.bodyBytes = hexStringtoUint8(params.signDoc.bodyBytes as any);
+  params.signDoc.authInfoBytes = hexStringtoUint8(
+    params.signDoc.authInfoBytes as any,
+  );
+
+  const resp = (await client.signDirect(
+    params.signerAddress,
+    params.signDoc,
+  )) as any;
+  resp.signed.authInfoBytes = uint8ToBase64(resp.signed.authInfoBytes);
+  resp.signed.bodyBytes = uint8ToBase64(resp.signed.bodyBytes);
+
+  return resp;
 }

@@ -16,5 +16,6 @@ export * from "./searchTokens";
 export * from "./secureStorage";
 export * from "./shuffle";
 export * from "./storage";
+export * from "./stringTransforms";
 export * from "./trimAddress";
 export * from "./unique";

@@ -47,6 +47,8 @@ import CancelHeaderRight from "./header/CancelHeaderRight";
 import DefaultHeaderTitle from "./header/DefaultHeaderTitle";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
 import SettingsHeaderRight from "./header/SettingsHeaderRight";
+import ConnectWalletScreen from "@/screens/ConnectWallet";
+import ConnectedAppsScreen from "@/screens/settings/ConnectedAppsScreen";
 
 export type Recipient = {
   address: string;
@@ -107,6 +109,8 @@ export type HomeParamList = {
   "Transaction settings": { global?: boolean; gas?: number };
   "Pin Change Success": undefined;
   "Transaction details": { transaction: SerializedTx };
+  "Connect Wallet": undefined;
+  "Connected Apps": undefined;
 };
 
 const { Navigator, Screen } = createNativeStackNavigator<HomeParamList>();
@@ -242,6 +246,8 @@ export default function HomeNavigation() {
       />
       <Screen name="Scan QR code" component={ScanAddressScreen} />
       <Screen name="Transaction details" component={TransactionDetails} />
+      <Screen name="Connect Wallet" component={ConnectWalletScreen} />
+      <Screen name="Connected Apps" component={ConnectedAppsScreen} />
     </Navigator>
   );
 }

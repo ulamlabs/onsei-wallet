@@ -46,17 +46,17 @@ export default function LastTransactionsWithAddress({ addressData }: Props) {
         </Column>
       ) : (
         <Column style={{ paddingVertical: 60, alignItems: "center" }}>
-          <WalletSearch size={90} color={Colors.text400} />
+          <WalletSearch size={90} color={Colors.text500} />
           <Text
             style={{
-              color: Colors.text400,
+              color: Colors.text500,
               fontFamily: FontWeights.bold,
               fontSize: FontSizes.lg,
             }}
           >
             No transactions
           </Text>
-          <Text style={{ color: Colors.text400 }}>
+          <Text style={{ color: Colors.text500 }}>
             You haven't made any transactions with this address yet.
           </Text>
         </Column>
