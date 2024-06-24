@@ -24,6 +24,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import "fastestsmallesttextencoderdecoder";
 import "globals";
+import { PostHogProvider } from "posthog-react-native";
 import { useEffect, useMemo, useRef, useState } from "react";
 import "react-native-get-random-values";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -142,14 +143,21 @@ export default function App() {
   return (
     <QueryClientProvider>
       <NavigationContainer>
-        <SafeAreaProvider>
-          <StatusBar style="light" />
-          {getContent()}
-          <Modals />
-          <Toasts />
-          {ready && <NotificationsListener />}
-          <Web3WalletController />
-        </SafeAreaProvider>
+        <PostHogProvider
+          apiKey="phc_D1lpcIWgwj1vdCk7JkxZgPAmXQHwD9BsIK8e2oXJLo0"
+          options={{
+            host: "https://eu.i.posthog.com",
+          }}
+        >
+          <SafeAreaProvider>
+            <StatusBar style="light" />
+            {getContent()}
+            <Modals />
+            <Toasts />
+            {ready && <NotificationsListener />}
+            <Web3WalletController />
+          </SafeAreaProvider>
+        </PostHogProvider>
       </NavigationContainer>
     </QueryClientProvider>
   );
