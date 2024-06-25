@@ -21,7 +21,7 @@ import { useEffect, useMemo, useState } from "react";
 import { SectionList, View } from "react-native";
 import AddressBox from "./AddressBox";
 
-type TransferSelectTokenScreenProps = NativeStackScreenProps<
+type TransferSelectAddressScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
   "transferSelectAddress"
 >;
@@ -29,7 +29,7 @@ type TransferSelectTokenScreenProps = NativeStackScreenProps<
 export default function TransferSelectAddressScreen({
   navigation,
   route,
-}: TransferSelectTokenScreenProps) {
+}: TransferSelectAddressScreenProps) {
   const searchInput = useInputState();
   const { accounts: allAccounts, activeAccount } = useAccountsStore();
   const { addressBook: allAddressBook } = useAddressBookStore();
@@ -58,11 +58,11 @@ export default function TransferSelectAddressScreen({
   }, [searchInput.value]);
 
   useEffect(() => {
-    const { address } = route.params;
+    const address = route.params?.address;
     if (address) {
       searchInput.onChangeText(address);
     }
-  }, [route.params.address]);
+  }, [route.params?.address]);
 
   const typedAddress = useMemo(() => {
     if (isValidSeiCosmosAddress(searchInput.value)) {
@@ -80,8 +80,7 @@ export default function TransferSelectAddressScreen({
     const name = [...allAddressBook, ...allAccounts].find(
       (address) => address.address === recipientAddress,
     )?.name;
-    navigation.navigate("transferAmount", {
-      ...route.params,
+    navigation.navigate("transferSelectToken", {
       recipient: { address: recipientAddress, name },
     });
   }
@@ -95,9 +94,7 @@ export default function TransferSelectAddressScreen({
   }
 
   function scanCode() {
-    navigation.navigate("Scan QR code", {
-      tokenId: route.params.tokenId,
-    });
+    navigation.navigate("Scan QR code");
   }
 
   function addToAddressBook() {

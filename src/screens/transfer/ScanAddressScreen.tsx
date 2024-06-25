@@ -19,12 +19,7 @@ import { View } from "react-native";
 
 type Props = NativeStackScreenProps<NavigatorParamsList, "Scan QR code">;
 
-export default function ScanAddressScreen({
-  navigation,
-  route: {
-    params: { tokenId },
-  },
-}: Props) {
+export default function ScanAddressScreen({ navigation }: Props) {
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
   const [error, setError] = useState(false);
@@ -40,7 +35,6 @@ export default function ScanAddressScreen({
     navigation.pop();
     navigation.replace("transferSelectAddress", {
       address: result.data,
-      tokenId,
     });
     setScanned(true);
   }

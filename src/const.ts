@@ -1,6 +1,8 @@
 import { Node } from "./types";
 
 export const APP_NAME = "SEI Wallet";
+export const WALLET_ADMIN_ADDRESS =
+  "sei1udjj8x82rqws7zcz9c6lv6efvhylv4yvhrlza6";
 
 export const AUTH_MAX_ATTEMPTS = 5;
 export const AUTH_TIMEOUT_SECONDS = 30;
