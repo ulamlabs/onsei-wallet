@@ -50,6 +50,7 @@
     "expo-secure-store": "~13.0.1",
     "expo-splash-screen": "~0.27.4",
     "expo-status-bar": "~1.12.1",
+    "expo-three": "^7.0.1",
     "fastestsmallesttextencoderdecoder": "^1.0.22",
     "iconsax-react-native": "^0.0.8",
     "posthog-react-native": "^3.1.1",
@@ -69,7 +70,8 @@
     "readable-stream": "^4.5.2",
     "stream-browserify": "^3.0.0",
     "text-encoding": "^0.7.0",
-    "zustand": "^4.5.2"
+    "zustand": "^4.5.2",
+    "expo-gl": "~14.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

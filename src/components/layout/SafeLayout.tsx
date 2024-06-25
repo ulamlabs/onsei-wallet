@@ -18,6 +18,7 @@ type LayoutProps = PropsWithChildren & {
   refreshFn?: () => any;
   style?: StyleProp<ViewStyle>;
   scrollEnabled?: boolean;
+  containerStyle?: StyleProp<ViewStyle>;
 };
 
 // Layout with safe paddings that ensure that content won't be hidden behind phone elements (like front camera)
@@ -27,6 +28,7 @@ export default function SafeLayout({
   refreshFn,
   style,
   scrollEnabled = true,
+  containerStyle,
 }: LayoutProps) {
   const [refreshing, setRefreshing] = useState(false);
   const insets = useSafeAreaInsets();
@@ -58,7 +60,7 @@ export default function SafeLayout({
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ backgroundColor: Colors.background }}
+      style={[{ backgroundColor: Colors.background }, containerStyle]}
       keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0} // 40 is perfect match for ios offset
     >
       {staticView ? (
