@@ -82,8 +82,8 @@ export type HomeParamList = {
   "Wallet settings": { address: string };
   "Edit name": { account: Account };
   "Manage Token List": undefined;
-  transferSelectToken: undefined;
-  transferSelectAddress: { tokenId: string; address?: string };
+  transferSelectAddress: { address: string } | undefined;
+  transferSelectToken: { recipient: Recipient };
   transferAmount: {
     tokenId: string;
     recipient: Recipient;
@@ -105,7 +105,7 @@ export type HomeParamList = {
   };
   transferSent: { tx: DeliverTxResponse; amount?: string; symbol?: string };
   "Set Name": { nextRoute: "Import Wallet" | "Generate Wallet" };
-  "Scan QR code": { tokenId: string };
+  "Scan QR code": undefined;
   "Transaction settings": { global?: boolean; gas?: number };
   "Pin Change Success": undefined;
   "Transaction details": { transaction: SerializedTx };

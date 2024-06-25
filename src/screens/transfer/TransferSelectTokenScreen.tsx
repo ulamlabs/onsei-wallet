@@ -16,6 +16,9 @@ type TransferSelectTokenScreenProps = NativeStackScreenProps<
 
 export default function TransferSelectTokenScreen({
   navigation,
+  route: {
+    params: { recipient },
+  },
 }: TransferSelectTokenScreenProps) {
   const searchInput = useInputState();
   const tokensStore = useTokensStore();
@@ -26,7 +29,8 @@ export default function TransferSelectTokenScreen({
   }, [searchInput.value]);
 
   function select(token: CosmToken) {
-    navigation.navigate("transferSelectAddress", {
+    navigation.navigate("transferAmount", {
+      recipient,
       tokenId: token.id,
     });
   }

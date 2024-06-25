@@ -5,6 +5,7 @@ import {
   SafeLayout,
   SwitchWithLabel,
 } from "@/components";
+import { APP_NAME, WALLET_ADMIN_ADDRESS } from "@/const";
 import { useSettingsStore } from "@/store";
 import { Colors } from "@/styles";
 import {
@@ -14,6 +15,7 @@ import {
   Notification,
   SecuritySafe,
   Wallet,
+  WalletMoney,
 } from "iconsax-react-native";
 
 export default function SettingsScreen() {
@@ -63,6 +65,14 @@ export default function SettingsScreen() {
           />
         </OptionGroup>
         <OptionGroup>
+          <Link
+            label="Give us a Tip!"
+            navigateTo="transferSelectToken"
+            params={{
+              recipient: { address: WALLET_ADMIN_ADDRESS, name: APP_NAME },
+            }}
+            icon={<WalletMoney size={22} color={Colors.text} />}
+          />
           <Link
             label="Security and privacy"
             navigateTo="Security and privacy"

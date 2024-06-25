@@ -52,7 +52,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
   }
   function onSend() {
     setSetting("localGasPrice", globalGasPrice);
-    navigation.navigate("transferSelectToken");
+    navigation.navigate("transferSelectAddress");
   }
   function onScan() {
     navigation.push("Connect Wallet");
