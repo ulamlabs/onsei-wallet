@@ -30,9 +30,10 @@ import {
   Setting2,
 } from "iconsax-react-native";
 import React from "react";
-import { TouchableOpacity, View } from "react-native";
+import { Image, TouchableOpacity, View } from "react-native";
 import { TokensList } from "../tokens";
-import DashboardAnimation from "./DashboardAnimation";
+
+const DASHBOARD_IMG = require("../../../assets/dashboard-image.png");
 
 type DashboardProps = NativeStackScreenProps<NavigatorParamsList, "Wallet">;
 
@@ -187,7 +188,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
           backgroundColor: Colors.background,
         }}
       >
-        <DashboardAnimation />
+        <Image source={DASHBOARD_IMG} style={{ width: "100%", height: 400 }} />
       </View>
     </>
   );
