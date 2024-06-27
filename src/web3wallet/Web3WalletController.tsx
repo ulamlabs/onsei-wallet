@@ -21,7 +21,7 @@ export default function Web3WalletController() {
     useState<Web3WalletTypes.SessionProposal | null>(null);
   const [requestEvent, setRequestEvent] =
     useState<Web3WalletTypes.SessionRequest | null>(null);
-  const { ask, alert, modals } = useModalStore();
+  const { ask, alert } = useModalStore();
 
   useEffect(() => {
     loadWeb3Wallet();
