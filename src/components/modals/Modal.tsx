@@ -46,7 +46,8 @@ export default function Modal({
         <Animated.View
           style={{
             backgroundColor: transparentBg ? "" : Colors.background,
-            padding: 10,
+            paddingVertical: 24,
+            paddingHorizontal: 16,
             borderTopLeftRadius: 12,
             borderTopRightRadius: 12,
             transform: [{ translateY }],

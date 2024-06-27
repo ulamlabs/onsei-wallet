@@ -1,9 +1,9 @@
-import { Paragraph, Text } from "./typography";
 import { useModalStore } from "@/store";
 import { Colors, FontSizes } from "@/styles";
 import { InfoCircle } from "iconsax-react-native";
 import { TouchableOpacity } from "react-native";
 import { Row } from "./layout";
+import { Paragraph, Text } from "./typography";
 
 export default function NetworkFeeInfo() {
   const { alert } = useModalStore();
@@ -12,7 +12,7 @@ export default function NetworkFeeInfo() {
     alert({
       title: "",
       description: (
-        <Paragraph size="base">
+        <Paragraph size="base" style={{ color: Colors.text }}>
           A network fee is a blockchain charge for processing and confirming
           transactions. Our wallet is free to use.
         </Paragraph>

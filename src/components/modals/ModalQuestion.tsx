@@ -60,7 +60,7 @@ export default function ModalQuestion({ isVisible, question }: ModalProps) {
         )}
 
         {typeof question.options.question === "string" ? (
-          <Paragraph>{question.options.question}</Paragraph>
+          <Paragraph size="base">{question.options.question}</Paragraph>
         ) : (
           <View>{question.options.question}</View>
         )}

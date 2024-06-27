@@ -22,10 +22,10 @@ export default function ModalAlert({ isVisible, alert }: ModalProps) {
             {alert.options.title}
           </Headline>
         )}
-        <Paragraph>{alert.options.description}</Paragraph>
+        <Paragraph size="base">{alert.options.description}</Paragraph>
         <SecondaryButton
           title={alert.options.ok ?? "OK"}
-          style={{ marginVertical: 24 }}
+          style={{ marginVertical: 14 }}
           onPress={() => alert.resolve()}
         />
       </Column>
