@@ -11,7 +11,7 @@ export type AlertOptions = {
 };
 
 export type AskOptions = {
-  title: string;
+  title: string | ReactElement;
   question: string | ReactElement;
   yes: string;
   no: string;
@@ -19,6 +19,7 @@ export type AskOptions = {
   icon?: Icon;
   danger?: boolean;
   headerStyle?: StyleProp<TextStyle>;
+  showCloseButton?: boolean;
 };
 
 export type Question = {

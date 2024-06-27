@@ -204,7 +204,7 @@ export default function TransferSelectAddressScreen({
         <PrimaryButton
           title="Next"
           onPress={validateTypedAddress}
-          disabled={!searchInput.value || isInvalidAddress}
+          disabled={!searchInput.value || isInvalidAddress || sameAddressError}
         />
       </View>
     </SafeLayout>
