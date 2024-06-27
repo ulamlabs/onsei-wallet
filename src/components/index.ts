@@ -8,6 +8,7 @@ import MnemonicWords from "./MnemonicWords";
 import NetworkFeeInfo from "./NetworkFeeInfo";
 import ResultHeader from "./ResultHeader";
 import ShakingView from "./ShakingView";
+import SplashAnimation from "./SplashAnimation";
 import TokenBalanceBox from "./TokenBalanceBox";
 import TokenBox from "./TokenBox";
 import Tooltip from "./Tooltip";
@@ -34,6 +35,7 @@ export {
   NetworkFeeInfo,
   ResultHeader,
   ShakingView,
+  SplashAnimation,
   TokenBalanceBox,
   TokenBox,
   Tooltip,

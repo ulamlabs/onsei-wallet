@@ -1,9 +1,10 @@
-import { Loader, Paragraph, SafeLayout } from "@/components";
+import { Loader, Paragraph, SafeLayout, SplashAnimation } from "@/components";
 import { useTransactions } from "@/modules/transactions";
 import DashboardHeader from "@/navigation/header/DashboardHeader";
 import DefaultHeaderTitle from "@/navigation/header/DefaultHeaderTitle";
 import { useAccountsStore, useTokensStore } from "@/store";
-import { View } from "react-native";
+import { useState } from "react";
+import { Pressable, View } from "react-native";
 import TransactionList from "./TransactionList";
 
 export default function Transactions() {
@@ -15,6 +16,7 @@ export default function Transactions() {
     refetch,
   } = useTransactions(activeAccount?.address || "");
   const { updateBalances } = useTokensStore();
+  const [start, setStart] = useState(false);
 
   async function refreshApp() {
     await Promise.all([refetch(), updateBalances()]);
@@ -23,7 +25,9 @@ export default function Transactions() {
   return (
     <>
       <DashboardHeader>
-        <DefaultHeaderTitle title="Transactions" />
+        <Pressable onPress={() => setStart(!start)}>
+          <DefaultHeaderTitle title="Transactions" />
+        </Pressable>
       </DashboardHeader>
       <SafeLayout style={{ paddingBottom: 65 }} refreshFn={refreshApp}>
         <View>
@@ -44,6 +48,15 @@ export default function Transactions() {
           )}
         </View>
       </SafeLayout>
+      {start && (
+        <SplashAnimation
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+          }}
+        />
+      )}
     </>
   );
 }
