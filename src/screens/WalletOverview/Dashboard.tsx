@@ -157,19 +157,19 @@ export default function Dashboard({ navigation }: DashboardProps) {
         >
           <SecondaryButton
             title="Send"
-            style={{ paddingHorizontal: 20 }}
+            style={{ paddingHorizontal: 20, flex: 1 }}
             onPress={onSend}
             icon={ArrowUp}
           />
           <SecondaryButton
             title="Receive"
-            style={{ paddingHorizontal: 20 }}
+            style={{ paddingHorizontal: 20, flex: 1 }}
             onPress={onReceive}
             icon={ArrowDown}
           />
           <SecondaryButton
             title="Scan"
-            style={{ paddingHorizontal: 20 }}
+            style={{ paddingHorizontal: 20, flex: 1 }}
             onPress={onScan}
             icon={ScanBarcode}
           />
