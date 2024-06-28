@@ -62,11 +62,7 @@ export default function Web3WalletController() {
 
   async function proposeConnection() {
     const yesno = await ask({
-      title: (
-        <Text style={{ fontFamily: FontWeights.bold, fontSize: FontSizes.lg }}>
-          Connect with dApp
-        </Text>
-      ),
+      title: "Connect with dApp",
       question: (
         <Column
           style={{
@@ -173,11 +169,7 @@ export default function Web3WalletController() {
     }
 
     const yesno = await ask({
-      title: (
-        <Text style={{ fontFamily: FontWeights.bold, fontSize: FontSizes.lg }}>
-          Incoming transaction to sign
-        </Text>
-      ),
+      title: "Incoming transaction to sign",
       question: (
         <Column style={{ marginVertical: 32 }}>
           <OptionGroup>

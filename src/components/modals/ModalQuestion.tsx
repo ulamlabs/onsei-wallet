@@ -1,12 +1,12 @@
 import { Question } from "@/store";
 import { Colors } from "@/styles";
 import { PropsWithChildren, useMemo } from "react";
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 import { DangerButton, PrimaryButton, TertiaryButton } from "../buttons";
-import { CloseIcon } from "../icons";
-import { Column, Row } from "../layout";
-import { Headline, Paragraph } from "../typography";
+import { Column } from "../layout";
+import { Paragraph } from "../typography";
 import Modal from "./Modal";
+import ModalHeadline from "./ModalHeadline";
 
 type ModalProps = PropsWithChildren & {
   isVisible: boolean;
@@ -33,34 +33,17 @@ export default function ModalQuestion({ isVisible, question }: ModalProps) {
     <Modal isVisible={isVisible}>
       <Column style={{ marginBottom: 24 }}>
         {Icon && <Icon color={Colors.info} size={40} />}
-        {typeof question.options.title === "string" ? (
-          <Headline style={question.options.headerStyle}>
-            {question.options.title}
-          </Headline>
-        ) : (
-          <Row
-            style={{
-              paddingHorizontal: 16,
-              paddingVertical: 24,
-              marginTop: -10,
-              justifyContent: "flex-start",
-              gap: 24,
-              backgroundColor: Colors.background100,
-              marginLeft: -10,
-              marginRight: -10,
-            }}
-          >
-            {question.options.showCloseButton && (
-              <Pressable onPress={onSecondaryPress}>
-                <CloseIcon size={13} />
-              </Pressable>
-            )}
-            {question.options.title}
-          </Row>
-        )}
-
+        <ModalHeadline
+          title={question.options.title}
+          onClose={onSecondaryPress}
+        />
         {typeof question.options.question === "string" ? (
-          <Paragraph size="base">{question.options.question}</Paragraph>
+          <Paragraph
+            style={{ textAlign: "center", marginVertical: 20 }}
+            size="base"
+          >
+            {question.options.question}
+          </Paragraph>
         ) : (
           <View>{question.options.question}</View>
         )}

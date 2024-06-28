@@ -14,7 +14,7 @@ type ModalProps = PropsWithChildren & {
 export default function ModalAlert({ isVisible, alert }: ModalProps) {
   const Icon = alert.options.icon;
   return (
-    <Modal isVisible={isVisible}>
+    <Modal isVisible={isVisible} onBackdropPress={() => alert.resolve()}>
       <Column>
         {Icon && <Icon color={Colors.info} size={40} />}
         {alert.options.title && (
