@@ -4,7 +4,7 @@ import { trimAddress } from "@/utils";
 import { PropsWithChildren } from "react";
 import { View } from "react-native";
 import Box from "./Box";
-import TokenIcon from "./icons/TokenIcon";
+import { TokenIcon } from "./icons";
 import { Row } from "./layout";
 import { Text } from "./typography";
 

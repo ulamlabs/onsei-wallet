@@ -3,13 +3,13 @@ import {
   CopyAddress,
   Headline,
   Loader,
+  NoBackupIcon,
   Paragraph,
   Row,
   SafeLayout,
   SecondaryButton,
   Text,
 } from "@/components";
-import { NoBackupIcon } from "@/components/icons";
 import DashboardHeader from "@/navigation/header/DashboardHeader";
 import {
   useAccountsStore,
