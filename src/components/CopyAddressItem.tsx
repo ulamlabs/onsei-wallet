@@ -1,41 +1,69 @@
-import { AccountProps } from "@/screens/WalletOverview/Account";
-import { Colors } from "@/styles";
+import { Colors, FontSizes, FontWeights } from "@/styles";
 import { trimAddress } from "@/utils";
 import * as Clipboard from "expo-clipboard";
 import { Copy as CopyIcon, TickCircle } from "iconsax-react-native";
 import { useState } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View, Image } from "react-native";
+import { Option, OptionGroup } from "./forms";
 import { Row } from "./layout";
-import { Headline, Paragraph } from "./typography";
+import { Text } from "./typography";
 
-export default function CopyAddressItem({ item }: AccountProps) {
+type CopyAddressItemProps = {
+  type: "SEI" | "EVM";
+  address: string;
+};
+
+const SEI_LOGO = require("../../assets/sei-logo.png");
+
+export default function CopyAddressItem({
+  type,
+  address,
+}: CopyAddressItemProps) {
   const [clicked, setClicked] = useState(false);
-  const onPress = () => {
+  function onPress() {
     if (clicked) {
       return;
     }
     setClicked(true);
-    Clipboard.setStringAsync(item.address);
+    Clipboard.setStringAsync(address);
     setTimeout(() => {
       setClicked(false);
     }, 1000);
-  };
+  }
 
   return (
-    <TouchableOpacity onPress={onPress}>
-      <Row>
-        <View style={{ alignItems: "flex-start" }}>
-          <Headline size="base" style={{ marginBottom: 0 }}>
-            {item.name}
-          </Headline>
-          <Paragraph>{trimAddress(item.address)}</Paragraph>
-        </View>
-        {clicked ? (
-          <TickCircle variant="Bold" color={Colors.success} />
-        ) : (
-          <CopyIcon color={Colors.text100} />
-        )}
-      </Row>
+    <TouchableOpacity style={{ marginVertical: 5 }} onPress={onPress}>
+      <OptionGroup>
+        <Option
+          icon={<Image source={SEI_LOGO} style={{ width: 32, height: 42 }} />}
+        >
+          <Row style={{ flex: 1 }}>
+            <View>
+              <Text
+                style={{
+                  fontFamily: FontWeights.bold,
+                  fontSize: FontSizes.base,
+                }}
+              >
+                {type} address
+              </Text>
+              <Text
+                style={{
+                  color: Colors.text100,
+                }}
+              >
+                {trimAddress(address)}
+              </Text>
+            </View>
+
+            {clicked ? (
+              <TickCircle variant="Bold" color={Colors.success} />
+            ) : (
+              <CopyIcon color={Colors.text} />
+            )}
+          </Row>
+        </Option>
+      </OptionGroup>
     </TouchableOpacity>
   );
 }

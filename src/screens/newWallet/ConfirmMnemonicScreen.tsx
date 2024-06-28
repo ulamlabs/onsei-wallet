@@ -109,6 +109,7 @@ export default function ConfirmMnemonicScreen({
           navigation,
           wallet,
           skipValidation,
+          false,
           name,
         );
       }

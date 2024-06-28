@@ -2,6 +2,7 @@ import {
   Column,
   CopyAddress,
   Headline,
+  LinkIcon,
   Loader,
   NoBackupIcon,
   Paragraph,
@@ -129,7 +130,13 @@ export default function Dashboard({ navigation }: DashboardProps) {
           style={{ flexDirection: "row", gap: 4 }}
         >
           <Row style={{ gap: 4 }}>
-            {activeAccount?.passphraseSkipped && <NoBackupIcon />}
+            {activeAccount?.passphraseSkipped ? (
+              <NoBackupIcon />
+            ) : !activeAccount?.addressLinked ? (
+              <LinkIcon />
+            ) : (
+              <></>
+            )}
             <Paragraph
               style={{
                 color: Colors.text,

@@ -13,8 +13,8 @@ export async function createWeb3Wallet() {
   web3wallet = await Web3Wallet.init({
     core,
     metadata: {
-      name: "Nami Wallet",
-      description: "Nami Wallet",
+      name: "SEI Wallet",
+      description: "SEI Wallet",
       url: "ulam.io",
       // TODO: add proper icon
       icons: ["https://avatars.githubusercontent.com/u/37784886"],

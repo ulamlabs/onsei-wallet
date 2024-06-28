@@ -7,12 +7,13 @@ export async function storeNewAccount(
   navigation: NavigationProp,
   wallet: Wallet,
   passphraseSkipped: boolean,
+  addressLinked: boolean,
   name?: string,
 ) {
   await accountsStore.storeAccount(
     name || generateWalletName(accountsStore.accounts),
     wallet,
-    passphraseSkipped,
+    { addressLinked, passphraseSkipped },
   );
   accountsStore.setActiveAccount(wallet.address);
 

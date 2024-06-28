@@ -1,4 +1,4 @@
-import { Column, IconButton, NoBackupIcon, Row } from "@/components";
+import { Column, IconButton, LinkIcon, NoBackupIcon, Row } from "@/components";
 import { Account as AccountType, useAccountsStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigationProp } from "@/types";
@@ -16,12 +16,14 @@ export default function Account({ item }: AccountProps) {
   const { activeAccount, setActiveAccount } = useAccountsStore();
   const navigation = useNavigation<NavigationProp>();
   const isActive = item.address === activeAccount?.address;
-  const selectAccount = (address: string) => {
+  const actionRequired = item.passphraseSkipped || !item.addressLinked;
+
+  function selectAccount(address: string) {
     if (address !== activeAccount?.address) {
       setActiveAccount(address);
     }
     navigation.goBack();
-  };
+  }
 
   return (
     <TouchableOpacity
@@ -65,7 +67,7 @@ export default function Account({ item }: AccountProps) {
             navigation.navigate("Wallet settings", { address: item.address })
           }
         />
-        {item.passphraseSkipped && (
+        {actionRequired && (
           <View
             style={{
               position: "absolute",
@@ -75,7 +77,7 @@ export default function Account({ item }: AccountProps) {
               top: -6,
             }}
           >
-            <NoBackupIcon />
+            {item.passphraseSkipped ? <NoBackupIcon /> : <LinkIcon />}
           </View>
         )}
       </View>

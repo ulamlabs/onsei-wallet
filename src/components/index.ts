@@ -3,6 +3,7 @@ import Box from "./Box";
 import ClipboardAddressBox from "./ClipboardAddressBox";
 import CopyAddress from "./CopyAddress";
 import FeeBox from "./FeeBox";
+import LinkAddresses from "./LinkAddresses";
 import Loader from "./Loader";
 import MnemonicWords from "./MnemonicWords";
 import NetworkFeeInfo from "./NetworkFeeInfo";
@@ -10,7 +11,6 @@ import ResultHeader from "./ResultHeader";
 import ShakingView from "./ShakingView";
 import TokenBalanceBox from "./TokenBalanceBox";
 import TokenBox from "./TokenBox";
-import Tooltip from "./Tooltip";
 import Modal from "./modals/Modal";
 
 export * from "./buttons";
@@ -28,6 +28,7 @@ export {
   ClipboardAddressBox,
   CopyAddress,
   FeeBox,
+  LinkAddresses,
   Loader,
   MnemonicWords,
   Modal,
@@ -36,5 +37,4 @@ export {
   ShakingView,
   TokenBalanceBox,
   TokenBox,
-  Tooltip,
 };
