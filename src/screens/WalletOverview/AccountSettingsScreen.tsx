@@ -3,13 +3,13 @@ import {
   Headline,
   IconButton,
   Link,
-  NoBackupIcon,
   OptionGroup,
   Row,
   SafeLayout,
   TertiaryButton,
   Text,
 } from "@/components";
+import { NoBackupIcon } from "@/components/icons";
 import { NETWORK_NAMES } from "@/const";
 import { clearTransactionsForAddress } from "@/modules/transactions/storage";
 import { useAccountsStore, useModalStore, useSettingsStore } from "@/store";

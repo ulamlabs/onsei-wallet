@@ -6,12 +6,10 @@ import FeeBox from "./FeeBox";
 import Loader from "./Loader";
 import MnemonicWords from "./MnemonicWords";
 import NetworkFeeInfo from "./NetworkFeeInfo";
-import NoBackupIcon from "./NoBackupIcon";
 import ResultHeader from "./ResultHeader";
 import ShakingView from "./ShakingView";
 import TokenBalanceBox from "./TokenBalanceBox";
 import TokenBox from "./TokenBox";
-import TokenIcon from "./TokenIcon";
 import Tooltip from "./Tooltip";
 import Modal from "./modals/Modal";
 
@@ -33,11 +31,9 @@ export {
   MnemonicWords,
   Modal,
   NetworkFeeInfo,
-  NoBackupIcon,
   ResultHeader,
   ShakingView,
   TokenBalanceBox,
   TokenBox,
-  TokenIcon,
   Tooltip,
 };
