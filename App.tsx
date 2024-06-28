@@ -1,6 +1,6 @@
 import "@walletconnect/react-native-compat"; // This has to be on top on the imports. WalletConnet's functions won't work otherwise
 
-import { Modals, SafeLayout } from "@/components";
+import { Modals, SafeLayout, SplashAnimation } from "@/components";
 import { Toasts } from "@/components/toasts";
 import { useAppIsActive, useInactivityLock } from "@/hooks";
 import { QueryClientProvider } from "@/modules/query";
@@ -39,6 +39,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [ready, setReady] = useState(false);
+  const [splashFinished, setSplashFinished] = useState(false);
   const [fontsLoaded, fontError] = useFonts({
     light: require("./assets/fonts/Satoshi-Light.otf"),
     regular: require("./assets/fonts/Satoshi-Regular.otf"),
@@ -153,6 +154,9 @@ export default function App() {
             host: "https://eu.i.posthog.com",
           }}
         >
+          {!splashFinished && (
+            <SplashAnimation onFinish={() => setSplashFinished(true)} />
+          )}
           <SafeAreaProvider>
             <StatusBar style="light" />
             {getContent()}
