@@ -6,7 +6,7 @@ type TokenIconProps = {
   token: CosmToken;
 };
 
-const PLACEHOLDER_LOGO = require("../../assets/token-placeholder.png");
+const PLACEHOLDER_LOGO = require("../../../assets/token-placeholder.png");
 
 export default function TokenIcon({ token }: TokenIconProps) {
   const [placeholder, setPlaceholder] = useState(false);

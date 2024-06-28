@@ -19,6 +19,7 @@ export type AskOptions = {
   icon?: Icon;
   danger?: boolean;
   headerStyle?: StyleProp<TextStyle>;
+  showCloseButton?: boolean;
 };
 
 export type Question = {

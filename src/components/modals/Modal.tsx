@@ -1,6 +1,11 @@
 import { Colors } from "@/styles";
 import { PropsWithChildren, useEffect, useRef } from "react";
-import { Animated, Pressable, Modal as ReactModal } from "react-native";
+import {
+  Animated,
+  Pressable,
+  Modal as ReactModal,
+  TouchableWithoutFeedback,
+} from "react-native";
 
 type ModalProps = PropsWithChildren & {
   isVisible: boolean;
@@ -46,7 +51,8 @@ export default function Modal({
         <Animated.View
           style={{
             backgroundColor: transparentBg ? "" : Colors.background,
-            padding: 10,
+            paddingVertical: 24,
+            paddingHorizontal: 16,
             borderTopLeftRadius: 12,
             borderTopRightRadius: 12,
             transform: [{ translateY }],
@@ -56,7 +62,7 @@ export default function Modal({
             borderRightWidth: 2,
           }}
         >
-          {children}
+          <TouchableWithoutFeedback>{children}</TouchableWithoutFeedback>
         </Animated.View>
       </Pressable>
     </ReactModal>

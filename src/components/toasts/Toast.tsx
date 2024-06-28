@@ -2,7 +2,7 @@ import { Toasts } from "@/store";
 import { Colors, FontWeights } from "@/styles";
 import { PropsWithChildren, useEffect, useRef } from "react";
 import { Animated, Pressable, StyleProp, View, ViewStyle } from "react-native";
-import { Path, Svg } from "react-native-svg";
+import { CloseIcon } from "../icons";
 import { Row } from "../layout";
 import { Text } from "../typography";
 
@@ -81,22 +81,7 @@ export default function Toast({
           </Row>
         </View>
         <Pressable onPress={hideToast}>
-          <Svg width="12" height="12" viewBox="0 0 14 14" fill="none">
-            <Path
-              d="M0.999512 1L12.9995 13"
-              stroke={Colors.text}
-              strokeWidth="1.28571"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <Path
-              d="M0.998047 13L12.998 1"
-              stroke={Colors.text}
-              strokeWidth="1.28571"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </Svg>
+          <CloseIcon />
         </Pressable>
       </Row>
     </Animated.View>

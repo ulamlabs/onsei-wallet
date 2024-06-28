@@ -49,6 +49,7 @@ export default function AccountSettingsScreen({
       no: "No, keep the wallet",
       primary: "yes",
       danger: true,
+      headerStyle: { textAlign: "left" },
     });
     if (yesno) {
       clearTransactionsForAddress(account.address);

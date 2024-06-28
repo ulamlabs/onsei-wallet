@@ -11,15 +11,20 @@ export function useCopyAlert() {
     const yesno = await ask({
       title: "Paste it in a safe place",
       question: (
-        <>
-          <Text style={{ fontFamily: FontWeights.bold, color: Colors.text100 }}>
-            Password Manager
-          </Text>{" "}
+        <Text>
+          <Text
+            style={{
+              fontFamily: FontWeights.bold,
+              color: Colors.text100,
+            }}
+          >
+            Password Manager{" "}
+          </Text>
           <Text style={{ color: Colors.text100 }}>
             is a great option. Visiting unsecured sites poses a risk to
             clipboard data.
           </Text>
-        </>
+        </Text>
       ),
       yes: "Got it",
       no: "Cancel",

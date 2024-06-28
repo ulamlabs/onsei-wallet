@@ -14,7 +14,7 @@ type ModalProps = PropsWithChildren & {
 export default function ModalAlert({ isVisible, alert }: ModalProps) {
   const Icon = alert.options.icon;
   return (
-    <Modal isVisible={isVisible}>
+    <Modal isVisible={isVisible} onBackdropPress={() => alert.resolve()}>
       <Column>
         {Icon && <Icon color={Colors.info} size={40} />}
         {alert.options.title && (
@@ -22,10 +22,10 @@ export default function ModalAlert({ isVisible, alert }: ModalProps) {
             {alert.options.title}
           </Headline>
         )}
-        <Paragraph>{alert.options.description}</Paragraph>
+        <Paragraph size="base">{alert.options.description}</Paragraph>
         <SecondaryButton
           title={alert.options.ok ?? "OK"}
-          style={{ marginVertical: 24 }}
+          style={{ marginVertical: 14 }}
           onPress={() => alert.resolve()}
         />
       </Column>

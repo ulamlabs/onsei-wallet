@@ -65,14 +65,16 @@ export default function SettingsScreen() {
           />
         </OptionGroup>
         <OptionGroup>
-          <Link
-            label="Give us a Tip!"
-            navigateTo="transferSelectToken"
-            params={{
-              recipient: { address: WALLET_ADMIN_ADDRESS, name: APP_NAME },
-            }}
-            icon={<WalletMoney size={22} color={Colors.text} />}
-          />
+          {node === "MainNet" && (
+            <Link
+              label="Give us a Tip!"
+              navigateTo="transferSelectToken"
+              params={{
+                recipient: { address: WALLET_ADMIN_ADDRESS, name: APP_NAME },
+              }}
+              icon={<WalletMoney size={22} color={Colors.text} />}
+            />
+          )}
           <Link
             label="Security and privacy"
             navigateTo="Security and privacy"

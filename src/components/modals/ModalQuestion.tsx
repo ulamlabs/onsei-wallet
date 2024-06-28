@@ -1,11 +1,12 @@
 import { Question } from "@/store";
 import { Colors } from "@/styles";
 import { PropsWithChildren, useMemo } from "react";
+import { View } from "react-native";
 import { DangerButton, PrimaryButton, TertiaryButton } from "../buttons";
 import { Column } from "../layout";
-import { Headline, Paragraph } from "../typography";
+import { Paragraph } from "../typography";
 import Modal from "./Modal";
-import { View } from "react-native";
+import ModalHeadline from "./ModalHeadline";
 
 type ModalProps = PropsWithChildren & {
   isVisible: boolean;
@@ -32,11 +33,17 @@ export default function ModalQuestion({ isVisible, question }: ModalProps) {
     <Modal isVisible={isVisible}>
       <Column style={{ marginBottom: 24 }}>
         {Icon && <Icon color={Colors.info} size={40} />}
-        <Headline style={question.options.headerStyle}>
-          {question.options.title}
-        </Headline>
+        <ModalHeadline
+          title={question.options.title}
+          onClose={onSecondaryPress}
+        />
         {typeof question.options.question === "string" ? (
-          <Paragraph>{question.options.question}</Paragraph>
+          <Paragraph
+            style={{ textAlign: "center", marginVertical: 20 }}
+            size="base"
+          >
+            {question.options.question}
+          </Paragraph>
         ) : (
           <View>{question.options.question}</View>
         )}

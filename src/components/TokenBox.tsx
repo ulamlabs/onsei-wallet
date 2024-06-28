@@ -1,12 +1,12 @@
-import { Colors, FontSizes, FontWeights } from "@/styles";
 import { CosmToken } from "@/services/cosmos";
+import { Colors, FontSizes, FontWeights } from "@/styles";
+import { trimAddress } from "@/utils";
 import { PropsWithChildren } from "react";
 import { View } from "react-native";
 import Box from "./Box";
-import TokenIcon from "./TokenIcon";
+import { TokenIcon } from "./icons";
 import { Row } from "./layout";
 import { Text } from "./typography";
-import { trimAddress } from "@/utils";
 
 type TokenBoxProps = PropsWithChildren & {
   token: CosmToken;

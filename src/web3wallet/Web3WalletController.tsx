@@ -1,18 +1,18 @@
-import { useAccountsStore, useModalStore, useSettingsStore } from "@/store";
-import { useEffect, useState } from "react";
-import { Image } from "react-native";
-import { Web3WalletTypes } from "@walletconnect/web3wallet";
-import { getSdkError } from "@walletconnect/utils";
-import { createWeb3Wallet, web3wallet } from "./init";
+import { Column, Option, OptionGroup, Row, Text } from "@/components";
 import {
   signAminoTxn,
   signDirectTxn,
   signGetAccountTxn,
 } from "@/services/cosmos/tx";
-import { Column, OptionGroup, Option, Text, Row } from "@/components";
+import { useAccountsStore, useModalStore, useSettingsStore } from "@/store";
 import { Colors, FontSizes, FontWeights } from "@/styles";
-import { disconnectApp, getNamespaces } from "./utils";
+import { getSdkError } from "@walletconnect/utils";
+import { Web3WalletTypes } from "@walletconnect/web3wallet";
+import { useEffect, useState } from "react";
+import { Image } from "react-native";
+import { createWeb3Wallet, web3wallet } from "./init";
 import { WalletConnectSession } from "./types";
+import { disconnectApp, getNamespaces } from "./utils";
 
 export default function Web3WalletController() {
   const { activeAccount, accounts } = useAccountsStore();
@@ -70,6 +70,7 @@ export default function Web3WalletController() {
             justifyContent: "center",
             alignItems: "center",
             marginBottom: 32,
+            paddingTop: 14,
           }}
         >
           <Image
@@ -96,6 +97,7 @@ export default function Web3WalletController() {
       yes: "Connect",
       no: "Cancel",
       primary: "yes",
+      showCloseButton: true,
     });
     if (yesno) {
       acceptProposal();
@@ -197,6 +199,7 @@ export default function Web3WalletController() {
       yes: "Sign",
       no: "Abort",
       primary: "yes",
+      showCloseButton: true,
     });
     if (yesno) {
       acceptRequest();
