@@ -1,4 +1,5 @@
-import { Column, IconButton, NoBackupIcon, Row } from "@/components";
+import { Column, IconButton, Row } from "@/components";
+import { NoBackupIcon } from "@/components/icons";
 import { Account as AccountType, useAccountsStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigationProp } from "@/types";
