@@ -59,7 +59,8 @@ export async function notifyTx(
     options?: RefetchOptions | undefined,
   ) => Promise<QueryObserverResult<Transaction[], Error>>,
 ): Promise<boolean> {
-  const { tokenRegistryMap } = useTokenRegistryStore.getState();
+  const { tokenRegistryMap, refreshRegistryCache } =
+    useTokenRegistryStore.getState();
   const { updateBalances } = useTokensStore.getState();
   const { activeAccount } = useAccountsStore.getState();
 
@@ -74,6 +75,7 @@ export async function notifyTx(
 
   if (!tokenRegistryMap.has(tx.token)) {
     await addTokenToRegistry(tx.token);
+    await refreshRegistryCache();
   }
 
   if (addresses.has(tx.sender)) {
