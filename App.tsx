@@ -1,6 +1,6 @@
 import "globals"; // it has to be on top to override global settings
 
-import "@walletconnect/react-native-compat"; // This has to be on top on the imports. WalletConnet's functions won't work otherwise
+import "@walletconnect/react-native-compat"; // This has to be second import. WalletConnet's functions won't work otherwise
 
 import { Modals, SafeLayout, SplashAnimation } from "@/components";
 import { Toasts } from "@/components/toasts";
