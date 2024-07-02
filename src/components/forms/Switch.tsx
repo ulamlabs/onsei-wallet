@@ -16,7 +16,7 @@ export default function CustomSwitch({
     <Switch
       onValueChange={onValueChangeWrapped}
       trackColor={{
-        true: Colors.labelBackground,
+        true: Colors.markerBackground,
         false: Colors.activeInputBorderColor,
       }}
       ios_backgroundColor={Colors.activeInputBorderColor}

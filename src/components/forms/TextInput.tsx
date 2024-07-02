@@ -75,7 +75,7 @@ export default function TextInput({
             borderColor: error
               ? Colors.danger
               : focused
-                ? Colors.activeTextInputBorderColor
+                ? Colors.markerBackground
                 : Colors.inputBorderColor,
             backgroundColor: Colors.background100,
             paddingRight: showClear && !!value?.length ? 55 : 16,

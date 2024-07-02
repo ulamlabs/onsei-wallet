@@ -201,6 +201,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       blacklistedTokensIds,
     } = get();
     const { error: errorToast } = useToastStore.getState();
+    const definedSei = sei || SEI_TOKEN;
     try {
       const { node } = useSettingsStore.getState().settings;
 
@@ -232,8 +233,8 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
         const token = tokensWithPrices.find((t) => t.id === balanceData.denom);
 
         if (token) {
-          if (balanceData.denom === sei.id) {
-            token.logo = sei.logo;
+          if (balanceData.denom === definedSei.id) {
+            token.logo = definedSei.logo;
           }
           nativeTokens.push({ ...token, balance } as CosmTokenWithBalance);
         }

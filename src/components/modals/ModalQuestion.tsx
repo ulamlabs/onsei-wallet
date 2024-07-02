@@ -32,11 +32,11 @@ export default function ModalQuestion({ isVisible, question }: ModalProps) {
   return (
     <Modal isVisible={isVisible}>
       <Column style={{ marginBottom: 24 }}>
-        {Icon && <Icon color={Colors.info} size={40} />}
         <ModalHeadline
           title={question.options.title}
           onClose={onSecondaryPress}
         />
+        {Icon && <Icon color={Colors.info} size={40} />}
         {typeof question.options.question === "string" ? (
           <Paragraph
             style={{ textAlign: "center", marginVertical: 20 }}
