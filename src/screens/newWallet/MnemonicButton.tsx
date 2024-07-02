@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Animated, Pressable } from "react-native";
 import { Text } from "@/components";
 import { Colors } from "@/styles";
 import { getNumberName } from "@/utils";
+import React, { useEffect, useRef, useState } from "react";
+import { Animated, Pressable } from "react-native";
 
 const ANIMATION_DURATION = 300;
 
@@ -59,7 +59,7 @@ export default function MnemonicButton({
           right: 10,
           top: -15,
           opacity: animatedColor,
-          backgroundColor: Colors.labelBackground,
+          backgroundColor: Colors.markerBackground,
           borderWidth: 1,
           borderColor: Colors.activeInputBorderColor,
           borderRadius: 10,

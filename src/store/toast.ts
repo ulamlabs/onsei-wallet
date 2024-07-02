@@ -37,7 +37,15 @@ export const useToastStore = create<ToastStore>((set, get) => ({
   },
   _createToast: (options, type) => {
     return new Promise<void>((resolve) => {
-      const id = `${options.description}-${get().toasts.length}`;
+      const { toasts } = get();
+      const id = `${options.description}-${toasts.length}`;
+      if (
+        toasts.find(
+          (toast) => toast.options.description === options.description,
+        )
+      ) {
+        return;
+      }
       const toast: Toasts = {
         id,
         type,

@@ -125,7 +125,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
     <>
       <DashboardHeader style={{ backgroundColor: "transparent" }}>
         <TouchableOpacity onPress={openSettings}>
-          <Setting2 size={22} color={Colors.text100} />
+          <Setting2 size={22} color={Colors.dashboardMenu} />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => navigation.navigate("Wallets")}

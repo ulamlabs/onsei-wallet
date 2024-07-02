@@ -11,10 +11,8 @@ export const Colors = {
   text300: "#6A6A6A",
   text400: "#4E4E4E",
   text500: "#3D3D3D",
-  labelBackground: "#345DC7",
   inputBorderColor: "#232323",
   activeInputBorderColor: "#D3D3D3",
-  activeTextInputBorderColor: "#4666A5",
   info: "#7983A7",
   success: "#3E925A",
   success100: "#52C97B",
@@ -43,6 +41,7 @@ export const Colors = {
   toastSuccessText: "#9BE78F",
   toastSuccessBorder: "#1F311C",
   toastSuccessBackground: "#121E15",
+  dashboardMenu: "#FFD1D1",
   backgroundOpacity: "rgba(250, 250, 250, 0.12)",
 };
 

@@ -24,7 +24,7 @@ export default function CopyAddress() {
 
   return (
     <Pressable onPress={openModal}>
-      <Copy size={22} color={Colors.text100} />
+      <Copy size={22} color={Colors.dashboardMenu} />
     </Pressable>
   );
 }
