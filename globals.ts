@@ -6,3 +6,4 @@ import encoding from "text-encoding";
 (global as any).Buffer = Buffer;
 
 global.TextEncoder = encoding.TextEncoder;
+global.TextDecoder = encoding.TextDecoder;
