@@ -1,6 +1,7 @@
 import {
   Column,
   Headline,
+  LinkAddresses,
   Paragraph,
   PrimaryButton,
   Row,
@@ -8,7 +9,8 @@ import {
   TextInput,
 } from "@/components";
 import { useInputState } from "@/hooks";
-import { useAccountsStore } from "@/store";
+import { isAddressLinked } from "@/services/evm";
+import { useAccountsStore, useModalStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -30,6 +32,7 @@ export default function ImportWalletScreen({
   const mnemonicInput = useInputState();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const { alert } = useModalStore();
 
   useEffect(() => {
     if (loading) {
@@ -40,13 +43,23 @@ export default function ImportWalletScreen({
   async function onImport() {
     try {
       const wallet = await accountsStore.restoreWallet(mnemonicInput.value);
+      const isLinked = await isAddressLinked(wallet.address);
       await storeNewAccount(
         accountsStore,
         navigation,
         wallet!,
         false,
+        isLinked,
         route.params?.name,
       );
+      if (!isLinked) {
+        alert({
+          title: "Link addresses",
+          description: <LinkAddresses address={wallet!.address} />,
+          useHeadline: true,
+          hideOk: true,
+        });
+      }
     } catch (e: any) {
       console.error("Error on wallet import:", e);
       setError(e.message);

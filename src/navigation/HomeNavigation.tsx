@@ -49,6 +49,7 @@ import { newWalletScreenOptions } from "./header/NewWalletHeader";
 import SettingsHeaderRight from "./header/SettingsHeaderRight";
 import ConnectWalletScreen from "@/screens/ConnectWallet";
 import ConnectedAppsScreen from "@/screens/settings/ConnectedAppsScreen";
+import LinkAddressesScreen from "@/screens/WalletOverview/LinkAddressesScreen";
 
 export type Recipient = {
   address: string;
@@ -111,6 +112,7 @@ export type HomeParamList = {
   "Transaction details": { transaction: SerializedTx };
   "Connect Wallet": undefined;
   "Connected Apps": undefined;
+  "Link Addresses": { address: string };
 };
 
 const { Navigator, Screen } = createNativeStackNavigator<HomeParamList>();
@@ -248,6 +250,7 @@ export default function HomeNavigation() {
       <Screen name="Transaction details" component={TransactionDetails} />
       <Screen name="Connect Wallet" component={ConnectWalletScreen} />
       <Screen name="Connected Apps" component={ConnectedAppsScreen} />
+      <Screen name="Link Addresses" component={LinkAddressesScreen} />
     </Navigator>
   );
 }

@@ -3,6 +3,7 @@ import {
   Headline,
   IconButton,
   Link,
+  LinkIcon,
   NoBackupIcon,
   OptionGroup,
   Row,
@@ -16,7 +17,13 @@ import { useAccountsStore, useModalStore, useSettingsStore } from "@/store";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Edit2, ExportSquare, SecuritySafe, Trash } from "iconsax-react-native";
+import {
+  Edit2,
+  ExportSquare,
+  LinkCircle,
+  SecuritySafe,
+  Trash,
+} from "iconsax-react-native";
 import { Linking, View } from "react-native";
 
 type AccountSettingsProps = NativeStackScreenProps<
@@ -32,15 +39,21 @@ export default function AccountSettingsScreen({
 }: AccountSettingsProps) {
   const { accounts, deleteAccount, activeAccount } = useAccountsStore();
   const { ask } = useModalStore();
-  const account = accounts.find((account) => account.address === address);
+  const account = accounts.find((account) => account.address === address)!;
+  const truncatedAddresses = `${account.address.slice(0, 4)}(...), ${account.evmAddress.slice(0, 4)}(...)`;
   const {
     settings: { node },
   } = useSettingsStore();
 
+  const infoBoxStyle = {
+    paddingHorizontal: 22,
+    paddingVertical: 16,
+    borderRadius: 22,
+    borderWidth: 1,
+    flex: 1,
+  };
+
   async function onRemove() {
-    if (!account) {
-      return;
-    }
     const yesno = await ask({
       title: "Remove wallet?",
       question:
@@ -83,12 +96,13 @@ export default function AccountSettingsScreen({
               }
             />
           </Row>
+
           <OptionGroup>
-            {account?.passphraseSkipped ? (
+            {account.passphraseSkipped ? (
               <Link
                 label="Recovery phrase"
                 icon={<NoBackupIcon />}
-                navigateTo={"Your unique Recovery Phrase"}
+                navigateTo="Your unique Recovery Phrase"
                 params={{ address, needsConfirmation: true }}
                 labelRight="Back up"
                 askPin
@@ -96,32 +110,54 @@ export default function AccountSettingsScreen({
             ) : (
               <Link
                 label="Show recovery phrase"
-                navigateTo={"Your unique Recovery Phrase"}
+                navigateTo="Your unique Recovery Phrase"
                 params={{ address }}
                 askPin
               />
             )}
+            {!account.addressLinked && (
+              <Link
+                label="Link addresses"
+                icon={<LinkIcon />}
+                navigateTo="Link Addresses"
+                params={{ address }}
+                labelRight={truncatedAddresses}
+              />
+            )}
           </OptionGroup>
-          {account?.passphraseSkipped && (
-            <Row
-              style={{
-                marginTop: 32,
-                paddingHorizontal: 22,
-                paddingVertical: 16,
-                backgroundColor: Colors.warningBackground,
-                borderRadius: 22,
-                borderWidth: 1,
-                borderColor: Colors.warningBorder,
-                flex: 1,
-              }}
-            >
-              <SecuritySafe size={22} color={Colors.warningText} />
-              <Text style={{ flex: 1, color: Colors.warningText }}>
-                Back up your Recovery Phrase to restore your wallet if you lose
-                your device.
-              </Text>
-            </Row>
-          )}
+
+          <Column style={{ marginTop: 32 }}>
+            {account.passphraseSkipped && (
+              <Row
+                style={{
+                  ...infoBoxStyle,
+                  backgroundColor: Colors.warningBackground,
+                  borderColor: Colors.warningBorder,
+                }}
+              >
+                <SecuritySafe size={22} color={Colors.warningText} />
+                <Text style={{ flex: 1, color: Colors.warningText }}>
+                  Back up your Recovery Phrase to restore your wallet if you
+                  lose your device.
+                </Text>
+              </Row>
+            )}
+
+            {!account.addressLinked && (
+              <Row
+                style={{
+                  ...infoBoxStyle,
+                  backgroundColor: Colors.markerBackground100,
+                  borderColor: Colors.markerBorder,
+                }}
+              >
+                <LinkCircle size={22} color={Colors.markerText100} />
+                <Text style={{ flex: 1, color: Colors.markerText100 }}>
+                  Link Sei & EVM addresses to explore Sei V2
+                </Text>
+              </Row>
+            )}
+          </Column>
 
           {activeAccount?.address !== address && (
             <TertiaryButton

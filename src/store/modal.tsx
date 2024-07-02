@@ -8,6 +8,8 @@ export type AlertOptions = {
   description: ReactElement | string;
   ok?: string;
   icon?: Icon;
+  useHeadline?: boolean;
+  hideOk?: boolean;
 };
 
 export type AskOptions = {

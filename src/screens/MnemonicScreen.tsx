@@ -54,7 +54,11 @@ export default function MnemonicScreen({
     }
     if (needsConfirmation) {
       navigation.navigate("Confirm Mnemonic", {
-        wallet: { mnemonic: mnemonic.join(" "), address },
+        wallet: {
+          mnemonic: mnemonic.join(" "),
+          address,
+          evmAddress: "", // evm is not used during confirmation so it can be anything
+        },
         backup: true,
       });
     } else {

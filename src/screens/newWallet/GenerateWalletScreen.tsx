@@ -53,6 +53,7 @@ export default function GenerateWalletScreen({
       navigation,
       wallet!,
       true,
+      false,
       route.params?.name,
     );
   }
