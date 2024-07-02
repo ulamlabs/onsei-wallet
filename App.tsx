@@ -1,4 +1,6 @@
-import "@walletconnect/react-native-compat"; // This has to be on top on the imports. WalletConnet's functions won't work otherwise
+import "globals"; // it has to be on top to override global settings
+
+import "@walletconnect/react-native-compat"; // This has to be second import. WalletConnet's functions won't work otherwise
 
 import { Modals, SafeLayout, SplashAnimation } from "@/components";
 import { Toasts } from "@/components/toasts";
@@ -27,7 +29,6 @@ import { usePreventScreenCapture } from "expo-screen-capture";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import "fastestsmallesttextencoderdecoder";
-import "globals";
 import { EyeSlash } from "iconsax-react-native";
 import { PostHogProvider } from "posthog-react-native";
 import { useEffect, useMemo, useRef, useState } from "react";
