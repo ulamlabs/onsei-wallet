@@ -43,6 +43,7 @@ export const Colors = {
   toastSuccessText: "#9BE78F",
   toastSuccessBorder: "#1F311C",
   toastSuccessBackground: "#121E15",
+  backgroundOpacity: "rgba(250, 250, 250, 0.12)",
 };
 
 export const FontSizes = {

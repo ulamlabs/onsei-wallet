@@ -1,5 +1,6 @@
 import "@walletconnect/react-native-compat"; // This has to be on top on the imports. WalletConnet's functions won't work otherwise
-import { Modals, SafeLayout } from "@/components";
+
+import { Modals, SafeLayout, SplashAnimation } from "@/components";
 import { Toasts } from "@/components/toasts";
 import { useAppIsActive, useInactivityLock } from "@/hooks";
 import { QueryClientProvider } from "@/modules/query";
@@ -17,27 +18,28 @@ import {
   useTokenRegistryStore,
   useTokensStore,
 } from "@/store";
+import { Colors } from "@/styles";
+import { Web3WalletController } from "@/web3wallet";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
+import { usePreventScreenCapture } from "expo-screen-capture";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import "fastestsmallesttextencoderdecoder";
 import "globals";
+import { EyeSlash } from "iconsax-react-native";
 import { PostHogProvider } from "posthog-react-native";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { View } from "react-native";
 import "react-native-get-random-values";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { View } from "react-native";
-import { usePreventScreenCapture } from "expo-screen-capture";
-import { EyeSlash } from "iconsax-react-native";
-import { Colors } from "@/styles";
-import { Web3WalletController } from "@/web3wallet";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [ready, setReady] = useState(false);
+  const [splashFinished, setSplashFinished] = useState(false);
   const [fontsLoaded, fontError] = useFonts({
     light: require("./assets/fonts/Satoshi-Light.otf"),
     regular: require("./assets/fonts/Satoshi-Regular.otf"),
@@ -64,7 +66,10 @@ export default function App() {
   }
 
   useEffect(() => {
-    if (isConnected === false && !prevConnectionState.current) {
+    if (
+      isConnected === false &&
+      (!prevConnectionState.current || prevConnectionState.current === true)
+    ) {
       info({ description: "No internet connection" });
       prevConnectionState.current = false;
     }
@@ -149,6 +154,9 @@ export default function App() {
             host: "https://eu.i.posthog.com",
           }}
         >
+          {!splashFinished && (
+            <SplashAnimation onFinish={() => setSplashFinished(true)} />
+          )}
           <SafeAreaProvider>
             <StatusBar style="light" />
             {getContent()}

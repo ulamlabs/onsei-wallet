@@ -31,8 +31,10 @@ import {
   Setting2,
 } from "iconsax-react-native";
 import React from "react";
-import { TouchableOpacity } from "react-native";
+import { Image, TouchableOpacity, View } from "react-native";
 import { TokensList } from "../tokens";
+
+const DASHBOARD_IMG = require("../../../assets/dashboard-image.png");
 
 type DashboardProps = NativeStackScreenProps<NavigatorParamsList, "Wallet">;
 
@@ -101,7 +103,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
               gap: 6,
               paddingHorizontal: 16,
               paddingVertical: 8,
-              backgroundColor: Colors.background100,
+              backgroundColor: Colors.backgroundOpacity,
               borderRadius: 30,
             }}
           >
@@ -121,7 +123,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
 
   return (
     <>
-      <DashboardHeader>
+      <DashboardHeader style={{ backgroundColor: "transparent" }}>
         <TouchableOpacity onPress={openSettings}>
           <Setting2 size={22} color={Colors.text100} />
         </TouchableOpacity>
@@ -154,6 +156,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
       <SafeLayout
         style={{ paddingTop: 24, paddingBottom: 65 }}
         refreshFn={onRefresh}
+        containerStyle={{ backgroundColor: "transparent" }}
       >
         <Column style={{ alignItems: "center" }}>{render()}</Column>
         <Row
@@ -183,6 +186,17 @@ export default function Dashboard({ navigation }: DashboardProps) {
         </Row>
         <TokensList />
       </SafeLayout>
+      <View
+        style={{
+          position: "absolute",
+          zIndex: -1,
+          height: "100%",
+          width: "100%",
+          backgroundColor: Colors.background,
+        }}
+      >
+        <Image source={DASHBOARD_IMG} style={{ width: "100%", height: 400 }} />
+      </View>
     </>
   );
 }
