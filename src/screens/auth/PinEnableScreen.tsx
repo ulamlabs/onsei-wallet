@@ -1,9 +1,10 @@
-import { Pin } from "@/components";
+import { Biometrics, Pin } from "@/components";
 import { PIN_LENGTH } from "@/components/pin/const";
-import { useAuthStore } from "@/store";
+import { addSkipButton } from "@/navigation/header/NewWalletHeader";
+import { useAuthStore, useModalStore, useSettingsStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type EnablePinScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -17,16 +18,58 @@ export default function PinEnableScreen({
   navigation,
 }: EnablePinScreenProps) {
   const [pinHash, setPinHash] = useState("");
+  const { setSetting } = useSettingsStore();
+  const [enablingBiometrics, setEnablingBiometrics] = useState(false);
 
+  const { alert } = useModalStore();
   const authStore = useAuthStore();
+
+  useEffect(() => {
+    if (route.params.isOnboarding) {
+      addSkipButton(navigation, goNextRoute);
+    }
+  }, []);
+
+  function goNextRoute() {
+    if (route.params.isOnboarding) {
+      navigation.replace(route.params.nextRoute as any, undefined as any);
+      return;
+    }
+    navigation.navigate(route.params.nextRoute as any, undefined as any);
+  }
+
+  function enableBiometrics() {
+    setSetting("auth.biometricsEnabled", true);
+    goNextRoute();
+  }
+
+  async function onNotEnrolled() {
+    await alert({
+      title: "Biometrics failed",
+      description:
+        "Face ID / Touch ID not enabled in the system.\nYou can enable it later in the security settings.",
+    });
+    goNextRoute();
+  }
 
   function savePin(pinHash: string) {
     authStore.setPinHash(pinHash);
-    navigation.navigate(route.params.nextRoute as any, undefined as any);
+    if (route.params.isOnboarding) {
+      setEnablingBiometrics(true);
+      return;
+    }
+    goNextRoute();
   }
 
   return (
     <>
+      {enablingBiometrics && (
+        <Biometrics
+          onSuccess={enableBiometrics}
+          onNotEnrolled={onNotEnrolled}
+          onCancel={goNextRoute}
+        />
+      )}
       {!pinHash ? (
         <Pin
           label="Create passcode"

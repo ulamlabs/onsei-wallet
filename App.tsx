@@ -96,6 +96,7 @@ export default function App() {
       tokenRegistryStore.init(),
       authStore.init(),
       addressStore.init(),
+      onboardingStore.init(),
     ]);
     setReady(true);
   }
@@ -116,18 +117,6 @@ export default function App() {
   }, [ready, onboardingStore, hasAccounts]);
 
   function getContent() {
-    if (!isAppActive) {
-      return (
-        <SafeLayout>
-          <View
-            style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
-          >
-            <EyeSlash color={Colors.text} size={100} />
-          </View>
-        </SafeLayout>
-      );
-    }
-
     if (!ready || !fontsLoaded || fontError) {
       return <></>;
     }
@@ -159,11 +148,36 @@ export default function App() {
             <SplashAnimation onFinish={() => setSplashFinished(true)} />
           )}
           <SafeAreaProvider>
+            {!isAppActive && (
+              <SafeLayout
+                containerStyle={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  zIndex: 10,
+                  elevation: 10,
+                  width: "100%",
+                  height: "100%",
+                }}
+              >
+                <View
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flex: 1,
+                  }}
+                >
+                  <EyeSlash color={Colors.text} size={100} />
+                </View>
+              </SafeLayout>
+            )}
             <StatusBar style="light" />
             {getContent()}
             <Modals />
             <Toasts />
-            {ready && <NotificationsListener />}
+            {ready && onboardingStore.state === "finished" && (
+              <NotificationsListener />
+            )}
             <Web3WalletController />
           </SafeAreaProvider>
         </PostHogProvider>

@@ -6,10 +6,16 @@ export default function AddWallet() {
   const navigation = useNavigation<NavigationProp>();
 
   function onCreateNew() {
-    navigation.navigate("Generate Wallet");
+    navigation.navigate("Enable Passcode", {
+      nextRoute: "Generate Wallet",
+      isOnboarding: true,
+    });
   }
   function onImport() {
-    navigation.navigate("Import Wallet");
+    navigation.navigate("Enable Passcode", {
+      nextRoute: "Import Wallet",
+      isOnboarding: true,
+    });
   }
 
   return (

@@ -1,13 +1,12 @@
 import { useAppIsActive } from "@/hooks";
 import { useAccountsStore, useSettingsStore, useTokensStore } from "@/store";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { NotificationsWebsocket } from "./NotificationsWebsocket";
 import { registerBackgroundTxPooler } from "./background";
 import { grantNotificationsPermission } from "./pushNotifications";
 import { poolAndNotifyNewTxs } from "./txPooler";
 
 function useRefreshOnActivation() {
-  const [firstActivation, setFirstActivation] = useState(true);
   const isActive = useAppIsActive();
   const { updateBalances } = useTokensStore();
 
@@ -15,11 +14,8 @@ function useRefreshOnActivation() {
     if (!isActive) {
       return;
     }
-    setFirstActivation(false);
     poolAndNotifyNewTxs();
-    if (!firstActivation) {
-      updateBalances();
-    }
+    updateBalances();
   }, [isActive]);
 }
 

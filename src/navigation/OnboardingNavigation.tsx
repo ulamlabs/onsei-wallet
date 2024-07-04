@@ -4,9 +4,7 @@ import {
   GenerateWalletScreen,
   ImportWalletScreen,
 } from "@/screens/newWallet";
-import { OnboardingEnableBiometricsScreen } from "@/screens/onboarding/OnboardingEnableBiometricsScreen";
 import OnboardingFinishScreen from "@/screens/onboarding/OnboardingFinishScreen";
-import OnboardingProtectionScreen from "@/screens/onboarding/OnboardingProtectionScreen";
 import OnboardingWelcomeScreen from "@/screens/onboarding/OnboardingWelcomeScreen";
 import { Wallet } from "@/store";
 import { NavigatorParamsList } from "@/types";
@@ -19,10 +17,11 @@ export type OnboardingParamList = {
   "Generate Wallet": { name: string } | undefined;
   "Import Wallet": { name: string } | undefined;
   "Confirm Mnemonic": { wallet: Wallet };
-  "Protect Your Wallet": undefined;
-  "Enable Biometrics": undefined;
   "Finish Onboarding": undefined;
-  "Enable Passcode": { nextRoute: keyof NavigatorParamsList };
+  "Enable Passcode": {
+    nextRoute: keyof NavigatorParamsList;
+    isOnboarding?: boolean;
+  };
 };
 
 const { Navigator, Screen } = createNativeStackNavigator<OnboardingParamList>();
@@ -49,14 +48,6 @@ export default function OnboardingNavigation() {
         name="Import Wallet"
         component={ImportWalletScreen}
         options={{ title: "" }}
-      />
-      <Screen
-        name="Protect Your Wallet"
-        component={OnboardingProtectionScreen}
-      />
-      <Screen
-        name="Enable Biometrics"
-        component={OnboardingEnableBiometricsScreen}
       />
       <Screen name="Finish Onboarding" component={OnboardingFinishScreen} />
       <Screen

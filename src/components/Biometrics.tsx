@@ -1,15 +1,17 @@
-import { useEffect } from "react";
-import * as LocalAuthentication from "expo-local-authentication";
 import { APP_NAME } from "@/const";
+import * as LocalAuthentication from "expo-local-authentication";
+import { useEffect } from "react";
 
 export type BiometricsProps = {
   onSuccess: () => void;
   onNotEnrolled?: () => void;
+  onCancel?: () => void;
 };
 
 export default function Biometrics({
   onSuccess,
   onNotEnrolled,
+  onCancel,
 }: BiometricsProps) {
   useEffect(() => {
     async function biometrics() {
@@ -23,6 +25,8 @@ export default function Biometrics({
         onSuccess();
       } else if (onNotEnrolled && result.error === "not_enrolled") {
         onNotEnrolled();
+      } else if (onCancel) {
+        onCancel();
       }
     }
 
