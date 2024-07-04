@@ -3,6 +3,7 @@ import Box from "./Box";
 import ClipboardAddressBox from "./ClipboardAddressBox";
 import CopyAddress from "./CopyAddress";
 import FeeBox from "./FeeBox";
+import GradientBlob from "./GradientBlob";
 import LinkAddresses from "./LinkAddresses";
 import Loader from "./Loader";
 import MnemonicWords from "./MnemonicWords";
@@ -29,6 +30,7 @@ export {
   ClipboardAddressBox,
   CopyAddress,
   FeeBox,
+  GradientBlob,
   LinkAddresses,
   Loader,
   MnemonicWords,

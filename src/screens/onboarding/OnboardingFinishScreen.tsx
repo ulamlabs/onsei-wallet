@@ -1,4 +1,5 @@
 import {
+  GradientBlob,
   Headline,
   Paragraph,
   PrimaryButton,
@@ -9,8 +10,7 @@ import { useOnboardingStore } from "@/store";
 import { resetNavigationStack } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect } from "react";
-import { Dimensions, Image, View } from "react-native";
-const blob = require("../../../assets/blob.png");
+import { Dimensions, View } from "react-native";
 
 type OnboardingFinishScreenProps = NativeStackScreenProps<
   OnboardingParamList,
@@ -52,20 +52,16 @@ export default function OnboardingFinishScreen({
           elevation: -1,
         }}
       >
-        <Image
+        <GradientBlob
           style={{
-            position: "absolute",
-            width: width,
             top: 0,
             right: 100,
+            left: "auto",
             transform: [
               { translateX: (width + 50) / 2 },
               { translateY: -(width + 50) / 2 },
-              { scale: 1.5 },
             ],
           }}
-          source={blob}
-          resizeMode="contain"
         />
       </View>
     </SafeLayoutBottom>
