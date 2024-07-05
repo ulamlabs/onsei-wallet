@@ -4,6 +4,7 @@ import {
   GenerateWalletScreen,
   ImportWalletScreen,
 } from "@/screens/newWallet";
+import { OnboardingEnableBiometricsScreen } from "@/screens/onboarding/OnboardingEnableBiometricsScreen";
 import OnboardingFinishScreen from "@/screens/onboarding/OnboardingFinishScreen";
 import OnboardingWelcomeScreen from "@/screens/onboarding/OnboardingWelcomeScreen";
 import { Wallet } from "@/store";
@@ -17,6 +18,7 @@ export type OnboardingParamList = {
   "Generate Wallet": { name: string } | undefined;
   "Import Wallet": { name: string } | undefined;
   "Confirm Mnemonic": { wallet: Wallet };
+  "Enable Biometrics": { nextRoute: keyof NavigatorParamsList };
   "Finish Onboarding": undefined;
   "Enable Passcode": {
     nextRoute: keyof NavigatorParamsList;
@@ -48,6 +50,10 @@ export default function OnboardingNavigation() {
         name="Import Wallet"
         component={ImportWalletScreen}
         options={{ title: "" }}
+      />
+      <Screen
+        name="Enable Biometrics"
+        component={OnboardingEnableBiometricsScreen}
       />
       <Screen name="Finish Onboarding" component={OnboardingFinishScreen} />
       <Screen

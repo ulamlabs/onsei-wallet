@@ -1,21 +1,33 @@
 import { Column, PrimaryButton, TertiaryButton } from "@/components";
+import { useAuthStore } from "@/store";
 import { NavigationProp } from "@/types";
 import { useNavigation } from "@react-navigation/native";
 
 export default function AddWallet() {
   const navigation = useNavigation<NavigationProp>();
-
+  const { state } = useAuthStore();
+  console.log(state);
   function onCreateNew() {
-    navigation.navigate("Enable Passcode", {
-      nextRoute: "Generate Wallet",
-      isOnboarding: true,
-    });
+    if (state === "noPin" || state === "notReady") {
+      navigation.navigate("Enable Passcode", {
+        nextRoute: "Generate Wallet",
+        isOnboarding: true,
+      });
+      return;
+    }
+
+    navigation.navigate("Generate Wallet");
   }
   function onImport() {
-    navigation.navigate("Enable Passcode", {
-      nextRoute: "Import Wallet",
-      isOnboarding: true,
-    });
+    if (state === "noPin" || state === "notReady") {
+      navigation.navigate("Enable Passcode", {
+        nextRoute: "Import Wallet",
+        isOnboarding: true,
+      });
+      return;
+    }
+
+    navigation.navigate("Import Wallet");
   }
 
   return (

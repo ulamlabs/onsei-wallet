@@ -1,7 +1,7 @@
-import { Biometrics, Pin } from "@/components";
+import { Pin } from "@/components";
 import { PIN_LENGTH } from "@/components/pin/const";
 import { addSkipButton } from "@/navigation/header/NewWalletHeader";
-import { useAuthStore, useModalStore, useSettingsStore } from "@/store";
+import { useAuthStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
@@ -18,10 +18,6 @@ export default function PinEnableScreen({
   navigation,
 }: EnablePinScreenProps) {
   const [pinHash, setPinHash] = useState("");
-  const { setSetting } = useSettingsStore();
-  const [enablingBiometrics, setEnablingBiometrics] = useState(false);
-
-  const { alert } = useModalStore();
   const authStore = useAuthStore();
 
   useEffect(() => {
@@ -32,44 +28,21 @@ export default function PinEnableScreen({
 
   function goNextRoute() {
     if (route.params.isOnboarding) {
-      navigation.replace(route.params.nextRoute as any, undefined as any);
+      navigation.replace("Enable Biometrics", {
+        nextRoute: route.params.nextRoute,
+      });
       return;
     }
     navigation.navigate(route.params.nextRoute as any, undefined as any);
   }
 
-  function enableBiometrics() {
-    setSetting("auth.biometricsEnabled", true);
-    goNextRoute();
-  }
-
-  async function onNotEnrolled() {
-    await alert({
-      title: "Biometrics failed",
-      description:
-        "Face ID / Touch ID not enabled in the system.\nYou can enable it later in the security settings.",
-    });
-    goNextRoute();
-  }
-
   function savePin(pinHash: string) {
     authStore.setPinHash(pinHash);
-    if (route.params.isOnboarding) {
-      setEnablingBiometrics(true);
-      return;
-    }
     goNextRoute();
   }
 
   return (
     <>
-      {enablingBiometrics && (
-        <Biometrics
-          onSuccess={enableBiometrics}
-          onNotEnrolled={onNotEnrolled}
-          onCancel={goNextRoute}
-        />
-      )}
       {!pinHash ? (
         <Pin
           label="Create passcode"
