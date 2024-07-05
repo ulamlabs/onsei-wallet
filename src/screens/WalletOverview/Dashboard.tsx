@@ -124,7 +124,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
   return (
     <>
       <DashboardHeader style={{ backgroundColor: "transparent" }}>
-        <TouchableOpacity onPress={openSettings}>
+        <TouchableOpacity testID="settings" onPress={openSettings}>
           <Setting2 size={22} color={Colors.dashboardMenu} />
         </TouchableOpacity>
         <TouchableOpacity

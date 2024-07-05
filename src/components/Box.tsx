@@ -5,11 +5,13 @@ import { Row } from "./layout";
 
 type Props = PropsWithChildren & {
   style?: StyleProp<ViewStyle>;
+  testID?: string;
 };
 
-export default function Box({ children, style }: Props) {
+export default function Box({ children, style, testID }: Props) {
   return (
     <Row
+      testID={testID}
       style={[
         {
           backgroundColor: Colors.background200,

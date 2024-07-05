@@ -6,7 +6,6 @@ import { useNavigation } from "@react-navigation/native";
 export default function AddWallet() {
   const navigation = useNavigation<NavigationProp>();
   const { state } = useAuthStore();
-  console.log(state);
   function onCreateNew() {
     if (state === "noPin" || state === "notReady") {
       navigation.navigate("Enable Passcode", {

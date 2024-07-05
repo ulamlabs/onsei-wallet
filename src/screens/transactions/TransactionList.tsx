@@ -213,6 +213,7 @@ export default function TransactionList({
             {txGroup.map((txn, id) => (
               <Pressable
                 key={id}
+                testID={`transaction-${id}`}
                 onPress={() =>
                   navigation.navigate("Transaction details", {
                     transaction: serializeTxn(txn),

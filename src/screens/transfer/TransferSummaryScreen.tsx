@@ -86,7 +86,11 @@ export default function TransferSummaryScreen({
 
   function getFeeElement() {
     if (fee) {
-      return <Text>{formatAmount(feeInt, sei.decimals)} SEI</Text>;
+      return (
+        <Text testID="network-fee">
+          {formatAmount(feeInt, sei.decimals)} SEI
+        </Text>
+      );
     }
 
     if (estimationFailed) {

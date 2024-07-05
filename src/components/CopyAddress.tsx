@@ -23,7 +23,7 @@ export default function CopyAddress() {
   }
 
   return (
-    <Pressable onPress={openModal}>
+    <Pressable testID="address-copy" onPress={openModal}>
       <Copy size={22} color={Colors.dashboardMenu} />
     </Pressable>
   );

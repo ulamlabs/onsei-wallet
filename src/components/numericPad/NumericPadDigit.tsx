@@ -37,6 +37,7 @@ export default function NumericPadDigit({
     <TouchableHighlight
       onPress={() => onPress(digit)}
       style={viewStyle}
+      testID={`digit-${digit}`}
       underlayColor="black"
     >
       {digit === "X" ? (

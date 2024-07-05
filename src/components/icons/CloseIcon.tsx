@@ -8,7 +8,13 @@ type IconProps = {
 
 export default function CloseIcon({ color, size }: IconProps) {
   return (
-    <Svg width={size || 12} height={size || 12} viewBox="0 0 14 14" fill="none">
+    <Svg
+      testID="close-icon"
+      width={size || 12}
+      height={size || 12}
+      viewBox="0 0 14 14"
+      fill="none"
+    >
       <Path
         d="M0.999512 1L12.9995 13"
         stroke={color || Colors.text}
