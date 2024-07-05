@@ -21,7 +21,8 @@ export default function OnboardingFinishScreen({
   navigation,
 }: OnboardingFinishScreenProps) {
   const onboardingStore = useOnboardingStore();
-  const { width } = Dimensions.get("window");
+  const { width, height } = Dimensions.get("window");
+  console.log(width, height);
 
   useEffect(() => {
     resetNavigationStack(navigation);
@@ -59,7 +60,7 @@ export default function OnboardingFinishScreen({
             left: "auto",
             transform: [
               { translateX: (width + 50) / 2 },
-              { translateY: -(width + 50) / 2 },
+              { translateY: -(width + 50) / (height > 900 ? 3 : 2) },
             ],
           }}
         />
