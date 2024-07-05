@@ -22,7 +22,6 @@ export default function OnboardingFinishScreen({
 }: OnboardingFinishScreenProps) {
   const onboardingStore = useOnboardingStore();
   const { width, height } = Dimensions.get("window");
-  console.log(width, height);
 
   useEffect(() => {
     resetNavigationStack(navigation);
