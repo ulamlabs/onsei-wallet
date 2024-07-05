@@ -14,7 +14,11 @@ export default function TokenToggleBox({
 }: TokenToggleProps) {
   return (
     <TokenBox token={token} showId={true}>
-      <Switch onValueChange={onToggle} value={selected} />
+      <Switch
+        testID={`${token.symbol}-switch`}
+        onValueChange={onToggle}
+        value={selected}
+      />
     </TokenBox>
   );
 }

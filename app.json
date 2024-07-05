@@ -66,7 +66,8 @@
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera"
         }
       ],
-      "expo-localization"
+      "expo-localization",
+      "@config-plugins/detox"
     ]
   }
 }

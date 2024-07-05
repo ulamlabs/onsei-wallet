@@ -40,7 +40,7 @@ export default function AccountSettingsScreen({
   const { accounts, deleteAccount, activeAccount } = useAccountsStore();
   const { ask } = useModalStore();
   const account = accounts.find((account) => account.address === address)!;
-  const truncatedAddresses = `${account.address.slice(0, 4)}(...), ${account.evmAddress.slice(0, 4)}(...)`;
+  const truncatedAddresses = `${account.address?.slice(0, 4)}(...), ${account.evmAddress?.slice(0, 4)}(...)`;
   const {
     settings: { node },
   } = useSettingsStore();

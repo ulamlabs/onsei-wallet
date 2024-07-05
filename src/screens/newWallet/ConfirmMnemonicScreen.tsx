@@ -157,7 +157,10 @@ export default function ConfirmMnemonicScreen({
         <View>
           <Headline>Confirm Recovery Phrase</Headline>
           {idsToSelect.length === MNEMONIC_WORDS_TO_CONFIRM && (
-            <Paragraph style={{ textAlign: "center", marginBottom: 24 }}>
+            <Paragraph
+              testID="words-to-verify"
+              style={{ textAlign: "center", marginBottom: 24 }}
+            >
               Tap the {getNumberLabel(idsToSelect[0])},{" "}
               {getNumberLabel(idsToSelect[1])} and{" "}
               {getNumberLabel(idsToSelect[2])} word to verify that you saved

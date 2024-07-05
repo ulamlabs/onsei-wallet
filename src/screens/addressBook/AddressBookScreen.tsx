@@ -60,6 +60,7 @@ export default function AddressBook({ navigation }: Props) {
             <IconButton
               style={{ backgroundColor: "transparent" }}
               icon={Add}
+              testID="add-address"
               onPress={() => navigation.navigate("Saved Address")}
             />
           </Row>

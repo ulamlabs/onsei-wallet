@@ -38,6 +38,7 @@ export default function MnemonicWords({ mnemonic }: MnemonicWordsProps) {
   return (
     <View>
       <FlatList
+        testID="mnemonic-list"
         data={mnemonic}
         numColumns={2}
         scrollEnabled={false}

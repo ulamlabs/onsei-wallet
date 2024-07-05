@@ -19,7 +19,7 @@ export default function TokenBox({
   children,
 }: TokenBoxProps) {
   return (
-    <Box>
+    <Box testID={`${token.name}-box`}>
       <Row style={{ alignItems: "center", flexShrink: 1, paddingRight: 10 }}>
         <TokenIcon token={token} />
         <View style={{ flexShrink: 1 }}>

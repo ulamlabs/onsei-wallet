@@ -58,6 +58,7 @@ export default function Account({ item }: AccountProps) {
         <IconButton
           icon={Setting2}
           color={isActive ? Colors.background : Colors.text}
+          testID={`${item.name.replaceAll(" ", "-")}-settings`}
           style={{
             backgroundColor: isActive
               ? Colors.background500

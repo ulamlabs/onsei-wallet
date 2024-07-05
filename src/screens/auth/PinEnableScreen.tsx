@@ -22,15 +22,19 @@ export default function PinEnableScreen({
 
   useEffect(() => {
     if (route.params.isOnboarding) {
-      addSkipButton(navigation, goNextRoute);
+      addSkipButton(navigation, () => goNextRoute(true));
     }
   }, []);
 
-  function goNextRoute() {
+  function goNextRoute(skipPin?: boolean) {
     if (route.params.isOnboarding) {
-      navigation.replace("Enable Biometrics", {
-        nextRoute: route.params.nextRoute,
-      });
+      if (skipPin) {
+        navigation.replace(route.params.nextRoute as any, undefined as any);
+      } else {
+        navigation.replace("Enable Biometrics", {
+          nextRoute: route.params.nextRoute,
+        });
+      }
       return;
     }
     navigation.navigate(route.params.nextRoute as any, undefined as any);

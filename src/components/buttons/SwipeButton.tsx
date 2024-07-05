@@ -223,7 +223,11 @@ export default function SwipeButton({
         ]}
         {...panResponder.panHandlers}
       >
-        <ArrowRight2 color={Colors.background200} size={30} />
+        <ArrowRight2
+          testID="swipe-button"
+          color={Colors.background200}
+          size={30}
+        />
       </Animated.View>
     </View>
   );

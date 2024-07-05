@@ -17,6 +17,7 @@ export type BaseButtonProps = {
   iconSize?: number;
   iconAllign?: "left" | "right";
   loading?: boolean;
+  testID?: string;
 };
 
 export default function BaseButton({
@@ -32,9 +33,11 @@ export default function BaseButton({
   iconSize = 20,
   iconAllign = "left",
   loading = false,
+  testID,
 }: BaseButtonProps) {
   return (
     <Pressable
+      testID={testID}
       disabled={disabled || loading}
       style={[
         {

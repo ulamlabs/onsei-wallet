@@ -85,6 +85,7 @@ export default function TextInput({
         ]}
       >
         <ReactNative.TextInput
+          testID={label ? `${label}-input` : "input"}
           placeholderTextColor={Colors.text100}
           onChangeText={onChangeText}
           value={value}
