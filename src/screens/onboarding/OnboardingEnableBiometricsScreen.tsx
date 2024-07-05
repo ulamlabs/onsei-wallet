@@ -7,10 +7,9 @@ import {
 } from "@/components";
 import { useModalStore, useSettingsStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
-import { resetNavigationStack } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { EmojiHappy } from "iconsax-react-native";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type OnboardingEnableBiometricsScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -18,6 +17,7 @@ type OnboardingEnableBiometricsScreenProps = NativeStackScreenProps<
 >;
 
 export function OnboardingEnableBiometricsScreen({
+  route,
   navigation,
 }: OnboardingEnableBiometricsScreenProps) {
   const [enablingBiometrics, setEnablingBiometrics] = useState(false);
@@ -25,13 +25,13 @@ export function OnboardingEnableBiometricsScreen({
   const { setSetting } = useSettingsStore();
   const { alert } = useModalStore();
 
-  useEffect(() => {
-    resetNavigationStack(navigation);
-  }, [navigation]);
+  function nextRoute() {
+    navigation.replace(route.params.nextRoute as any, undefined as any);
+  }
 
   function enableBiometrics() {
     setSetting("auth.biometricsEnabled", true);
-    navigation.navigate("Finish Onboarding");
+    nextRoute();
   }
 
   async function onNotEnrolled() {
@@ -40,7 +40,7 @@ export function OnboardingEnableBiometricsScreen({
       description:
         "Face ID / Touch ID not enabled in the system.\nYou can enable it later in the security settings.",
     });
-    navigation.navigate("Finish Onboarding");
+    nextRoute();
   }
 
   return (
@@ -61,7 +61,7 @@ export function OnboardingEnableBiometricsScreen({
 
         <TertiaryButton
           title="Skip biometrics protection"
-          onPress={() => navigation.navigate("Finish Onboarding")}
+          onPress={nextRoute}
         />
       </Column>
     </SafeLayoutBottom>

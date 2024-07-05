@@ -1,9 +1,10 @@
 import { Pin } from "@/components";
 import { PIN_LENGTH } from "@/components/pin/const";
+import { addSkipButton } from "@/navigation/header/NewWalletHeader";
 import { useAuthStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type EnablePinScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -17,12 +18,27 @@ export default function PinEnableScreen({
   navigation,
 }: EnablePinScreenProps) {
   const [pinHash, setPinHash] = useState("");
-
   const authStore = useAuthStore();
+
+  useEffect(() => {
+    if (route.params.isOnboarding) {
+      addSkipButton(navigation, goNextRoute);
+    }
+  }, []);
+
+  function goNextRoute() {
+    if (route.params.isOnboarding) {
+      navigation.replace("Enable Biometrics", {
+        nextRoute: route.params.nextRoute,
+      });
+      return;
+    }
+    navigation.navigate(route.params.nextRoute as any, undefined as any);
+  }
 
   function savePin(pinHash: string) {
     authStore.setPinHash(pinHash);
-    navigation.navigate(route.params.nextRoute as any, undefined as any);
+    goNextRoute();
   }
 
   return (

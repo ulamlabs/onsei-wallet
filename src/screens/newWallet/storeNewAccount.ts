@@ -18,7 +18,7 @@ export async function storeNewAccount(
   accountsStore.setActiveAccount(wallet.address);
 
   const nextRoute: keyof NavigatorParamsList =
-    navigation.getId() === "onboarding" ? "Protect Your Wallet" : "Home";
+    navigation.getId() === "onboarding" ? "Finish Onboarding" : "Home";
   navigation.navigate(nextRoute);
   resetNavigationStack(navigation);
 }
