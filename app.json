@@ -2,7 +2,7 @@
   "expo": {
     "name": "sei-wallet",
     "slug": "sei-wallet",
-    "version": "1.0.12",
+    "version": "1.0.13",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -21,7 +21,7 @@
       "infoPlist": {
         "NSFaceIDUsageDescription": "This app stores users's private keys and the access should be Face ID protected."
       },
-      "buildNumber": "1"
+      "buildNumber": "2"
     },
     "android": {
       "adaptiveIcon": {
@@ -29,7 +29,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.ulamlabs.seiwallet",
-      "versionCode": 10
+      "versionCode": 11
     },
     "web": {
       "favicon": "./assets/favicon.png"
