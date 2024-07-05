@@ -195,7 +195,10 @@ export default function Dashboard({ navigation }: DashboardProps) {
           backgroundColor: Colors.background,
         }}
       >
-        <Image source={DASHBOARD_IMG} style={{ width: "100%", height: 400 }} />
+        <Image
+          source={DASHBOARD_IMG}
+          style={{ width: "100%", aspectRatio: "1/1", height: "auto" }}
+        />
       </View>
     </>
   );
