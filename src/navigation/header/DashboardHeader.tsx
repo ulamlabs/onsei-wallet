@@ -17,7 +17,7 @@ export default function DashboardHeader({ children, style }: Props) {
       style={[
         {
           width: "100%",
-          paddingTop: Math.max(verticalScale(50), insets.top),
+          paddingTop: Math.max(verticalScale(70), insets.top),
           backgroundColor: Colors.background,
           paddingLeft: Math.max(scale(16), insets.left),
           paddingRight: Math.max(scale(16), insets.right),

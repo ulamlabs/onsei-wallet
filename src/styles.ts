@@ -43,6 +43,10 @@ export const Colors = {
   toastSuccessBackground: "#121E15",
   dashboardMenu: "#FFD1D1",
   backgroundOpacity: "rgba(250, 250, 250, 0.12)",
+  tokenBoxBackground: "#1A1A1A",
+  tokenIdBox: "#222",
+  disabledButtonText: "#8A8A8A",
+  disabledPrimaryButtonBackground: "#505050",
 };
 
 export const FontSizes = {
