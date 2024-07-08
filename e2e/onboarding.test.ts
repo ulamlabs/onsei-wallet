@@ -77,7 +77,7 @@ describe("Onboarding", () => {
     }
 
     // PIN should pass, biometric should be the next step. Skip them as it's not possible to test on simulator
-    await element(by.text("Skip biometrics protection")).tap();
+    await element(by.text("Maybe later")).tap();
     await element(by.text("Skip")).tap(); // skip mnemonic confirmation
     await element(by.text("Confirm")).tap(); // confirm onboarding
 

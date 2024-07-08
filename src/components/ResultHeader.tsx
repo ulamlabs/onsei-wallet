@@ -1,41 +1,34 @@
-import { Colors } from "@/styles";
-import { CloseCircle, TickCircle } from "iconsax-react-native";
-import { View } from "react-native";
 import { Headline, Paragraph } from "./typography";
+import { Image } from "react-native";
+
+type Header = "Success" | "Biometrics" | "Fail" | "Clear";
 
 type Props = {
-  success?: boolean;
+  type: Header;
   description: string;
-  header?: string;
+  header: string;
 };
 
-export default function ResultHeader({
-  success = true,
-  description,
-  header,
-}: Props) {
+const successSrc = require("../../assets/icon-success.png");
+const clearSrc = require("../../assets/icon-clear.png");
+const failSrc = require("../../assets/icon-fail.png");
+const biometricsSrc = require("../../assets/icon-biometrics.png");
+const ICON_SIZE = 150;
+const iconStyle = { width: ICON_SIZE, height: ICON_SIZE };
+
+export default function ResultHeader({ type, description, header }: Props) {
+  const icon: Record<Header, React.JSX.Element> = {
+    Success: <Image source={successSrc} style={iconStyle} />,
+    Biometrics: <Image source={biometricsSrc} style={iconStyle} />,
+    Fail: <Image source={failSrc} style={iconStyle} />,
+    Clear: <Image source={clearSrc} style={iconStyle} />,
+  };
+
   return (
     <>
-      <View
-        style={{
-          padding: 20,
-          width: 128,
-          height: 128,
-          justifyContent: "center",
-          alignItems: "center",
-          borderRadius: 22,
-          backgroundColor: success ? Colors.success200 : Colors.danger200,
-        }}
-      >
-        {success ? (
-          <TickCircle variant="Bold" color={Colors.success} size={88} />
-        ) : (
-          <CloseCircle variant="Bold" color={Colors.danger} size={88} />
-        )}
-      </View>
-      <Headline>
-        {header || (success ? "It's Done!" : "Something went wrong")}
-      </Headline>
+      {icon[type]}
+
+      <Headline>{header}</Headline>
       <Paragraph size="base" style={{ textAlign: "center" }}>
         {description}
       </Paragraph>

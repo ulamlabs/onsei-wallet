@@ -50,7 +50,8 @@ export default function TransferSentScreen({
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       >
         <ResultHeader
-          success={success}
+          type={success ? "Success" : "Fail"}
+          header={success ? "It's Done!" : "Something went wrong"}
           description={
             success
               ? "Transaction completed successfully."

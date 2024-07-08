@@ -1,10 +1,9 @@
-import { Column, TertiaryButton, Text } from "@/components";
+import { Column, EmptyList, TertiaryButton, Text } from "@/components";
 import { Transaction, useTransactions } from "@/modules/transactions";
 import { SavedAddress, useAccountsStore } from "@/store";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { NavigationProp } from "@/types";
 import { useNavigation } from "@react-navigation/native";
-import { WalletSearch } from "iconsax-react-native";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import { TransactionList } from "../transactions";
@@ -46,19 +45,10 @@ export default function LastTransactionsWithAddress({ addressData }: Props) {
         </Column>
       ) : (
         <Column style={{ paddingVertical: 60, alignItems: "center" }}>
-          <WalletSearch size={90} color={Colors.text500} />
-          <Text
-            style={{
-              color: Colors.text500,
-              fontFamily: FontWeights.bold,
-              fontSize: FontSizes.lg,
-            }}
-          >
-            No transactions
-          </Text>
-          <Text style={{ color: Colors.text500 }}>
-            You haven't made any transactions with this address yet.
-          </Text>
+          <EmptyList
+            title="No transactions found"
+            description="None of the last 100 transactions were made with this address"
+          />
         </Column>
       )}
     </View>

@@ -16,6 +16,7 @@ export default function PinChangeSuccessScreen({ navigation }: Props) {
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       >
         <ResultHeader
+          type="Success"
           header="Passcode changed successfully"
           description="Keep your passcode safe and never share it."
         />

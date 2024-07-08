@@ -1,6 +1,7 @@
 import {
   ClipboardAddressBox,
   Column,
+  EmptyList,
   IconButton,
   Paragraph,
   PrimaryButton,
@@ -200,10 +201,14 @@ export default function TransferSelectAddressScreen({
         {addressBook.length === 0 &&
           yourAddresses.length === 0 &&
           !typedAddress &&
+          searchInput.value &&
           !isInvalidAddress && (
-            <Paragraph style={{ textAlign: "center" }}>
-              No addresses matching given criteria
-            </Paragraph>
+            <View style={{ height: "100%" }}>
+              <EmptyList
+                title="No addresses found"
+                description="No addresses matching the criteria"
+              />
+            </View>
           )}
       </View>
       <View style={{ paddingTop: 24 }}>

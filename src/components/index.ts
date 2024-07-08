@@ -2,6 +2,7 @@ import Biometrics from "./Biometrics";
 import Box from "./Box";
 import ClipboardAddressBox from "./ClipboardAddressBox";
 import CopyAddress from "./CopyAddress";
+import EmptyList from "./EmptyList";
 import FeeBox from "./FeeBox";
 import GradientBlob from "./GradientBlob";
 import LinkAddresses from "./LinkAddresses";
@@ -29,6 +30,7 @@ export {
   Box,
   ClipboardAddressBox,
   CopyAddress,
+  EmptyList,
   FeeBox,
   GradientBlob,
   LinkAddresses,

@@ -1,7 +1,7 @@
 import {
   Column,
+  EmptyList,
   IconButton,
-  Paragraph,
   Row,
   SafeLayout,
   Text,
@@ -15,6 +15,7 @@ import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Add, SearchNormal } from "iconsax-react-native";
 import React, { useEffect, useState } from "react";
+import { View } from "react-native";
 import AddressBookEntry from "./AddressBookEntry";
 
 type Props = NativeStackScreenProps<NavigatorParamsList, "Address Book">;
@@ -82,10 +83,15 @@ export default function AddressBook({ navigation }: Props) {
               addressData={addressData}
             />
           ))}
-          {searchInput.value && displayedAddresses.length === 0 && (
-            <Paragraph style={{ textAlign: "center" }}>
-              No addresses matching the criteria
-            </Paragraph>
+          {displayedAddresses.length === 0 && (
+            <View style={{ height: "100%" }}>
+              <EmptyList
+                title={`No addresses ${searchInput.value ? "found" : "yet"}`}
+                description={
+                  searchInput.value && "No addresses matching the criteria"
+                }
+              />
+            </View>
           )}
         </Column>
       </SafeLayout>

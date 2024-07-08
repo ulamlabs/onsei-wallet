@@ -1,4 +1,4 @@
-import { Loader, Paragraph, SafeLayout } from "@/components";
+import { EmptyList, Loader, Paragraph, SafeLayout } from "@/components";
 import { useTransactions } from "@/modules/transactions";
 import DashboardHeader from "@/navigation/header/DashboardHeader";
 import DefaultHeaderTitle from "@/navigation/header/DefaultHeaderTitle";
@@ -36,9 +36,9 @@ export default function Transactions() {
               {transactions && transactions?.length > 0 ? (
                 <TransactionList transactions={transactions} />
               ) : (
-                <Paragraph style={{ textAlign: "center" }}>
-                  No transactions yet
-                </Paragraph>
+                <View style={{ height: "100%" }}>
+                  <EmptyList title="No transactions found" />
+                </View>
               )}
             </View>
           )}
