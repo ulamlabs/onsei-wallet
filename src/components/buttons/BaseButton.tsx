@@ -98,9 +98,10 @@ export default function BaseButton({
     >
       <LinearGradient
         style={{
+          bottom: 0,
           position: "absolute",
           width: "100%",
-          height: "100%",
+          height: 100,
         }}
         colors={["transparent", Colors.background]}
       />

@@ -50,7 +50,8 @@ export default function AccountsScreen({ navigation }: AccountsScreenProps) {
           style={{
             position: "absolute",
             width: "100%",
-            height: "100%",
+            height: "150%",
+            borderColor: "red",
           }}
           colors={["transparent", Colors.background]}
         />
