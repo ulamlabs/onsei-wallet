@@ -1,4 +1,4 @@
-import { Colors, FontWeights } from "@/styles";
+import { Colors, FontSizes, FontWeights } from "@/styles";
 import { Icon, IconProps } from "iconsax-react-native";
 import { Pressable, StyleProp, TextStyle, ViewStyle } from "react-native";
 import Loader from "../Loader";
@@ -44,12 +44,11 @@ export default function BaseButton({
           alignItems: "center",
           justifyContent: "center",
           paddingHorizontal: 24,
-          paddingVertical: loading ? 16 : 18,
+          paddingVertical: loading ? 18 : 20,
           borderRadius: 22,
           flexDirection: iconAllign === "left" ? "row" : "row-reverse",
           gap: 8,
         },
-        disabled ? { opacity: 0.3 } : {},
         style,
       ]}
       onPress={onPress}
@@ -62,7 +61,16 @@ export default function BaseButton({
             <Icon color={iconColor} size={iconSize} variant={iconVariant} />
           )}
           {title && (
-            <Text style={[{ color, fontFamily: FontWeights.bold }, textStyle]}>
+            <Text
+              style={[
+                {
+                  color: disabled ? Colors.disabledButtonText : color,
+                  fontFamily: FontWeights.bold,
+                  fontSize: FontSizes.base,
+                },
+                textStyle,
+              ]}
+            >
               {title}
             </Text>
           )}

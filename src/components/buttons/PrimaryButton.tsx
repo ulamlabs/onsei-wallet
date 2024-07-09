@@ -3,13 +3,21 @@ import BaseButton, { BaseButtonProps } from "./BaseButton";
 
 export default function PrimaryButton({
   style: styles,
+  disabled,
   ...props
 }: BaseButtonProps) {
   return (
     <BaseButton
       {...props}
-      color={Colors.background}
-      style={[{ backgroundColor: Colors.text }, styles]}
+      color={disabled ? Colors.disabledButtonText : Colors.background}
+      style={[
+        {
+          backgroundColor: disabled
+            ? Colors.disabledPrimaryButtonBackground
+            : Colors.text,
+        },
+        styles,
+      ]}
       textStyle={{ fontSize: 16 }}
     />
   );

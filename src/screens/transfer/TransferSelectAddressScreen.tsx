@@ -115,7 +115,13 @@ export default function TransferSelectAddressScreen({
             containerStyle={{ flex: 1 }}
           />
           <IconButton
-            style={{ height: 51, width: 51 }}
+            style={{
+              height: 51,
+              width: 51,
+              backgroundColor: Colors.tokenBoxBackground,
+              borderWidth: 1,
+              borderColor: Colors.inputBorderColor,
+            }}
             iconSize={24}
             icon={Scan}
             onPress={scanCode}

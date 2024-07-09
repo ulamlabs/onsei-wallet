@@ -44,6 +44,7 @@ export default function Bar({
       style={{
         backgroundColor: Colors.background,
         padding: 20,
+        paddingBottom: 34,
         alignItems: "center",
         width: "100%",
         justifyContent: "center",

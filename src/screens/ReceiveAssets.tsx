@@ -24,7 +24,7 @@ export default function ReceiveAssets({ navigation }: Props) {
       <Column
         style={{ gap: 0, justifyContent: "space-between", height: "100%" }}
       >
-        <View style={{ alignItems: "center" }}>
+        <View style={{ alignItems: "center", marginTop: 28 }}>
           <Headline>Scan SEI address</Headline>
           <Paragraph size="base">
             Use this address to receive tokens on SEI

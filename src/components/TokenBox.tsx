@@ -19,16 +19,23 @@ export default function TokenBox({
   children,
 }: TokenBoxProps) {
   return (
-    <Box testID={`${token.name}-box`}>
+    <Box
+      style={{ backgroundColor: Colors.tokenBoxBackground }}
+      testID={`${token.name}-box`}
+    >
       <Row style={{ alignItems: "center", flexShrink: 1, paddingRight: 10 }}>
         <TokenIcon token={token} />
         <View style={{ flexShrink: 1 }}>
           <Text
-            style={{ fontFamily: FontWeights.bold, fontSize: FontSizes.base }}
+            style={{
+              fontFamily: FontWeights.bold,
+              fontSize: FontSizes.base,
+              marginBottom: 2,
+            }}
           >
             {token.symbol}
           </Text>
-          <Row>
+          <Row style={{ gap: 4 }}>
             <Text
               style={{
                 color: Colors.text100,
@@ -41,12 +48,12 @@ export default function TokenBox({
             {showId && (
               <View
                 style={{
-                  backgroundColor: Colors.background300,
+                  backgroundColor: Colors.tokenIdBox,
                   paddingHorizontal: 6,
                   borderRadius: 8,
                 }}
               >
-                <Text style={{ color: Colors.text100 }}>
+                <Text style={{ color: Colors.text100, fontSize: FontSizes.xs }}>
                   {trimAddress(token.id, { prefixCut: 3, suffixCut: 5 })}
                 </Text>
               </View>

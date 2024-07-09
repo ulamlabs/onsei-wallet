@@ -107,8 +107,10 @@ export default function Dashboard({ navigation }: DashboardProps) {
               borderRadius: 30,
             }}
           >
-            <InfoCircle size={16} color={Colors.text100} />
-            <Text style={{ color: Colors.text100 }}>
+            <InfoCircle size={16} color={Colors.dashboardMenu} />
+            <Text
+              style={{ color: Colors.dashboardMenu, fontSize: FontSizes.base }}
+            >
               Excludes unknown value assets
             </Text>
           </Row>
@@ -154,7 +156,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
         <CopyAddress />
       </DashboardHeader>
       <SafeLayout
-        style={{ paddingTop: 24, paddingBottom: 65 }}
+        style={{ paddingTop: 24, paddingBottom: 80 }}
         refreshFn={onRefresh}
         containerStyle={{ backgroundColor: "transparent" }}
       >
@@ -162,24 +164,25 @@ export default function Dashboard({ navigation }: DashboardProps) {
         <Row
           style={{
             justifyContent: "space-around",
-            marginVertical: 30,
+            marginVertical: 32,
+            gap: 8,
           }}
         >
           <SecondaryButton
             title="Send"
-            style={{ paddingHorizontal: 20, flex: 1 }}
+            style={{ paddingHorizontal: 20, flex: 1, gap: 6 }}
             onPress={onSend}
             icon={ArrowUp}
           />
           <SecondaryButton
             title="Receive"
-            style={{ paddingHorizontal: 20, flex: 1 }}
+            style={{ paddingHorizontal: 20, flex: 1, gap: 6 }}
             onPress={onReceive}
             icon={ArrowDown}
           />
           <SecondaryButton
             title="Scan"
-            style={{ paddingHorizontal: 20, flex: 1 }}
+            style={{ paddingHorizontal: 20, flex: 1, gap: 6 }}
             onPress={onScan}
             icon={ScanBarcode}
           />
