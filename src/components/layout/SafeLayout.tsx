@@ -75,6 +75,7 @@ export default function SafeLayout({
             contentContainerStyle={{ flexGrow: 1 }}
             keyboardShouldPersistTaps="handled"
             scrollEnabled={scrollEnabled}
+            testID="safe-layout-scroll-view"
             refreshControl={
               refreshFn && (
                 <RefreshControl
