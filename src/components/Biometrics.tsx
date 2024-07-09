@@ -37,7 +37,7 @@ export default function Biometrics({
       alert({
         title: "Biometrics failed",
         description:
-          "Check your biometric settings and try again from the application menu.",
+          "Check your biometric settings and try again later in the security settings.",
       });
     }
 
