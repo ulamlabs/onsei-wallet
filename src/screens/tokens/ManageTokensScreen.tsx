@@ -13,10 +13,12 @@ import {
   useTokenRegistryStore,
   useTokensStore,
 } from "@/store";
+import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { searchTokens } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
+import { LinearGradient } from "expo-linear-gradient";
 import { SearchNormal } from "iconsax-react-native";
 import { useEffect, useState } from "react";
 import { FlatList, View } from "react-native";
@@ -117,7 +119,7 @@ export default function ManageTokensScreen({ navigation }: Props) {
 
   return (
     <SafeLayout staticView={true}>
-      <Column style={{ flexGrow: 1 }}>
+      <Column style={{ flexGrow: 1, gap: 0 }}>
         <TextInput
           placeholder="Enter token name or contract address"
           icon={SearchNormal}
@@ -139,9 +141,20 @@ export default function ManageTokensScreen({ navigation }: Props) {
         )}
 
         <View style={{ flex: 1 }}>
+          <LinearGradient
+            style={{
+              width: "100%",
+              height: 20,
+              position: "absolute",
+              zIndex: 1,
+              elevation: 1,
+            }}
+            colors={[Colors.background, "transparent"]}
+          />
           <FlatList
             data={tokens}
             nestedScrollEnabled={true}
+            ListHeaderComponent={<View style={{ height: 12 }} />}
             renderItem={({ item: token }) => (
               <View style={{ marginVertical: 6 }}>
                 <TokenToggleBox
@@ -161,7 +174,7 @@ export default function ManageTokensScreen({ navigation }: Props) {
       <PrimaryButton
         title="Save changes"
         onPress={onSave}
-        style={{ marginTop: 24 }}
+        elevate
         loading={saving}
       />
     </SafeLayout>

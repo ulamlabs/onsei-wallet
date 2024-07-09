@@ -167,6 +167,7 @@ export default function TransferSelectAddressScreen({
       <View style={{ flex: 1 }}>
         <SectionList
           stickySectionHeadersEnabled={false}
+          ListFooterComponent={<View style={{ height: 70 }} />}
           sections={[
             { title: "My Wallets", data: yourAddresses },
             { title: "Address book", data: addressBook },
@@ -206,13 +207,12 @@ export default function TransferSelectAddressScreen({
             </Paragraph>
           )}
       </View>
-      <View style={{ paddingTop: 24 }}>
-        <PrimaryButton
-          title="Next"
-          onPress={validateTypedAddress}
-          disabled={!searchInput.value || isInvalidAddress || sameAddressError}
-        />
-      </View>
+      <PrimaryButton
+        title="Next"
+        onPress={validateTypedAddress}
+        disabled={!searchInput.value || isInvalidAddress || sameAddressError}
+        elevate
+      />
     </SafeLayout>
   );
 }
