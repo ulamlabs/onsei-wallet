@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import {
   Box,
+  EmptyList,
   IconButton,
   Row,
   SafeLayout,
@@ -12,8 +13,7 @@ import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useMemo } from "react";
 import { View, Image, Pressable, FlatList } from "react-native";
-import { Path, Svg } from "react-native-svg";
-import { CloseCircle, ScanBarcode, SearchNormal } from "iconsax-react-native";
+import { CloseCircle, ScanBarcode } from "iconsax-react-native";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { disconnectApp } from "@/web3wallet/utils";
 import { WalletConnectSession } from "@/web3wallet/types";
@@ -144,36 +144,11 @@ export default function ConnectedAppsScreen({ navigation }: ScreenProps) {
   function renderEmptyView() {
     return (
       <>
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <View style={{ position: "relative", marginBottom: 20 }}>
-            <Svg width="81" height="81" viewBox="0 0 81 81" fill="none">
-              <Path
-                d="M40.4588 10.9918C52.9642 13.3785 68.5746 7.41877 76.144 17.6551C84.1334 28.4594 79.8267 43.9518 73.6601 55.8906C68.1426 66.5727 57.4354 72.5017 45.9607 76.0909C34.0793 79.8074 18.7339 84.9643 10.4655 75.6577C2.4042 66.5843 16.3902 53.4306 15.1056 41.3617C13.6335 27.5307 -6.11173 14.3348 2.80196 3.65732C11.4243 -6.67108 27.243 8.46949 40.4588 10.9918Z"
-                fill="#1D1D1D"
-              />
-            </Svg>
-            <SearchNormal
-              style={{ position: "absolute", top: 5, left: 5 }}
-              size={71}
-              color={Colors.text400}
-            />
-          </View>
-          <Text
-            style={{
-              color: Colors.text400,
-              fontSize: FontSizes.lg,
-              fontFamily: FontWeights.bold,
-              marginBottom: 10,
-            }}
-          >
-            No connected apps found
-          </Text>
-          <Text style={{ color: Colors.text400 }}>
-            Scan the QR code to connect your first app.
-          </Text>
-        </View>
+        <EmptyList
+          title="No connected apps found"
+          description="Scan the QR code to connect your first app."
+        />
+
         <SecondaryButton
           title="Scan QR code"
           onPress={() => navigation.push("Connect Wallet")}

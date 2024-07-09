@@ -54,6 +54,7 @@ export default function OnboardingNavigation() {
       <Screen
         name="Enable Biometrics"
         component={OnboardingEnableBiometricsScreen}
+        options={{ title: "" }}
       />
       <Screen
         name="Finish Onboarding"

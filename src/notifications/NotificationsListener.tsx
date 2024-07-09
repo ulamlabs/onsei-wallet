@@ -40,7 +40,7 @@ export default function NotificationsListener() {
   }, [allowNotifications]);
 
   if (!allowNotifications) {
-    return;
+    return <></>;
   }
 
   return (

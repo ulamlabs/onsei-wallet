@@ -2,13 +2,13 @@ import {
   Biometrics,
   Column,
   PrimaryButton,
-  SafeLayoutBottom,
+  ResultHeader,
+  SafeLayout,
   TertiaryButton,
 } from "@/components";
 import { useModalStore, useSettingsStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { EmojiHappy } from "iconsax-react-native";
 import { useState } from "react";
 
 type OnboardingEnableBiometricsScreenProps = NativeStackScreenProps<
@@ -44,12 +44,20 @@ export function OnboardingEnableBiometricsScreen({
   }
 
   return (
-    <SafeLayoutBottom>
+    <SafeLayout>
+      <Column
+        style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+      >
+        <ResultHeader
+          type="Biometrics"
+          header="Enable biometric"
+          description="Optionally enable biometric security to protect your data and log in conveniently."
+        />
+      </Column>
       <Column>
         <PrimaryButton
           title="Enable Biometrics"
           onPress={() => setEnablingBiometrics(true)}
-          icon={EmojiHappy}
         />
 
         {enablingBiometrics && (
@@ -59,11 +67,8 @@ export function OnboardingEnableBiometricsScreen({
           />
         )}
 
-        <TertiaryButton
-          title="Skip biometrics protection"
-          onPress={nextRoute}
-        />
+        <TertiaryButton title="Maybe later" onPress={nextRoute} />
       </Column>
-    </SafeLayoutBottom>
+    </SafeLayout>
   );
 }

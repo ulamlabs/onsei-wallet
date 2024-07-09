@@ -1,5 +1,6 @@
 import {
   Column,
+  EmptyList,
   Loader,
   Paragraph,
   PrimaryButton,
@@ -126,16 +127,21 @@ export default function ManageTokensScreen({ navigation }: Props) {
           showClear
         />
 
-        {loading && <Loader />}
+        {loading && (
+          <View style={{ alignItems: "center" }}>
+            <Loader />
+          </View>
+        )}
 
         {error && (
           <Paragraph style={{ textAlign: "center" }}>{error}</Paragraph>
         )}
 
         {!error && !loading && tokens.length === 0 && searchInput.value && (
-          <Paragraph style={{ textAlign: "center" }}>
-            No tokens matching the criteria
-          </Paragraph>
+          <EmptyList
+            title="No tokens found"
+            description="No tokens matching the criteria"
+          />
         )}
 
         <View style={{ flex: 1 }}>

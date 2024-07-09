@@ -107,7 +107,11 @@ export default function TransferSendingScreen({
     if (error) {
       return (
         <>
-          <ResultHeader success={false} description={error} />
+          <ResultHeader
+            type="Fail"
+            header="Something went wrong"
+            description={error}
+          />
           <TertiaryButton onPress={done} title="Close" />
         </>
       );
