@@ -30,7 +30,7 @@ import {
   ScanBarcode,
   Setting2,
 } from "iconsax-react-native";
-import React from "react";
+import React, { useMemo } from "react";
 import { Image, TouchableOpacity, View } from "react-native";
 import { TokensList } from "../tokens";
 
@@ -49,6 +49,10 @@ export default function Dashboard({ navigation }: DashboardProps) {
   const {
     settings: { node },
   } = useSettingsStore();
+  const requiresAction = useMemo(
+    () => activeAccount?.passphraseSkipped || !activeAccount?.addressLinked,
+    [activeAccount],
+  );
 
   function onReceive() {
     navigation.navigate("Your SEI address");
@@ -134,13 +138,27 @@ export default function Dashboard({ navigation }: DashboardProps) {
           style={{ flexDirection: "row", gap: 4 }}
         >
           <Row style={{ gap: 4 }}>
-            {activeAccount?.passphraseSkipped ? (
-              <NoBackupIcon />
-            ) : !activeAccount?.addressLinked ? (
-              <LinkIcon />
-            ) : (
-              <></>
+            {requiresAction && (
+              <View style={{ position: "relative" }}>
+                <View
+                  style={{
+                    position: "absolute",
+                    top: 2,
+                    left: 2,
+                    width: 14,
+                    height: 14,
+                    backgroundColor: Colors.text,
+                    borderRadius: 999,
+                  }}
+                ></View>
+                {activeAccount?.passphraseSkipped ? (
+                  <NoBackupIcon />
+                ) : (
+                  <LinkIcon />
+                )}
+              </View>
             )}
+
             <Paragraph
               style={{
                 color: Colors.text,
