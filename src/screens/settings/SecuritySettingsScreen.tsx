@@ -79,6 +79,7 @@ export default function SecuritySettingsScreen({
               <Biometrics
                 onSuccess={enableBiometrics}
                 onNotEnrolled={onBiometricsNotEnrolled}
+                onFail={() => setEnablingBiometrics(false)}
               />
             )}
           </View>

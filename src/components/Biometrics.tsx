@@ -7,12 +7,14 @@ export type BiometricsProps = {
   onSuccess: () => void;
   onNotEnrolled?: () => void;
   onCancel?: () => void;
+  onFail?: () => void;
 };
 
 export default function Biometrics({
   onSuccess,
   onNotEnrolled,
   onCancel,
+  onFail,
 }: BiometricsProps) {
   const { alert } = useModalStore();
   useEffect(() => {
@@ -39,6 +41,9 @@ export default function Biometrics({
         description:
           "Check your biometric settings and try again later in the security settings.",
       });
+      if (onFail) {
+        onFail();
+      }
     }
 
     biometrics();

@@ -9,6 +9,7 @@ import {
   ParamListBase,
   TabNavigationState,
 } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef } from "react";
 import { Animated, View } from "react-native";
 import BarItem from "./BarItem";
@@ -47,9 +48,20 @@ export default function Bar({
         width: "100%",
         justifyContent: "center",
         position: "absolute",
-        bottom: 34,
+        paddingBottom: 34,
+        bottom: 0,
       }}
     >
+      <LinearGradient
+        style={{
+          top: -20,
+          position: "absolute",
+          width: "100%",
+          height: 126,
+        }}
+        colors={["transparent", Colors.background]}
+        pointerEvents="none"
+      />
       <View
         style={{
           backgroundColor: Colors.background200,
