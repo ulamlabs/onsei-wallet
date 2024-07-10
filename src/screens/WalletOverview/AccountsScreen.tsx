@@ -43,7 +43,6 @@ export default function AccountsScreen({ navigation }: AccountsScreenProps) {
           bottom: Math.max(verticalScale(50), insets.bottom),
           width: "100%",
           left: Math.max(scale(16), insets.left),
-          paddingTop: 50,
         }}
       >
         <LinearGradient
@@ -51,8 +50,11 @@ export default function AccountsScreen({ navigation }: AccountsScreenProps) {
             position: "absolute",
             width: "100%",
             height: "150%",
+            marginTop: -50,
           }}
+          end={{ x: 0.5, y: 0.5 }}
           colors={["transparent", Colors.background]}
+          pointerEvents="none"
         />
         <SecondaryButton
           title="Create new wallet"

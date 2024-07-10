@@ -149,6 +149,7 @@ export default function ManageTokensScreen({ navigation }: Props) {
               zIndex: 1,
               elevation: 1,
             }}
+            pointerEvents="none"
             colors={[Colors.background, "transparent"]}
           />
           <FlatList

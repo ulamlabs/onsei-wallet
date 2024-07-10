@@ -93,7 +93,6 @@ export default function BaseButton({
         bottom: Math.max(verticalScale(50), insets.bottom),
         width: "100%",
         left: Math.max(scale(16), insets.left),
-        paddingTop: 50,
       }}
     >
       <LinearGradient
@@ -101,9 +100,11 @@ export default function BaseButton({
           bottom: 0,
           position: "absolute",
           width: "100%",
-          height: 100,
+          height: 90,
         }}
         colors={["transparent", Colors.background]}
+        end={{ x: 0.5, y: 0.5 }}
+        pointerEvents="none"
       />
       {content()}
     </View>
