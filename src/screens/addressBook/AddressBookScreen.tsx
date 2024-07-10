@@ -75,7 +75,7 @@ export default function AddressBook({ navigation }: Props) {
           />
         </Column>
       </DashboardHeader>
-      <SafeLayout style={{ paddingTop: 24, paddingBottom: 140 }}>
+      <SafeLayout style={{ paddingTop: 24, paddingBottom: 180 }}>
         <Column>
           {displayedAddresses.map((addressData) => (
             <AddressBookEntry

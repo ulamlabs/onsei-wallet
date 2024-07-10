@@ -42,12 +42,12 @@ export default function Bar({
   return (
     <Row
       style={{
-        backgroundColor: Colors.background,
-        padding: 20,
-        paddingBottom: 34,
+        backgroundColor: "transparent",
         alignItems: "center",
         width: "100%",
         justifyContent: "center",
+        position: "absolute",
+        bottom: 34,
       }}
     >
       <View

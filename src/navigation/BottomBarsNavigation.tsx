@@ -22,7 +22,6 @@ export default function BottomBarsNavigation() {
       initialRouteName="Wallet"
       tabBar={(props) => <Bar {...props} />}
       tabBarPosition="bottom"
-      // screenOptions={{ swipeEnabled: false }}
     >
       <Screen
         name="Wallet"

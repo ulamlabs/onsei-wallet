@@ -25,7 +25,7 @@ export default function Transactions() {
       <DashboardHeader>
         <DefaultHeaderTitle title="Transactions" />
       </DashboardHeader>
-      <SafeLayout style={{ paddingBottom: 65 }} refreshFn={refreshApp}>
+      <SafeLayout style={{ paddingBottom: 80 }} refreshFn={refreshApp}>
         <View>
           {isLoading ? (
             <Loader />
