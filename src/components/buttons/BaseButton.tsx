@@ -1,6 +1,9 @@
 import { Colors, FontSizes, FontWeights } from "@/styles";
+import { scale, verticalScale } from "@/utils";
+import { LinearGradient } from "expo-linear-gradient";
 import { Icon, IconProps } from "iconsax-react-native";
-import { Pressable, StyleProp, TextStyle, ViewStyle } from "react-native";
+import { Pressable, StyleProp, TextStyle, View, ViewStyle } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Loader from "../Loader";
 import { Text } from "../typography";
 
@@ -18,6 +21,7 @@ export type BaseButtonProps = {
   iconAllign?: "left" | "right";
   loading?: boolean;
   testID?: string;
+  elevate?: boolean;
 };
 
 export default function BaseButton({
@@ -34,8 +38,11 @@ export default function BaseButton({
   iconAllign = "left",
   loading = false,
   testID,
+  elevate = false,
 }: BaseButtonProps) {
-  return (
+  const insets = useSafeAreaInsets();
+
+  const content = () => (
     <Pressable
       testID={testID}
       disabled={disabled || loading}
@@ -77,5 +84,31 @@ export default function BaseButton({
         </>
       )}
     </Pressable>
+  );
+
+  return elevate ? (
+    <View
+      style={{
+        position: "absolute",
+        bottom: Math.max(verticalScale(50), insets.bottom),
+        width: "100%",
+        left: Math.max(scale(16), insets.left),
+      }}
+    >
+      <LinearGradient
+        style={{
+          bottom: 0,
+          position: "absolute",
+          width: "100%",
+          height: 90,
+        }}
+        colors={["transparent", Colors.background]}
+        end={{ x: 0.5, y: 0.5 }}
+        pointerEvents="none"
+      />
+      {content()}
+    </View>
+  ) : (
+    content()
   );
 }

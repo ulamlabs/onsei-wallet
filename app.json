@@ -5,7 +5,7 @@
     "version": "1.0.13",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -15,6 +15,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ulamlabs.seiwallet",
+      "userInterfaceStyle": "light",
       "config": {
         "usesNonExemptEncryption": false
       },
@@ -28,6 +29,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "userInterfaceStyle": "light",
       "package": "com.ulamlabs.seiwallet",
       "versionCode": 11
     },
@@ -67,7 +69,8 @@
         }
       ],
       "expo-localization",
-      "@config-plugins/detox"
+      "@config-plugins/detox",
+      ["./plugins/withDisableForcedDarkModeAndroid.js", {}]
     ]
   }
 }

@@ -10,6 +10,7 @@ describe("Displaying tokens", () => {
 
   it("Automatically displays native tokens and allows to hide them or show more", async () => {
     await expect(element(by.text("LLAMA")).atIndex(0)).toExist();
+    await element(by.id("safe-layout-scroll-view")).swipe("up", "fast");
     await element(by.text("Manage token list")).tap();
 
     await element(by.id("WMATIC-switch")).tap();
@@ -26,6 +27,7 @@ describe("Displaying tokens", () => {
 
   it("Does not display CW20 tokens but allows to fetch them by contract ID", async () => {
     await expect(element(by.text("MYTA"))).not.toExist();
+    await element(by.id("safe-layout-scroll-view")).swipe("up", "fast");
     await element(by.text("Manage token list")).tap();
     await element(by.id("input")).typeText(
       "sei1ctwaptjnwkx863sgsge4lq44rf0dkxr02px9z8vtptwsnj7w0cxqd6tyht",

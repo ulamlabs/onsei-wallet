@@ -96,7 +96,6 @@ export default function App() {
       tokenRegistryStore.init(),
       authStore.init(),
       addressStore.init(),
-      onboardingStore.init(),
     ]);
     setReady(true);
   }
@@ -175,7 +174,7 @@ export default function App() {
             {getContent()}
             <Modals />
             <Toasts />
-            {ready && onboardingStore.state === "finished" && (
+            {ready && hasAccounts && onboardingStore.state !== "onboarding" && (
               <NotificationsListener />
             )}
             <Web3WalletController />
