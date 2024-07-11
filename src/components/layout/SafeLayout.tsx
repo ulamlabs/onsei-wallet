@@ -1,6 +1,7 @@
 import { useToastStore } from "@/store";
 import { Colors } from "@/styles";
 import { scale, verticalScale } from "@/utils";
+import { useNavigation } from "@react-navigation/native";
 import React, { PropsWithChildren, useCallback, useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -40,6 +41,7 @@ export default function SafeLayout({
     paddingRight: Math.max(scale(16), insets.right),
   };
   const { error } = useToastStore();
+  const navigation = useNavigation();
 
   const onRefresh = useCallback(async () => {
     if (!refreshFn) {
@@ -72,7 +74,10 @@ export default function SafeLayout({
       ) : (
         <View style={[layoutStyle, style]}>
           <ScrollView
-            contentContainerStyle={{ flexGrow: 1 }}
+            contentContainerStyle={{
+              flexGrow: 1,
+              paddingBottom: navigation.getId && navigation.getId() ? 0 : 128,
+            }}
             keyboardShouldPersistTaps="handled"
             scrollEnabled={scrollEnabled}
             testID="safe-layout-scroll-view"
