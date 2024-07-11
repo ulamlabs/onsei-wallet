@@ -39,8 +39,8 @@ export default function AccountSettingsScreen({
 }: AccountSettingsProps) {
   const { accounts, deleteAccount, activeAccount } = useAccountsStore();
   const { ask } = useModalStore();
-  const account = accounts.find((account) => account.address === address)!;
-  const truncatedAddresses = `${account.address?.slice(0, 4)}(...), ${account.evmAddress?.slice(0, 4)}(...)`;
+  const account = accounts.find((account) => account.address === address);
+  const truncatedAddresses = `${account?.address?.slice(0, 4)}(...), ${account?.evmAddress?.slice(0, 4)}(...)`;
   const {
     settings: { node },
   } = useSettingsStore();
@@ -65,8 +65,8 @@ export default function AccountSettingsScreen({
       headerStyle: { textAlign: "left" },
     });
     if (yesno) {
-      clearTransactionsForAddress(account.address);
-      await deleteAccount(account.address);
+      clearTransactionsForAddress(account!.address);
+      await deleteAccount(account!.address);
       navigation.goBack();
     }
   }
@@ -98,7 +98,7 @@ export default function AccountSettingsScreen({
           </Row>
 
           <OptionGroup>
-            {account.passphraseSkipped ? (
+            {account?.passphraseSkipped ? (
               <Link
                 label="Recovery phrase"
                 icon={<NoBackupIcon />}
@@ -115,7 +115,7 @@ export default function AccountSettingsScreen({
                 askPin
               />
             )}
-            {!account.addressLinked && (
+            {!account?.addressLinked && (
               <Link
                 label="Link addresses"
                 icon={<LinkIcon />}
@@ -127,7 +127,7 @@ export default function AccountSettingsScreen({
           </OptionGroup>
 
           <Column style={{ marginTop: 32 }}>
-            {account.passphraseSkipped && (
+            {account?.passphraseSkipped && (
               <Row
                 style={{
                   ...infoBoxStyle,
@@ -143,7 +143,7 @@ export default function AccountSettingsScreen({
               </Row>
             )}
 
-            {!account.addressLinked && (
+            {!account?.addressLinked && (
               <Row
                 style={{
                   ...infoBoxStyle,
