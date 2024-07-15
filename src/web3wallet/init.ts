@@ -1,6 +1,6 @@
 import { Core } from "@walletconnect/core";
 import { ICore } from "@walletconnect/types";
-import { Web3Wallet, IWeb3Wallet } from "@walletconnect/web3wallet";
+import { IWeb3Wallet, Web3Wallet } from "@walletconnect/web3wallet";
 
 export let web3wallet: IWeb3Wallet;
 export let core: ICore;
@@ -13,8 +13,8 @@ export async function createWeb3Wallet() {
   web3wallet = await Web3Wallet.init({
     core,
     metadata: {
-      name: "SEI Wallet",
-      description: "SEI Wallet",
+      name: "Onsei Wallet",
+      description: "Onsei Wallet",
       url: "ulam.io",
       // TODO: add proper icon
       icons: ["https://avatars.githubusercontent.com/u/37784886"],

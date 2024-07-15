@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "sei-wallet",
-    "slug": "sei-wallet",
+    "name": "onsei wallet",
+    "slug": "onsei wallet",
     "version": "1.0.14",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,7 +14,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ulamlabs.seiwallet",
+      "bundleIdentifier": "com.ulamlabs.onseiwallet",
       "userInterfaceStyle": "light",
       "config": {
         "usesNonExemptEncryption": false
@@ -30,7 +30,7 @@
         "backgroundColor": "#ffffff"
       },
       "userInterfaceStyle": "light",
-      "package": "com.ulamlabs.seiwallet",
+      "package": "com.ulamlabs.onseiwallet",
       "versionCode": 12
     },
     "web": {
