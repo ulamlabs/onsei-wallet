@@ -14,7 +14,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ulamlabs.onseiwallet",
+      "bundleIdentifier": "com.ulamlabs.seiwallet",
       "userInterfaceStyle": "light",
       "config": {
         "usesNonExemptEncryption": false
@@ -30,7 +30,7 @@
         "backgroundColor": "#ffffff"
       },
       "userInterfaceStyle": "light",
-      "package": "com.ulamlabs.onseiwallet",
+      "package": "com.ulamlabs.seiwallet",
       "versionCode": 12
     },
     "web": {
