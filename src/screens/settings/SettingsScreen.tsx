@@ -70,7 +70,10 @@ export default function SettingsScreen() {
               label="Give us a Tip!"
               navigateTo="transferSelectToken"
               params={{
-                recipient: { address: WALLET_ADMIN_ADDRESS, name: APP_NAME },
+                recipient: {
+                  address: WALLET_ADMIN_ADDRESS,
+                  name: APP_NAME,
+                },
               }}
               icon={<WalletMoney size={22} color={Colors.text} />}
             />

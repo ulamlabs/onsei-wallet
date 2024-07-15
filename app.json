@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "sei-wallet",
-    "slug": "sei-wallet",
+    "name": "onsei wallet",
+    "slug": "onsei-wallet",
     "version": "1.0.14",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

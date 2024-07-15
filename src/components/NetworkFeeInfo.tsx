@@ -14,7 +14,7 @@ export default function NetworkFeeInfo() {
       description: (
         <Paragraph size="base" style={{ color: Colors.text }}>
           A network fee is a blockchain charge for processing and confirming
-          transactions. Our wallet is free to use.
+          transactions. Onsei Wallet is free to use.
         </Paragraph>
       ),
       icon: InfoCircle,

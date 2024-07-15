@@ -1,6 +1,6 @@
 import { Node } from "./types";
 
-export const APP_NAME = "SEI Wallet";
+export const APP_NAME = "onsei wallet";
 export const WALLET_ADMIN_ADDRESS =
   "sei1udjj8x82rqws7zcz9c6lv6efvhylv4yvhrlza6";
 

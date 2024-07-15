@@ -1,4 +1,4 @@
-# sei-wallet
+# onsei wallet
 
 # Getting Started
 

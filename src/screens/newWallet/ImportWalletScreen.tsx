@@ -120,8 +120,8 @@ export default function ImportWalletScreen({
             }}
             size="xs"
           >
-            Remember, SEI Wallet ensures your funds' security and cannot access
-            your wallet. You retain sole control over your funds.
+            Remember, Onsei Wallet ensures your funds' security and cannot
+            access your wallet. You retain sole control over your funds.
           </Paragraph>
         </Row>
       </Column>
