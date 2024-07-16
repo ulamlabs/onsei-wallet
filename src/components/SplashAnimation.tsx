@@ -1,8 +1,9 @@
 import { Colors } from "@/styles";
 import { useEffect, useRef } from "react";
-import { Animated, Dimensions, Easing } from "react-native";
+import { Animated, Dimensions, Easing, Image } from "react-native";
 
 const blob = require("../../assets/blob.png");
+const logo = require("../../assets/logo.png");
 
 type Props = {
   onFinish: () => void;
@@ -123,6 +124,19 @@ export default function SplashAnimation({ onFinish }: Props) {
           resizeMode="contain"
         />
       </Animated.View>
+      <Image
+        source={logo}
+        resizeMode="contain"
+        style={{
+          position: "absolute",
+          width: 164,
+          height: 66,
+          top: "50%",
+          left: "50%",
+          transform: [{ translateX: -82 }, { translateY: -33 }],
+          zIndex: 1,
+        }}
+      />
     </Animated.View>
   );
 }
