@@ -4,16 +4,28 @@ import {
   Paragraph,
   SafeLayoutBottom,
 } from "@/components";
-import { APP_NAME } from "@/const";
 import { AddWallet } from "@/screens/newWallet";
-import { Dimensions, View } from "react-native";
+import { Dimensions, Image, View } from "react-native";
+
+const logo = require("../../../assets/logo.png");
 
 export default function OnboardingWelcomeScreen() {
-  const { width } = Dimensions.get("window");
+  const { width, height } = Dimensions.get("window");
+
   return (
     <SafeLayoutBottom>
       <View>
-        <Headline>{APP_NAME}</Headline>
+        <Image
+          source={logo}
+          resizeMode="contain"
+          style={{
+            width: 164,
+            height: 66,
+            marginBottom: height > 750 ? 124 : 62,
+            marginHorizontal: "auto",
+          }}
+        />
+        <Headline>Welcome to Onsei Wallet</Headline>
 
         <Paragraph style={{ textAlign: "center" }}>
           To get started, create a new wallet or import one from a seed phrase.
