@@ -52,7 +52,9 @@ export default function Web3WalletController() {
         typeof url === "string"
           ? url.split("onseiwallet://")[1]
           : url?.url?.split("onseiwallet://")[1];
-      if (address) onConnect(address);
+      if (address) {
+        onConnect(address);
+      }
     }
   }
 
