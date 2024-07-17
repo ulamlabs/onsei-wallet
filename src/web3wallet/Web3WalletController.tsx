@@ -9,8 +9,8 @@ import { Colors, FontSizes, FontWeights } from "@/styles";
 import { getSdkError } from "@walletconnect/utils";
 import { Web3WalletTypes } from "@walletconnect/web3wallet";
 import { useEffect, useState } from "react";
-import { Image } from "react-native";
-import { createWeb3Wallet, web3wallet } from "./init";
+import { Image, Linking } from "react-native";
+import { createWeb3Wallet, onConnect, web3wallet } from "./init";
 import { WalletConnectSession } from "./types";
 import { disconnectApp, getNamespaces } from "./utils";
 
@@ -25,6 +25,8 @@ export default function Web3WalletController() {
 
   useEffect(() => {
     loadWeb3Wallet();
+
+    return () => Linking.removeAllListeners("url");
   }, []);
 
   useEffect(() => {
@@ -44,6 +46,21 @@ export default function Web3WalletController() {
     setupWalletListeners();
   }
 
+  function handleURL(url: string | { url: string } | null) {
+    if (url) {
+      const address =
+        typeof url === "string"
+          ? url.split("onseiwallet://")[1]
+          : url?.url?.split("onseiwallet://")[1];
+      if (address) onConnect(address);
+    }
+  }
+
+  const getInitialURL = async () => {
+    const initialUrl = await Linking.getInitialURL();
+    handleURL(initialUrl);
+  };
+
   function setupWalletListeners() {
     if (web3wallet) {
       web3wallet.on("session_proposal", (proposal) => {
@@ -57,6 +74,9 @@ export default function Web3WalletController() {
       web3wallet.on("session_delete", (session) => {
         disconnectApp(session.topic);
       });
+
+      Linking.addEventListener("url", handleURL);
+      getInitialURL();
     }
   }
 
