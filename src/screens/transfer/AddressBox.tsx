@@ -1,6 +1,6 @@
 import { Box, Text } from "@/components";
 import { SavedAddress } from "@/store";
-import { Colors, FontWeights } from "@/styles";
+import { Colors, FontSizes, FontWeights } from "@/styles";
 import { trimAddress } from "@/utils";
 import { Pressable, StyleProp, View, ViewStyle } from "react-native";
 
@@ -24,8 +24,12 @@ export default function AddressBox({
     >
       <Box style={{ backgroundColor: Colors.tokenBoxBackground }}>
         <View>
-          <Text style={{ color: Colors.text100 }}>{address.name}</Text>
-          <Text style={{ fontFamily: FontWeights.bold }}>
+          <Text
+            style={{ fontFamily: FontWeights.bold, fontSize: FontSizes.base }}
+          >
+            {address.name}
+          </Text>
+          <Text style={{ color: Colors.text100 }}>
             {trimAddress(address.address)}
           </Text>
         </View>

@@ -7,6 +7,7 @@ import RadioMarker from "./RadioMarker";
 import Switch from "./Switch";
 import SwitchWithLabel from "./SwitchWithLabel";
 import TextInput from "./TextInput";
+import TransactionDetailsOption from "./TransactionDetailsOptions";
 
 export {
   Link,
@@ -18,4 +19,5 @@ export {
   Switch,
   SwitchWithLabel,
   TextInput,
+  TransactionDetailsOption,
 };

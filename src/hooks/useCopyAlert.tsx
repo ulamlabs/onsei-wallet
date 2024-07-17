@@ -1,5 +1,5 @@
 import { useModalStore } from "@/store";
-import { Colors, FontWeights } from "@/styles";
+import { Colors, FontSizes, FontWeights } from "@/styles";
 import { SecuritySafe } from "iconsax-react-native";
 import React from "react";
 import { Text } from "react-native";
@@ -30,7 +30,8 @@ export function useCopyAlert() {
       no: "Cancel",
       primary: "yes",
       icon: SecuritySafe,
-      headerStyle: { textAlign: "left" },
+      headerStyle: { textAlign: "left", fontSize: FontSizes.xl },
+      noTopBar: true,
     });
     return yesno;
   };

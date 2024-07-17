@@ -3,7 +3,7 @@ import { PropsWithChildren, ReactElement } from "react";
 import { StyleProp, TextStyle, View } from "react-native";
 import { Text } from "../typography";
 
-type OptionProps = PropsWithChildren & {
+export type OptionProps = PropsWithChildren & {
   label?: string | JSX.Element;
   labelStyle?: StyleProp<TextStyle>;
   icon?: ReactElement;

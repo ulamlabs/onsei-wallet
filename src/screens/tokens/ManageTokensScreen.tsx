@@ -156,7 +156,7 @@ export default function ManageTokensScreen({ navigation }: Props) {
               elevation: 1,
             }}
             pointerEvents="none"
-            colors={[Colors.background, "transparent"]}
+            colors={[Colors.background, Colors.transparent]}
           />
           <FlatList
             data={tokens}

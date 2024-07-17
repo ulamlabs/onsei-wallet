@@ -4,7 +4,7 @@ import { PropsWithChildren, useMemo } from "react";
 import { View } from "react-native";
 import { DangerButton, PrimaryButton, TertiaryButton } from "../buttons";
 import { Column } from "../layout";
-import { Paragraph } from "../typography";
+import { Headline, Paragraph } from "../typography";
 import Modal from "./Modal";
 import ModalHeadline from "./ModalHeadline";
 
@@ -31,12 +31,24 @@ export default function ModalQuestion({ isVisible, question }: ModalProps) {
 
   return (
     <Modal isVisible={isVisible}>
-      <Column style={{ marginBottom: 24 }}>
-        <ModalHeadline
-          title={question.options.title}
-          onClose={onSecondaryPress}
-        />
-        {Icon && <Icon color={Colors.info} size={40} />}
+      <Column style={{ marginBottom: 24, gap: 0 }}>
+        {question.options.noTopBar ? (
+          <>
+            {Icon && <Icon color={Colors.info} size={40} />}
+            <Headline style={{ textAlign: "left", marginTop: 24 }}>
+              {question.options.title}
+            </Headline>
+          </>
+        ) : (
+          <>
+            <ModalHeadline
+              title={question.options.title}
+              onClose={onSecondaryPress}
+            />
+            {Icon && <Icon color={Colors.info} size={40} />}
+          </>
+        )}
+
         {typeof question.options.question === "string" ? (
           <Paragraph
             style={{ textAlign: "center", marginVertical: 20 }}
@@ -48,9 +60,17 @@ export default function ModalQuestion({ isVisible, question }: ModalProps) {
           <View>{question.options.question}</View>
         )}
         {question.options.danger ? (
-          <DangerButton title={primaryTitle} onPress={onPrimaryPress} />
+          <DangerButton
+            style={{ marginTop: 24 }}
+            title={primaryTitle}
+            onPress={onPrimaryPress}
+          />
         ) : (
-          <PrimaryButton title={primaryTitle} onPress={onPrimaryPress} />
+          <PrimaryButton
+            style={{ marginTop: 24 }}
+            title={primaryTitle}
+            onPress={onPrimaryPress}
+          />
         )}
         <TertiaryButton title={secondaryTitle} onPress={onSecondaryPress} />
       </Column>

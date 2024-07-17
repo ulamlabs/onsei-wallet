@@ -1,9 +1,11 @@
 import { SerializedTx } from "@/modules/transactions";
+import ConnectWalletScreen from "@/screens/ConnectWallet";
 import MnemonicScreen from "@/screens/MnemonicScreen";
 import ReceiveAssets from "@/screens/ReceiveAssets";
 import AccountSettingsScreen from "@/screens/WalletOverview/AccountSettingsScreen";
 import AccountsScreen from "@/screens/WalletOverview/AccountsScreen";
 import EditAccountNameScreen from "@/screens/WalletOverview/EditAccountNameScreen";
+import LinkAddressesScreen from "@/screens/WalletOverview/LinkAddressesScreen";
 import AddOrEditAddress from "@/screens/addressBook/AddOrEditAddress";
 import AddressDetailsScreen from "@/screens/addressBook/AddressDetailsScreen";
 import TransactionsWithAddress from "@/screens/addressBook/TransactionsWithAddress";
@@ -19,6 +21,7 @@ import {
   ImportWalletScreen,
 } from "@/screens/newWallet";
 import SetWalletNameScreen from "@/screens/newWallet/SetWalletNameScreen";
+import ConnectedAppsScreen from "@/screens/settings/ConnectedAppsScreen";
 import NodeSettingsScreen from "@/screens/settings/NodeSettingsScreen";
 import ResetAppScreen from "@/screens/settings/ResetAppScreen";
 import SecuritySettingsScreen from "@/screens/settings/SecuritySettingsScreen";
@@ -44,12 +47,10 @@ import React from "react";
 import BottomBarsNavigation from "./BottomBarsNavigation";
 import { navigatorScreenOptions } from "./const";
 import CancelHeaderRight from "./header/CancelHeaderRight";
+import DefaultHeaderLeft from "./header/DefaultHeaderLeft";
 import DefaultHeaderTitle from "./header/DefaultHeaderTitle";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
 import SettingsHeaderRight from "./header/SettingsHeaderRight";
-import ConnectWalletScreen from "@/screens/ConnectWallet";
-import ConnectedAppsScreen from "@/screens/settings/ConnectedAppsScreen";
-import LinkAddressesScreen from "@/screens/WalletOverview/LinkAddressesScreen";
 
 export type Recipient = {
   address: string;
@@ -124,6 +125,7 @@ export default function HomeNavigation() {
       screenOptions={{
         ...navigatorScreenOptions,
         headerTitle: (props) => <DefaultHeaderTitle title={props.children} />,
+        headerLeft: () => <DefaultHeaderLeft />,
       }}
     >
       <Screen

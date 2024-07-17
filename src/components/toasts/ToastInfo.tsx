@@ -12,7 +12,13 @@ export default function ToastInfo({
     <Toast
       toast={toast}
       duration={duration}
-      icon={<InfoCircle size={18} color={Colors.toastInfoText} />}
+      icon={
+        <InfoCircle
+          size={18}
+          color={Colors.toastInfoText}
+          style={{ transform: [{ rotate: "180deg" }] }}
+        />
+      }
     >
       {description}
     </Toast>
