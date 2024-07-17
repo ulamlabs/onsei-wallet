@@ -25,6 +25,7 @@ export default function Web3WalletController() {
 
   useEffect(() => {
     loadWeb3Wallet();
+    Linking.addEventListener("url", handleURL);
 
     return () => Linking.removeAllListeners("url");
   }, []);
@@ -77,7 +78,6 @@ export default function Web3WalletController() {
         disconnectApp(session.topic);
       });
 
-      Linking.addEventListener("url", handleURL);
       getInitialURL();
     }
   }
