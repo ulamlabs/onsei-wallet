@@ -19,15 +19,22 @@ export default function NetworkFeeInfo() {
       ),
       icon: InfoCircle,
       ok: "Got it",
+      iconStyle: { transform: [{ rotate: "180deg" }] },
     });
   }
 
   return (
     <TouchableOpacity onPress={showFeeInfo}>
       <Row style={{ gap: 8 }}>
-        <Text style={{ fontSize: FontSizes.base }}>Network fee</Text>
+        <Text style={{ fontSize: FontSizes.base, color: Colors.text100 }}>
+          Network fee
+        </Text>
 
-        <InfoCircle size={16} color={Colors.text} />
+        <InfoCircle
+          size={18}
+          color={Colors.text100}
+          style={{ transform: [{ rotate: "180deg" }] }}
+        />
       </Row>
     </TouchableOpacity>
   );

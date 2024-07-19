@@ -53,7 +53,7 @@ export default function AccountsScreen({ navigation }: AccountsScreenProps) {
             marginTop: -50,
           }}
           end={{ x: 0.5, y: 0.5 }}
-          colors={["transparent", Colors.background]}
+          colors={[Colors.transparent, Colors.background]}
           pointerEvents="none"
         />
         <SecondaryButton

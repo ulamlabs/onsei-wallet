@@ -102,7 +102,7 @@ export default function BaseButton({
           width: "100%",
           height: 90,
         }}
-        colors={["transparent", Colors.background]}
+        colors={[Colors.transparent, Colors.background]}
         end={{ x: 0.5, y: 0.5 }}
         pointerEvents="none"
       />

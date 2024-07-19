@@ -8,23 +8,24 @@ import {
   SafeLayout,
   TertiaryButton,
   Text,
+  TransactionDetailsOption,
 } from "@/components";
 import { NETWORK_NAMES } from "@/const";
+import { deserializeTxn } from "@/modules/transactions/utils";
 import { useAccountsStore, useSettingsStore, useTokensStore } from "@/store";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { calculateTokenUsdBalance, formatAmount, trimAddress } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { ExportSquare } from "iconsax-react-native";
 import { useMemo } from "react";
 import { Linking } from "react-native";
-import { ExportSquare } from "iconsax-react-native";
 import {
   getKnownAddress,
   getSentOrReceived,
   getTokenFromTxn,
   getTxnDate,
 } from "./utils";
-import { deserializeTxn } from "@/modules/transactions/utils";
 
 type Props = NativeStackScreenProps<NavigatorParamsList, "Transaction details">;
 
@@ -109,7 +110,7 @@ export default function TransactionDetails({
         )}
 
         <OptionGroup>
-          <Option label="Status">
+          <TransactionDetailsOption label="Status">
             <Text
               style={{
                 fontSize: FontSizes.base,
@@ -119,15 +120,15 @@ export default function TransactionDetails({
             >
               {txn.status === "success" ? "Completed" : "Failed"}
             </Text>
-          </Option>
-          <Option label="Date">
+          </TransactionDetailsOption>
+          <TransactionDetailsOption label="Date">
             <Text style={{ fontSize: FontSizes.base }}>{getTxnDate(txn)}</Text>
-          </Option>
-          <Option label="Transaction ID">
+          </TransactionDetailsOption>
+          <TransactionDetailsOption label="Transaction ID">
             <Text style={{ fontSize: FontSizes.base }}>
               {trimAddress(txn.hash)}
             </Text>
-          </Option>
+          </TransactionDetailsOption>
           {txn.fee ? (
             <Option label={<NetworkFeeInfo />}>
               <Text style={{ fontSize: FontSizes.base }}>
@@ -138,9 +139,9 @@ export default function TransactionDetails({
             <></>
           )}
           {txn.memo ? (
-            <Option label="Memo">
+            <TransactionDetailsOption label="Memo">
               <Text style={{ fontSize: FontSizes.base }}>{txn.memo}</Text>
-            </Option>
+            </TransactionDetailsOption>
           ) : (
             <></>
           )}

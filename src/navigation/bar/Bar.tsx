@@ -59,7 +59,7 @@ export default function Bar({
           width: "100%",
           height: 126,
         }}
-        colors={["transparent", Colors.background]}
+        colors={[Colors.transparent, Colors.background]}
         pointerEvents="none"
       />
       <View

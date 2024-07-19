@@ -1,6 +1,6 @@
 import { Icon } from "iconsax-react-native";
 import { ReactElement } from "react";
-import { StyleProp, TextStyle } from "react-native";
+import { StyleProp, TextStyle, ViewStyle } from "react-native";
 import { create } from "zustand";
 
 export type AlertOptions = {
@@ -10,6 +10,7 @@ export type AlertOptions = {
   icon?: Icon;
   useHeadline?: boolean;
   hideOk?: boolean;
+  iconStyle?: StyleProp<ViewStyle>;
 };
 
 export type AskOptions = {
@@ -22,6 +23,7 @@ export type AskOptions = {
   danger?: boolean;
   headerStyle?: StyleProp<TextStyle>;
   showCloseButton?: boolean;
+  noTopBar?: boolean;
 };
 
 export type Question = {

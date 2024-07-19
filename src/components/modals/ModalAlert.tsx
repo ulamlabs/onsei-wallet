@@ -18,7 +18,9 @@ export default function ModalAlert({ isVisible, alert }: ModalProps) {
   return (
     <Modal isVisible={isVisible} onBackdropPress={() => alert.resolve()}>
       <Column>
-        {Icon && <Icon color={Colors.info} size={40} />}
+        {Icon && (
+          <Icon color={Colors.info} size={40} style={alert.options.iconStyle} />
+        )}
         {alert.options.title &&
           (alert.options.useHeadline ? (
             <ModalHeadline

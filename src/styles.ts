@@ -13,7 +13,7 @@ export const Colors = {
   text500: "#3D3D3D",
   inputBorderColor: "#232323",
   activeInputBorderColor: "#D3D3D3",
-  info: "#7983A7",
+  info: "#9580D0",
   success: "#3E925A",
   success100: "#52C97B",
   success200: "#171F1A",
@@ -47,6 +47,7 @@ export const Colors = {
   tokenIdBox: "#222",
   disabledButtonText: "#8A8A8A",
   disabledPrimaryButtonBackground: "#505050",
+  transparent: "rgba(18,18,18,0)",
 };
 
 export const FontSizes = {
