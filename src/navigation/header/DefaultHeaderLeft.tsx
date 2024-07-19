@@ -5,7 +5,7 @@ import { Pressable } from "react-native";
 export default function DefaultHeaderLeft() {
   const navigation = useNavigation();
   return (
-    <Pressable onPress={() => navigation.goBack()} style={{ marginRight: 24 }}>
+    <Pressable onPress={() => navigation.goBack()} style={{ marginRight: 14 }}>
       <ArrowLeft />
     </Pressable>
   );
