@@ -62,7 +62,10 @@ export default function SafeLayout({
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={[{ backgroundColor: Colors.background }, containerStyle]}
+      style={[
+        { backgroundColor: Colors.background, minHeight: "100%", flexGrow: 1 },
+        containerStyle,
+      ]}
       keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 50}
     >
       {staticView ? (
