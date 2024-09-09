@@ -9,12 +9,14 @@ import {
 import { deliverTxResponseToTxResponse, parseTx } from "@/modules/transactions";
 import { storeNewTransaction } from "@/modules/transactions/storage";
 import { transferToken } from "@/services/cosmos/tx";
+import { getEvmClient } from "@/services/evm";
 import { useAccountsStore, useTokensStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { formatAmount, resetNavigationStack } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
+import { isAddress } from "viem";
 
 type TransferSendingScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -25,7 +27,7 @@ export default function TransferSendingScreen({
   navigation,
   route,
 }: TransferSendingScreenProps) {
-  const { activeAccount } = useAccountsStore();
+  const { activeAccount, getMnemonic } = useAccountsStore();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
@@ -50,6 +52,16 @@ export default function TransferSendingScreen({
 
   async function send() {
     try {
+      if (isAddress(transfer.recipient.address) && transfer.evmTransaction) {
+        const evmClient = await getEvmClient(
+          getMnemonic(activeAccount?.address!),
+        );
+        const { walletClient } = evmClient;
+        const hash = await walletClient.sendRawTransaction({
+          serializedTransaction: transfer.evmTransaction,
+        });
+        return;
+      }
       const tx = await transferToken({
         ...transfer,
         token,

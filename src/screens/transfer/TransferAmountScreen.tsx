@@ -15,7 +15,8 @@ import {
   estimateTransferGas,
 } from "@/services/cosmos/tx";
 import { getSigningClientAndSender } from "@/services/cosmos/tx/getSigningClientAndSender";
-import { useTokensStore } from "@/store";
+import { simulateLegacyTx } from "@/services/evm";
+import { useAccountsStore, useTokensStore } from "@/store";
 import { Colors, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { checkFundsForFee, parseAmount } from "@/utils";
@@ -23,6 +24,7 @@ import { formatAmount } from "@/utils/formatAmount";
 import { SigningStargateClient, StdFee } from "@cosmjs/stargate";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useMemo, useState } from "react";
+import { isAddress } from "viem";
 import TransferAmount from "./TransferAmount";
 
 type TransferAmountScreenProps = NativeStackScreenProps<
@@ -47,6 +49,8 @@ export default function TransferAmountScreen({
   const [signingClientAndSender, setSigningClientAndSender] = useState<
     [SigningStargateClient, string] | undefined
   >(undefined);
+  const { getMnemonic, activeAccount } = useAccountsStore();
+  const [evmTransaction, setEvmTransaction] = useState<`0x${string}`>(`0x`);
 
   const token = useMemo(() => tokenMap.get(tokenId)!, [tokenId, tokenMap]);
 
@@ -123,6 +127,7 @@ export default function TransferAmountScreen({
       intAmount: intAmount.toString(),
       memo: memoInput.value,
       fee,
+      evmTransaction,
     });
   }
 
@@ -192,6 +197,17 @@ export default function TransferAmountScreen({
 
   async function feeEstimation(amount: bigint = intAmount) {
     try {
+      if (isAddress(recipient.address)) {
+        const simulation = await simulateLegacyTx(
+          getMnemonic(activeAccount?.address!),
+          recipient.address,
+          intAmount,
+        );
+
+        setFee(simulation.stdFee);
+        setEvmTransaction(simulation.serializedTransaction);
+        return simulation.stdFee;
+      }
       const gas = await estimateTransferGas(
         recipient.address,
         token,

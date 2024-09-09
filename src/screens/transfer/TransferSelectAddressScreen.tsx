@@ -20,6 +20,7 @@ import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
 import { Scan, TickCircle } from "iconsax-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { SectionList, View } from "react-native";
+import { isAddress } from "viem";
 import AddressBox from "./AddressBox";
 
 type TransferSelectAddressScreenProps = NativeStackScreenProps<
@@ -66,7 +67,10 @@ export default function TransferSelectAddressScreen({
   }, [route.params?.address]);
 
   const typedAddress = useMemo(() => {
-    if (isValidSeiCosmosAddress(searchInput.value)) {
+    if (
+      isValidSeiCosmosAddress(searchInput.value) ||
+      isAddress(searchInput.value)
+    ) {
       return searchInput.value;
     }
     return "";
@@ -87,7 +91,7 @@ export default function TransferSelectAddressScreen({
   }
 
   function validateTypedAddress() {
-    if (isValidSeiCosmosAddress(typedAddress)) {
+    if (isValidSeiCosmosAddress(typedAddress) || isAddress(typedAddress)) {
       select(typedAddress);
     } else {
       setIsInvalidAddress(true);
