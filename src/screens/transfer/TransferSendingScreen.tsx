@@ -52,7 +52,11 @@ export default function TransferSendingScreen({
 
   async function send() {
     try {
-      if (isAddress(transfer.recipient.address) && transfer.evmTransaction) {
+      if (
+        isAddress(transfer.recipient.address) &&
+        transfer.evmTransaction !== "0x" &&
+        transfer.evmTransaction
+      ) {
         const evmClient = await getEvmClient(
           getMnemonic(activeAccount?.address!),
         );

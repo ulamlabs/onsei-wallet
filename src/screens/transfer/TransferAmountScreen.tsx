@@ -15,7 +15,7 @@ import {
   estimateTransferGas,
 } from "@/services/cosmos/tx";
 import { getSigningClientAndSender } from "@/services/cosmos/tx/getSigningClientAndSender";
-import { simulateLegacyTx } from "@/services/evm";
+import { getSeiAddress, simulateLegacyTx } from "@/services/evm";
 import { useAccountsStore, useTokensStore } from "@/store";
 import { Colors, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
@@ -51,9 +51,9 @@ export default function TransferAmountScreen({
   >(undefined);
   const { getMnemonic, activeAccount } = useAccountsStore();
   const [evmTransaction, setEvmTransaction] = useState<`0x${string}`>(`0x`);
+  const [recipientAddress, setRecipientAddress] = useState(recipient.address);
 
   const token = useMemo(() => tokenMap.get(tokenId)!, [tokenId, tokenMap]);
-
   useEffect(() => {
     getSigningClientAndSender()
       .then((data) => {
@@ -123,7 +123,7 @@ export default function TransferAmountScreen({
   function goToSummary() {
     navigation.navigate("transferSummary", {
       tokenId,
-      recipient,
+      recipient: { ...recipient, address: recipientAddress },
       intAmount: intAmount.toString(),
       memo: memoInput.value,
       fee,
@@ -196,12 +196,15 @@ export default function TransferAmountScreen({
   }
 
   async function feeEstimation(amount: bigint = intAmount) {
+    const hasSeiAddress = await getSeiAddress(recipient.address);
+    if (hasSeiAddress) setRecipientAddress(hasSeiAddress);
     try {
-      if (isAddress(recipient.address)) {
+      if (!hasSeiAddress) {
         const simulation = await simulateLegacyTx(
           getMnemonic(activeAccount?.address!),
-          recipient.address,
+          recipient.address as `0x${string}`,
           intAmount,
+          token,
         );
 
         setFee(simulation.stdFee);
@@ -209,7 +212,7 @@ export default function TransferAmountScreen({
         return simulation.stdFee;
       }
       const gas = await estimateTransferGas(
-        recipient.address,
+        isAddress(recipient.address) ? hasSeiAddress : recipient.address,
         token,
         amount,
         signingClientAndSender || undefined,

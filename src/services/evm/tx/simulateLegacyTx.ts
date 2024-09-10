@@ -1,3 +1,4 @@
+import { CosmTokenWithBalance } from "@/services/cosmos";
 import { StdFee } from "@cosmjs/stargate";
 import { getEvmClient } from "../utils";
 
@@ -5,9 +6,11 @@ export async function simulateLegacyTx(
   mnemonic: string,
   receiver: `0x${string}`,
   amount: bigint,
+  token: CosmTokenWithBalance,
 ) {
   const evmClient = await getEvmClient(mnemonic);
   const { account, walletClient } = evmClient;
+
   const request = await walletClient.prepareTransactionRequest({
     account,
     to: receiver,

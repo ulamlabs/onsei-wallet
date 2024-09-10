@@ -7,7 +7,7 @@ import {
 } from "@cosmjs/crypto";
 import { createWalletClient, http, publicActions } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { seiTestnet } from "viem/chains";
+import { sei } from "viem/chains";
 
 export async function getPrivateKeyFromMnemonic(mnemonic: string) {
   // Ensure the mnemonic is a valid English Mnemonic
@@ -34,7 +34,7 @@ export async function getEvmClient(mnemonic: string) {
 
   const walletClient = createWalletClient({
     account,
-    chain: seiTestnet,
+    chain: sei,
     transport: http(),
   }).extend(publicActions);
   return { walletClient, account };
