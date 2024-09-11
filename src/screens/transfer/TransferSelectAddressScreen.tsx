@@ -139,7 +139,9 @@ export default function TransferSelectAddressScreen({
         {typedAddress && !sameAddressError && (
           <Row style={{ justifyContent: "flex-start" }}>
             <TickCircle variant="Bold" color={Colors.success} />
-            <Text style={{ color: Colors.success }}>Correct SEI address</Text>
+            <Text style={{ color: Colors.success }}>
+              Correct {isAddress(typedAddress) ? "EVM" : "SEI"} address
+            </Text>
           </Row>
         )}
 

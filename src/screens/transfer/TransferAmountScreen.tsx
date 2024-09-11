@@ -15,7 +15,7 @@ import {
   estimateTransferGas,
 } from "@/services/cosmos/tx";
 import { getSigningClientAndSender } from "@/services/cosmos/tx/getSigningClientAndSender";
-import { getSeiAddress, simulateLegacyTx } from "@/services/evm";
+import { getSeiAddress, simulateEvmTx } from "@/services/evm";
 import { useAccountsStore, useTokensStore } from "@/store";
 import { Colors, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
@@ -200,14 +200,18 @@ export default function TransferAmountScreen({
     if (hasSeiAddress) setRecipientAddress(hasSeiAddress);
     try {
       if (!hasSeiAddress) {
-        const simulation = await simulateLegacyTx(
+        const simulation = await simulateEvmTx(
           getMnemonic(activeAccount?.address!),
           recipient.address as `0x${string}`,
           intAmount,
           token,
+          decimalAmount,
         );
 
         setFee(simulation.stdFee);
+        if (!simulation.serializedTransaction) {
+          return simulation.stdFee;
+        }
         setEvmTransaction(simulation.serializedTransaction);
         return simulation.stdFee;
       }

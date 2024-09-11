@@ -12,8 +12,6 @@ import {
   Text,
 } from "@/components";
 import DashboardHeader from "@/navigation/header/DashboardHeader";
-import { getPrivateKeyFromMnemonic } from "@/services/evm";
-import { EVM_RPC_MAIN } from "@/services/evm/consts";
 import {
   useAccountsStore,
   useSettingsStore,
@@ -24,7 +22,6 @@ import { Colors, FontSizes, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { calculateTotalBalance } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ethers } from "ethers";
 import {
   ArrowDown,
   ArrowDown2,
@@ -71,48 +68,6 @@ export default function Dashboard({ navigation }: DashboardProps) {
     await refreshRegistryCache();
     updateBalances();
   }
-
-  const test = async () => {
-    try {
-      // const evmClient = await getEvmClient(
-      //   getMnemonic(activeAccount?.address!),
-      // );
-      // const { account, walletClient } = evmClient;
-      // const result = await walletClient.simulateContract({
-      //   address: "0x58b11B14fCE0be4781EA2992D7Ca3AF3B960Bc3A",
-      //   abi: ,
-      //   functionName: "transferFrom",
-      //   account,
-      //   args: [
-      //     account.address,
-      //     "0x1C2257f39c20dCF77EFB79AA06467d8ed4DB46e4",
-      //     10000n,
-      //   ],
-      // });
-      // console.log(result);
-      const privateKey = await getPrivateKeyFromMnemonic(
-        getMnemonic(activeAccount?.address!),
-      );
-      const evmRpcEndpoint = EVM_RPC_MAIN;
-      const provider = new ethers.JsonRpcProvider(evmRpcEndpoint);
-      const signer = new ethers.Wallet(privateKey, provider);
-      const contractAddress = "0x613cb5b7a8ffd4304161f30fba46ce4284c25e21";
-      const contract = new ethers.Contract(
-        contractAddress,
-        ["function transfer(address recipient, uint256 amount) returns (bool)"],
-        signer,
-      );
-      const tx = await contract.transfer(
-        "0x1C2257f39c20dCF77EFB79AA06467d8ed4DB46e4",
-        1,
-      );
-      console.log(tx);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  test();
 
   function render() {
     const hasTokensWithoutPrice = tokens.some((token) => !token.price);
