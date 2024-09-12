@@ -10,7 +10,8 @@ import { deliverTxResponseToTxResponse, parseTx } from "@/modules/transactions";
 import { storeNewTransaction } from "@/modules/transactions/storage";
 import { transferToken } from "@/services/cosmos/tx";
 import { getEvmClient } from "@/services/evm";
-import { useAccountsStore, useTokensStore } from "@/store";
+import { sendEvmTx } from "@/services/evm/tx";
+import { useAccountsStore, useSettingsStore, useTokensStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { formatAmount, resetNavigationStack } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -31,6 +32,9 @@ export default function TransferSendingScreen({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
+  const {
+    settings: { node },
+  } = useSettingsStore();
 
   const transfer = route.params;
 
@@ -52,18 +56,35 @@ export default function TransferSendingScreen({
 
   async function send() {
     try {
+      const evmClient = await getEvmClient(
+        getMnemonic(activeAccount?.address!),
+        node === "TestNet",
+      );
+      const { walletClient } = evmClient;
+      if (transfer.evmTxData?.pointerContract !== "0x") {
+        const { pointerContract, privateKey, tokenAmount } =
+          transfer.evmTxData!;
+        const tx = await sendEvmTx(
+          pointerContract,
+          privateKey,
+          transfer.recipient.address as `0x${string}`,
+          BigInt(tokenAmount),
+        );
+        const transaction = await walletClient.getTransaction({
+          hash: tx.hash,
+        });
+        console.log(transaction);
+      }
       if (
         isAddress(transfer.recipient.address) &&
         transfer.evmTransaction !== "0x" &&
         transfer.evmTransaction
       ) {
-        const evmClient = await getEvmClient(
-          getMnemonic(activeAccount?.address!),
-        );
-        const { walletClient } = evmClient;
         const hash = await walletClient.sendRawTransaction({
           serializedTransaction: transfer.evmTransaction,
         });
+        const transaction = await walletClient.getTransaction({ hash });
+        console.log(transaction);
         return;
       }
       const tx = await transferToken({

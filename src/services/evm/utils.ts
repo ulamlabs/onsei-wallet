@@ -7,7 +7,7 @@ import {
 } from "@cosmjs/crypto";
 import { createWalletClient, http, publicActions } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { sei } from "viem/chains";
+import { sei, seiTestnet } from "viem/chains";
 
 export async function getPrivateKeyFromMnemonic(mnemonic: string) {
   // Ensure the mnemonic is a valid English Mnemonic
@@ -28,13 +28,12 @@ export async function getPrivateKeyFromMnemonic(mnemonic: string) {
   return ("0x" + Buffer.from(privkey).toString("hex")) as `0x${string}`;
 }
 
-export async function getEvmClient(mnemonic: string) {
+export async function getEvmClient(mnemonic: string, testnet?: boolean) {
   const privateKey = await getPrivateKeyFromMnemonic(mnemonic);
   const account = privateKeyToAccount(privateKey);
-
   const walletClient = createWalletClient({
     account,
-    chain: sei,
+    chain: testnet ? seiTestnet : sei,
     transport: http(),
   }).extend(publicActions);
   return { walletClient, account };

@@ -15,7 +15,8 @@ import {
   estimateTransferGas,
 } from "@/services/cosmos/tx";
 import { getSigningClientAndSender } from "@/services/cosmos/tx/getSigningClientAndSender";
-import { getSeiAddress, simulateEvmTx } from "@/services/evm";
+import { getSeiAddress } from "@/services/evm";
+import { simulateEvmTx } from "@/services/evm/tx";
 import { useAccountsStore, useTokensStore } from "@/store";
 import { Colors, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
@@ -52,6 +53,15 @@ export default function TransferAmountScreen({
   const { getMnemonic, activeAccount } = useAccountsStore();
   const [evmTransaction, setEvmTransaction] = useState<`0x${string}`>(`0x`);
   const [recipientAddress, setRecipientAddress] = useState(recipient.address);
+  const [evmTxData, setEvmTxData] = useState<{
+    tokenAmount: string;
+    privateKey: `0x${string}`;
+    pointerContract: `0x${string}`;
+  }>({
+    tokenAmount: "",
+    privateKey: `0x`,
+    pointerContract: `0x`,
+  });
 
   const token = useMemo(() => tokenMap.get(tokenId)!, [tokenId, tokenMap]);
   useEffect(() => {
@@ -128,6 +138,7 @@ export default function TransferAmountScreen({
       memo: memoInput.value,
       fee,
       evmTransaction,
+      evmTxData,
     });
   }
 
@@ -210,6 +221,7 @@ export default function TransferAmountScreen({
 
         setFee(simulation.stdFee);
         if (!simulation.serializedTransaction) {
+          setEvmTxData(simulation.dataForTx);
           return simulation.stdFee;
         }
         setEvmTransaction(simulation.serializedTransaction);
@@ -226,6 +238,7 @@ export default function TransferAmountScreen({
       setFee(estimatedFee);
       return estimatedFee;
     } catch (error) {
+      console.log(error);
       setEstimationFailed(true);
     } finally {
       setLoadingFee(false);
