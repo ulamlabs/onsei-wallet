@@ -5,6 +5,7 @@ import {
   Slip10Curve,
   stringToPath,
 } from "@cosmjs/crypto";
+import { ethers } from "ethers";
 import { createWalletClient, http, publicActions } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { sei, seiTestnet } from "viem/chains";
@@ -37,4 +38,14 @@ export async function getEvmClient(mnemonic: string, testnet?: boolean) {
     transport: http(),
   }).extend(publicActions);
   return { walletClient, account };
+}
+
+export function dataToMemo(data: string) {
+  if (data.length < 138) {
+    return ethers.toUtf8String(data);
+  }
+
+  const hexMemo = data.substring(138);
+
+  return ethers.toUtf8String("0x" + hexMemo);
 }

@@ -210,13 +210,14 @@ export default function TransferAmountScreen({
     const hasSeiAddress = await getSeiAddress(recipient.address);
     if (hasSeiAddress) setRecipientAddress(hasSeiAddress);
     try {
-      if (!hasSeiAddress) {
+      if (!hasSeiAddress && isAddress(recipient.address)) {
         const simulation = await simulateEvmTx(
           getMnemonic(activeAccount?.address!),
           recipient.address as `0x${string}`,
           intAmount,
           token,
           decimalAmount,
+          memoInput.value,
         );
 
         setFee(simulation.stdFee);

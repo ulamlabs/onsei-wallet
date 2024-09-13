@@ -13,25 +13,28 @@ export async function simulateEvmTx(
   amount: bigint,
   token: CosmTokenWithBalance,
   decimalAmount: string,
+  memo: string,
 ) {
   const isMainnet = useSettingsStore.getState().settings.node === "MainNet";
   const evmClient = await getEvmClient(mnemonic, !isMainnet);
   const { account, walletClient } = evmClient;
   if (token.symbol === "SEI") {
+    const memoHex = ethers.hexlify(ethers.toUtf8Bytes(memo));
     const request = await walletClient.prepareTransactionRequest({
       account,
       to: receiver,
       value: amount * 10n ** BigInt(12),
       type: "legacy",
+      data: memoHex as `0x${string}`,
     });
     const fee = (request.gas * request.gasPrice) / 10n ** BigInt(12);
-    const bal = await walletClient.getBalance({ address: account.address });
-    console.log(bal);
     const stdFee: StdFee = {
       amount: [{ amount: `${+fee.toString()}`, denom: "usei" }],
       gas: "",
     };
-    const serializedTransaction = await walletClient.signTransaction(request);
+    const serializedTransaction = await walletClient.signTransaction(
+      request as any,
+    );
     return { stdFee, serializedTransaction };
   }
   const privateKey = await getPrivateKeyFromMnemonic(mnemonic);
@@ -46,10 +49,6 @@ export async function simulateEvmTx(
     pointerContract,
     privateKey,
   );
-  const test = await contract.queryTransaction(
-    "0xede1aedfb84cb6867f5cde8f78af0c89b01a974049cc732407214e8a62d796a2",
-  );
-  console.log(test, "test");
   const tokenAmount = ethers.parseUnits(decimalAmount, token.decimals);
   const balance = await contract.balanceOf(signer.address);
 
@@ -68,6 +67,7 @@ export async function simulateEvmTx(
     value: "0x0",
     data: encodedData,
   });
+  console.log(gas);
 
   const gasPrice = await walletClient.getGasPrice();
   const fee = (gas * gasPrice) / 10n ** BigInt(12); // in usei
@@ -116,9 +116,21 @@ export async function sendEvmTx(
   privateKey: string,
   recipient: `0x${string}`,
   tokenAmount: bigint,
+  memo?: string,
 ) {
-  const { contract } = prepareContract(pointerContract, privateKey);
+  const { contract, signer } = prepareContract(pointerContract, privateKey);
 
-  const tx = await contract.transfer(recipient, tokenAmount);
+  const encodedData = contract.interface.encodeFunctionData("transfer", [
+    recipient,
+    tokenAmount,
+  ]);
+  const transaction = {
+    to: pointerContract,
+    data: memo
+      ? encodedData + ethers.hexlify(ethers.toUtf8Bytes(memo)).slice(2)
+      : encodedData,
+  };
+
+  const tx = await signer.sendTransaction(transaction);
   return tx;
 }

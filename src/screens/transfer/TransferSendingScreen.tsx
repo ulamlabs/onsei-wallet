@@ -6,7 +6,11 @@ import {
   SafeLayoutBottom,
   TertiaryButton,
 } from "@/components";
-import { deliverTxResponseToTxResponse, parseTx } from "@/modules/transactions";
+import {
+  deliverTxResponseToTxResponse,
+  parseEvmToTransaction,
+  parseTx,
+} from "@/modules/transactions";
 import { storeNewTransaction } from "@/modules/transactions/storage";
 import { transferToken } from "@/services/cosmos/tx";
 import { getEvmClient } from "@/services/evm";
@@ -55,6 +59,7 @@ export default function TransferSendingScreen({
   }, []);
 
   async function send() {
+    const amount = formatAmount(intAmount, token.decimals);
     try {
       const evmClient = await getEvmClient(
         getMnemonic(activeAccount?.address!),
@@ -69,11 +74,22 @@ export default function TransferSendingScreen({
           privateKey,
           transfer.recipient.address as `0x${string}`,
           BigInt(tokenAmount),
+          transfer.memo,
         );
+
         const transaction = await walletClient.getTransaction({
-          hash: tx.hash,
+          hash: tx.hash as `0x${string}`,
         });
-        console.log(transaction);
+        const parsedTx = parseEvmToTransaction(transaction, token);
+
+        storeNewTransaction(activeAccount!.address, parsedTx);
+        const sentTx = { code: 0, transactionHash: tx.hash as `0x${string}` };
+        navigation.navigate("transferSent", {
+          tx: sentTx,
+          amount,
+          symbol: token.symbol,
+        });
+        return;
       }
       if (
         isAddress(transfer.recipient.address) &&
@@ -84,7 +100,14 @@ export default function TransferSendingScreen({
           serializedTransaction: transfer.evmTransaction,
         });
         const transaction = await walletClient.getTransaction({ hash });
-        console.log(transaction);
+        const parsedTx = parseEvmToTransaction(transaction, token);
+        storeNewTransaction(activeAccount!.address, parsedTx);
+        const tx = { code: 0, transactionHash: hash };
+        navigation.navigate("transferSent", {
+          tx,
+          amount,
+          symbol: token.symbol,
+        });
         return;
       }
       const tx = await transferToken({
@@ -105,9 +128,7 @@ export default function TransferSendingScreen({
         parsedTx.token = transfer.tokenId;
         parsedTx.type = "sent";
       }
-
       storeNewTransaction(activeAccount!.address, parsedTx);
-      const amount = formatAmount(intAmount, token.decimals);
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       navigation.navigate("transferSent", {
         tx,

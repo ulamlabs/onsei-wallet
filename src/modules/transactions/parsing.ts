@@ -1,5 +1,7 @@
+import { CosmTokenWithBalance } from "@/services/cosmos";
+import { dataToMemo } from "@/services/evm";
 import { DeliverTxResponse } from "@cosmjs/stargate";
-import { Transaction, TxEvent, TxResponse } from "./types";
+import { EvmTransaction, Transaction, TxEvent, TxResponse } from "./types";
 
 type TransactionEventParams = Pick<
   Transaction,
@@ -54,7 +56,7 @@ export function parseTx(
   memo = "",
   simulatedFee = "",
 ): Transaction {
-  const fee = simulatedFee || tx.tx?.auth_info?.fee.amount[0].amount;
+  const fee = simulatedFee || tx.tx?.auth_info?.fee?.amount[0]?.amount;
   return {
     timestamp: new Date(tx.timestamp),
     fee: fee ? BigInt(fee) : 0n,
@@ -166,4 +168,50 @@ export function parseEvents(events: TxEvent[]) {
     }
   }
   return result;
+}
+
+export function parseEvmToTransaction(
+  tx: EvmTransaction,
+  token: CosmTokenWithBalance,
+): Transaction {
+  const fee = (tx.gas * tx.gasPrice) / 10n ** BigInt(12);
+
+  let contract = tx.to || "";
+  let contractAction = "";
+  let to = tx.to || "";
+  let amount = tx.value / 10n ** BigInt(12);
+  let txType = "transfer";
+  let status: "success" | "fail" = "success";
+  let sender = tx.from;
+  let memo = dataToMemo(tx.input);
+
+  if (tx.input !== "0x") {
+    const functionSignature = tx.input.slice(0, 10); // First 4 bytes is the function selector
+    const erc20TransferSignature = "0xa9059cbb"; // ERC-20 transfer function signature
+
+    if (functionSignature === erc20TransferSignature) {
+      // ERC-20 Token Transfer
+      contractAction = "transfer";
+      to = `0x${tx.input.slice(34, 74)}`; // Extract the 'to' address from the input data
+      amount = BigInt(`0x${tx.input.slice(74)}`); // Extract and convert the amount
+      contract = tx.to || "";
+      txType = "contract";
+    }
+  }
+
+  return {
+    token: token?.id,
+    from: tx.from,
+    to,
+    type: txType,
+    status,
+    hash: tx.hash,
+    contract,
+    contractAction,
+    sender,
+    memo,
+    amount,
+    fee,
+    timestamp: new Date(),
+  };
 }

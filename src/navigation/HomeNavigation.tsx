@@ -117,7 +117,11 @@ export type HomeParamList = {
       pointerContract: `0x${string}`;
     };
   };
-  transferSent: { tx: DeliverTxResponse; amount?: string; symbol?: string };
+  transferSent: {
+    tx: DeliverTxResponse | { code: number; transactionHash: `0x${string}` };
+    amount?: string;
+    symbol?: string;
+  };
   "Set Name": { nextRoute: "Import Wallet" | "Generate Wallet" };
   "Scan QR code": undefined;
   "Transaction settings": { global?: boolean; gas?: number };

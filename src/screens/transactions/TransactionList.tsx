@@ -38,7 +38,8 @@ function TransactionBox({ txn }: TransactionRenderProps) {
   const token = getTokenFromTxn(txn);
 
   const sentOrReceived = useMemo(
-    () => getSentOrReceived(txn, activeAccount!.address),
+    () =>
+      getSentOrReceived(txn, activeAccount!.address, activeAccount!.evmAddress),
     [txn],
   );
 
