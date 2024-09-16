@@ -7,13 +7,14 @@ import {
   TertiaryButton,
 } from "@/components";
 import {
+  Transaction,
   deliverTxResponseToTxResponse,
   parseEvmToTransaction,
   parseTx,
 } from "@/modules/transactions";
 import { storeNewTransaction } from "@/modules/transactions/storage";
 import { transferToken } from "@/services/cosmos/tx";
-import { getEvmClient } from "@/services/evm";
+import { WalletClientWithPublicActions, getEvmClient } from "@/services/evm";
 import { sendEvmTx } from "@/services/evm/tx";
 import { useAccountsStore, useSettingsStore, useTokensStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
@@ -66,85 +67,117 @@ export default function TransferSendingScreen({
         node === "TestNet",
       );
       const { walletClient } = evmClient;
+
       if (transfer.evmTxData?.pointerContract !== "0x") {
-        const { pointerContract, privateKey, tokenAmount } =
-          transfer.evmTxData!;
-        const tx = await sendEvmTx(
-          pointerContract,
-          privateKey,
-          transfer.recipient.address as `0x${string}`,
-          BigInt(tokenAmount),
-          transfer.memo,
-        );
-
-        const transaction = await walletClient.getTransaction({
-          hash: tx.hash as `0x${string}`,
-        });
-        const parsedTx = parseEvmToTransaction(transaction, token);
-
-        storeNewTransaction(activeAccount!.address, parsedTx);
-        const sentTx = { code: 0, transactionHash: tx.hash as `0x${string}` };
-        navigation.navigate("transferSent", {
-          tx: sentTx,
-          amount,
-          symbol: token.symbol,
-        });
+        await handleEvmPointerTransaction(walletClient, amount);
         return;
       }
+
       if (
         isAddress(transfer.recipient.address) &&
-        transfer.evmTransaction !== "0x" &&
-        transfer.evmTransaction
+        transfer.evmTransaction !== "0x"
       ) {
-        const hash = await walletClient.sendRawTransaction({
-          serializedTransaction: transfer.evmTransaction,
-        });
-        const transaction = await walletClient.getTransaction({ hash });
-        const parsedTx = parseEvmToTransaction(transaction, token);
-        storeNewTransaction(activeAccount!.address, parsedTx);
-        const tx = { code: 0, transactionHash: hash };
-        navigation.navigate("transferSent", {
-          tx,
-          amount,
-          symbol: token.symbol,
-        });
+        await handleEvmRawTransaction(walletClient, amount);
         return;
       }
-      const tx = await transferToken({
-        ...transfer,
-        token,
-        intAmount,
-        recipient: transfer.recipient.address,
-      });
-      const parsedTx = parseTx(
-        deliverTxResponseToTxResponse(tx),
-        transfer.memo,
-        transfer.fee.amount[0].amount,
-      );
-      if (parsedTx.status === "fail") {
-        parsedTx.amount = BigInt(transfer.intAmount);
-        parsedTx.from = activeAccount!.address;
-        parsedTx.to = transfer.recipient.address;
-        parsedTx.token = transfer.tokenId;
-        parsedTx.type = "sent";
-      }
-      storeNewTransaction(activeAccount!.address, parsedTx);
-      queryClient.invalidateQueries({ queryKey: ["transactions"] });
-      navigation.navigate("transferSent", {
-        tx,
-        amount,
-        symbol: token.symbol,
-      });
+
+      await handleCosmosTransaction(amount);
     } catch (error: any) {
       setError(error.toString());
     } finally {
-      setLoading(false);
-      const tokensToUpdate = [sei];
-      if (token.id !== sei.id) {
-        tokensToUpdate.push(token);
-      }
-      updateBalances(tokensToUpdate);
+      finishTransaction();
     }
+  }
+
+  async function handleEvmPointerTransaction(
+    walletClient: WalletClientWithPublicActions,
+    amount: string,
+  ) {
+    const { pointerContract, privateKey, tokenAmount } = transfer.evmTxData!;
+    const tx = await sendEvmTx(
+      pointerContract,
+      privateKey,
+      transfer.recipient.address as `0x${string}`,
+      BigInt(tokenAmount),
+      transfer.memo,
+    );
+
+    const transaction = await walletClient.getTransaction({
+      hash: tx.hash as `0x${string}`,
+    });
+
+    const parsedTx = parseEvmToTransaction(transaction, token);
+    storeNewTransaction(activeAccount!.address, parsedTx);
+
+    navigateToSuccess(tx.hash as `0x${string}`, amount);
+  }
+
+  async function handleEvmRawTransaction(
+    walletClient: WalletClientWithPublicActions,
+    amount: string,
+  ) {
+    const hash = await walletClient.sendRawTransaction({
+      serializedTransaction: transfer.evmTransaction!,
+    });
+    const transaction = await walletClient.getTransaction({ hash });
+    const parsedTx = parseEvmToTransaction(transaction, token);
+    storeNewTransaction(activeAccount!.address, parsedTx);
+
+    navigateToSuccess(hash, amount);
+  }
+
+  async function handleCosmosTransaction(amount: string) {
+    const tx = await transferToken({
+      ...transfer,
+      token,
+      intAmount,
+      recipient: transfer.recipient.address,
+    });
+
+    const parsedTx = parseTx(
+      deliverTxResponseToTxResponse(tx),
+      transfer.memo,
+      transfer.fee.amount[0].amount,
+    );
+
+    if (parsedTx.status === "fail") {
+      updateParsedTxWithFailure(parsedTx);
+    }
+
+    storeNewTransaction(activeAccount!.address, parsedTx);
+    queryClient.invalidateQueries({ queryKey: ["transactions"] });
+
+    navigation.navigate("transferSent", {
+      tx,
+      amount,
+      symbol: token.symbol,
+    });
+  }
+
+  function updateParsedTxWithFailure(parsedTx: Transaction) {
+    parsedTx.amount = BigInt(transfer.intAmount);
+    parsedTx.from = activeAccount!.address;
+    parsedTx.to = transfer.recipient.address;
+    parsedTx.token = transfer.tokenId;
+    parsedTx.type = "sent";
+  }
+
+  function navigateToSuccess(txHash: `0x${string}`, amount: string) {
+    const sentTx = { code: 0, transactionHash: txHash };
+    navigation.navigate("transferSent", {
+      tx: sentTx,
+      amount,
+      symbol: token.symbol,
+    });
+  }
+
+  function finishTransaction() {
+    setLoading(false);
+    const tokensToUpdate = [sei];
+    if (token.id !== sei.id) {
+      tokensToUpdate.push(token);
+    }
+    updateBalances(tokensToUpdate);
   }
 
   function done() {

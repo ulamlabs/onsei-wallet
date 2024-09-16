@@ -40,7 +40,6 @@ export async function simulateEvmTx(
   const privateKey = await getPrivateKeyFromMnemonic(mnemonic);
 
   const pointerContract = await getPointerContract(token.id);
-
   if (!pointerContract) {
     throw new Error("Can't find pointer contract!");
   }
@@ -60,14 +59,12 @@ export async function simulateEvmTx(
     receiver,
     tokenAmount,
   ]);
-
   const gas = await provider.estimateGas({
     from: account.address,
     to: pointerContract,
     value: "0x0",
     data: encodedData,
   });
-  console.log(gas);
 
   const gasPrice = await walletClient.getGasPrice();
   const fee = (gas * gasPrice) / 10n ** BigInt(12); // in usei

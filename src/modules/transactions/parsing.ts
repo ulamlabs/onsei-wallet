@@ -1,7 +1,8 @@
 import { CosmTokenWithBalance } from "@/services/cosmos";
 import { dataToMemo } from "@/services/evm";
 import { DeliverTxResponse } from "@cosmjs/stargate";
-import { EvmTransaction, Transaction, TxEvent, TxResponse } from "./types";
+import { Transaction as evmTx } from "viem";
+import { Transaction, TxEvent, TxResponse } from "./types";
 
 type TransactionEventParams = Pick<
   Transaction,
@@ -171,10 +172,10 @@ export function parseEvents(events: TxEvent[]) {
 }
 
 export function parseEvmToTransaction(
-  tx: EvmTransaction,
+  tx: evmTx,
   token: CosmTokenWithBalance,
 ): Transaction {
-  const fee = (tx.gas * tx.gasPrice) / 10n ** BigInt(12);
+  const fee = (tx.gas * (tx.gasPrice || 1000000000000n)) / 10n ** BigInt(12);
 
   let contract = tx.to || "";
   let contractAction = "";
@@ -193,7 +194,7 @@ export function parseEvmToTransaction(
       // ERC-20 Token Transfer
       contractAction = "transfer";
       to = `0x${tx.input.slice(34, 74)}`; // Extract the 'to' address from the input data
-      amount = BigInt(`0x${tx.input.slice(74)}`); // Extract and convert the amount
+      amount = BigInt(`0x${tx.input.slice(74, 138)}`); // Extract and convert the amount
       contract = tx.to || "";
       txType = "contract";
     }

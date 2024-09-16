@@ -6,7 +6,7 @@ import {
   stringToPath,
 } from "@cosmjs/crypto";
 import { ethers } from "ethers";
-import { createWalletClient, http, publicActions } from "viem";
+import { PublicActions, createWalletClient, http, publicActions } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { sei, seiTestnet } from "viem/chains";
 
@@ -28,6 +28,11 @@ export async function getPrivateKeyFromMnemonic(mnemonic: string) {
 
   return ("0x" + Buffer.from(privkey).toString("hex")) as `0x${string}`;
 }
+
+export type WalletClientWithPublicActions = ReturnType<
+  typeof createWalletClient
+> &
+  PublicActions;
 
 export async function getEvmClient(mnemonic: string, testnet?: boolean) {
   const privateKey = await getPrivateKeyFromMnemonic(mnemonic);

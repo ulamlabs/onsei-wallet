@@ -73,7 +73,7 @@ export default function AccountSettingsScreen({
 
   const handleShowDetails = () => {
     const network = NETWORK_NAMES[node];
-    const url = `https://www.seiscan.app/${network}/accounts/${activeAccount?.address}`;
+    const url = `https://seitrace.com/address/${activeAccount?.address}?chain=${network}`;
     Linking.openURL(url);
   };
 
@@ -177,7 +177,7 @@ export default function AccountSettingsScreen({
             fontFamily: FontWeights.bold,
           }}
           iconSize={16}
-          title="View details on SeiScan"
+          title="View details on SEITRACE"
           icon={ExportSquare}
         />
       </Column>

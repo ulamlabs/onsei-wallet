@@ -17,7 +17,7 @@ import {
 import { getSigningClientAndSender } from "@/services/cosmos/tx/getSigningClientAndSender";
 import { getSeiAddress } from "@/services/evm";
 import { simulateEvmTx } from "@/services/evm/tx";
-import { useAccountsStore, useTokensStore } from "@/store";
+import { useAccountsStore, useToastStore, useTokensStore } from "@/store";
 import { Colors, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { checkFundsForFee, parseAmount } from "@/utils";
@@ -62,6 +62,7 @@ export default function TransferAmountScreen({
     privateKey: `0x`,
     pointerContract: `0x`,
   });
+  const { error } = useToastStore();
 
   const token = useMemo(() => tokenMap.get(tokenId)!, [tokenId, tokenMap]);
   useEffect(() => {
@@ -238,9 +239,9 @@ export default function TransferAmountScreen({
       const estimatedFee = estimateTransferFeeWithGas(gasPrice, gas);
       setFee(estimatedFee);
       return estimatedFee;
-    } catch (error) {
-      console.log(error);
+    } catch (err: any) {
       setEstimationFailed(true);
+      error({ description: `${err}` });
     } finally {
       setLoadingFee(false);
     }
