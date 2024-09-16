@@ -85,7 +85,9 @@ export async function simulateEvmTx(
 export async function getPointerContract(
   tokenAddress: string | `0x${string}`,
 ): Promise<`0x${string}` | undefined> {
-  if (isAddress(tokenAddress)) return tokenAddress;
+  if (isAddress(tokenAddress)) {
+    return tokenAddress;
+  }
   const pointerContract = await axios.get(
     `https://v2.seipex.fi/pointer?address=${tokenAddress}`,
   );

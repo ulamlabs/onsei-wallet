@@ -63,7 +63,7 @@ export default function TransferSendingScreen({
     const amount = formatAmount(intAmount, token.decimals);
     try {
       const evmClient = await getEvmClient(
-        getMnemonic(activeAccount?.address!),
+        getMnemonic(activeAccount!.address!),
         node === "TestNet",
       );
       const { walletClient } = evmClient;

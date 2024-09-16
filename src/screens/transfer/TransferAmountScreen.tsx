@@ -209,11 +209,13 @@ export default function TransferAmountScreen({
 
   async function feeEstimation(amount: bigint = intAmount) {
     const hasSeiAddress = await getSeiAddress(recipient.address);
-    if (hasSeiAddress) setRecipientAddress(hasSeiAddress);
+    if (hasSeiAddress) {
+      setRecipientAddress(hasSeiAddress);
+    }
     try {
       if (!hasSeiAddress && isAddress(recipient.address)) {
         const simulation = await simulateEvmTx(
-          getMnemonic(activeAccount?.address!),
+          getMnemonic(activeAccount!.address!),
           recipient.address as `0x${string}`,
           intAmount,
           token,

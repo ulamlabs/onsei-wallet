@@ -182,9 +182,9 @@ export function parseEvmToTransaction(
   let to = tx.to || "";
   let amount = tx.value / 10n ** BigInt(12);
   let txType = "transfer";
-  let status: "success" | "fail" = "success";
-  let sender = tx.from;
-  let memo = dataToMemo(tx.input);
+  const status: "success" | "fail" = "success";
+  const sender = tx.from;
+  const memo = dataToMemo(tx.input);
 
   if (tx.input !== "0x") {
     const functionSignature = tx.input.slice(0, 10); // First 4 bytes is the function selector
