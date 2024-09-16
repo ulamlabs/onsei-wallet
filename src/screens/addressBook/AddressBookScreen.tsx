@@ -67,7 +67,7 @@ export default function AddressBook({ navigation }: Props) {
           </Row>
           <TextInput
             style={{ marginBottom: 0 }}
-            placeholder="Search name or SEI address"
+            placeholder="Search name or address"
             icon={SearchNormal}
             autoCorrect={false}
             {...searchInput}
