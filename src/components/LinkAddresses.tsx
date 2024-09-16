@@ -1,6 +1,4 @@
-import { PrimaryButton, TertiaryButton } from "./buttons";
-import CopyAddressItem from "./CopyAddressItem";
-import { linkAddresses } from "@/services/evm";
+import { linkAddresses } from "@/services/evm/tx";
 import { useAccountsStore, useModalStore, useToastStore } from "@/store";
 import { Colors, FontWeights } from "@/styles";
 import { NavigationProp } from "@/types";
@@ -8,8 +6,10 @@ import { useNavigation } from "@react-navigation/native";
 import { ExportSquare } from "iconsax-react-native";
 import { useState } from "react";
 import { Linking, View } from "react-native";
-import { Headline, Paragraph } from "./typography";
+import CopyAddressItem from "./CopyAddressItem";
+import { PrimaryButton, TertiaryButton } from "./buttons";
 import { Column } from "./layout";
+import { Headline, Paragraph } from "./typography";
 
 type LinkAddressesProps = { address: string };
 
