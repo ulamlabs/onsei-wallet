@@ -1,10 +1,8 @@
 import { Colors, FontWeights } from "@/styles";
-import { trimAddress } from "@/utils";
-import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
+import { isCorrectAddress, trimAddress } from "@/utils";
 import * as Clipboard from "expo-clipboard";
 import React, { useEffect, useState } from "react";
 import { Pressable, View } from "react-native";
-import { isAddress } from "viem";
 import Box from "./Box";
 import { Text } from "./typography";
 
@@ -21,7 +19,7 @@ export default function ClipboardAddressBox({ onPaste }: Props) {
 
   async function getContent() {
     const copied = await Clipboard.getStringAsync();
-    if (isValidSeiCosmosAddress(copied) || isAddress(copied)) {
+    if (isCorrectAddress(copied)) {
       setClipboardContent(copied);
     }
   }
