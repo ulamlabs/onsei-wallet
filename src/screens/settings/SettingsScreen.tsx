@@ -10,6 +10,7 @@ import { useSettingsStore } from "@/store";
 import { Colors } from "@/styles";
 import {
   Blend,
+  Book,
   CardEdit,
   Global,
   Notification,
@@ -62,6 +63,11 @@ export default function SettingsScreen() {
             labelRight={
               sessions?.length > 0 ? sessions.length.toString() : undefined
             }
+          />
+          <Link
+            label="Address Book"
+            navigateTo="Address Book"
+            icon={<Book size={22} color={Colors.text} />}
           />
         </OptionGroup>
         <OptionGroup>
