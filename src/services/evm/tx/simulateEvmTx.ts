@@ -1,5 +1,5 @@
 import { CosmTokenWithBalance } from "@/services/cosmos";
-import { useSettingsStore } from "@/store";
+import { useAccountsStore, useSettingsStore } from "@/store";
 import { StdFee } from "@cosmjs/stargate";
 import axios from "axios";
 import { ethers } from "ethers";
@@ -134,4 +134,17 @@ export async function sendEvmTx(
 
   const tx = await signer.sendTransaction(transaction);
   return tx;
+}
+
+export async function sendDirectTx(data: any) {
+  const { activeAccount, getMnemonic } = useAccountsStore.getState();
+  const privateKey = await getPrivateKeyFromMnemonic(
+    getMnemonic(activeAccount!.address),
+  );
+  const isMainnet = useSettingsStore.getState().settings.node === "MainNet";
+  const evmRpcEndpoint = isMainnet ? EVM_RPC_MAIN : EVM_RPC_TEST;
+  const provider = new ethers.JsonRpcProvider(evmRpcEndpoint);
+  const signer = new ethers.Wallet(privateKey, provider);
+  const { hash } = await signer.sendTransaction(data);
+  return hash;
 }

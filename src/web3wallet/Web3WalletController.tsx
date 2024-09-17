@@ -4,6 +4,7 @@ import {
   signDirectTxn,
   signGetAccountTxn,
 } from "@/services/cosmos/tx";
+import { sendDirectTx } from "@/services/evm/tx";
 import { useAccountsStore, useModalStore, useSettingsStore } from "@/store";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { getSdkError } from "@walletconnect/utils";
@@ -132,20 +133,20 @@ export default function Web3WalletController() {
     if (!proposal) {
       return;
     }
-    if (
-      !proposal.params.optionalNamespaces.cosmos &&
-      !proposal.params.requiredNamespaces.cosmos
-    ) {
-      return alert({
-        title: "Unable to connect",
-        description: "This dApp doesn't support SEI chain",
-      });
-    }
+    // if (
+    //   !proposal.params.optionalNamespaces.cosmos &&
+    //   !proposal.params.requiredNamespaces.cosmos
+    // ) {
+    //   return alert({
+    //     title: "Unable to connect",
+    //     description: "This dApp doesn't support SEI chain",
+    //   });
+    // }
 
     try {
       const session = await web3wallet.approveSession({
         id: proposal.id,
-        namespaces: getNamespaces(proposal, activeAccount!.address),
+        namespaces: getNamespaces(proposal, activeAccount!),
       });
 
       await web3wallet.respondSessionRequest({
@@ -254,6 +255,9 @@ export default function Web3WalletController() {
         case "cosmos_signAmino":
           sig = await signAminoTxn(request.params);
           break;
+        case "eth_sendTransaction":
+          sig = await sendDirectTx(request.params[0]);
+          break;
         default:
           throw new Error(getSdkError("INVALID_METHOD").message);
       }
@@ -268,6 +272,7 @@ export default function Web3WalletController() {
       });
       setRequestEvent(null);
     } catch (e: any) {
+      console.log(e);
       alert({
         title: "Error on signing",
         description: e.message,
