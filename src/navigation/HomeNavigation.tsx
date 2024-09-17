@@ -130,6 +130,7 @@ export type HomeParamList = {
   "Connect Wallet": undefined;
   "Connected Apps": undefined;
   "Link Addresses": { address: string };
+  "Address Book": undefined;
 };
 
 const { Navigator, Screen } = createNativeStackNavigator<HomeParamList>();
