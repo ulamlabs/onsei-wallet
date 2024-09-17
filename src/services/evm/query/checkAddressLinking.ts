@@ -1,9 +1,9 @@
 import { api } from "@/modules/api";
-import { EVM_RPC } from "../consts";
+import { EVM_RPC_MAIN } from "../consts";
 
 export async function isAddressLinked(address: string) {
   try {
-    const response = await api.post(EVM_RPC, {
+    const response = await api.post(EVM_RPC_MAIN, {
       jsonrpc: "2.0",
       method: "sei_getEVMAddress",
       params: [address],

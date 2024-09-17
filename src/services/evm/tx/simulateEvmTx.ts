@@ -4,7 +4,7 @@ import { StdFee } from "@cosmjs/stargate";
 import axios from "axios";
 import { ethers } from "ethers";
 import { isAddress } from "viem";
-import { EVM_RPC_MAIN, EVM_RPC_TEST } from "../consts";
+import { EVM_RPC_MAIN, EVM_RPC_TEST, SZABO } from "../consts";
 import { getEvmClient, getPrivateKeyFromMnemonic } from "../utils";
 
 export async function simulateEvmTx(
@@ -27,7 +27,7 @@ export async function simulateEvmTx(
       type: "legacy",
       data: memoHex as `0x${string}`,
     });
-    const fee = (request.gas * request.gasPrice) / 10n ** BigInt(12);
+    const fee = (request.gas * request.gasPrice) / SZABO;
     const stdFee: StdFee = {
       amount: [{ amount: `${+fee.toString()}`, denom: "usei" }],
       gas: "",
@@ -41,7 +41,9 @@ export async function simulateEvmTx(
 
   const pointerContract = await getPointerContract(token.id);
   if (!pointerContract) {
-    throw new Error("Can't find pointer contract!");
+    throw new Error(
+      "We couldn't find the contract information needed to process your transaction.",
+    );
   }
 
   const { contract, signer, provider } = prepareContract(
@@ -67,7 +69,7 @@ export async function simulateEvmTx(
   });
 
   const gasPrice = await walletClient.getGasPrice();
-  const fee = (gas * gasPrice) / 10n ** BigInt(12); // in usei
+  const fee = (gas * gasPrice) / SZABO; // in usei
 
   const stdFee: StdFee = {
     amount: [{ amount: `${+fee.toString()}`, denom: "usei" }],

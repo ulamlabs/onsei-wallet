@@ -1,6 +1,7 @@
 import { Transaction } from "@/modules/transactions";
 import { CosmTokenWithBalance } from "@/services/cosmos";
 import {
+  Account,
   useAccountsStore,
   useAddressBookStore,
   useTokenRegistryStore,
@@ -23,13 +24,18 @@ export function getKnownAddress(address: string) {
 
 export function getSentOrReceived(
   txn: Transaction,
-  activeAddress: string,
-  evmAddress: string,
+  account: Account,
 ): SentOrReceived {
-  if (txn.from === activeAddress || txn.from === evmAddress?.toLowerCase()) {
+  if (
+    txn.from === account.address ||
+    txn.from === account.evmAddress?.toLowerCase()
+  ) {
     return "sent";
   }
-  if (txn.to === activeAddress || txn.to === evmAddress?.toLowerCase()) {
+  if (
+    txn.to === account.address ||
+    txn.to === account.evmAddress?.toLowerCase()
+  ) {
     return "received";
   }
   return "";

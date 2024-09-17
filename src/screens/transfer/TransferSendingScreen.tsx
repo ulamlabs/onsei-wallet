@@ -22,7 +22,7 @@ import { formatAmount, resetNavigationStack } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { isAddress } from "viem";
+import { isAddress as isEvmAddress } from "viem";
 
 type TransferSendingScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -62,23 +62,25 @@ export default function TransferSendingScreen({
   async function send() {
     const amount = formatAmount(intAmount, token.decimals);
     try {
-      const evmClient = await getEvmClient(
-        getMnemonic(activeAccount!.address!),
-        node === "TestNet",
-      );
-      const { walletClient } = evmClient;
-
-      if (transfer.evmTxData?.pointerContract !== "0x") {
-        await handleEvmPointerTransaction(walletClient, amount);
-        return;
-      }
-
       if (
-        isAddress(transfer.recipient.address) &&
-        transfer.evmTransaction !== "0x"
+        transfer.evmTxData?.pointerContract !== "0x" ||
+        isEvmAddress(transfer.recipient.address)
       ) {
-        await handleEvmRawTransaction(walletClient, amount);
-        return;
+        const evmClient = await getEvmClient(
+          getMnemonic(activeAccount!.address!),
+          node === "TestNet",
+        );
+        const { walletClient } = evmClient;
+
+        if (transfer.evmTxData?.pointerContract !== "0x") {
+          await handleEvmPointerTransaction(walletClient, amount);
+          return;
+        }
+
+        if (transfer.evmTransaction !== "0x") {
+          await handleEvmRawTransaction(walletClient, amount);
+          return;
+        }
       }
 
       await handleCosmosTransaction(amount);

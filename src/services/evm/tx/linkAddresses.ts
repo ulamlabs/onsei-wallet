@@ -1,7 +1,7 @@
 import { api } from "@/modules/api";
 import { hexToNumber, numberToHex } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { EVM_RPC } from "../consts";
+import { EVM_RPC_MAIN } from "../consts";
 import { getPrivateKeyFromMnemonic } from "../utils";
 
 export async function linkAddresses(mnemonic: string) {
@@ -27,7 +27,7 @@ export async function linkAddresses(mnemonic: string) {
   };
 
   try {
-    const resp = await api.post(EVM_RPC, {
+    const resp = await api.post(EVM_RPC_MAIN, {
       id: 1,
       jsonrpc: "2.0",
       method: "sei_associate",

@@ -15,6 +15,7 @@ import { useInputState } from "@/hooks";
 import { useAccountsStore, useAddressBookStore } from "@/store";
 import { Colors, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
+import { isCorrectAddress } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
 import { Scan, TickCircle } from "iconsax-react-native";
@@ -67,17 +68,16 @@ export default function TransferSelectAddressScreen({
   }, [route.params?.address]);
 
   const typedAddress = useMemo(() => {
-    if (
-      isValidSeiCosmosAddress(searchInput.value) ||
-      isAddress(searchInput.value)
-    ) {
+    if (isCorrectAddress(searchInput.value)) {
       return searchInput.value;
     }
     return "";
   }, [searchInput.value]);
 
   const sameAddressError = useMemo(
-    () => typedAddress === activeAccount?.address,
+    () =>
+      typedAddress === activeAccount?.address ||
+      typedAddress === activeAccount?.evmAddress,
     [typedAddress],
   );
 

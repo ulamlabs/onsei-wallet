@@ -25,7 +25,7 @@ import { formatAmount } from "@/utils/formatAmount";
 import { SigningStargateClient, StdFee } from "@cosmjs/stargate";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useMemo, useState } from "react";
-import { isAddress } from "viem";
+import { isAddress as isEvmAddress } from "viem";
 import TransferAmount from "./TransferAmount";
 
 type TransferAmountScreenProps = NativeStackScreenProps<
@@ -213,7 +213,7 @@ export default function TransferAmountScreen({
       setRecipientAddress(hasSeiAddress);
     }
     try {
-      if (!hasSeiAddress && isAddress(recipient.address)) {
+      if (!hasSeiAddress && isEvmAddress(recipient.address)) {
         const simulation = await simulateEvmTx(
           getMnemonic(activeAccount!.address!),
           recipient.address as `0x${string}`,
@@ -224,15 +224,17 @@ export default function TransferAmountScreen({
         );
 
         setFee(simulation.stdFee);
+
         if (!simulation.serializedTransaction) {
           setEvmTxData(simulation.dataForTx);
           return simulation.stdFee;
         }
+
         setEvmTransaction(simulation.serializedTransaction);
         return simulation.stdFee;
       }
       const gas = await estimateTransferGas(
-        isAddress(recipient.address) ? hasSeiAddress : recipient.address,
+        isEvmAddress(recipient.address) ? hasSeiAddress : recipient.address,
         token,
         amount,
         signingClientAndSender || undefined,

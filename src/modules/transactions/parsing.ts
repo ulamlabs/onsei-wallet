@@ -1,7 +1,8 @@
 import { CosmTokenWithBalance } from "@/services/cosmos";
 import { dataToMemo } from "@/services/evm";
+import { SZABO } from "@/services/evm/consts";
 import { DeliverTxResponse } from "@cosmjs/stargate";
-import { Transaction as evmTx } from "viem";
+import { etherUnits, Transaction as evmTx } from "viem";
 import { Transaction, TxEvent, TxResponse } from "./types";
 
 type TransactionEventParams = Pick<
@@ -175,12 +176,12 @@ export function parseEvmToTransaction(
   tx: evmTx,
   token: CosmTokenWithBalance,
 ): Transaction {
-  const fee = (tx.gas * (tx.gasPrice || 1000000000000n)) / 10n ** BigInt(12);
+  const fee = (tx.gas * (tx.gasPrice || SZABO)) / SZABO;
 
   let contract = tx.to || "";
   let contractAction = "";
   let to = tx.to || "";
-  let amount = tx.value / 10n ** BigInt(12);
+  let amount = tx.value / BigInt(10 ** (etherUnits.wei - token.decimals));
   let txType = "transfer";
   const status: "success" | "fail" = "success";
   const sender = tx.from;
