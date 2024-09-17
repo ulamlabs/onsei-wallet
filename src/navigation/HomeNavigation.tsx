@@ -52,7 +52,7 @@ import DefaultHeaderTitle from "./header/DefaultHeaderTitle";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
 import SettingsHeaderRight from "./header/SettingsHeaderRight";
 import AddressBook from "@/screens/addressBook/AddressBookScreen";
-import AddressBookHeaderRight from "./header/AddressBookHeaderRight";
+import AddressBookHeaderOptions from "./header/AddressBookHeader";
 
 export type Recipient = {
   address: string;
@@ -132,7 +132,7 @@ export type HomeParamList = {
   "Connect Wallet": undefined;
   "Connected Apps": undefined;
   "Link Addresses": { address: string };
-  "Address Book": undefined;
+  "Address Book": { addressCount?: number; allAddressCount?: number };
 };
 
 const { Navigator, Screen } = createNativeStackNavigator<HomeParamList>();
@@ -275,9 +275,7 @@ export default function HomeNavigation() {
       <Screen
         name="Address Book"
         component={AddressBook}
-        options={() => ({
-          headerRight: AddressBookHeaderRight,
-        })}
+        options={({ route }) => AddressBookHeaderOptions(route, "Address Book")}
       />
     </Navigator>
   );

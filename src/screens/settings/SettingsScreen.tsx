@@ -68,6 +68,7 @@ export default function SettingsScreen() {
             label="Address Book"
             navigateTo="Address Book"
             icon={<Book size={22} color={Colors.text} />}
+            params={{ addressCount: 0 }}
           />
         </OptionGroup>
         <OptionGroup>
