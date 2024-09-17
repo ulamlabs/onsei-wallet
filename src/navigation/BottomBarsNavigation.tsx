@@ -9,7 +9,7 @@ import DApps from "@/screens/dApps/DAppsScreen";
 
 export type BottomTabsParamList = {
   Wallet: undefined;
-  "DApps": undefined;
+  DApps: undefined;
   Transactions: { address: string };
 };
 
@@ -37,7 +37,7 @@ export default function BottomBarsNavigation() {
         component={DApps}
         options={{
           tabBarIcon: ({ focused }) => (
-            <Global color={focused ? Colors.text : Colors.text100}/>
+            <Global color={focused ? Colors.text : Colors.text100} />
           ),
         }}
       />
