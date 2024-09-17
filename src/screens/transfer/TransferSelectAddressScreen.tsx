@@ -17,7 +17,6 @@ import { Colors, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { isCorrectAddress } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
 import { Scan, TickCircle } from "iconsax-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { SectionList, View } from "react-native";
@@ -91,7 +90,7 @@ export default function TransferSelectAddressScreen({
   }
 
   function validateTypedAddress() {
-    if (isValidSeiCosmosAddress(typedAddress) || isAddress(typedAddress)) {
+    if (isCorrectAddress(typedAddress)) {
       select(typedAddress);
     } else {
       setIsInvalidAddress(true);

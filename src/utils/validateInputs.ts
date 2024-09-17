@@ -1,6 +1,6 @@
 import { VALID_ACCOUNT_NAME_REGEX } from "@/const";
 import { Account, SavedAddress } from "@/store";
-import { isValidSeiCosmosAddress } from "@sei-js/cosmjs";
+import { isCorrectAddress } from "./isCorrectAddress";
 
 export const validateEntry = (
   name: string,
@@ -46,7 +46,7 @@ export const validateAddressBook = (
   newEntry = true,
 ) => {
   validateName(name, accounts);
-  if (!isValidSeiCosmosAddress(address)) {
+  if (!isCorrectAddress(address)) {
     throw new Error("Provided address is invalid");
   }
   if (newEntry && addressBook.find((data) => data.name === name)) {
