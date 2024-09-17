@@ -15,7 +15,9 @@ import {
   estimateTransferGas,
 } from "@/services/cosmos/tx";
 import { getSigningClientAndSender } from "@/services/cosmos/tx/getSigningClientAndSender";
-import { useTokensStore } from "@/store";
+import { getSeiAddress } from "@/services/evm";
+import { simulateEvmTx } from "@/services/evm/tx";
+import { useAccountsStore, useToastStore, useTokensStore } from "@/store";
 import { Colors, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { checkFundsForFee, parseAmount } from "@/utils";
@@ -23,6 +25,7 @@ import { formatAmount } from "@/utils/formatAmount";
 import { SigningStargateClient, StdFee } from "@cosmjs/stargate";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useMemo, useState } from "react";
+import { isAddress as isEvmAddress } from "viem";
 import TransferAmount from "./TransferAmount";
 
 type TransferAmountScreenProps = NativeStackScreenProps<
@@ -47,9 +50,21 @@ export default function TransferAmountScreen({
   const [signingClientAndSender, setSigningClientAndSender] = useState<
     [SigningStargateClient, string] | undefined
   >(undefined);
+  const { getMnemonic, activeAccount } = useAccountsStore();
+  const [evmTransaction, setEvmTransaction] = useState<`0x${string}`>(`0x`);
+  const [recipientAddress, setRecipientAddress] = useState(recipient.address);
+  const [evmTxData, setEvmTxData] = useState<{
+    tokenAmount: string;
+    privateKey: `0x${string}`;
+    pointerContract: `0x${string}`;
+  }>({
+    tokenAmount: "",
+    privateKey: `0x`,
+    pointerContract: `0x`,
+  });
+  const { error } = useToastStore();
 
   const token = useMemo(() => tokenMap.get(tokenId)!, [tokenId, tokenMap]);
-
   useEffect(() => {
     getSigningClientAndSender()
       .then((data) => {
@@ -119,10 +134,12 @@ export default function TransferAmountScreen({
   function goToSummary() {
     navigation.navigate("transferSummary", {
       tokenId,
-      recipient,
+      recipient: { ...recipient, address: recipientAddress },
       intAmount: intAmount.toString(),
       memo: memoInput.value,
       fee,
+      evmTransaction,
+      evmTxData,
     });
   }
 
@@ -191,9 +208,33 @@ export default function TransferAmountScreen({
   }
 
   async function feeEstimation(amount: bigint = intAmount) {
+    const hasSeiAddress = await getSeiAddress(recipient.address);
+    if (hasSeiAddress) {
+      setRecipientAddress(hasSeiAddress);
+    }
     try {
+      if (!hasSeiAddress && isEvmAddress(recipient.address)) {
+        const simulation = await simulateEvmTx(
+          getMnemonic(activeAccount!.address!),
+          recipient.address as `0x${string}`,
+          intAmount,
+          token,
+          decimalAmount,
+          memoInput.value,
+        );
+
+        setFee(simulation.stdFee);
+
+        if (!simulation.serializedTransaction) {
+          setEvmTxData(simulation.dataForTx);
+          return simulation.stdFee;
+        }
+
+        setEvmTransaction(simulation.serializedTransaction);
+        return simulation.stdFee;
+      }
       const gas = await estimateTransferGas(
-        recipient.address,
+        isEvmAddress(recipient.address) ? hasSeiAddress : recipient.address,
         token,
         amount,
         signingClientAndSender || undefined,
@@ -202,8 +243,9 @@ export default function TransferAmountScreen({
       const estimatedFee = estimateTransferFeeWithGas(gasPrice, gas);
       setFee(estimatedFee);
       return estimatedFee;
-    } catch (error) {
+    } catch (err: any) {
       setEstimationFailed(true);
+      error({ description: `${err}` });
     } finally {
       setLoadingFee(false);
     }

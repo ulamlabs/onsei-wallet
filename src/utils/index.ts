@@ -9,6 +9,7 @@ export * from "./formatUsdBalance";
 export * from "./generateWalletName";
 export * from "./getNumberName";
 export * from "./getSpeedMultiplier";
+export * from "./isCorrectAddress";
 export * from "./matchPriceToToken";
 export * from "./resetNavigationStack";
 export * from "./scaling";

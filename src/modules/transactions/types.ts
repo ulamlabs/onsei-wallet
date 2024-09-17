@@ -70,3 +70,23 @@ export type TxBody = {
   non_critical_extension_options: string[];
   timeout_height: string;
 };
+
+export type EvmTransaction = {
+  blockHash: string | null;
+  blockNumber: number | null;
+  chainId: number | undefined;
+  from: string;
+  gas: bigint;
+  gasPrice: bigint;
+  hash: string;
+  input: string;
+  nonce: number;
+  r: string;
+  s: string;
+  to: string | null;
+  transactionIndex: number | null;
+  type: string;
+  typeHex: string;
+  v: bigint;
+  value: bigint;
+};

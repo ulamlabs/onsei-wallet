@@ -1,11 +1,12 @@
-import { format, isToday } from "date-fns";
 import { Transaction } from "@/modules/transactions";
 import { CosmTokenWithBalance } from "@/services/cosmos";
 import {
+  Account,
   useAccountsStore,
   useAddressBookStore,
   useTokenRegistryStore,
 } from "@/store";
+import { format, isToday } from "date-fns";
 
 export type SentOrReceived = "sent" | "received" | "";
 
@@ -23,12 +24,18 @@ export function getKnownAddress(address: string) {
 
 export function getSentOrReceived(
   txn: Transaction,
-  activeAddress: string,
+  account: Account,
 ): SentOrReceived {
-  if (txn.from === activeAddress) {
+  if (
+    txn.from === account.address ||
+    txn.from === account.evmAddress?.toLowerCase()
+  ) {
     return "sent";
   }
-  if (txn.to === activeAddress) {
+  if (
+    txn.to === account.address ||
+    txn.to === account.evmAddress?.toLowerCase()
+  ) {
     return "received";
   }
   return "";

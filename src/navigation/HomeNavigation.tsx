@@ -97,6 +97,12 @@ export type HomeParamList = {
     intAmount: string;
     memo?: string;
     fee?: StdFee | null;
+    evmTransaction?: `0x${string}`;
+    evmTxData?: {
+      tokenAmount: string;
+      privateKey: `0x${string}`;
+      pointerContract: `0x${string}`;
+    };
   };
   transferSending: {
     tokenId: string;
@@ -104,8 +110,18 @@ export type HomeParamList = {
     intAmount: string;
     fee: StdFee;
     memo?: string;
+    evmTransaction?: `0x${string}`;
+    evmTxData?: {
+      tokenAmount: string;
+      privateKey: `0x${string}`;
+      pointerContract: `0x${string}`;
+    };
   };
-  transferSent: { tx: DeliverTxResponse; amount?: string; symbol?: string };
+  transferSent: {
+    tx: DeliverTxResponse | { code: number; transactionHash: `0x${string}` };
+    amount?: string;
+    symbol?: string;
+  };
   "Set Name": { nextRoute: "Import Wallet" | "Generate Wallet" };
   "Scan QR code": undefined;
   "Transaction settings": { global?: boolean; gas?: number };
