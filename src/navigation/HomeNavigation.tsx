@@ -52,6 +52,7 @@ import DefaultHeaderTitle from "./header/DefaultHeaderTitle";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
 import SettingsHeaderRight from "./header/SettingsHeaderRight";
 import AddressBook from "@/screens/addressBook/AddressBookScreen";
+import AddressBookHeaderRight from "./header/AddressBookHeaderRight";
 
 export type Recipient = {
   address: string;
@@ -271,7 +272,13 @@ export default function HomeNavigation() {
       <Screen name="Connect Wallet" component={ConnectWalletScreen} />
       <Screen name="Connected Apps" component={ConnectedAppsScreen} />
       <Screen name="Link Addresses" component={LinkAddressesScreen} />
-      <Screen name="Address Book" component={AddressBook} />
+      <Screen
+        name="Address Book"
+        component={AddressBook}
+        options={() => ({
+          headerRight: AddressBookHeaderRight,
+        })}
+      />
     </Navigator>
   );
 }

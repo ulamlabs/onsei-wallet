@@ -45,37 +45,15 @@ export default function AddressBook({ navigation }: Props) {
 
   return (
     <>
-      <DashboardHeader>
-        <Column>
-          <Row
-            style={{
-              minWidth: "100%",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text
-              style={{ fontSize: FontSizes.lg, fontFamily: FontWeights.bold }}
-            >
-              Address Book
-            </Text>
-            <IconButton
-              style={{ backgroundColor: "transparent" }}
-              icon={Add}
-              testID="add-address"
-              onPress={() => navigation.navigate("Saved Address")}
-            />
-          </Row>
-          <TextInput
-            style={{ marginBottom: 0 }}
-            placeholder="Search name or address"
-            icon={SearchNormal}
-            autoCorrect={false}
-            {...searchInput}
-            showClear
-          />
-        </Column>
-      </DashboardHeader>
       <SafeLayout style={{ paddingTop: 24, paddingBottom: 180 }}>
+        <TextInput
+          style={{ marginBottom: 0 }}
+          placeholder="Search name or SEI address"
+          icon={SearchNormal}
+          autoCorrect={false}
+          {...searchInput}
+          showClear
+        />
         <Column>
           {displayedAddresses.map((addressData) => (
             <AddressBookEntry
