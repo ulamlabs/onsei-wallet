@@ -193,7 +193,7 @@ export default function Web3WalletController() {
       return;
     }
 
-    const { from } = requestEvent?.params.request.params[0];
+    const from = requestEvent?.params.request.params[0].from;
 
     const yesno = await ask({
       title: "Incoming transaction to sign",
