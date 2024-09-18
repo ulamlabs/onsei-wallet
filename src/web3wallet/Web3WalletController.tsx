@@ -133,15 +133,17 @@ export default function Web3WalletController() {
     if (!proposal) {
       return;
     }
-    // if (
-    //   !proposal.params.optionalNamespaces.cosmos &&
-    //   !proposal.params.requiredNamespaces.cosmos
-    // ) {
-    //   return alert({
-    //     title: "Unable to connect",
-    //     description: "This dApp doesn't support SEI chain",
-    //   });
-    // }
+    if (
+      !proposal.params.optionalNamespaces.cosmos &&
+      !proposal.params.requiredNamespaces.cosmos &&
+      !proposal.params.requiredNamespaces.eip155 &&
+      !proposal.params.optionalNamespaces.eip155
+    ) {
+      return alert({
+        title: "Unable to connect",
+        description: "This dApp doesn't support SEI and EVM chain",
+      });
+    }
 
     try {
       const session = await web3wallet.approveSession({
@@ -191,6 +193,8 @@ export default function Web3WalletController() {
       return;
     }
 
+    const { from } = requestEvent?.params.request.params[0];
+
     const yesno = await ask({
       title: "Incoming transaction to sign",
       question: (
@@ -201,9 +205,7 @@ export default function Web3WalletController() {
                 <Text style={{ color: Colors.text100 }}>Account</Text>
                 <Text style={{ flex: 1, textAlign: "right" }}>
                   {accounts.find(
-                    (a) =>
-                      a.address ===
-                      requestEvent?.params.request.params.signerAddress,
+                    (a) => a.address === from || a.evmAddress === from,
                   )?.name ?? "?"}
                 </Text>
               </Row>
@@ -243,7 +245,6 @@ export default function Web3WalletController() {
     const { params, id, topic } = requestEvent!;
     const { request } = params;
     let sig: any;
-
     try {
       switch (request.method) {
         case "cosmos_getAccounts":
@@ -272,10 +273,10 @@ export default function Web3WalletController() {
       });
       setRequestEvent(null);
     } catch (e: any) {
-      console.log(e);
       alert({
         title: "Error on signing",
-        description: e.message,
+        description:
+          e.info.error.message.replace(/^:\s*/, "") || "Something went wrong",
       });
       rejectRequest();
     }

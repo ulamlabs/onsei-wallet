@@ -141,9 +141,7 @@ export async function sendDirectTx(data: any) {
   const privateKey = await getPrivateKeyFromMnemonic(
     getMnemonic(activeAccount!.address),
   );
-  const isMainnet = useSettingsStore.getState().settings.node === "MainNet";
-  const evmRpcEndpoint = isMainnet ? EVM_RPC_MAIN : EVM_RPC_TEST;
-  const provider = new ethers.JsonRpcProvider(evmRpcEndpoint);
+  const provider = new ethers.JsonRpcProvider(EVM_RPC_MAIN);
   const signer = new ethers.Wallet(privateKey, provider);
   const { hash } = await signer.sendTransaction(data);
   return hash;
