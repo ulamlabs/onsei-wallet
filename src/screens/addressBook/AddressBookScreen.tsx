@@ -40,7 +40,7 @@ export default function AddressBook({ navigation }: Props) {
 
   return (
     <>
-      <SafeLayout style={{ paddingTop: 24, paddingBottom: 180 }}>
+      <SafeLayout>
         <TextInput
           style={{ marginBottom: 24 }}
           placeholder="Search name or SEI address"

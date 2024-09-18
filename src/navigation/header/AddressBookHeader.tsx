@@ -1,17 +1,15 @@
-import { IconButton, Text } from "@/components";
+import { Text } from "@/components";
 import { Colors, FontSizes, FontWeights } from "@/styles";
-import { RouteProp, useNavigation } from "@react-navigation/native";
+import { RouteProp } from "@react-navigation/native";
 import { View } from "react-native";
 import { HomeParamList } from "../HomeNavigation";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
-import { Add } from "iconsax-react-native";
-import { NavigationProp } from "@/types";
+import { AddressBookHeaderRight } from "./AddressBookHeaderRight";
 
 export default function AddressBookHeaderOptions(
   route: RouteProp<HomeParamList, "Address Book">,
   title: string,
 ): NativeStackNavigationOptions {
-  const navigation = useNavigation<NavigationProp>();
   const addressCount = route.params.addressCount || 0;
   const allAddressCount = route.params.allAddressCount || 0;
 
@@ -31,12 +29,7 @@ export default function AddressBookHeaderOptions(
       </View>
     ),
     headerRight: () => (
-      <IconButton
-        style={{ backgroundColor: "transparent" }}
-        icon={Add}
-        testID="add-address"
-        onPress={() => navigation.navigate("Saved Address")}
-      />
+      <AddressBookHeaderRight/>
     ),
   };
 }
