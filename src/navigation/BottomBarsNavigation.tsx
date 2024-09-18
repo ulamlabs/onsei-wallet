@@ -1,15 +1,15 @@
 import Dashboard from "@/screens/WalletOverview/Dashboard";
-import AddressBook from "@/screens/addressBook/AddressBookScreen";
 import Transactions from "@/screens/transactions/Transactions";
 import { Colors } from "@/styles";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { ArrangeHorizontalSquare, Book, Wallet2 } from "iconsax-react-native";
+import { ArrangeHorizontalSquare, Global, Wallet2 } from "iconsax-react-native";
 import React from "react";
 import Bar from "./bar/Bar";
+import DApps from "@/screens/dApps/DAppsScreen";
 
 export type BottomTabsParamList = {
   Wallet: undefined;
-  "Address Book": undefined;
+  DApps: undefined;
   Transactions: { address: string };
 };
 
@@ -33,6 +33,15 @@ export default function BottomBarsNavigation() {
         }}
       />
       <Screen
+        name="DApps"
+        component={DApps}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Global color={focused ? Colors.text : Colors.text100} />
+          ),
+        }}
+      />
+      <Screen
         name="Transactions"
         component={Transactions}
         options={{
@@ -40,15 +49,6 @@ export default function BottomBarsNavigation() {
             <ArrangeHorizontalSquare
               color={focused ? Colors.text : Colors.text100}
             />
-          ),
-        }}
-      />
-      <Screen
-        name="Address Book"
-        component={AddressBook}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <Book color={focused ? Colors.text : Colors.text100} />
           ),
         }}
       />

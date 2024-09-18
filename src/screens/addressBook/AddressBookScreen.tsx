@@ -1,22 +1,12 @@
-import {
-  Column,
-  EmptyList,
-  IconButton,
-  Row,
-  SafeLayout,
-  Text,
-  TextInput,
-} from "@/components";
+import { Column, EmptyList, SafeLayout, TextInput } from "@/components";
 import { useInputState } from "@/hooks";
-import DashboardHeader from "@/navigation/header/DashboardHeader";
 import { useAddressBookStore } from "@/store";
-import { FontSizes, FontWeights } from "@/styles";
-import { NavigatorParamsList } from "@/types";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Add, SearchNormal } from "iconsax-react-native";
+import { SearchNormal } from "iconsax-react-native";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import AddressBookEntry from "./AddressBookEntry";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { NavigatorParamsList } from "@/types";
 
 type Props = NativeStackScreenProps<NavigatorParamsList, "Address Book">;
 
@@ -27,7 +17,12 @@ export default function AddressBook({ navigation }: Props) {
 
   useEffect(() => {
     setDisplayedAddresses(addressBook);
+    navigation.setParams({ allAddressCount: addressBook.length });
   }, [addressBook]);
+
+  useEffect(() => {
+    navigation.setParams({ addressCount: displayedAddresses.length });
+  }, [displayedAddresses]);
 
   useEffect(() => {
     if (searchInput.value) {
@@ -45,37 +40,15 @@ export default function AddressBook({ navigation }: Props) {
 
   return (
     <>
-      <DashboardHeader>
-        <Column>
-          <Row
-            style={{
-              minWidth: "100%",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text
-              style={{ fontSize: FontSizes.lg, fontFamily: FontWeights.bold }}
-            >
-              Address Book
-            </Text>
-            <IconButton
-              style={{ backgroundColor: "transparent" }}
-              icon={Add}
-              testID="add-address"
-              onPress={() => navigation.navigate("Saved Address")}
-            />
-          </Row>
-          <TextInput
-            style={{ marginBottom: 0 }}
-            placeholder="Search name or address"
-            icon={SearchNormal}
-            autoCorrect={false}
-            {...searchInput}
-            showClear
-          />
-        </Column>
-      </DashboardHeader>
-      <SafeLayout style={{ paddingTop: 24, paddingBottom: 180 }}>
+      <SafeLayout>
+        <TextInput
+          style={{ marginBottom: 24 }}
+          placeholder="Search name or SEI address"
+          icon={SearchNormal}
+          autoCorrect={false}
+          {...searchInput}
+          showClear
+        />
         <Column>
           {displayedAddresses.map((addressData) => (
             <AddressBookEntry

@@ -69,6 +69,7 @@
     "react-native-screens": "3.31.1",
     "react-native-svg": "15.2.0",
     "react-native-tab-view": "^3.5.2",
+    "react-native-webview": "^13.12.2",
     "readable-stream": "^4.5.2",
     "stream-browserify": "^3.0.0",
     "text-encoding": "^0.7.0",

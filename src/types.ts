@@ -7,8 +7,7 @@ import { LockParamList } from "./navigation/LockNavigation";
 export type NavigatorParamsList = BottomTabsParamList &
   OnboardingParamList &
   LockParamList &
-  HomeParamList &
-  BottomTabsParamList;
+  HomeParamList;
 
 export type NavigationProp = NativeStackNavigationProp<
   NavigatorParamsList,
