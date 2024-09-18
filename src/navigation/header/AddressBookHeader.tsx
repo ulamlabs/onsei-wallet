@@ -28,8 +28,6 @@ export default function AddressBookHeaderOptions(
         >{`(${addressCount === allAddressCount ? `${allAddressCount}` : `${addressCount}/${allAddressCount}`})`}</Text>
       </View>
     ),
-    headerRight: () => (
-      <AddressBookHeaderRight/>
-    ),
+    headerRight: () => <AddressBookHeaderRight />,
   };
 }
