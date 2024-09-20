@@ -27,7 +27,7 @@ export function getNamespaces(
           "eth_accounts",
           "eth_requestAccounts",
           "eth_sendRawTransaction",
-          "eth_sign",
+          "eth_sign", // eth_sign is not supported because Infura doesn't store the user's private key required for the signature. DEPRECATED
           "eth_signTransaction",
           "eth_signTypedData",
           "eth_signTypedData_v3",
@@ -73,5 +73,13 @@ export function disconnectApp(sessionTopic: string) {
   setSetting(
     "walletConnet.sessions",
     storedSessions.filter((s) => s.topic !== sessionTopic),
+  );
+}
+
+export function findAccount(accounts: Account[], address: string) {
+  return accounts.find(
+    (a) =>
+      a.address.toLowerCase() === address.toLowerCase() ||
+      a.evmAddress.toLowerCase() === address.toLowerCase(),
   );
 }
