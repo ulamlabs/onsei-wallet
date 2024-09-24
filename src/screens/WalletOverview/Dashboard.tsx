@@ -39,7 +39,7 @@ const DASHBOARD_IMG = require("../../../assets/dashboard-image.png");
 type DashboardProps = NativeStackScreenProps<NavigatorParamsList, "Wallet">;
 
 export default function Dashboard({ navigation }: DashboardProps) {
-  const { activeAccount } = useAccountsStore();
+  const { activeAccount, getMnemonic } = useAccountsStore();
   const { updateBalances, tokens } = useTokensStore();
   const { refreshRegistryCache } = useTokenRegistryStore();
   const {

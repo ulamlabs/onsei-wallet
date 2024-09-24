@@ -15,7 +15,6 @@ import {
   estimateTransferGas,
 } from "@/services/cosmos/tx";
 import { getSigningClientAndSender } from "@/services/cosmos/tx/getSigningClientAndSender";
-import { getSeiAddress } from "@/services/evm";
 import { simulateEvmTx } from "@/services/evm/tx";
 import { useAccountsStore, useToastStore, useTokensStore } from "@/store";
 import { Colors, FontWeights } from "@/styles";
@@ -208,12 +207,8 @@ export default function TransferAmountScreen({
   }
 
   async function feeEstimation(amount: bigint = intAmount) {
-    const hasSeiAddress = await getSeiAddress(recipient.address);
-    if (hasSeiAddress) {
-      setRecipientAddress(hasSeiAddress);
-    }
     try {
-      if (!hasSeiAddress && isEvmAddress(recipient.address)) {
+      if (isEvmAddress(recipient.address)) {
         const simulation = await simulateEvmTx(
           getMnemonic(activeAccount!.address!),
           recipient.address as `0x${string}`,
@@ -234,7 +229,7 @@ export default function TransferAmountScreen({
         return simulation.stdFee;
       }
       const gas = await estimateTransferGas(
-        isEvmAddress(recipient.address) ? hasSeiAddress : recipient.address,
+        recipient.address,
         token,
         amount,
         signingClientAndSender || undefined,

@@ -175,6 +175,7 @@ export function parseEvents(events: TxEvent[]) {
 export function parseEvmToTransaction(
   tx: evmTx,
   token: CosmTokenWithBalance,
+  success?: "success" | "reverted",
 ): Transaction {
   const fee = (tx.gas * (tx.gasPrice || SZABO)) / SZABO;
 
@@ -183,7 +184,7 @@ export function parseEvmToTransaction(
   let to = tx.to || "";
   let amount = tx.value / BigInt(10 ** (etherUnits.wei - token.decimals));
   let txType = "transfer";
-  const status: "success" | "fail" = "success";
+  const status: "success" | "fail" = success === "success" ? "success" : "fail";
   const sender = tx.from;
   const memo = dataToMemo(tx.input);
 

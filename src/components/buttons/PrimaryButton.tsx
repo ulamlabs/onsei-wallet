@@ -18,6 +18,7 @@ export default function PrimaryButton({
         },
         styles,
       ]}
+      disabled={disabled}
       textStyle={{ fontSize: 16 }}
     />
   );
