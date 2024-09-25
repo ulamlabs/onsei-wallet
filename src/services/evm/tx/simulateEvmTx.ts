@@ -1,5 +1,5 @@
 import { CosmTokenWithBalance } from "@/services/cosmos";
-import { useSettingsStore } from "@/store";
+import { Account, useAccountsStore, useSettingsStore } from "@/store";
 import { StdFee } from "@cosmjs/stargate";
 import axios from "axios";
 import { ethers } from "ethers";
@@ -134,4 +134,71 @@ export async function sendEvmTx(
 
   const tx = await signer.sendTransaction(transaction);
   return tx;
+}
+
+export async function sendDirectTx(data: any, requestAccount: Account) {
+  const { getMnemonic } = useAccountsStore.getState();
+  const privateKey = await getPrivateKeyFromMnemonic(
+    getMnemonic(requestAccount.address),
+  );
+  const provider = new ethers.JsonRpcProvider(EVM_RPC_MAIN);
+  const signer = new ethers.Wallet(privateKey, provider);
+  const { hash } = await signer.sendTransaction(data);
+  return hash;
+}
+
+export async function personalSign(data: any, requestAccount: Account) {
+  const { account, walletClient } =
+    await getCurrentClientAndAccount(requestAccount);
+  const signature = await walletClient.signMessage({
+    account: account,
+    message: { raw: data },
+  });
+  return signature;
+}
+
+export async function signTransaction(data: any, requestAccount: Account) {
+  const { account, walletClient } =
+    await getCurrentClientAndAccount(requestAccount);
+  const request = await walletClient.prepareTransactionRequest({
+    account: account,
+    ...data,
+  });
+
+  const signature = await walletClient.signTransaction(request);
+  return signature;
+}
+
+export async function signTypedData(data: any, requestAccount: Account) {
+  const { account, walletClient } =
+    await getCurrentClientAndAccount(requestAccount);
+  const signature = await walletClient.signTypedData({
+    account: account,
+    ...JSON.parse(data[1]),
+  });
+  return signature;
+}
+
+export async function sendRawTransaction(data: any, requestAccount: Account) {
+  const { account, walletClient } =
+    await getCurrentClientAndAccount(requestAccount);
+  const request = await walletClient.prepareTransactionRequest({
+    account,
+    ...data,
+  });
+
+  const serializedTransaction = await walletClient.signTransaction(request);
+
+  const hash = await walletClient.sendRawTransaction({ serializedTransaction });
+  return hash;
+}
+
+export async function getCurrentClientAndAccount(requestAccount: Account) {
+  const { getMnemonic } = useAccountsStore.getState();
+  const evmClient = await getEvmClient(
+    getMnemonic(requestAccount.address),
+    false,
+  );
+  const { account, walletClient } = evmClient;
+  return { account, walletClient };
 }
