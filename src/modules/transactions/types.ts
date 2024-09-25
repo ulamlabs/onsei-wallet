@@ -35,6 +35,7 @@ export type TxResponse = {
   code: number;
   events: TxEvent[];
   tx?: TxData;
+  to?: string;
 };
 
 export type TxEvent = {

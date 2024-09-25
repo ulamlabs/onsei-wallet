@@ -51,6 +51,8 @@ export function dataToMemo(data: string) {
   }
 
   const hexMemo = data.substring(138);
-
+  if (hexMemo.length > 64) {
+    return "";
+  }
   return ethers.toUtf8String("0x" + hexMemo);
 }
