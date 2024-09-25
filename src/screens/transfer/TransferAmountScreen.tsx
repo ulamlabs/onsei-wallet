@@ -51,7 +51,6 @@ export default function TransferAmountScreen({
   >(undefined);
   const { getMnemonic, activeAccount } = useAccountsStore();
   const [evmTransaction, setEvmTransaction] = useState<`0x${string}`>(`0x`);
-  const [recipientAddress, setRecipientAddress] = useState(recipient.address);
   const [evmTxData, setEvmTxData] = useState<{
     tokenAmount: string;
     privateKey: `0x${string}`;
@@ -133,7 +132,7 @@ export default function TransferAmountScreen({
   function goToSummary() {
     navigation.navigate("transferSummary", {
       tokenId,
-      recipient: { ...recipient, address: recipientAddress },
+      recipient,
       intAmount: intAmount.toString(),
       memo: memoInput.value,
       fee,
