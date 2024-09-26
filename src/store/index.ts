@@ -7,3 +7,4 @@ export * from "./settings";
 export * from "./toast";
 export * from "./tokenRegistry";
 export * from "./tokens";
+export * from "./dApps";

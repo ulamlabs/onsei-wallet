@@ -14,6 +14,7 @@ import {
   useAccountsStore,
   useAddressBookStore,
   useAuthStore,
+  useDAppsStore,
   useOnboardingStore,
   useSettingsStore,
   useToastStore,
@@ -60,6 +61,7 @@ export default function App() {
   const settingsStore = useSettingsStore();
   const tokenRegistryStore = useTokenRegistryStore();
   const isAppActive = useAppIsActive();
+  const dAppsStore = useDAppsStore();
 
   async function onRestore() {
     await tokenRegistryStore.refreshRegistryCache();
@@ -96,6 +98,7 @@ export default function App() {
       tokenRegistryStore.init(),
       authStore.init(),
       addressStore.init(),
+      dAppsStore.init(),
     ]);
     setReady(true);
   }
