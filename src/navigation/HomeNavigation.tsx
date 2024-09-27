@@ -55,6 +55,7 @@ import AddressBook from "@/screens/addressBook/AddressBookScreen";
 import AddressBookHeaderOptions from "./header/AddressBookHeader";
 import { CloseIcon } from "@/components";
 import { View } from "react-native";
+import { SettingsHeaderLeft } from "./header/SettingsHeaderLeft";
 
 export type Recipient = {
   address: string;
@@ -222,11 +223,7 @@ export default function HomeNavigation() {
       <Screen
         name="Settings"
         options={{
-          headerLeft: () => (
-            <View style={{ marginRight: 24 }}>
-              <CloseIcon size={14} />
-            </View>
-          ),
+          headerLeft: () => <SettingsHeaderLeft />,
         }}
         component={SettingsScreen}
       />
