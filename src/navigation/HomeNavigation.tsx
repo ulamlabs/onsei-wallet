@@ -53,8 +53,6 @@ import { newWalletScreenOptions } from "./header/NewWalletHeader";
 import SettingsHeaderRight from "./header/SettingsHeaderRight";
 import AddressBook from "@/screens/addressBook/AddressBookScreen";
 import AddressBookHeaderOptions from "./header/AddressBookHeader";
-import { CloseIcon } from "@/components";
-import { View } from "react-native";
 import { SettingsHeaderLeft } from "./header/SettingsHeaderLeft";
 
 export type Recipient = {
