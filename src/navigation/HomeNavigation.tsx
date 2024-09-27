@@ -53,6 +53,7 @@ import { newWalletScreenOptions } from "./header/NewWalletHeader";
 import SettingsHeaderRight from "./header/SettingsHeaderRight";
 import AddressBook from "@/screens/addressBook/AddressBookScreen";
 import AddressBookHeaderOptions from "./header/AddressBookHeader";
+import { SettingsHeaderLeft } from "./header/SettingsHeaderLeft";
 
 export type Recipient = {
   address: string;
@@ -217,7 +218,13 @@ export default function HomeNavigation() {
         component={ImportWalletScreen}
         options={{ title: "" }}
       />
-      <Screen name="Settings" component={SettingsScreen} />
+      <Screen
+        name="Settings"
+        options={{
+          headerLeft: () => <SettingsHeaderLeft />,
+        }}
+        component={SettingsScreen}
+      />
       <Screen name="Manage Token List" component={ManageTokensScreen} />
       <Screen name="Wallets" component={AccountsScreen} />
       <Screen name="Wallet settings" component={AccountSettingsScreen} />
