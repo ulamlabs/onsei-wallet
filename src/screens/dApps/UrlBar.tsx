@@ -8,7 +8,7 @@ export default function UrlBar() {
   const searchInput = useInputState({ initialValue: url });
 
   return (
-    <Row style={{ paddingTop: 24, paddingBottom: 12 }}>
+    <Row>
       <TextInput
         {...searchInput}
         keyboardType="web-search"

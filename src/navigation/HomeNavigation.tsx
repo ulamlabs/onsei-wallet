@@ -53,6 +53,8 @@ import { newWalletScreenOptions } from "./header/NewWalletHeader";
 import SettingsHeaderRight from "./header/SettingsHeaderRight";
 import AddressBook from "@/screens/addressBook/AddressBookScreen";
 import AddressBookHeaderOptions from "./header/AddressBookHeader";
+import { CloseIcon } from "@/components";
+import { View } from "react-native";
 
 export type Recipient = {
   address: string;
@@ -217,7 +219,17 @@ export default function HomeNavigation() {
         component={ImportWalletScreen}
         options={{ title: "" }}
       />
-      <Screen name="Settings" component={SettingsScreen} />
+      <Screen
+        name="Settings"
+        options={{
+          headerLeft: () => (
+            <View style={{ marginRight: 24 }}>
+              <CloseIcon size={14} />
+            </View>
+          ),
+        }}
+        component={SettingsScreen}
+      />
       <Screen name="Manage Token List" component={ManageTokensScreen} />
       <Screen name="Wallets" component={AccountsScreen} />
       <Screen name="Wallet settings" component={AccountSettingsScreen} />
