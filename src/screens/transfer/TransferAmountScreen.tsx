@@ -100,7 +100,7 @@ export default function TransferAmountScreen({
     if (loadingMaxAmount) {
       return;
     }
-    if (!decimalAmount || intAmount > token.balance) {
+    if (!decimalAmount || intAmount > token.balance || +decimalAmount === 0) {
       setFee(null);
       setLoadingFee(false);
       return;
