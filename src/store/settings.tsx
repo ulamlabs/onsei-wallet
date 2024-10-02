@@ -34,7 +34,6 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
     const settings = {
       ...DEFAULT_SETTINGS,
       ...storedSettings,
-      node: DEFAULT_SETTINGS.node, // TODO: To delete
     };
     set({ settings });
   },
