@@ -54,7 +54,7 @@ export function parseTx(
   memo = "",
   simulatedFee = "",
 ): Transaction {
-  const fee = simulatedFee || tx.tx?.auth_info?.fee.amount[0].amount;
+  const fee = simulatedFee || tx.tx?.auth_info?.fee?.amount[0]?.amount;
   return {
     timestamp: new Date(tx.timestamp),
     fee: fee ? BigInt(fee) : 0n,
