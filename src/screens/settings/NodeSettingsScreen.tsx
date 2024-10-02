@@ -3,6 +3,7 @@ import { NETWORK_NAMES, NODES } from "@/const";
 import { useTransactions } from "@/modules/transactions";
 import {
   useAccountsStore,
+  useModalStore,
   useSettingsStore,
   useTokenRegistryStore,
   useTokensStore,
@@ -20,8 +21,18 @@ export default function NodeSettingsScreen() {
   const { refetch: refetchTransactions } = useTransactions(
     activeAccount!.address,
   );
+  const { alert } = useModalStore();
 
   async function onNodeChange(newNode: Node) {
+    // TODO: to delete
+    if (newNode === "MainNet") {
+      await alert({
+        description:
+          "The mainnet is currently unavailable. Stay tuned for updates as we prepare for its upcoming launch!",
+        title: "Mainnet Coming Soon!",
+      });
+      return;
+    }
     setSetting("node", newNode);
     await refreshRegistryCache();
     if (activeAccount) {
