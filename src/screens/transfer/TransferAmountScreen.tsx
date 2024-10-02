@@ -244,7 +244,10 @@ export default function TransferAmountScreen({
       return estimatedFee;
     } catch (err: any) {
       setEstimationFailed(true);
-      if (err.details?.includes("gas")) {
+      if (
+        err.details?.includes("gas") ||
+        err.details?.includes("insufficient")
+      ) {
         setFee({
           amount: [{ amount: `${sei.balance + 1n}`, denom: "usei" }],
           gas: "",
