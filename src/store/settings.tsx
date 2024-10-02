@@ -8,7 +8,7 @@ const SETTINGS_KEY = "settings.json";
 
 const DEFAULT_SETTINGS = {
   "auth.biometricsEnabled": false,
-  node: "MainNet" as Node,
+  node: "TestNet" as Node,
   globalGasPrice: "Low" as FeeTier,
   localGasPrice: "Low" as FeeTier,
   allowNotifications: true,
@@ -31,7 +31,10 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
       SETTINGS_KEY,
       { ...DEFAULT_SETTINGS },
     );
-    const settings = { ...DEFAULT_SETTINGS, ...storedSettings };
+    const settings = {
+      ...DEFAULT_SETTINGS,
+      ...storedSettings,
+    };
     set({ settings });
   },
   setSetting: (key, value) => {
