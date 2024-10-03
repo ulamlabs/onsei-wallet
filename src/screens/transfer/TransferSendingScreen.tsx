@@ -107,11 +107,14 @@ export default function TransferSendingScreen({
     const transaction = await walletClient.getTransaction({
       hash: tx.hash as `0x${string}`,
     });
+    const receipt = await walletClient.waitForTransactionReceipt({
+      hash: transaction.hash,
+    });
 
-    const parsedTx = parseEvmToTransaction(transaction, token);
+    const parsedTx = parseEvmToTransaction(transaction, token, receipt.status);
     storeNewTransaction(activeAccount!.address, parsedTx);
 
-    navigateToSuccess(tx.hash as `0x${string}`, amount);
+    navigateToSuccess(tx.hash as `0x${string}`, amount, receipt.status);
   }
 
   async function handleEvmRawTransaction(
@@ -122,10 +125,10 @@ export default function TransferSendingScreen({
       serializedTransaction: transfer.evmTransaction!,
     });
     const transaction = await walletClient.getTransaction({ hash });
-    const parsedTx = parseEvmToTransaction(transaction, token);
+    const receipt = await walletClient.waitForTransactionReceipt({ hash });
+    const parsedTx = parseEvmToTransaction(transaction, token, receipt.status);
     storeNewTransaction(activeAccount!.address, parsedTx);
-
-    navigateToSuccess(hash, amount);
+    navigateToSuccess(hash, amount, receipt.status);
   }
 
   async function handleCosmosTransaction(amount: string) {
@@ -164,8 +167,15 @@ export default function TransferSendingScreen({
     parsedTx.type = "sent";
   }
 
-  function navigateToSuccess(txHash: `0x${string}`, amount: string) {
-    const sentTx = { code: 0, transactionHash: txHash };
+  function navigateToSuccess(
+    txHash: `0x${string}`,
+    amount: string,
+    status: "success" | "reverted",
+  ) {
+    const sentTx = {
+      code: status === "success" ? 0 : 1,
+      transactionHash: txHash,
+    };
     navigation.navigate("transferSent", {
       tx: sentTx,
       amount,

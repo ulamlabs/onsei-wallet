@@ -69,7 +69,7 @@ export async function notifyTx(
     return false;
   }
 
-  if (tx.to === activeAccount?.address) {
+  if (tx.to === activeAccount?.address || tx.to === activeAccount?.evmAddress) {
     await addTokenToTokens(tx.token);
   }
 

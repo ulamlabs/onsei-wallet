@@ -47,6 +47,7 @@ export function NotificationsWebsocket({ address }: { address: string }) {
     const queries = [
       `transfer.recipient='${address}'`, // receiving token
       `wasm.to='${address}'`, // receiving CW20
+      `coin_received.receiver='${address}'`,
     ];
     for (const query of queries) {
       const message = {

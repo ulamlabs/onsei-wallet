@@ -1,6 +1,6 @@
 import { Transaction, getTransactions } from "@/modules/transactions";
 import { useAccountsStore, useSettingsStore } from "@/store";
-import { saveToStorage, loadFromStorage, unique } from "@/utils";
+import { loadFromStorage, saveToStorage, unique } from "@/utils";
 import { notifyTx } from "./pushNotifications";
 
 export async function poolAndNotifyNewTxs(): Promise<boolean> {

@@ -1,10 +1,12 @@
 import { NODE_URL } from "@/const";
 import { useSettingsStore } from "@/store";
 import { useQuery } from "@tanstack/react-query";
+import { createPublicClient, http } from "viem";
+import { sei, seiTestnet } from "viem/chains";
 import { get } from "../api/api";
+import { parseEvmToTransaction, parseTx } from "./parsing";
 import { combineTransactionsWithStorage } from "./storage";
-import { Transaction, TransactionsData } from "./types";
-import { parseTx } from "./parsing";
+import { RpcResponseTxs, Transaction, TransactionsData } from "./types";
 import { getTxEventQueries } from "./utils";
 
 type GetTransactionsOptions = {
@@ -19,7 +21,7 @@ export const getTransactions = async (
 
   const node = useSettingsStore.getState().settings.node;
   const url = `https://rest.${NODE_URL[node]}/cosmos/tx/v1beta1/txs`;
-
+  const rpcUrl = `https://rpc.${NODE_URL[node]}/tx_search?query=coin_received.receiver%3D%27${options.address}%27`;
   const events = getTxEventQueries(options.address);
 
   const txs = await Promise.all(
@@ -28,9 +30,37 @@ export const getTransactions = async (
     ),
   );
 
-  return txs
-    .flatMap((tx) => tx.data.tx_responses.map((tx) => parseTx(tx)))
-    .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+  const rpcTxs = await get<RpcResponseTxs>(rpcUrl);
+  const publicClient = createPublicClient({
+    chain: node === "MainNet" ? sei : seiTestnet,
+    transport: http(),
+  });
+  const evmTxsHashes = rpcTxs.data.txs
+    .filter((resp) => resp.tx_result.evm_tx_info?.txHash)
+    .map((resp) => resp.tx_result.evm_tx_info!.txHash);
+
+  const evmTxs = await Promise.all(
+    evmTxsHashes?.map((hash) => publicClient.getTransaction({ hash })),
+  );
+
+  const evmTxsReceipt = await Promise.all(
+    evmTxsHashes?.map((hash) => publicClient.getTransactionReceipt({ hash })),
+  );
+  const evmBlocks = await Promise.all(
+    evmTxs.map((tx) => publicClient.getBlock({ blockHash: tx.blockHash })),
+  );
+
+  const parsedEvm = evmTxs.map((tx, index) => {
+    return {
+      ...parseEvmToTransaction(tx, undefined, evmTxsReceipt[index].status),
+      timestamp: new Date(+evmBlocks[index].timestamp.toString() * 1000),
+    };
+  });
+
+  return [
+    ...txs.flatMap((tx) => tx.data.tx_responses.map((tx) => parseTx(tx))),
+    ...parsedEvm,
+  ].sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
 };
 
 export const useTransactions = (address: string) =>

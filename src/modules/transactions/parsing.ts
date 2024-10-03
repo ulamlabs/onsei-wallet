@@ -44,12 +44,13 @@ export function websocketTxToTxResponse(tx: any): TxResponse {
   const result = tx.data.value.TxResult.result;
   return {
     code: 0,
-    events: result.events,
+    events: tx.data.events || result.events,
     gas_used: result.gas_used.toString(),
     gas_wanted: result.gas_wanted.toString(),
     // Timestamp is missing in websocket data. We might pull it from the block data in the future but using the current date is good enough as websockets are "real time".
     timestamp: new Date().toISOString(),
     txhash: tx.events["tx.hash"][0] ?? "",
+    to: tx.events["coin_received.receiver"][0] || "",
   };
 }
 
@@ -71,9 +72,7 @@ export function parseTx(
 
 function getParamsFromEvents(tx: TxResponse): TransactionEventParams {
   const events = parseEvents(tx.events);
-
   const action = events["message.action"] ?? "";
-
   const result: TransactionEventParams = {
     sender: events["signer.sei_addr"] ?? events["message.sender"] ?? "",
     type: action.split(".").at(-1) ?? "",
@@ -82,7 +81,7 @@ function getParamsFromEvents(tx: TxResponse): TransactionEventParams {
     token: "",
     amount: 0n,
     from: "",
-    to: "",
+    to: tx.to || "",
   };
 
   if (
@@ -92,9 +91,22 @@ function getParamsFromEvents(tx: TxResponse): TransactionEventParams {
     parseMsgSend(result, events);
   } else if (action === "/cosmwasm.wasm.v1.MsgExecuteContract") {
     parseMsgExecuteContract(result, events);
+  } else if (action === "/seiprotocol.seichain.evm.MsgEVMTransaction") {
+    parseMsgEVMTransaction(result, events);
   }
-
   return result;
+}
+
+function parseMsgEVMTransaction(
+  result: TransactionEventParams,
+  events: Record<string, string>,
+) {
+  const from = events["signer.evm_addr"] || events["signer.sei_addr"] || "";
+  const [amount, token] = splitAmountAndDenom(events["coin_spent.amount"]);
+
+  if (token && amount) {
+    Object.assign(result, { token, from, amount });
+  }
 }
 
 function parseMsgSend(
@@ -174,23 +186,23 @@ export function parseEvents(events: TxEvent[]) {
 
 export function parseEvmToTransaction(
   tx: evmTx,
-  token: CosmTokenWithBalance,
+  token?: CosmTokenWithBalance,
+  success?: "success" | "reverted",
 ): Transaction {
   const fee = (tx.gas * (tx.gasPrice || SZABO)) / SZABO;
-
-  let contract = tx.to || "";
+  let contract = "";
   let contractAction = "";
   let to = tx.to || "";
-  let amount = tx.value / BigInt(10 ** (etherUnits.wei - token.decimals));
+  let amount =
+    tx.value / BigInt(10 ** (etherUnits.wei - (token?.decimals || 6)));
   let txType = "transfer";
-  const status: "success" | "fail" = "success";
+  const status: "success" | "fail" = success === "success" ? "success" : "fail";
   const sender = tx.from;
   const memo = dataToMemo(tx.input);
 
   if (tx.input !== "0x") {
     const functionSignature = tx.input.slice(0, 10); // First 4 bytes is the function selector
     const erc20TransferSignature = "0xa9059cbb"; // ERC-20 transfer function signature
-
     if (functionSignature === erc20TransferSignature) {
       // ERC-20 Token Transfer
       contractAction = "transfer";
@@ -200,9 +212,8 @@ export function parseEvmToTransaction(
       txType = "contract";
     }
   }
-
   return {
-    token: token?.id,
+    token: token?.id || "",
     from: tx.from,
     to,
     type: txType,

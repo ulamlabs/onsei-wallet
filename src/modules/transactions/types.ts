@@ -35,6 +35,7 @@ export type TxResponse = {
   code: number;
   events: TxEvent[];
   tx?: TxData;
+  to?: string;
 };
 
 export type TxEvent = {
@@ -89,4 +90,26 @@ export type EvmTransaction = {
   typeHex: string;
   v: bigint;
   value: bigint;
+};
+
+export type RpcResponseTxs = {
+  total_count: number;
+  txs: RpcResponseTx[];
+};
+
+export type RpcResponseTx = {
+  hash: string;
+  height: string;
+  index: number;
+  tx_result: {
+    data: string;
+    log: string;
+    gas_wanted: string;
+    gas_used: string;
+    evm_tx_info?: {
+      senderAddress: `0x${string}`;
+      nonce: string;
+      txHash: `0x${string}`;
+    };
+  };
 };

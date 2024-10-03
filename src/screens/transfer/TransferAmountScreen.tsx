@@ -15,7 +15,6 @@ import {
   estimateTransferGas,
 } from "@/services/cosmos/tx";
 import { getSigningClientAndSender } from "@/services/cosmos/tx/getSigningClientAndSender";
-import { getSeiAddress } from "@/services/evm";
 import { simulateEvmTx } from "@/services/evm/tx";
 import { useAccountsStore, useToastStore, useTokensStore } from "@/store";
 import { Colors, FontWeights } from "@/styles";
@@ -52,7 +51,6 @@ export default function TransferAmountScreen({
   >(undefined);
   const { getMnemonic, activeAccount } = useAccountsStore();
   const [evmTransaction, setEvmTransaction] = useState<`0x${string}`>(`0x`);
-  const [recipientAddress, setRecipientAddress] = useState(recipient.address);
   const [evmTxData, setEvmTxData] = useState<{
     tokenAmount: string;
     privateKey: `0x${string}`;
@@ -102,7 +100,12 @@ export default function TransferAmountScreen({
     if (loadingMaxAmount) {
       return;
     }
-    if (!decimalAmount || intAmount > token.balance) {
+    if (
+      !decimalAmount ||
+      intAmount > token.balance ||
+      +decimalAmount === 0 ||
+      !Number(decimalAmount)
+    ) {
       setFee(null);
       setLoadingFee(false);
       return;
@@ -134,7 +137,7 @@ export default function TransferAmountScreen({
   function goToSummary() {
     navigation.navigate("transferSummary", {
       tokenId,
-      recipient: { ...recipient, address: recipientAddress },
+      recipient,
       intAmount: intAmount.toString(),
       memo: memoInput.value,
       fee,
@@ -208,12 +211,8 @@ export default function TransferAmountScreen({
   }
 
   async function feeEstimation(amount: bigint = intAmount) {
-    const hasSeiAddress = await getSeiAddress(recipient.address);
-    if (hasSeiAddress) {
-      setRecipientAddress(hasSeiAddress);
-    }
     try {
-      if (!hasSeiAddress && isEvmAddress(recipient.address)) {
+      if (isEvmAddress(recipient.address)) {
         const simulation = await simulateEvmTx(
           getMnemonic(activeAccount!.address!),
           recipient.address as `0x${string}`,
@@ -234,7 +233,7 @@ export default function TransferAmountScreen({
         return simulation.stdFee;
       }
       const gas = await estimateTransferGas(
-        isEvmAddress(recipient.address) ? hasSeiAddress : recipient.address,
+        recipient.address,
         token,
         amount,
         signingClientAndSender || undefined,
@@ -245,6 +244,16 @@ export default function TransferAmountScreen({
       return estimatedFee;
     } catch (err: any) {
       setEstimationFailed(true);
+      if (
+        err.details?.includes("gas") ||
+        err.details?.includes("insufficient")
+      ) {
+        setFee({
+          amount: [{ amount: `${sei.balance + 1n}`, denom: "usei" }],
+          gas: "",
+        });
+        return;
+      }
       error({ description: `${err}` });
     } finally {
       setLoadingFee(false);
