@@ -12,7 +12,7 @@ export default function TextLink({ url, text }: Props) {
     await Linking.openURL(url);
   }
   return (
-    <Pressable style={{}} onPress={openUrl}>
+    <Pressable onPress={openUrl}>
       <Paragraph
         style={[
           {

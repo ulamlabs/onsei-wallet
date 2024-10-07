@@ -39,22 +39,20 @@ export default function OnboardingFinishScreen({
       </View>
       <View>
         <View
-          style={[
-            {
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 20,
-              justifyContent: "center",
-              paddingRight: 42, // checkbox width + gap
-              marginBottom: 32,
-            },
-          ]}
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 20,
+            justifyContent: "center",
+            paddingRight: 42, // checkbox width + gap
+            marginBottom: 32,
+          }}
         >
           <Checkbox setChecked={setChecked} checked={checked} />
-          <View style={[{ alignItems: "center" }]}>
+          <View style={{ alignItems: "center" }}>
             <Paragraph>I have read and agree to the</Paragraph>
             <View
-              style={[{ flexDirection: "row", alignItems: "center", gap: 4 }]}
+              style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
             >
               <TextLink
                 url="https://www.onseiwallet.io/terms-and-conditions"
