@@ -83,7 +83,11 @@ npm install -g eas-cli
 eas login
 ```
 
+...and update `version` in `app.json`. `versionCode` will be updated automatically during android build
+
 ### iOS
+
+Before starting the iOS build, replace all `react-native-quick-crypto` names into `react-native-crypto` in files `eas.json` and `babel.config.js`,
 
 Run those commands:
 
@@ -107,6 +111,8 @@ eas credentials
 In the menu pick "Android", then "production" and "Keystore".
 From this menu, select "Set up a new keystore", and when asked to "Generate a new Android Keystore?", answer "No". You will then be asked for the path to the Keystore file. Provide the path to `my-upload-key.keystore`.
 When asked for an alias, type "my-key-alias", and when asked for a password, enter the one provided by your team.
+
+If you replaced quick-crypto package before for iOS, you can bring it back, as it works properly on Android.
 
 You can now run
 
