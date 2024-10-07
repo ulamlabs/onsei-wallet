@@ -1,3 +1,5 @@
+import Checkbox from "./Checkbox";
+import ExternalLink from "./ExternalLink";
 import Link from "./Link";
 import Option from "./Option";
 import OptionGroup from "./OptionGroup";
@@ -10,6 +12,8 @@ import TextInput from "./TextInput";
 import TransactionDetailsOption from "./TransactionDetailsOptions";
 
 export {
+  Checkbox,
+  ExternalLink,
   Link,
   Option,
   OptionGroup,

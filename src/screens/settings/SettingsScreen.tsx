@@ -1,5 +1,6 @@
 import {
   Column,
+  ExternalLink,
   Link,
   OptionGroup,
   SafeLayout,
@@ -12,7 +13,9 @@ import {
   Blend,
   Book,
   CardEdit,
+  Document,
   Global,
+  Note,
   Notification,
   SecuritySafe,
   Wallet,
@@ -72,6 +75,21 @@ export default function SettingsScreen() {
           />
         </OptionGroup>
         <OptionGroup>
+          <Link
+            label="Security and privacy"
+            navigateTo="Security and privacy"
+            icon={<SecuritySafe size={22} color={Colors.text} />}
+          />
+          <ExternalLink
+            label="Terms of service"
+            navigateTo="https://www.onseiwallet.io/terms-and-conditions"
+            icon={<Document size={22} color={Colors.text} />}
+          />
+          <ExternalLink
+            label="Privacy policy"
+            navigateTo="https://www.onseiwallet.io/privacy-policy"
+            icon={<Note size={22} color={Colors.text} />}
+          />
           {node === "MainNet" && (
             <Link
               label="Give us a Tip!"
@@ -85,11 +103,6 @@ export default function SettingsScreen() {
               icon={<WalletMoney size={22} color={Colors.text} />}
             />
           )}
-          <Link
-            label="Security and privacy"
-            navigateTo="Security and privacy"
-            icon={<SecuritySafe size={22} color={Colors.text} />}
-          />
         </OptionGroup>
       </Column>
     </SafeLayout>
