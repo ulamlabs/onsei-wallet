@@ -1,7 +1,6 @@
 import {
   Column,
   Headline,
-  LinkAddresses,
   Paragraph,
   PrimaryButton,
   Row,
@@ -52,14 +51,15 @@ export default function ImportWalletScreen({
         isLinked,
         route.params?.name,
       );
-      if (!isLinked) {
-        alert({
-          title: "Link addresses",
-          description: <LinkAddresses address={wallet!.address} />,
-          useHeadline: true,
-          hideOk: true,
-        });
-      }
+      // TODO: use again when evm implemented
+      // if (!isLinked) {
+      //   alert({
+      //     title: "Link addresses",
+      //     description: <LinkAddresses address={wallet!.address} />,
+      //     useHeadline: true,
+      //     hideOk: true,
+      //   });
+      // }
     } catch (e: any) {
       console.error("Error on wallet import:", e);
       setError(e.message);
