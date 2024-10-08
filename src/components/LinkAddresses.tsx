@@ -4,7 +4,7 @@ import { Colors, FontWeights } from "@/styles";
 import { NavigationProp } from "@/types";
 import { useNavigation } from "@react-navigation/native";
 import { ExportSquare } from "iconsax-react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Linking, View } from "react-native";
 import CopyAddressItem from "./CopyAddressItem";
 import { PrimaryButton, TertiaryButton } from "./buttons";
@@ -19,8 +19,22 @@ export default function LinkAddresses({ address }: LinkAddressesProps) {
   const account = accounts.find((account) => account.address === address)!;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const { modals } = useModalStore();
+  const { modals, alert } = useModalStore();
   const { success } = useToastStore();
+
+  // TODO: to delete when evm available
+  useEffect(() => {
+    async function comingSoonInfo() {
+      await alert({
+        description:
+          "EVM is currently unavailable. Stay tuned for updates as we prepare for its upcoming launch!",
+        title: "EVM Coming Soon!",
+      });
+
+      navigation.goBack();
+    }
+    comingSoonInfo();
+  }, [alert]);
 
   async function onLink() {
     setLoading(true);
@@ -72,8 +86,10 @@ export default function LinkAddresses({ address }: LinkAddressesProps) {
           title="Link addresses"
           loading={loading}
           onPress={onLink}
+          disabled // Todo: to delete
         />
         <TertiaryButton
+          disabled //Todo: to delete
           onPress={onShowMore}
           textStyle={{
             fontFamily: FontWeights.bold,
