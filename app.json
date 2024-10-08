@@ -3,7 +3,7 @@
     "name": "onsei wallet",
     "slug": "sei-wallet",
     "scheme": "onseiwallet",
-    "version": "1.0.16",
+    "version": "1.0.17",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -23,7 +23,7 @@
       "infoPlist": {
         "NSFaceIDUsageDescription": "This app stores users's private keys and the access should be Face ID protected."
       },
-      "buildNumber": "3"
+      "buildNumber": "4"
     },
     "android": {
       "adaptiveIcon": {
@@ -31,7 +31,7 @@
       },
       "userInterfaceStyle": "light",
       "package": "com.ulamlabs.seiwallet",
-      "versionCode": 15
+      "versionCode": 16
     },
     "web": {
       "favicon": "./assets/favicon.png"
