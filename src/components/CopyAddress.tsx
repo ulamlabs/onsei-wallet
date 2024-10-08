@@ -13,7 +13,7 @@ export default function CopyAddress() {
       title: `${activeAccount!.name} addresses`,
       description: (
         <View>
-          <CopyAddressItem type="EVM" address={activeAccount!.evmAddress} />
+          {/* <CopyAddressItem type="EVM" address={activeAccount!.evmAddress} /> TODO: use again when evm implemented */}
           <CopyAddressItem type="SEI" address={activeAccount!.address} />
         </View>
       ),

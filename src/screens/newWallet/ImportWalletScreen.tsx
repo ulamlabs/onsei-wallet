@@ -1,7 +1,6 @@
 import {
   Column,
   Headline,
-  LinkAddresses,
   Paragraph,
   PrimaryButton,
   Row,
@@ -10,7 +9,7 @@ import {
 } from "@/components";
 import { useInputState } from "@/hooks";
 import { isAddressLinked } from "@/services/evm";
-import { useAccountsStore, useModalStore } from "@/store";
+import { useAccountsStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -32,7 +31,6 @@ export default function ImportWalletScreen({
   const mnemonicInput = useInputState();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const { alert } = useModalStore();
 
   useEffect(() => {
     if (loading) {
@@ -52,14 +50,15 @@ export default function ImportWalletScreen({
         isLinked,
         route.params?.name,
       );
-      if (!isLinked) {
-        alert({
-          title: "Link addresses",
-          description: <LinkAddresses address={wallet!.address} />,
-          useHeadline: true,
-          hideOk: true,
-        });
-      }
+      // TODO: use again when evm implemented
+      // if (!isLinked) {
+      //   alert({
+      //     title: "Link addresses",
+      //     description: <LinkAddresses address={wallet!.address} />,
+      //     useHeadline: true,
+      //     hideOk: true,
+      //   });
+      // }
     } catch (e: any) {
       console.error("Error on wallet import:", e);
       setError(e.message);
