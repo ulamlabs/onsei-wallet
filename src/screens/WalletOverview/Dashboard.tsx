@@ -2,7 +2,6 @@ import {
   Column,
   CopyAddress,
   Headline,
-  LinkIcon,
   Loader,
   NoBackupIcon,
   Paragraph,
@@ -27,10 +26,9 @@ import {
   ArrowDown2,
   ArrowUp,
   InfoCircle,
-  ScanBarcode,
   Setting2,
 } from "iconsax-react-native";
-import React, { useMemo } from "react";
+import React from "react";
 import { Image, TouchableOpacity, View } from "react-native";
 import { TokensList } from "../tokens";
 
@@ -49,10 +47,10 @@ export default function Dashboard({ navigation }: DashboardProps) {
   const {
     settings: { node },
   } = useSettingsStore();
-  const requiresAction = useMemo(
-    () => activeAccount?.passphraseSkipped || !activeAccount?.addressLinked,
-    [activeAccount],
-  );
+  // const requiresAction = useMemo(
+  //   () => activeAccount?.passphraseSkipped || !activeAccount?.addressLinked,
+  //   [activeAccount],
+  // ); // TODO: use again when mainnet and evm ready
 
   function onReceive() {
     navigation.navigate("Your SEI address");
@@ -61,9 +59,9 @@ export default function Dashboard({ navigation }: DashboardProps) {
     setSetting("localGasPrice", globalGasPrice);
     navigation.navigate("transferSelectAddress");
   }
-  function onScan() {
-    navigation.push("Connect Wallet");
-  }
+  // function onScan() {
+  //   navigation.push("Connect Wallet");
+  //  TODO: use again when mainnet ready}
   async function onRefresh() {
     await refreshRegistryCache();
     updateBalances();
@@ -138,7 +136,7 @@ export default function Dashboard({ navigation }: DashboardProps) {
           style={{ flexDirection: "row", gap: 4 }}
         >
           <Row style={{ gap: 4 }}>
-            {requiresAction && (
+            {activeAccount?.passphraseSkipped && ( // Todo: use again requiresAction when mainnet and evm ready
               <View style={{ position: "relative" }}>
                 <View
                   style={{
@@ -151,11 +149,12 @@ export default function Dashboard({ navigation }: DashboardProps) {
                     borderRadius: 999,
                   }}
                 ></View>
-                {activeAccount?.passphraseSkipped ? (
+                <NoBackupIcon />
+                {/* {activeAccount?.passphraseSkipped ? (
                   <NoBackupIcon />
                 ) : (
                   <LinkIcon />
-                )}
+                )} TODO: use again when mainnet and evm ready */}
               </View>
             )}
 
@@ -198,12 +197,12 @@ export default function Dashboard({ navigation }: DashboardProps) {
             onPress={onReceive}
             icon={ArrowDown}
           />
-          <SecondaryButton
+          {/* <SecondaryButton
             title="Scan"
             style={{ paddingHorizontal: 20, flex: 1, gap: 6 }}
             onPress={onScan}
             icon={ScanBarcode}
-          />
+          /> TODO: use again when mainnet ready */}
         </Row>
         <TokensList />
       </SafeLayout>

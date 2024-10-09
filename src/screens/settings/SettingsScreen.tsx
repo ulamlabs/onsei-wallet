@@ -10,11 +10,13 @@ import { APP_NAME, WALLET_ADMIN_ADDRESS } from "@/const";
 import { useSettingsStore } from "@/store";
 import { Colors } from "@/styles";
 import {
+<<<<<<< HEAD
   Blend,
   Book,
+=======
+>>>>>>> b41f33d (WA-198: hide coming soon (#114))
   CardEdit,
   Document,
-  Global,
   Note,
   Notification,
   SecuritySafe,
@@ -24,7 +26,7 @@ import {
 
 export default function SettingsScreen() {
   const {
-    settings: { node, ["walletConnet.sessions"]: sessions, allowNotifications },
+    settings: { node, allowNotifications }, // TODO: use again when mainnet ready:  settings: { node, ["walletConnet.sessions"]: sessions, allowNotifications }
     setSetting,
   } = useSettingsStore();
 
@@ -41,12 +43,12 @@ export default function SettingsScreen() {
             navigateTo="Wallets"
             icon={<Wallet size={22} color={Colors.text} />}
           />
-          <Link
+          {/* <Link
             label="Network"
             navigateTo="Select network"
             icon={<Global size={22} color={Colors.text} />}
             labelRight={node}
-          />
+          /> TODO: use this again after mainnet*/}
           <Link
             label="Transactions settings"
             navigateTo="Transaction settings"
@@ -59,7 +61,7 @@ export default function SettingsScreen() {
             value={allowNotifications}
             onChange={toggleNotifications}
           />
-          <Link
+          {/* <Link
             label="Connected Apps"
             navigateTo="Connected Apps"
             icon={<Blend size={22} color={Colors.text} />}
@@ -73,6 +75,7 @@ export default function SettingsScreen() {
             icon={<Book size={22} color={Colors.text} />}
             params={{ addressCount: 0 }}
           />
+          /> TODO: use again when mainnet ready */}
         </OptionGroup>
         <OptionGroup>
           <Link
