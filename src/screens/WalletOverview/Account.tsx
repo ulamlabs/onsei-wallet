@@ -1,4 +1,4 @@
-import { Column, IconButton, LinkIcon, NoBackupIcon, Row } from "@/components";
+import { Column, IconButton, NoBackupIcon, Row } from "@/components";
 import { Account as AccountType, useAccountsStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigationProp } from "@/types";
@@ -16,7 +16,7 @@ export default function Account({ item }: AccountProps) {
   const { activeAccount, setActiveAccount } = useAccountsStore();
   const navigation = useNavigation<NavigationProp>();
   const isActive = item.address === activeAccount?.address;
-  const actionRequired = item.passphraseSkipped || !item.addressLinked;
+  // const actionRequired = item.passphraseSkipped || !item.addressLinked; // Todo: use again actionRequired when mainnet and evm ready
 
   function selectAccount(address: string) {
     if (address !== activeAccount?.address) {
@@ -68,7 +68,7 @@ export default function Account({ item }: AccountProps) {
             navigation.navigate("Wallet settings", { address: item.address })
           }
         />
-        {actionRequired && (
+        {item.passphraseSkipped && ( // TODO: use again actionRequired when mainnet and evm ready
           <View
             style={{
               position: "absolute",
@@ -78,7 +78,8 @@ export default function Account({ item }: AccountProps) {
               top: -6,
             }}
           >
-            {item.passphraseSkipped ? <NoBackupIcon /> : <LinkIcon />}
+            <NoBackupIcon />
+            {/* {item.passphraseSkipped ? <NoBackupIcon /> : <LinkIcon />} TODO: use again when mainnet and evm ready */}
           </View>
         )}
       </View>
