@@ -26,7 +26,6 @@ import {
   ArrowDown2,
   ArrowUp,
   InfoCircle,
-  ScanBarcode,
   Setting2,
 } from "iconsax-react-native";
 import React from "react";
@@ -198,12 +197,12 @@ export default function Dashboard({ navigation }: DashboardProps) {
             onPress={onReceive}
             icon={ArrowDown}
           />
-          <SecondaryButton
+          {/* <SecondaryButton
             title="Scan"
             style={{ paddingHorizontal: 20, flex: 1, gap: 6 }}
             onPress={onScan}
             icon={ScanBarcode}
-          />
+          /> TODO: use again when mainnet ready */}
         </Row>
         <TokensList />
       </SafeLayout>
