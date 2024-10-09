@@ -21,7 +21,7 @@ import {
 
 export default function SettingsScreen() {
   const {
-    settings: { node, ["walletConnet.sessions"]: sessions, allowNotifications },
+    settings: { node, allowNotifications }, // TODO: use again when mainnet ready:  settings: { node, ["walletConnet.sessions"]: sessions, allowNotifications }
     setSetting,
   } = useSettingsStore();
 
