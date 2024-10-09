@@ -10,7 +10,6 @@ import { APP_NAME, WALLET_ADMIN_ADDRESS } from "@/const";
 import { useSettingsStore } from "@/store";
 import { Colors } from "@/styles";
 import {
-  Blend,
   CardEdit,
   Document,
   Note,
@@ -57,14 +56,14 @@ export default function SettingsScreen() {
             value={allowNotifications}
             onChange={toggleNotifications}
           />
-          <Link
+          {/* <Link
             label="Connected Apps"
             navigateTo="Connected Apps"
             icon={<Blend size={22} color={Colors.text} />}
             labelRight={
               sessions?.length > 0 ? sessions.length.toString() : undefined
             }
-          />
+          /> TODO: use again when mainnet ready */}
         </OptionGroup>
         <OptionGroup>
           <Link
