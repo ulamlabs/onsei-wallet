@@ -13,7 +13,6 @@ import {
   Blend,
   CardEdit,
   Document,
-  Global,
   Note,
   Notification,
   SecuritySafe,
@@ -40,12 +39,12 @@ export default function SettingsScreen() {
             navigateTo="Wallets"
             icon={<Wallet size={22} color={Colors.text} />}
           />
-          <Link
+          {/* <Link
             label="Network"
             navigateTo="Select network"
             icon={<Global size={22} color={Colors.text} />}
             labelRight={node}
-          />
+          /> TODO: use this again after mainnet*/}
           <Link
             label="Transactions settings"
             navigateTo="Transaction settings"

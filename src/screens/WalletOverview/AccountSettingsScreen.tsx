@@ -3,7 +3,6 @@ import {
   Headline,
   IconButton,
   Link,
-  LinkIcon,
   NoBackupIcon,
   OptionGroup,
   Row,
@@ -17,13 +16,7 @@ import { useAccountsStore, useModalStore, useSettingsStore } from "@/store";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import {
-  Edit2,
-  ExportSquare,
-  LinkCircle,
-  SecuritySafe,
-  Trash,
-} from "iconsax-react-native";
+import { Edit2, ExportSquare, SecuritySafe, Trash } from "iconsax-react-native";
 import { Linking, View } from "react-native";
 
 type AccountSettingsProps = NativeStackScreenProps<
@@ -115,7 +108,7 @@ export default function AccountSettingsScreen({
                 askPin
               />
             )}
-            {!account?.addressLinked && (
+            {/* {!account?.addressLinked && (
               <Link
                 label="Link addresses"
                 icon={<LinkIcon />}
@@ -123,7 +116,7 @@ export default function AccountSettingsScreen({
                 params={{ address }}
                 labelRight={truncatedAddresses}
               />
-            )}
+            )} TODO: use again when mainnet and evm ready */}
           </OptionGroup>
 
           <Column style={{ marginTop: 32 }}>
@@ -143,7 +136,7 @@ export default function AccountSettingsScreen({
               </Row>
             )}
 
-            {!account?.addressLinked && (
+            {/* {!account?.addressLinked && (
               <Row
                 style={{
                   ...infoBoxStyle,
@@ -156,7 +149,7 @@ export default function AccountSettingsScreen({
                   Link Sei & EVM addresses to explore Sei V2
                 </Text>
               </Row>
-            )}
+            )} TODO: use again when mainnet and evm ready */}
           </Column>
 
           {activeAccount?.address !== address && (
