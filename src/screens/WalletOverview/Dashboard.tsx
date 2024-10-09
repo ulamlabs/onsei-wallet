@@ -59,9 +59,9 @@ export default function Dashboard({ navigation }: DashboardProps) {
     setSetting("localGasPrice", globalGasPrice);
     navigation.navigate("transferSelectAddress");
   }
-  function onScan() {
-    navigation.push("Connect Wallet");
-  }
+  // function onScan() {
+  //   navigation.push("Connect Wallet");
+  //  TODO: use again when mainnet ready}
   async function onRefresh() {
     await refreshRegistryCache();
     updateBalances();
