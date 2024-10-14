@@ -73,6 +73,7 @@ export function parseTx(
 function getParamsFromEvents(tx: TxResponse): TransactionEventParams {
   const events = parseEvents(tx.events);
   const action = events["message.action"] ?? "";
+  const receiver = events["coin_received.receiver"] ?? "";
   const result: TransactionEventParams = {
     sender: events["signer.sei_addr"] ?? events["message.sender"] ?? "",
     type: action.split(".").at(-1) ?? "",
@@ -81,7 +82,7 @@ function getParamsFromEvents(tx: TxResponse): TransactionEventParams {
     token: "",
     amount: 0n,
     from: "",
-    to: tx.to || "",
+    to: tx.to || receiver || "",
   };
 
   if (
@@ -172,12 +173,12 @@ function isDigit(char: string) {
   return char >= "0" && char <= "9";
 }
 
-export function parseEvents(events: TxEvent[]) {
+export function parseEvents(events: TxEvent[], decode = true) {
   const result: Record<string, string> = {};
   for (const event of events) {
     for (const attr of event.attributes) {
-      const key = `${event.type}.${atob(attr.key as any)}`;
-      const value = atob(attr.value as any);
+      const key = `${event.type}.${decode ? atob(attr.key as any) : attr.key}`;
+      const value = decode ? atob(attr.value as any) : attr.value;
       result[key] = value;
     }
   }
@@ -188,7 +189,10 @@ export function parseEvmToTransaction(
   tx: evmTx,
   token?: CosmTokenWithBalance,
   success?: "success" | "reverted",
+  logs?: TxEvent[],
 ): Transaction {
+  const events = logs ? parseEvents(logs || [], false) : "";
+  const tokenLog = events ? splitAmountAndDenom(events["transfer.amount"]) : "";
   const fee = (tx.gas * (tx.gasPrice || SZABO)) / SZABO;
   let contract = "";
   let contractAction = "";
@@ -212,8 +216,9 @@ export function parseEvmToTransaction(
       txType = "contract";
     }
   }
+
   return {
-    token: token?.id || "",
+    token: token?.id || tokenLog[1] || "",
     from: tx.from,
     to,
     type: txType,

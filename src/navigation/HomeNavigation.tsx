@@ -7,6 +7,7 @@ import AccountsScreen from "@/screens/WalletOverview/AccountsScreen";
 import EditAccountNameScreen from "@/screens/WalletOverview/EditAccountNameScreen";
 import LinkAddressesScreen from "@/screens/WalletOverview/LinkAddressesScreen";
 import AddOrEditAddress from "@/screens/addressBook/AddOrEditAddress";
+import AddressBook from "@/screens/addressBook/AddressBookScreen";
 import AddressDetailsScreen from "@/screens/addressBook/AddressDetailsScreen";
 import TransactionsWithAddress from "@/screens/addressBook/TransactionsWithAddress";
 import { AuthorizeScreen, BiometricsDisableScreen } from "@/screens/auth";
@@ -46,14 +47,13 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import BottomBarsNavigation from "./BottomBarsNavigation";
 import { navigatorScreenOptions } from "./const";
+import AddressBookHeaderOptions from "./header/AddressBookHeader";
 import CancelHeaderRight from "./header/CancelHeaderRight";
 import DefaultHeaderLeft from "./header/DefaultHeaderLeft";
 import DefaultHeaderTitle from "./header/DefaultHeaderTitle";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
-import SettingsHeaderRight from "./header/SettingsHeaderRight";
-import AddressBook from "@/screens/addressBook/AddressBookScreen";
-import AddressBookHeaderOptions from "./header/AddressBookHeader";
 import { SettingsHeaderLeft } from "./header/SettingsHeaderLeft";
+import SettingsHeaderRight from "./header/SettingsHeaderRight";
 
 export type Recipient = {
   address: string;
@@ -106,6 +106,7 @@ export type HomeParamList = {
       privateKey: `0x${string}`;
       pointerContract: `0x${string}`;
     };
+    decimalAmount?: string;
   };
   transferSending: {
     tokenId: string;

@@ -8,6 +8,7 @@ export type CosmToken = {
   decimals: number;
   logo: string;
   coingeckoId: string;
+  pointerContract?: `0x${string}`;
 };
 
 export type CosmTokenWithPrice = CosmToken & {

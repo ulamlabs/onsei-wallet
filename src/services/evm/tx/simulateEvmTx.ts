@@ -39,7 +39,12 @@ export async function simulateEvmTx(
   }
   const privateKey = await getPrivateKeyFromMnemonic(mnemonic);
 
-  const pointerContract = await getPointerContract(token.id);
+  const pointerContract =
+    token.pointerContract ||
+    (token.id.startsWith("0x")
+      ? (token.id as `0x${string}`)
+      : await getPointerContract(token.id));
+
   if (!pointerContract) {
     throw new Error(
       "We couldn't find the contract information needed to process your transaction.",
@@ -50,6 +55,7 @@ export async function simulateEvmTx(
     pointerContract,
     privateKey,
   );
+
   const tokenAmount = ethers.parseUnits(decimalAmount, token.decimals);
   const balance = await contract.balanceOf(signer.address);
 
@@ -61,6 +67,7 @@ export async function simulateEvmTx(
     receiver,
     tokenAmount,
   ]);
+
   const gas = await provider.estimateGas({
     from: account.address,
     to: pointerContract,

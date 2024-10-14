@@ -162,7 +162,7 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
 
 async function fetchRegistry(): Promise<CosmToken[]> {
   const url =
-    "https://raw.githubusercontent.com/sei-protocol/chain-registry/main/assetlist.json";
+    "https://raw.githubusercontent.com/Sei-Public-Goods/sei-assetlist/main/assetlist.json";
   try {
     const response = await fetchWithRetry(url);
     const data = await response.json();
@@ -238,6 +238,7 @@ type RegistryToken = {
   };
   coingecko_id?: string;
   type_asset: "sdk.coin" | "cw20" | "erc20" | "ics20";
+  pointer_contract?: { address: `0x${string}`; type_asset: string };
 };
 
 type NativeTokenMetadata = {
@@ -260,6 +261,7 @@ function parseRegistryToken(token: RegistryToken): CosmToken {
     symbol: token.symbol,
     logo: token.images.png ?? token.images.svg ?? "",
     coingeckoId: token.coingecko_id ?? "",
+    pointerContract: token.pointer_contract?.address,
   };
 }
 
