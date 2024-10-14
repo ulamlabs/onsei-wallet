@@ -130,7 +130,7 @@ it("parse astroportSwapTx", () => {
     token: "",
     amount: 0n,
     from: "",
-    to: "",
+    to: "sei1d97kh6x55eudfdd0wxkzunxuvhnze88te9m3f5zft59e5ygur8eq4588x0",
     sender: "sei1f8se40xdwnaaj66hsndt2ch8ppusah4yuw8s9p",
     memo: "",
   });
