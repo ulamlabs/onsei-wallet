@@ -57,7 +57,7 @@ export default function MnemonicScreen({
         wallet: {
           mnemonic: mnemonic.join(" "),
           address,
-          evmAddress: "", // evm is not used during confirmation so it can be anything
+          evmAddress: "0x", // evm is not used during confirmation so it can be anything
         },
         backup: true,
       });
