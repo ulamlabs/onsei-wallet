@@ -1,11 +1,13 @@
 import { CosmTokenWithBalance } from "@/services/cosmos";
 import { Account, useAccountsStore, useSettingsStore } from "@/store";
 import { StdFee } from "@cosmjs/stargate";
-import axios from "axios";
 import { ethers } from "ethers";
-import { isAddress } from "viem";
-import { EVM_RPC_MAIN, EVM_RPC_TEST, SZABO } from "../consts";
-import { getEvmClient, getPrivateKeyFromMnemonic } from "../utils";
+import { EVM_RPC_MAIN, EVM_RPC_TEST, SZABO, erc20Abi } from "../consts";
+import {
+  getEvmClient,
+  getPointerContract,
+  getPrivateKeyFromMnemonic,
+} from "../utils";
 
 export async function simulateEvmTx(
   mnemonic: string,
@@ -55,7 +57,6 @@ export async function simulateEvmTx(
     pointerContract,
     privateKey,
   );
-
   const tokenAmount = ethers.parseUnits(decimalAmount, token.decimals);
   const balance = await contract.balanceOf(signer.address);
 
@@ -91,27 +92,11 @@ export async function simulateEvmTx(
   return { stdFee, dataForTx, pointerContract };
 }
 
-export async function getPointerContract(
-  tokenAddress: string | `0x${string}`,
-): Promise<`0x${string}` | undefined> {
-  if (isAddress(tokenAddress)) {
-    return tokenAddress;
-  }
-  const pointerContract = await axios.get(
-    `https://v2.seipex.fi/pointer?address=${tokenAddress}`,
-  );
-  return pointerContract?.data?.nativePointer?.pointerAddress;
-}
-
 export function prepareContract(
   pointerContract: `0x${string}`,
   privateKey: string,
 ) {
   const isMainnet = useSettingsStore.getState().settings.node === "MainNet";
-  const erc20Abi = [
-    "function balanceOf(address account) view returns (uint256)",
-    "function transfer(address recipient, uint256 amount) external returns (bool)",
-  ];
   const evmRpcEndpoint = isMainnet ? EVM_RPC_MAIN : EVM_RPC_TEST;
   const provider = new ethers.JsonRpcProvider(evmRpcEndpoint);
   const signer = new ethers.Wallet(privateKey, provider);

@@ -15,11 +15,13 @@ type TokenPrice = {
 type TokenRegistryStore = {
   tokenRegistry: CosmToken[];
   cw20Registry: CosmToken[];
+  erc20Registry: CosmToken[];
   tokenRegistryMap: Map<string, CosmToken>;
   tokenPricesMap: Map<string, TokenPrice>;
   registryRefreshPromise: Promise<void> | null;
   init: () => Promise<void>;
   addCW20ToRegistry: (newToken: CosmToken) => Promise<void>;
+  addERC20ToRegistry: (newToken: CosmToken) => Promise<void>;
   getPrices: (tokens: CosmToken[]) => Promise<usdPrices[]>;
   getTokensWithPrices: (tokenIds: string[]) => Promise<CosmTokenWithPrice[]>;
   refreshRegistryCache: () => Promise<void>;
@@ -31,6 +33,7 @@ const PRICE_STALE_TIME = 10 * 60 * 1000; // 10 minutes
 export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
   tokenRegistry: [],
   cw20Registry: [],
+  erc20Registry: [],
   tokenRegistryMap: new Map(),
   tokenPricesMap: new Map(),
   registryRefreshPromise: null,
@@ -73,6 +76,32 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
     set({
       tokenRegistry: updatedRegistry,
       cw20Registry: updatedCW20Registry,
+      tokenRegistryMap: tokensToMap(updatedRegistry),
+      tokenPricesMap,
+    });
+  },
+  addERC20ToRegistry: async (newToken) => {
+    const { erc20Registry, tokenRegistry, tokenPricesMap, getPrices } = get();
+    const exists = erc20Registry.find((t) => t.id === newToken.id);
+    if (exists) {
+      return;
+    }
+    const prices = await getPrices([newToken]);
+    const newTokenPrice =
+      prices.find((p) => matchPriceToToken(newToken, p))?.price || 0;
+
+    tokenPricesMap.set(newToken.id, {
+      price: newTokenPrice,
+      timestamp: new Date(),
+    });
+
+    const updatedRegistry = [...tokenRegistry, newToken];
+    const updatedErc20Registry = [...erc20Registry, newToken];
+    saveToStorage(getRegistryKey(), updatedRegistry);
+    saveToStorage(getErc20RegistryKey(), updatedErc20Registry);
+    set({
+      tokenRegistry: updatedRegistry,
+      erc20Registry: updatedErc20Registry,
       tokenRegistryMap: tokensToMap(updatedRegistry),
       tokenPricesMap,
     });
@@ -211,6 +240,10 @@ function getRegistryKey() {
 
 function getCW20RegistryKey() {
   return `tokenCW20Registry-${getNode()}.json`;
+}
+
+function getErc20RegistryKey() {
+  return `tokenErc20Registry-${getNode()}.json`;
 }
 
 function getNode() {

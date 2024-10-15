@@ -25,7 +25,7 @@ export default function NodeSettingsScreen() {
     setSetting("node", newNode);
     await refreshRegistryCache();
     if (activeAccount) {
-      loadTokens(activeAccount.address);
+      loadTokens(activeAccount.address, activeAccount.evmAddress);
       refetchTransactions();
     }
   }

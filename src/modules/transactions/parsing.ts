@@ -157,7 +157,7 @@ function parseCw20Events(events: Record<string, string>) {
 function splitAmountAndDenom(amountAndDenom: string): [bigint, string] {
   // converts "1000usei" into [1000n, "usei"]
   let firstNonDigitIndex = 0;
-  while (firstNonDigitIndex < amountAndDenom.length) {
+  while (firstNonDigitIndex < amountAndDenom?.length) {
     if (!isDigit(amountAndDenom[firstNonDigitIndex])) {
       const amount = BigInt(amountAndDenom.substring(0, firstNonDigitIndex));
       const denom = amountAndDenom.substring(firstNonDigitIndex);

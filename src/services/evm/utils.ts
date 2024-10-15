@@ -5,8 +5,15 @@ import {
   Slip10Curve,
   stringToPath,
 } from "@cosmjs/crypto";
+import axios from "axios";
 import { ethers } from "ethers";
-import { PublicActions, createWalletClient, http, publicActions } from "viem";
+import {
+  PublicActions,
+  createWalletClient,
+  http,
+  isAddress,
+  publicActions,
+} from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { sei, seiTestnet } from "viem/chains";
 
@@ -55,4 +62,16 @@ export function dataToMemo(data: string) {
     return "";
   }
   return ethers.toUtf8String("0x" + hexMemo);
+}
+
+export async function getPointerContract(
+  tokenAddress: string | `0x${string}`,
+): Promise<`0x${string}` | undefined> {
+  if (isAddress(tokenAddress)) {
+    return tokenAddress;
+  }
+  const pointerContract = await axios.get(
+    `https://v2.seipex.fi/pointer?address=${tokenAddress}`,
+  );
+  return pointerContract?.data?.nativePointer?.pointerAddress;
 }
