@@ -19,7 +19,9 @@ const unknownToken = {
 export function getKnownAddress(address: string) {
   const { accounts } = useAccountsStore.getState();
   const { addressBook } = useAddressBookStore.getState();
-  return [...accounts, ...addressBook].find((a) => a.address === address);
+  return [...accounts, ...addressBook].find(
+    (a) => a.address.toLowerCase() === address.toLowerCase(),
+  );
 }
 
 export function getSentOrReceived(

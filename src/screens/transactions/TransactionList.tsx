@@ -56,11 +56,13 @@ function TransactionBox({ txn }: TransactionRenderProps) {
     if (sentOrReceived === "" && !txn.contractAction) {
       return "";
     }
-    const address = txn.contractAction
-      ? txn.contract
-      : sentOrReceived === "sent"
-        ? txn.to
-        : txn.sender;
+    const address =
+      txn.contractAction === "transfer"
+        ? sentOrReceived === "sent"
+          ? txn.to
+          : txn.sender
+        : txn.contract;
+
     const knownAddress = getKnownAddress(address);
 
     if (knownAddress) {
