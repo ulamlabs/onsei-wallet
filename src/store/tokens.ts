@@ -124,7 +124,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       (t) => !knownIds.has(t.id) && t.type === "erc20",
     );
     for (const erc20 of erc20ToAdd) {
-      await useTokenRegistryStore.getState().addCW20ToRegistry(erc20);
+      await useTokenRegistryStore.getState().addERC20ToRegistry(erc20);
       await updateErc20Balances({ ...erc20, price: 0, balance: 0n });
     }
     for (const cw of cwToAdd) {
