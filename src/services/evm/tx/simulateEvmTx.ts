@@ -41,11 +41,7 @@ export async function simulateEvmTx(
   }
   const privateKey = await getPrivateKeyFromMnemonic(mnemonic);
 
-  const pointerContract =
-    token.pointerContract ||
-    (token.id.startsWith("0x")
-      ? (token.id as `0x${string}`)
-      : await getPointerContract(token.id));
+  const pointerContract = await getPointerContract(token.id);
 
   if (!pointerContract) {
     throw new Error(

@@ -20,8 +20,7 @@ type TokenRegistryStore = {
   tokenPricesMap: Map<string, TokenPrice>;
   registryRefreshPromise: Promise<void> | null;
   init: () => Promise<void>;
-  addCW20ToRegistry: (newToken: CosmToken) => Promise<void>;
-  addERC20ToRegistry: (newToken: CosmToken) => Promise<void>;
+  addTokenToRegistry: (newToken: CosmToken) => Promise<void>;
   getPrices: (tokens: CosmToken[]) => Promise<usdPrices[]>;
   getTokensWithPrices: (tokenIds: string[]) => Promise<CosmTokenWithPrice[]>;
   refreshRegistryCache: () => Promise<void>;
@@ -53,39 +52,32 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
       tokenRegistryMap: tokensToMap(cachedTokenRegistry),
     });
   },
-  addCW20ToRegistry: async (newToken) => {
-    const { cw20Registry, tokenRegistry, tokenPricesMap, getPrices } = get();
-    const exists = cw20Registry.find((t) => t.id === newToken.id);
-    if (exists) {
-      return;
-    }
-
-    const prices = await getPrices([newToken]);
-    const newTokenPrice =
-      prices.find((p) => matchPriceToToken(newToken, p))?.price || 0;
-
-    tokenPricesMap.set(newToken.id, {
-      price: newTokenPrice,
-      timestamp: new Date(),
-    });
-
-    const updatedRegistry = [...tokenRegistry, newToken];
-    const updatedCW20Registry = [...cw20Registry, newToken];
-    saveToStorage(getRegistryKey(), updatedRegistry);
-    saveToStorage(getCW20RegistryKey(), updatedCW20Registry);
-    set({
-      tokenRegistry: updatedRegistry,
-      cw20Registry: updatedCW20Registry,
-      tokenRegistryMap: tokensToMap(updatedRegistry),
+  addTokenToRegistry: async (newToken) => {
+    const {
+      cw20Registry,
+      erc20Registry,
+      tokenRegistry,
       tokenPricesMap,
-    });
-  },
-  addERC20ToRegistry: async (newToken) => {
-    const { erc20Registry, tokenRegistry, tokenPricesMap, getPrices } = get();
-    const exists = erc20Registry.find((t) => t.id === newToken.id);
+      getPrices,
+    } = get();
+    let tokenRegistryToUpdate;
+    let storageKey;
+
+    if (newToken.type === "cw20") {
+      tokenRegistryToUpdate = cw20Registry;
+      storageKey = getCW20RegistryKey();
+    } else if (newToken.type === "erc20") {
+      tokenRegistryToUpdate = erc20Registry;
+      storageKey = getErc20RegistryKey();
+    } else {
+      return;
+    }
+
+    const exists = tokenRegistryToUpdate.find((t) => t.id === newToken.id);
     if (exists) {
       return;
     }
+
     const prices = await getPrices([newToken]);
     const newTokenPrice =
       prices.find((p) => matchPriceToToken(newToken, p))?.price || 0;
@@ -96,12 +88,15 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
     });
 
     const updatedRegistry = [...tokenRegistry, newToken];
-    const updatedErc20Registry = [...erc20Registry, newToken];
+    const updatedSpecificRegistry = [...tokenRegistryToUpdate, newToken];
+
     saveToStorage(getRegistryKey(), updatedRegistry);
-    saveToStorage(getErc20RegistryKey(), updatedErc20Registry);
+    saveToStorage(storageKey, updatedSpecificRegistry);
+
     set({
       tokenRegistry: updatedRegistry,
-      erc20Registry: updatedErc20Registry,
+      [newToken.type === "cw20" ? "cw20Registry" : "erc20Registry"]:
+        updatedSpecificRegistry,
       tokenRegistryMap: tokensToMap(updatedRegistry),
       tokenPricesMap,
     });

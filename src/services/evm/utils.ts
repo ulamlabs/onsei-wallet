@@ -75,3 +75,15 @@ export async function getPointerContract(
   );
   return pointerContract?.data?.nativePointer?.pointerAddress;
 }
+
+export const resolvePointerContract = async (token: {
+  id: string;
+  pointerContract?: `0x${string}`;
+}): Promise<`0x${string}` | undefined> => {
+  return (
+    token.pointerContract ||
+    (token.id.startsWith("0x")
+      ? (token.id as `0x${string}`)
+      : await getPointerContract(token.id))
+  );
+};

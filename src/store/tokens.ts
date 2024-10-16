@@ -57,6 +57,12 @@ type TokensStore = {
     tokens: CosmTokenWithBalance[],
     options?: { save?: boolean },
   ) => void;
+  _updateTokenBalance: (
+    tokenId: string,
+    tokenType: "cw20" | "erc20",
+    fetchBalance: () => Promise<bigint>,
+    getRegistryTokens: (ids: string[]) => Promise<CosmTokenWithPrice[]>,
+  ) => Promise<void>;
 };
 
 export const useTokensStore = create<TokensStore>((set, get) => ({
@@ -124,11 +130,12 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       (t) => !knownIds.has(t.id) && t.type === "erc20",
     );
     for (const erc20 of erc20ToAdd) {
-      await useTokenRegistryStore.getState().addERC20ToRegistry(erc20);
+      await useTokenRegistryStore.getState().addTokenToRegistry(erc20);
       await updateErc20Balances({ ...erc20, price: 0, balance: 0n });
     }
+
     for (const cw of cwToAdd) {
-      await useTokenRegistryStore.getState().addCW20ToRegistry(cw);
+      await useTokenRegistryStore.getState().addTokenToRegistry(cw);
       await updateCW20Balance(cw.id);
     }
     if (nativesToAdd.length > 0) {
@@ -190,36 +197,20 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     set({ initTokensLoading: false });
   },
   _updateCw20Balance: async (tokenId) => {
+    const { accountAddress, _updateTokenBalance } = get();
     const { node } = useSettingsStore.getState().settings;
-    const { accountAddress, tokens, getTokensFromRegistry, _updateStructures } =
-      get();
-    const { error: errorToast } = useToastStore.getState();
-    try {
-      const [token, balance] = await Promise.all([
-        getTokensFromRegistry([tokenId]),
-        fetchCW20TokenBalance(accountAddress, tokenId, node),
-      ]);
-      if (!token[0]) {
-        return;
-      }
 
-      const tokenWithBalance = {
-        ...token[0],
-        balance,
-      };
+    // Fetch CW20 balance using the provided account address
+    const fetchCW20Balance = async () => {
+      return await fetchCW20TokenBalance(accountAddress, tokenId, node);
+    };
 
-      const index = tokens.findIndex((t) => t.id === tokenWithBalance.id);
-      if (index === -1) {
-        tokens.push(tokenWithBalance);
-      } else {
-        tokens.splice(index, 1, tokenWithBalance);
-      }
-
-      _updateStructures([...tokens], { save: true });
-    } catch (error: any) {
-      console.error("error at updating cw20 balance: ", error);
-      errorToast({ description: "Error at updating CW20 balance" });
-    }
+    await _updateTokenBalance(
+      tokenId,
+      "cw20",
+      fetchCW20Balance,
+      get().getTokensFromRegistry,
+    );
   },
   _updateNativeBalances: async () => {
     const {
@@ -278,25 +269,47 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     }
   },
   _updateErc20Balances: async (token) => {
-    const { accountAddressEvm, tokens, _updateStructures } = get();
-    const { error: errorToast } = useToastStore.getState();
+    const { accountAddressEvm, _updateTokenBalance } = get();
 
-    try {
-      const pointerContract =
-        token.pointerContract ||
-        (token.id.startsWith("0x")
-          ? (token.id as `0x${string}`)
-          : await getPointerContract(token.id));
+    const fetchERC20Balance = async () => {
+      const pointerContract = await getPointerContract(token.id);
 
       if (!pointerContract) {
         throw new Error("Failed updating ERC20 balances.");
       }
 
       const contract = prepareRawContract(pointerContract);
-      const balance = await contract.balanceOf(accountAddressEvm);
+      return await contract.balanceOf(accountAddressEvm);
+    };
+
+    await _updateTokenBalance(
+      token.id,
+      "erc20",
+      fetchERC20Balance,
+      get().getTokensFromRegistry,
+    );
+  },
+  _updateTokenBalance: async (
+    tokenId,
+    tokenType,
+    fetchBalance,
+    getRegistryTokens,
+  ) => {
+    const { tokens, _updateStructures } = get();
+    const { error: errorToast } = useToastStore.getState();
+
+    try {
+      const [token, balance] = await Promise.all([
+        getRegistryTokens([tokenId]),
+        fetchBalance(),
+      ]);
+
+      if (!token[0]) {
+        return;
+      }
 
       const tokenWithBalance = {
-        ...token,
+        ...token[0],
         balance,
       };
 
@@ -309,8 +322,10 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
 
       _updateStructures([...tokens], { save: true });
     } catch (error: any) {
-      console.error("error at updating erc20 balance: ", error);
-      errorToast({ description: "Error at updating ERC20 balance" });
+      console.error(`error at updating ${tokenType} balance: `, error);
+      errorToast({
+        description: `Error at updating ${tokenType.toUpperCase()} balance`,
+      });
     }
   },
   _updateTokenLists: async (tokenIds, action) => {
