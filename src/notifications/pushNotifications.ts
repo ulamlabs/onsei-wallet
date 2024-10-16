@@ -145,11 +145,11 @@ async function fetchAndValidateToken(
 }
 
 async function addTokenToRegistry(tokenId: string) {
-  const { addCW20ToRegistry } = useTokenRegistryStore.getState();
+  const { addTokenToRegistry } = useTokenRegistryStore.getState();
 
   const token = await fetchAndValidateToken(tokenId);
   if (token) {
-    await addCW20ToRegistry(token);
+    await addTokenToRegistry(token);
   }
 }
 
