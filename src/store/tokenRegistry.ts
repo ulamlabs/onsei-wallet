@@ -217,10 +217,6 @@ function getNonNativeKey() {
   return `nonNativeRegistry-${getNode()}.json`;
 }
 
-function getErc20RegistryKey() {
-  return `tokenErc20Registry-${getNode()}.json`;
-}
-
 function getNode() {
   return useSettingsStore.getState().settings.node;
 }

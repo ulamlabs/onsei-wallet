@@ -229,7 +229,6 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       getTokensFromRegistry,
       whitelistedTokensIds,
       blacklistedTokensIds,
-      tokens,
     } = get();
     const { error: errorToast } = useToastStore.getState();
     const definedSei = sei || SEI_TOKEN;
