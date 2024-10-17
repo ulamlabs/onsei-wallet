@@ -82,10 +82,10 @@ export async function simulateEvmTx(
   const dataForTx = {
     tokenAmount: tokenAmount.toString(),
     privateKey,
-    resolvePointerContract,
+    pointerContract: resolvePointerContract,
   };
 
-  return { stdFee, dataForTx, resolvePointerContract };
+  return { stdFee, dataForTx, pointerContract: resolvePointerContract };
 }
 
 export function prepareContract(
