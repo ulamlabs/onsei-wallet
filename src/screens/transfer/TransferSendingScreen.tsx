@@ -113,7 +113,6 @@ export default function TransferSendingScreen({
 
     const parsedTx = parseEvmToTransaction(transaction, token, receipt.status);
     storeNewTransaction(activeAccount!.address, parsedTx);
-
     navigateToSuccess(tx.hash as `0x${string}`, amount, receipt.status);
   }
 

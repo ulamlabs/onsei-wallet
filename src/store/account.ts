@@ -1,4 +1,5 @@
 import { MNEMONIC_WORDS_COUNT } from "@/const";
+import { getPrivateKeyFromMnemonic, isAddressLinked } from "@/services/evm";
 import {
   loadFromSecureStorage,
   loadFromStorage,
@@ -9,10 +10,9 @@ import {
 } from "@/utils";
 import { validateEntry } from "@/utils/validateInputs";
 import { generateWallet, restoreWallet } from "@sei-js/cosmjs";
+import { privateKeyToAccount } from "viem/accounts";
 import { create } from "zustand";
 import { useTokensStore } from "./tokens";
-import { privateKeyToAccount } from "viem/accounts";
-import { getPrivateKeyFromMnemonic, isAddressLinked } from "@/services/evm";
 
 export type AccountOptions = {
   passphraseSkipped: boolean;
@@ -22,12 +22,12 @@ export type AccountOptions = {
 export type Account = {
   name: string;
   address: string;
-  evmAddress: string;
+  evmAddress: `0x${string}`;
 } & AccountOptions;
 
 export type Wallet = {
   address: string;
-  evmAddress: string;
+  evmAddress: `0x${string}`;
   mnemonic: string;
 };
 
@@ -66,7 +66,9 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
       ? accounts.find((acc) => acc.address === activeAccountAddress)!
       : null;
     if (activeAccount) {
-      useTokensStore.getState().loadTokens(activeAccount.address);
+      useTokensStore
+        .getState()
+        .loadTokens(activeAccount.address, activeAccount.evmAddress);
     }
 
     let wasLinkChange = false;
@@ -101,7 +103,7 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
       activeAccount: account,
     }));
     saveToStorage("activeAccount", account?.address);
-    useTokensStore.getState().loadTokens(address ?? "");
+    useTokensStore.getState().loadTokens(address ?? "", account?.evmAddress);
   },
   generateWallet: async () => {
     const wallet = await generateWallet(MNEMONIC_WORDS_COUNT);

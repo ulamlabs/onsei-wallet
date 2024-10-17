@@ -143,6 +143,7 @@ export default function TransferAmountScreen({
       fee,
       evmTransaction,
       evmTxData,
+      decimalAmount,
     });
   }
 
