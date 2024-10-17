@@ -5,8 +5,8 @@ import { ethers } from "ethers";
 import { EVM_RPC_MAIN, EVM_RPC_TEST, SZABO, erc20Abi } from "../consts";
 import {
   getEvmClient,
-  getPointerContract,
   getPrivateKeyFromMnemonic,
+  resolvePointerContract,
 } from "../utils";
 
 export async function simulateEvmTx(
@@ -41,16 +41,16 @@ export async function simulateEvmTx(
   }
   const privateKey = await getPrivateKeyFromMnemonic(mnemonic);
 
-  const resolvePointerContract = await getPointerContract(token.id);
+  const pointerContract = await resolvePointerContract(token);
 
-  if (!resolvePointerContract) {
+  if (!pointerContract) {
     throw new Error(
       "We couldn't find the contract information needed to process your transaction.",
     );
   }
 
   const { contract, signer, provider } = prepareContract(
-    resolvePointerContract,
+    pointerContract,
     privateKey,
   );
   const tokenAmount = ethers.parseUnits(decimalAmount, token.decimals);
@@ -67,7 +67,7 @@ export async function simulateEvmTx(
 
   const gas = await provider.estimateGas({
     from: account.address,
-    to: resolvePointerContract,
+    to: pointerContract,
     value: "0x0",
     data: encodedData,
   });
@@ -82,10 +82,10 @@ export async function simulateEvmTx(
   const dataForTx = {
     tokenAmount: tokenAmount.toString(),
     privateKey,
-    pointerContract: resolvePointerContract,
+    pointerContract,
   };
 
-  return { stdFee, dataForTx, pointerContract: resolvePointerContract };
+  return { stdFee, dataForTx, pointerContract };
 }
 
 export function prepareContract(

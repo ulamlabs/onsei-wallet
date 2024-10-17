@@ -88,8 +88,23 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       nonNativeKey,
       [],
     );
+
+    // CW20 tokens were stored in a different key before, used for backwards compatibility
+    const oldKey = getOldKey(address, node);
+    let cw20Tokens = await loadFromStorage<CosmTokenWithBalance[]>(oldKey, []);
+    cw20Tokens = cw20Tokens.map(deserializeToken);
     nonNativeTokens = nonNativeTokens.map(deserializeToken);
-    _updateStructures([SEI_TOKEN, ...nonNativeTokens]);
+    const tokenMap = new Map(); // Removes duplicates
+    tokenMap.set(SEI_TOKEN.id, SEI_TOKEN);
+
+    nonNativeTokens.forEach((token) => {
+      tokenMap.set(token.id, token);
+    });
+
+    cw20Tokens.forEach((token) => {
+      tokenMap.set(token.id, token);
+    });
+    _updateStructures([...tokenMap.values()]);
     await updateBalances();
   },
   addTokens: async (tokensToAdd) => {
@@ -111,7 +126,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       (t) => !knownIds.has(t.id) && (t.type === "erc20" || t.type === "cw20"),
     );
     const nativesToAdd = tokensToAdd.filter(
-      (t) => !knownIds.has(t.id) && t.type !== "cw20",
+      (t) => !knownIds.has(t.id) && t.type !== "cw20" && t.type !== "erc20",
     );
 
     for (const token of nonNativeToAdd) {
@@ -136,7 +151,10 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
   },
   clearAddress: async (address) => {
     await Promise.all(
-      NODES.map((node) => removeFromStorage(getNonNativeKey(address, node))),
+      NODES.map((node) => {
+        removeFromStorage(getNonNativeKey(address, node));
+        removeFromStorage(getOldKey(address, node));
+      }),
     );
     set((state) => {
       if (state.accountAddress === address) {
@@ -195,7 +213,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       if (token.type === "erc20") {
         const [tokenFromRegistry, fetchedBalance] = await Promise.all([
           getTokensFromRegistry([token.id]),
-          fetchERC20TokenBalance(node, token.id, accountAddressEvm),
+          fetchERC20TokenBalance(node, token, accountAddressEvm),
         ]);
         tokenResponse = tokenFromRegistry[0];
         balance = fetchedBalance;
@@ -344,6 +362,11 @@ function getTokenBlacklistKey(address: string, node: Node | "") {
 
 function getNonNativeKey(address: string, node: Node | "") {
   return `non-native-tokens-${node}-${address}.json`;
+}
+
+// Using old key for backwards compatibility
+function getOldKey(address: string, node: Node | "") {
+  return `cw20Tokens-${node}-${address}.json`;
 }
 
 function tokensToMap(

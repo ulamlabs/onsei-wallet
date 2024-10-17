@@ -69,14 +69,14 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
     });
 
     const updatedRegistry = [...tokenRegistry, newToken];
-    const updatedSpecificRegistry = [...nonNativeRegistry, newToken];
+    const updatedNonNativeRegistry = [...nonNativeRegistry, newToken];
 
     saveToStorage(getRegistryKey(), updatedRegistry);
-    saveToStorage(getNonNativeKey(), updatedSpecificRegistry);
+    saveToStorage(getNonNativeKey(), updatedNonNativeRegistry);
 
     set({
       tokenRegistry: updatedRegistry,
-      nonNativeRegistry: updatedSpecificRegistry,
+      nonNativeRegistry: updatedNonNativeRegistry,
       tokenRegistryMap: tokensToMap(updatedRegistry),
       tokenPricesMap,
     });

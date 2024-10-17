@@ -1,7 +1,8 @@
+import { CosmToken } from "@/services/cosmos";
 import { Node } from "@/types";
 import { ethers } from "ethers";
 import { EVM_RPC_MAIN, EVM_RPC_TEST, erc20Abi } from "../consts";
-import { getPointerContract } from "../utils";
+import { resolvePointerContract } from "../utils";
 
 export function prepareRawContract(pointerContract: `0x${string}`, node: Node) {
   const isMainnet = node === "MainNet";
@@ -13,17 +14,17 @@ export function prepareRawContract(pointerContract: `0x${string}`, node: Node) {
 
 export async function fetchERC20TokenBalance(
   node: Node,
-  tokenId: string,
+  token: CosmToken,
   accountAddressEvm: `0x${string}`,
 ) {
   try {
-    const resolvePointerContract = await getPointerContract(tokenId);
+    const pointerContract = await resolvePointerContract(token);
 
-    if (!resolvePointerContract) {
+    if (!pointerContract) {
       throw new Error("Failed updating ERC20 balances.");
     }
 
-    const contract = prepareRawContract(resolvePointerContract, node);
+    const contract = prepareRawContract(pointerContract, node);
     const balance = await contract.balanceOf(accountAddressEvm);
     return balance;
   } catch (error: any) {
