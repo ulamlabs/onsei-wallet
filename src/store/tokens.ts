@@ -7,11 +7,9 @@ import {
   fetchAccountBalances,
   fetchCW20TokenBalance,
 } from "@/services/cosmos";
-import { getPointerContract } from "@/services/evm";
-import { EVM_RPC_MAIN, EVM_RPC_TEST, erc20Abi } from "@/services/evm/consts";
+import { fetchERC20TokenBalance } from "@/services/evm";
 import { Node } from "@/types";
 import { loadFromStorage, removeFromStorage, saveToStorage } from "@/utils";
-import { ethers } from "ethers";
 import { create } from "zustand";
 import { useSettingsStore } from "./settings";
 import { useToastStore } from "./toast";
@@ -32,8 +30,7 @@ const SEI_TOKEN: CosmTokenWithBalance = {
 type TokensStore = {
   sei: CosmTokenWithBalance;
   tokens: CosmTokenWithBalance[];
-  cw20Tokens: CosmTokenWithBalance[];
-  erc20Tokens: CosmTokenWithBalance[];
+  nonNativeTokens: CosmTokenWithBalance[];
   whitelistedTokensIds: Set<string>;
   blacklistedTokensIds: Set<string>;
   tokenMap: Map<string, CosmTokenWithBalance>;
@@ -46,8 +43,7 @@ type TokensStore = {
   clearAddress: (address: string) => Promise<void>;
   getTokensFromRegistry: (tokenIds: string[]) => Promise<CosmTokenWithPrice[]>;
   updateBalances: (tokens?: CosmTokenWithBalance[]) => Promise<void>;
-  _updateCw20Balance: (tokenId: string) => Promise<void>;
-  _updateErc20Balances: (token: CosmTokenWithBalance) => Promise<void>;
+  _updateNonNativeBalance: (token: CosmToken) => Promise<void>;
   _updateNativeBalances: () => Promise<void>;
   _updateTokenLists: (
     tokenIds: string[],
@@ -57,12 +53,6 @@ type TokensStore = {
     tokens: CosmTokenWithBalance[],
     options?: { save?: boolean },
   ) => void;
-  _updateTokenBalance: (
-    tokenId: string,
-    tokenType: "cw20" | "erc20",
-    fetchBalance: () => Promise<bigint>,
-    getRegistryTokens: (ids: string[]) => Promise<CosmTokenWithPrice[]>,
-  ) => Promise<void>;
 };
 
 export const useTokensStore = create<TokensStore>((set, get) => ({
@@ -71,8 +61,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
   node: "",
   sei: SEI_TOKEN,
   tokens: [],
-  cw20Tokens: [],
-  erc20Tokens: [],
+  nonNativeTokens: [],
   whitelistedTokensIds: new Set(),
   blacklistedTokensIds: new Set(),
   tokenMap: new Map(),
@@ -94,16 +83,13 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       whitelistedTokensIds: new Set(whitelistedTokensIds),
       blacklistedTokensIds: new Set(blacklistedTokensIds),
     });
-    const key = getTokensKey(address, node);
-    const erc20Key = getErc20TokensKey(address, node);
-    let cw20Tokens = await loadFromStorage<CosmTokenWithBalance[]>(key, []);
-    cw20Tokens = cw20Tokens.map(deserializeToken);
-    let erc20Tokens = await loadFromStorage<CosmTokenWithBalance[]>(
-      erc20Key,
+    const nonNativeKey = getNonNativeKey(address, node);
+    let nonNativeTokens = await loadFromStorage<CosmTokenWithBalance[]>(
+      nonNativeKey,
       [],
     );
-    erc20Tokens = erc20Tokens.map(deserializeToken);
-    _updateStructures([SEI_TOKEN, ...cw20Tokens, ...erc20Tokens]);
+    nonNativeTokens = nonNativeTokens.map(deserializeToken);
+    _updateStructures([SEI_TOKEN, ...nonNativeTokens]);
     await updateBalances();
   },
   addTokens: async (tokensToAdd) => {
@@ -111,33 +97,28 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       tokens,
       _updateNativeBalances: updateNativeBalances,
       _updateTokenLists: updateTokenLists,
-      _updateCw20Balance: updateCW20Balance,
-      _updateErc20Balances: updateErc20Balances,
+      _updateNonNativeBalance: updateNonNativeBalance,
     } = get();
     const nativeIds = getNativeIds(tokensToAdd);
+
     if (nativeIds.length > 0) {
       await updateTokenLists(nativeIds, "WHITELIST");
     }
 
     const knownIds = new Set(tokens.map((t) => t.id));
-    const cwToAdd = tokensToAdd.filter(
-      (t) => !knownIds.has(t.id) && t.type === "cw20",
+
+    const nonNativeToAdd = tokensToAdd.filter(
+      (t) => !knownIds.has(t.id) && (t.type === "erc20" || t.type === "cw20"),
     );
     const nativesToAdd = tokensToAdd.filter(
       (t) => !knownIds.has(t.id) && t.type !== "cw20",
     );
-    const erc20ToAdd = tokensToAdd.filter(
-      (t) => !knownIds.has(t.id) && t.type === "erc20",
-    );
-    for (const erc20 of erc20ToAdd) {
-      await useTokenRegistryStore.getState().addTokenToRegistry(erc20);
-      await updateErc20Balances({ ...erc20, price: 0, balance: 0n });
+
+    for (const token of nonNativeToAdd) {
+      await useTokenRegistryStore.getState().addNonNativeToRegistry(token);
+      await updateNonNativeBalance(token);
     }
 
-    for (const cw of cwToAdd) {
-      await useTokenRegistryStore.getState().addTokenToRegistry(cw);
-      await updateCW20Balance(cw.id);
-    }
     if (nativesToAdd.length > 0) {
       await updateNativeBalances();
     }
@@ -155,7 +136,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
   },
   clearAddress: async (address) => {
     await Promise.all(
-      NODES.map((node) => removeFromStorage(getTokensKey(address, node))),
+      NODES.map((node) => removeFromStorage(getNonNativeKey(address, node))),
     );
     set((state) => {
       if (state.accountAddress === address) {
@@ -163,7 +144,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
           accountAddress: "",
           tokenMap: new Map(),
           tokens: [],
-          cw20Tokens: [],
+          nonNativeTokens: [],
         };
       }
       return {};
@@ -175,55 +156,84 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
   },
   updateBalances: async (tokensToUpdate) => {
     // Will always update native token balances.
-    const {
-      cw20Tokens,
-      _updateCw20Balance,
-      erc20Tokens,
-      _updateErc20Balances,
-    } = get();
-    let cw20ToUpdate: CosmTokenWithBalance[] = cw20Tokens;
-    let erc20ToUpdate: CosmTokenWithBalance[] = erc20Tokens;
+    const { nonNativeTokens, _updateNonNativeBalance } = get();
+    let nonNativeToUpdate: CosmTokenWithBalance[] = nonNativeTokens;
     if (tokensToUpdate) {
-      cw20ToUpdate = tokensToUpdate.filter((t) => t.type === "cw20");
-      erc20ToUpdate = tokensToUpdate.filter((t) => t.type === "erc20");
+      nonNativeToUpdate = tokensToUpdate.filter(
+        (t) => t.type === "cw20" || t.type === "erc20",
+      );
     }
-
     await get()._updateNativeBalances();
     await Promise.all([
-      ...cw20ToUpdate.map((token) => _updateCw20Balance(token.id)),
-      ...erc20ToUpdate.map((token) => _updateErc20Balances(token)),
+      ...nonNativeToUpdate.map((token) => _updateNonNativeBalance(token)),
     ]);
 
     set({ initTokensLoading: false });
   },
-  _updateCw20Balance: async (tokenId) => {
-    const { accountAddress, _updateTokenBalance } = get();
+  _updateNonNativeBalance: async (token) => {
+    const {
+      accountAddress,
+      getTokensFromRegistry,
+      tokens,
+      _updateStructures,
+      accountAddressEvm,
+    } = get();
     const { node } = useSettingsStore.getState().settings;
+    const { error: errorToast } = useToastStore.getState();
+    try {
+      let tokenResponse: CosmTokenWithPrice | undefined;
+      let balance: bigint | undefined;
+      if (token.type === "cw20") {
+        const [tokenFromRegistry, fetchedBalance] = await Promise.all([
+          getTokensFromRegistry([token.id]),
+          fetchCW20TokenBalance(accountAddress, token.id, node),
+        ]);
+        tokenResponse = tokenFromRegistry[0];
+        balance = fetchedBalance;
+      }
 
-    // Fetch CW20 balance using the provided account address
-    const fetchCW20Balance = async () => {
-      return await fetchCW20TokenBalance(accountAddress, tokenId, node);
-    };
+      if (token.type === "erc20") {
+        const [tokenFromRegistry, fetchedBalance] = await Promise.all([
+          getTokensFromRegistry([token.id]),
+          fetchERC20TokenBalance(node, token.id, accountAddressEvm),
+        ]);
+        tokenResponse = tokenFromRegistry[0];
+        balance = fetchedBalance;
+      }
 
-    await _updateTokenBalance(
-      tokenId,
-      "cw20",
-      fetchCW20Balance,
-      get().getTokensFromRegistry,
-    );
+      if (!tokenResponse) {
+        return;
+      }
+      const tokenWithBalance = {
+        ...tokenResponse,
+        balance: balance || 0n,
+      };
+      const index = tokens.findIndex((t) => t.id === tokenWithBalance.id);
+      if (index === -1) {
+        tokens.push(tokenWithBalance);
+      } else {
+        tokens.splice(index, 1, tokenWithBalance);
+      }
+      _updateStructures([...tokens], { save: true });
+    } catch (error) {
+      console.error("error at updating non native token balance: ", error);
+      errorToast({ description: "Error at updating non native token balance" });
+    }
   },
   _updateNativeBalances: async () => {
     const {
       accountAddress,
-      cw20Tokens,
+      nonNativeTokens,
       _updateStructures,
       sei,
       getTokensFromRegistry,
       whitelistedTokensIds,
       blacklistedTokensIds,
+      tokens,
     } = get();
     const { error: errorToast } = useToastStore.getState();
     const definedSei = sei || SEI_TOKEN;
+
     try {
       const { node } = useSettingsStore.getState().settings;
 
@@ -235,11 +245,13 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       balances.balances = balances.balances.filter(
         (token: TokenBalance) => !blacklistedTokensIds.has(token.denom),
       );
+
       for (const whitelistedID of whitelistedTokensIds) {
         if (
           !balances.balances.find(
             (token: TokenBalance) => token.denom === whitelistedID,
-          )
+          ) &&
+          !nonNativeTokens.some((token) => token.id === whitelistedID)
         ) {
           balances.balances.push({ denom: whitelistedID, amount: "0" });
         }
@@ -262,70 +274,10 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
         }
       }
 
-      _updateStructures([...cw20Tokens, ...nativeTokens]);
+      _updateStructures([...nonNativeTokens, ...nativeTokens]);
     } catch (error: any) {
       console.error("error at updating native balances: ", error);
       errorToast({ description: "Error at updating native balances" });
-    }
-  },
-  _updateErc20Balances: async (token) => {
-    const { accountAddressEvm, _updateTokenBalance } = get();
-
-    const fetchERC20Balance = async () => {
-      const pointerContract = await getPointerContract(token.id);
-
-      if (!pointerContract) {
-        throw new Error("Failed updating ERC20 balances.");
-      }
-
-      const contract = prepareRawContract(pointerContract);
-      return await contract.balanceOf(accountAddressEvm);
-    };
-
-    await _updateTokenBalance(
-      token.id,
-      "erc20",
-      fetchERC20Balance,
-      get().getTokensFromRegistry,
-    );
-  },
-  _updateTokenBalance: async (
-    tokenId,
-    tokenType,
-    fetchBalance,
-    getRegistryTokens,
-  ) => {
-    const { tokens, _updateStructures } = get();
-    const { error: errorToast } = useToastStore.getState();
-
-    try {
-      const [token, balance] = await Promise.all([
-        getRegistryTokens([tokenId]),
-        fetchBalance(),
-      ]);
-
-      if (!token[0]) {
-        return;
-      }
-
-      const tokenWithBalance = {
-        ...token[0],
-        balance,
-      };
-
-      const index = tokens.findIndex((t) => t.id === tokenWithBalance.id);
-      if (index === -1) {
-        tokens.push(tokenWithBalance);
-      } else {
-        tokens.splice(index, 1, tokenWithBalance);
-      }
-
-      _updateStructures([...tokens], { save: true });
-    } catch (error: any) {
-      console.error(`error at updating ${tokenType} balance: `, error);
-      errorToast({
-        description: `Error at updating ${tokenType.toUpperCase()} balance`,
-      });
     }
   },
   _updateTokenLists: async (tokenIds, action) => {
@@ -349,7 +301,6 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
         newBlacklist.add(tokenId);
       }
     }
-
     set({
       whitelistedTokensIds: newWhitelist,
       blacklistedTokensIds: newBlacklist,
@@ -362,7 +313,6 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
   _updateStructures: (tokens, options) => {
     const { accountAddress } = get();
     const { node } = useSettingsStore.getState().settings;
-
     tokens = tokens.sort((a, b) => {
       if (a.id === "usei") {
         return -Infinity;
@@ -372,30 +322,18 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
       }
       return a.symbol.localeCompare(b.symbol);
     });
-
-    const cw20Tokens = tokens.filter((t) => t.type === "cw20");
+    const nonNativeTokens = tokens.filter(
+      (t) => t.type === "cw20" || t.type === "erc20",
+    );
     const sei = tokens.find((t) => t.type === "native");
     const tokenMap = tokensToMap(tokens);
-    const erc20Tokens = tokens.filter((t) => t.type === "erc20");
-
-    set({ sei, tokens, cw20Tokens, tokenMap, erc20Tokens });
-
+    set({ sei, tokens, nonNativeTokens, tokenMap });
     if (options?.save) {
-      const key = getTokensKey(accountAddress, node);
-      saveToStorage(key, cw20Tokens.map(serializeToken));
-      const erc20Key = getErc20TokensKey(accountAddress, node);
-      saveToStorage(erc20Key, erc20Tokens.map(serializeToken));
+      const key = getNonNativeKey(accountAddress, node);
+      saveToStorage(key, nonNativeTokens.map(serializeToken));
     }
   },
 }));
-
-function getTokensKey(address: string, node: Node | "") {
-  return `cw20tokens-${node}-${address}.json`;
-}
-
-function getErc20TokensKey(address: string, node: Node | "") {
-  return `erc20tokens-${node}-${address}.json`;
-}
 
 function getTokenWhitelistKey(address: string, node: Node | "") {
   return `token-whitelist-${node}-${address}.json`;
@@ -403,6 +341,10 @@ function getTokenWhitelistKey(address: string, node: Node | "") {
 
 function getTokenBlacklistKey(address: string, node: Node | "") {
   return `token-blacklist-${node}-${address}.json`;
+}
+
+function getNonNativeKey(address: string, node: Node | "") {
+  return `non-native-tokens-${node}-${address}.json`;
 }
 
 function tokensToMap(
@@ -421,12 +363,4 @@ function deserializeToken(token: CosmTokenWithBalance): CosmTokenWithBalance {
 
 function getNativeIds(tokens: CosmToken[]) {
   return tokens.filter((t) => t.type !== "cw20").map((t) => t.id);
-}
-
-export function prepareRawContract(pointerContract: `0x${string}`) {
-  const isMainnet = useSettingsStore.getState().settings.node === "MainNet";
-  const evmRpcEndpoint = isMainnet ? EVM_RPC_MAIN : EVM_RPC_TEST;
-  const provider = new ethers.JsonRpcProvider(evmRpcEndpoint);
-  const contract = new ethers.Contract(pointerContract, erc20Abi, provider);
-  return contract;
 }

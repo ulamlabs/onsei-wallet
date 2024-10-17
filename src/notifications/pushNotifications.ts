@@ -145,11 +145,11 @@ async function fetchAndValidateToken(
 }
 
 async function addTokenToRegistry(tokenId: string) {
-  const { addTokenToRegistry } = useTokenRegistryStore.getState();
+  const { addNonNativeToRegistry } = useTokenRegistryStore.getState();
 
   const token = await fetchAndValidateToken(tokenId);
   if (token) {
-    await addTokenToRegistry(token);
+    await addNonNativeToRegistry(token);
   }
 }
 

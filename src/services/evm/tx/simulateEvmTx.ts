@@ -41,16 +41,16 @@ export async function simulateEvmTx(
   }
   const privateKey = await getPrivateKeyFromMnemonic(mnemonic);
 
-  const pointerContract = await getPointerContract(token.id);
+  const resolvePointerContract = await getPointerContract(token.id);
 
-  if (!pointerContract) {
+  if (!resolvePointerContract) {
     throw new Error(
       "We couldn't find the contract information needed to process your transaction.",
     );
   }
 
   const { contract, signer, provider } = prepareContract(
-    pointerContract,
+    resolvePointerContract,
     privateKey,
   );
   const tokenAmount = ethers.parseUnits(decimalAmount, token.decimals);
@@ -67,7 +67,7 @@ export async function simulateEvmTx(
 
   const gas = await provider.estimateGas({
     from: account.address,
-    to: pointerContract,
+    to: resolvePointerContract,
     value: "0x0",
     data: encodedData,
   });
@@ -82,10 +82,10 @@ export async function simulateEvmTx(
   const dataForTx = {
     tokenAmount: tokenAmount.toString(),
     privateKey,
-    pointerContract,
+    resolvePointerContract,
   };
 
-  return { stdFee, dataForTx, pointerContract };
+  return { stdFee, dataForTx, resolvePointerContract };
 }
 
 export function prepareContract(

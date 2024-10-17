@@ -14,13 +14,12 @@ type TokenPrice = {
 
 type TokenRegistryStore = {
   tokenRegistry: CosmToken[];
-  cw20Registry: CosmToken[];
-  erc20Registry: CosmToken[];
+  nonNativeRegistry: CosmToken[];
   tokenRegistryMap: Map<string, CosmToken>;
   tokenPricesMap: Map<string, TokenPrice>;
   registryRefreshPromise: Promise<void> | null;
   init: () => Promise<void>;
-  addTokenToRegistry: (newToken: CosmToken) => Promise<void>;
+  addNonNativeToRegistry: (newToken: CosmToken) => Promise<void>;
   getPrices: (tokens: CosmToken[]) => Promise<usdPrices[]>;
   getTokensWithPrices: (tokenIds: string[]) => Promise<CosmTokenWithPrice[]>;
   refreshRegistryCache: () => Promise<void>;
@@ -31,8 +30,7 @@ const PRICE_STALE_TIME = 10 * 60 * 1000; // 10 minutes
 
 export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
   tokenRegistry: [],
-  cw20Registry: [],
-  erc20Registry: [],
+  nonNativeRegistry: [],
   tokenRegistryMap: new Map(),
   tokenPricesMap: new Map(),
   registryRefreshPromise: null,
@@ -41,39 +39,22 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
       getRegistryKey(),
       [],
     );
-    const cw20Registry = await loadFromStorage<CosmToken[]>(
-      getCW20RegistryKey(),
+    const nonNativeRegistry = await loadFromStorage<CosmToken[]>(
+      getNonNativeKey(),
       [],
     );
     set({
       tokenRegistry: cachedTokenRegistry,
-      cw20Registry,
+      nonNativeRegistry,
       registryRefreshPromise: get()._refreshRegistryCache(),
       tokenRegistryMap: tokensToMap(cachedTokenRegistry),
     });
   },
-  addTokenToRegistry: async (newToken) => {
-    const {
-      cw20Registry,
-      erc20Registry,
-      tokenRegistry,
-      tokenPricesMap,
-      getPrices,
-    } = get();
-    let tokenRegistryToUpdate;
-    let storageKey;
+  addNonNativeToRegistry: async (newToken) => {
+    const { nonNativeRegistry, tokenRegistry, tokenPricesMap, getPrices } =
+      get();
 
-    if (newToken.type === "cw20") {
-      tokenRegistryToUpdate = cw20Registry;
-      storageKey = getCW20RegistryKey();
-    } else if (newToken.type === "erc20") {
-      tokenRegistryToUpdate = erc20Registry;
-      storageKey = getErc20RegistryKey();
-    } else {
-      return;
-    }
-
-    const exists = tokenRegistryToUpdate.find((t) => t.id === newToken.id);
+    const exists = nonNativeRegistry.find((t) => t.id === newToken.id);
     if (exists) {
       return;
     }
@@ -88,15 +69,14 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
     });
 
     const updatedRegistry = [...tokenRegistry, newToken];
-    const updatedSpecificRegistry = [...tokenRegistryToUpdate, newToken];
+    const updatedSpecificRegistry = [...nonNativeRegistry, newToken];
 
     saveToStorage(getRegistryKey(), updatedRegistry);
-    saveToStorage(storageKey, updatedSpecificRegistry);
+    saveToStorage(getNonNativeKey(), updatedSpecificRegistry);
 
     set({
       tokenRegistry: updatedRegistry,
-      [newToken.type === "cw20" ? "cw20Registry" : "erc20Registry"]:
-        updatedSpecificRegistry,
+      nonNativeRegistry: updatedSpecificRegistry,
       tokenRegistryMap: tokensToMap(updatedRegistry),
       tokenPricesMap,
     });
@@ -173,7 +153,7 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
     const tokenRegistry = [
       ...registryTokens,
       ...uniqueNativeTokens,
-      ...get().cw20Registry,
+      ...get().nonNativeRegistry,
     ];
 
     saveToStorage(getRegistryKey(), tokenRegistry);
@@ -233,8 +213,8 @@ function getRegistryKey() {
   return `tokenRegistry-${getNode()}.json`;
 }
 
-function getCW20RegistryKey() {
-  return `tokenCW20Registry-${getNode()}.json`;
+function getNonNativeKey() {
+  return `nonNativeRegistry-${getNode()}.json`;
 }
 
 function getErc20RegistryKey() {
