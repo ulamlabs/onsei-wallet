@@ -15,6 +15,7 @@ import ShakingView from "./ShakingView";
 import SplashAnimation from "./SplashAnimation";
 import TokenBalanceBox from "./TokenBalanceBox";
 import TokenBox from "./TokenBox";
+import { Tooltip } from "./Tooltip";
 import Modal from "./modals/Modal";
 
 export * from "./buttons";
@@ -45,4 +46,5 @@ export {
   SplashAnimation,
   TokenBalanceBox,
   TokenBox,
+  Tooltip,
 };
