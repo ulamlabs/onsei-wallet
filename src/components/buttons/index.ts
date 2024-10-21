@@ -6,6 +6,7 @@ import SecondaryButton from "./SecondaryButton";
 import SmallButton from "./SmallButton";
 import SwipeButton from "./SwipeButton";
 import TertiaryButton from "./TertiaryButton";
+import ToggleButton from "./ToggleButton";
 
 export {
   CopyButton,
@@ -16,4 +17,5 @@ export {
   SmallButton,
   SwipeButton,
   TertiaryButton,
+  ToggleButton,
 };

@@ -1,3 +1,4 @@
+import AnimatedToggleText from "./AnimatedToggleText";
 import Biometrics from "./Biometrics";
 import Box from "./Box";
 import ClipboardAddressBox from "./ClipboardAddressBox";
@@ -26,6 +27,7 @@ export * from "./pin";
 export { Pin } from "./pin";
 export * from "./typography";
 export {
+  AnimatedToggleText,
   Biometrics,
   Box,
   ClipboardAddressBox,
