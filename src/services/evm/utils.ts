@@ -73,7 +73,10 @@ export async function getPointerContract(
   const pointerContract = await axios.get(
     `https://v2.seipex.fi/pointer?address=${tokenAddress}`,
   );
-  return pointerContract?.data?.nativePointer?.pointerAddress;
+  const pointerContractAddress =
+    pointerContract?.data?.nativePointer?.pointerAddress ||
+    pointerContract?.data?.cw20Pointer?.pointerAddress;
+  return pointerContractAddress;
 }
 
 export const resolvePointerContract = async (token: {
