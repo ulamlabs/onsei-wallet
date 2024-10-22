@@ -20,14 +20,29 @@ type ModalProps = PropsWithChildren & {
 };
 
 export default function BrowserOptions({ webviewRef }: ModalProps) {
-  const { setUrl, } = useDAppsStore();
+  const { setUrl } = useDAppsStore();
   const navigation = useNavigation<NavigationProp>();
 
   return (
     <Tooltip
       tooltipContent={
-        <Column style={{ backgroundColor: Colors.background, width: 240, borderColor: Colors.inputBorderColor, borderWidth: 1, borderRadius: 22 }}>
-          <Row style={{borderBottomWidth: 2, borderColor:Colors.inputBorderColor, paddingHorizontal:28, paddingVertical:20}}>
+        <Column
+          style={{
+            backgroundColor: Colors.background,
+            width: 240,
+            borderColor: Colors.inputBorderColor,
+            borderWidth: 1,
+            borderRadius: 22,
+          }}
+        >
+          <Row
+            style={{
+              borderBottomWidth: 2,
+              borderColor: Colors.inputBorderColor,
+              paddingHorizontal: 28,
+              paddingVertical: 20,
+            }}
+          >
             <IconButton
               icon={ArrowLeft}
               onPress={() => {
