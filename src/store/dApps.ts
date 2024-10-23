@@ -12,10 +12,13 @@ type DAppsStore = {
   setPrev: (prev: boolean) => void;
   isFocused: boolean;
   setIsFocused: (focused: boolean) => void;
+  tooltipOpen: boolean;
+  toggleTooltip: (open?: boolean) => void;
 };
 
 export const useDAppsStore = create<DAppsStore>((set) => ({
   url: "",
+  tooltipOpen: false,
   init: async () => {
     set(() => ({ url: "http://localhost:5173" }));
   },
@@ -37,5 +40,10 @@ export const useDAppsStore = create<DAppsStore>((set) => ({
   isFocused: false,
   setIsFocused: (focused) => {
     set(() => ({ isFocused: focused }));
+  },
+  toggleTooltip: (open) => {
+    set((state) => ({
+      tooltipOpen: open !== undefined ? open : !state.tooltipOpen,
+    }));
   },
 }));

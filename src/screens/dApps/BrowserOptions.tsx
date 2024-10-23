@@ -1,6 +1,8 @@
-import { PropsWithChildren } from "react";
 import { Column, IconButton, Row, Text, Tooltip } from "@/components";
-import WebView from "react-native-webview";
+import { useDAppsStore } from "@/store";
+import { Colors } from "@/styles";
+import { NavigationProp } from "@/types";
+import { useNavigation } from "@react-navigation/native";
 import {
   ArrowLeft,
   ArrowRight,
@@ -9,18 +11,16 @@ import {
   Refresh,
   Timer,
 } from "iconsax-react-native";
-import { useDAppsStore } from "@/store";
-import { useNavigation } from "@react-navigation/native";
-import { NavigationProp } from "@/types";
+import { PropsWithChildren } from "react";
 import { Pressable, View } from "react-native";
-import { Colors } from "@/styles";
+import WebView from "react-native-webview";
 
 type ModalProps = PropsWithChildren & {
   webviewRef: React.MutableRefObject<WebView<object> | null>;
 };
 
 export default function BrowserOptions({ webviewRef }: ModalProps) {
-  const { setUrl } = useDAppsStore();
+  const { setUrl, toggleTooltip } = useDAppsStore();
   const navigation = useNavigation<NavigationProp>();
 
   return (
@@ -48,6 +48,7 @@ export default function BrowserOptions({ webviewRef }: ModalProps) {
               onPress={() => {
                 if (webviewRef) {
                   webviewRef.current?.goBack();
+                  toggleTooltip();
                 }
               }}
             />
@@ -56,6 +57,7 @@ export default function BrowserOptions({ webviewRef }: ModalProps) {
               onPress={() => {
                 if (webviewRef) {
                   webviewRef.current?.goForward();
+                  toggleTooltip();
                 }
               }}
             />
@@ -64,6 +66,7 @@ export default function BrowserOptions({ webviewRef }: ModalProps) {
               onPress={() => {
                 if (webviewRef) {
                   setUrl("http://localhost:5173");
+                  toggleTooltip();
                 }
               }}
             />
@@ -73,6 +76,7 @@ export default function BrowserOptions({ webviewRef }: ModalProps) {
               onPress={() => {
                 if (webviewRef) {
                   webviewRef.current?.reload();
+                  toggleTooltip();
                 }
               }}
             >
@@ -88,7 +92,12 @@ export default function BrowserOptions({ webviewRef }: ModalProps) {
                 <Text>Refresh</Text>
               </View>
             </Pressable>
-            <Pressable onPress={() => navigation.navigate("History")}>
+            <Pressable
+              onPress={() => {
+                toggleTooltip();
+                navigation.navigate("History");
+              }}
+            >
               <View
                 style={{
                   flexDirection: "row",

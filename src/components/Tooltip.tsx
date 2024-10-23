@@ -1,11 +1,12 @@
+import { useDAppsStore } from "@/store";
 import { Colors } from "@/styles";
-import React, { useState, useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
-  View,
-  Modal,
-  TouchableOpacity,
-  StyleSheet,
   Dimensions,
+  Modal,
+  StyleSheet,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 type TooltipProps = {
@@ -14,14 +15,14 @@ type TooltipProps = {
 };
 
 export const Tooltip = ({ children, tooltipContent }: TooltipProps) => {
-  const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const touchableRef = useRef<TouchableOpacity>(null);
+  const { tooltipOpen, toggleTooltip: switchTooltip } = useDAppsStore();
 
   const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
   const toggleTooltip = () => {
-    if (!isVisible && touchableRef.current) {
+    if (!tooltipOpen && touchableRef.current) {
       touchableRef.current.measure(
         (
           fx: number,
@@ -32,11 +33,11 @@ export const Tooltip = ({ children, tooltipContent }: TooltipProps) => {
           py: number,
         ) => {
           setPosition({ top: py + elementHeight, left: px });
-          setIsVisible(true);
+          switchTooltip(true);
         },
       );
     } else {
-      setIsVisible(false);
+      switchTooltip(false);
     }
   };
 
@@ -69,12 +70,13 @@ export const Tooltip = ({ children, tooltipContent }: TooltipProps) => {
 
       <Modal
         transparent
-        visible={isVisible}
-        onRequestClose={() => setIsVisible(false)}
+        visible={tooltipOpen}
+        onRequestClose={() => switchTooltip(false)}
+        animationType="fade"
       >
         <TouchableOpacity
           style={styles.overlay}
-          onPress={() => setIsVisible(false)}
+          onPress={() => switchTooltip(false)}
         >
           <View
             style={[
