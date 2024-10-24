@@ -1,7 +1,7 @@
 import { api } from "@/modules/api";
 import { EVM_RPC_MAIN } from "../consts";
 
-export async function getSeiAddress(address: string) {
+export async function getSeiAddress(address: `0x${string}`) {
   try {
     const response = await api.post(EVM_RPC_MAIN, {
       jsonrpc: "2.0",

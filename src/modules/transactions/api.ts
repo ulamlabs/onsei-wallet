@@ -45,9 +45,13 @@ export const getTransactions = async (
     (resp) => resp.tx_result.evm_tx_info?.txHash,
   );
 
-  const evmTxsLogs: { events: TxEvent[] }[] = evmTxsList.map((resp) =>
-    JSON.parse(resp.tx_result.log),
-  )[0];
+  const evmTxsLogs: { events: TxEvent[] }[] = evmTxsList.map((resp) => {
+    try {
+      return JSON.parse(resp.tx_result.log);
+    } catch (error) {
+      return { events: [] };
+    }
+  })[0];
 
   const evmTxsHashes = evmTxsList.map(
     (resp) => resp.tx_result.evm_tx_info!.txHash,
