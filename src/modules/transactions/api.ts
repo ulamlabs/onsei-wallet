@@ -93,9 +93,7 @@ export const getTransactions = async (
         evmTxsReceipt[index].status,
         evmTxsLogs[index]?.events,
       ),
-      timestamp: new Date(
-        +evmBlocks[index].block.header.time.toString() * 1000,
-      ),
+      timestamp: new Date(evmBlocks[index].block.header.time),
     };
   });
 
