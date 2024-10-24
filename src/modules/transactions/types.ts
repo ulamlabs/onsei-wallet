@@ -113,3 +113,7 @@ export type RpcResponseTx = {
     };
   };
 };
+
+export type BlockResponse = {
+  block: { header: { height: string; time: string } };
+};
