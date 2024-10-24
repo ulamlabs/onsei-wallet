@@ -7,6 +7,7 @@ import { get } from "../api/api";
 import { parseEvmToTransaction, parseTx } from "./parsing";
 import { combineTransactionsWithStorage } from "./storage";
 import {
+  BlockResponse,
   RpcResponseTxs,
   Transaction,
   TransactionsData,
@@ -19,6 +20,18 @@ type GetTransactionsOptions = {
   limit?: number;
 };
 
+export const getBlockByHeight = async (height: number, rpcUrl: string) => {
+  try {
+    const { data } = await get<BlockResponse>(
+      `${rpcUrl}/block?height=${height}`,
+    );
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to fetch block");
+  }
+};
+
 export const getTransactions = async (
   options: GetTransactionsOptions,
 ): Promise<Transaction[]> => {
@@ -26,7 +39,8 @@ export const getTransactions = async (
 
   const node = useSettingsStore.getState().settings.node;
   const url = `https://rest.${NODE_URL[node]}/cosmos/tx/v1beta1/txs`;
-  const rpcUrl = `https://rpc.${NODE_URL[node]}/tx_search?query=coin_received.receiver%3D%27${options.address}%27`;
+  const baseRpcUrl = `https://rpc.${NODE_URL[node]}`;
+  const rpcUrl = `${baseRpcUrl}/tx_search?query=coin_received.receiver%3D%27${options.address}%27`;
   const events = getTxEventQueries(options.address);
 
   const txs = await Promise.all(
@@ -66,7 +80,9 @@ export const getTransactions = async (
   );
 
   const evmBlocks = await Promise.all(
-    evmTxs.map((tx) => publicClient.getBlock({ blockHash: tx.blockHash })),
+    evmTxs.map((tx) =>
+      getBlockByHeight(+tx.blockNumber.toString(), baseRpcUrl),
+    ),
   );
 
   const parsedEvm = evmTxs.map((tx, index) => {
@@ -77,7 +93,9 @@ export const getTransactions = async (
         evmTxsReceipt[index].status,
         evmTxsLogs[index]?.events,
       ),
-      timestamp: new Date(+evmBlocks[index].timestamp.toString() * 1000),
+      timestamp: new Date(
+        +evmBlocks[index].block.header.time.toString() * 1000,
+      ),
     };
   });
 
