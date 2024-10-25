@@ -41,7 +41,6 @@ export default function TransactionDetails({
   } = useSettingsStore();
   const txn = deserializeTxn(transaction);
   const token = getTokenFromTxn(txn);
-
   const sentOrReceived = useMemo(
     () => getSentOrReceived(txn, activeAccount!),
     [txn],

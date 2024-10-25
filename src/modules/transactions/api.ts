@@ -58,14 +58,13 @@ export const getTransactions = async (
   const evmTxsList = rpcTxs.data.txs.filter(
     (resp) => resp.tx_result.evm_tx_info?.txHash,
   );
-
-  const evmTxsLogs: { events: TxEvent[] }[] = evmTxsList.map((resp) => {
-    try {
-      return JSON.parse(resp.tx_result.log);
-    } catch (error) {
-      return { events: [] };
-    }
-  })[0];
+  const evmTxsLogs: { events: TxEvent[] | undefined }[] = evmTxsList.map(
+    (resp) => {
+      return resp.tx_result.log === "execution reverted: evm reverted"
+        ? { events: undefined }
+        : JSON.parse(resp.tx_result.log)[0];
+    },
+  );
 
   const evmTxsHashes = evmTxsList.map(
     (resp) => resp.tx_result.evm_tx_info!.txHash,
