@@ -24,6 +24,7 @@ export type AskOptions = {
   headerStyle?: StyleProp<TextStyle>;
   showCloseButton?: boolean;
   noTopBar?: boolean;
+  cancelLink?: string;
 };
 
 export type Question = {

@@ -9,10 +9,12 @@ import {
   SafeLayout,
   SecondaryButton,
   Text,
+  TextLink,
 } from "@/components";
 import DashboardHeader from "@/navigation/header/DashboardHeader";
 import {
   useAccountsStore,
+  useModalStore,
   useSettingsStore,
   useTokenRegistryStore,
   useTokensStore,
@@ -25,10 +27,11 @@ import {
   ArrowDown,
   ArrowDown2,
   ArrowUp,
+  ClipboardTick,
   InfoCircle,
   Setting2,
 } from "iconsax-react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { Image, TouchableOpacity, View } from "react-native";
 import { TokensList } from "../tokens";
 
@@ -40,8 +43,9 @@ export default function Dashboard({ navigation }: DashboardProps) {
   const { activeAccount } = useAccountsStore();
   const { updateBalances, tokens } = useTokensStore();
   const { refreshRegistryCache } = useTokenRegistryStore();
+  const { ask } = useModalStore();
   const {
-    settings: { globalGasPrice },
+    settings: { globalGasPrice, acceptedNewTerms },
     setSetting,
   } = useSettingsStore();
   const {
@@ -66,6 +70,53 @@ export default function Dashboard({ navigation }: DashboardProps) {
     await refreshRegistryCache();
     updateBalances();
   }
+
+  useEffect(() => {
+    if (acceptedNewTerms) {
+      return;
+    }
+    (async () => {
+      const yesno = await ask({
+        title: "Terms of Use and Privacy Policy update.",
+        question: (
+          <View
+            style={{
+              flexDirection: "row",
+              columnGap: 4,
+              width: "100%",
+              flexWrap: "wrap",
+            }}
+          >
+            <Paragraph>Our</Paragraph>
+            <TextLink
+              url="https://www.onseiwallet.io/terms-and-conditions"
+              text="Terms of Use"
+            />
+            <Paragraph>and</Paragraph>
+            <TextLink
+              url="https://www.onseiwallet.io/privacy-policy"
+              text="Privacy Policy"
+            />
+            <Paragraph>have been</Paragraph>
+            <Paragraph>
+              recently updated. To continue using the app please review to our
+              updated terms.
+            </Paragraph>
+          </View>
+        ),
+        yes: "Confirm",
+        no: "Learn more",
+        primary: "yes",
+        icon: ClipboardTick,
+        showCloseButton: false,
+        noTopBar: true,
+        cancelLink: "https://www.onseiwallet.io/learn-more",
+      });
+      if (yesno) {
+        setSetting("acceptedNewTerms", true);
+      }
+    })();
+  }, [acceptedNewTerms]);
 
   function render() {
     const hasTokensWithoutPrice = tokens.some((token) => !token.price);
