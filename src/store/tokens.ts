@@ -401,9 +401,3 @@ function getNativeIds(tokens: CosmToken[]) {
     .filter((t) => t.type !== "cw20" && t.type !== "erc20")
     .map((t) => t.id);
 }
-
-function getNativePointerContractIds(tokens: CosmToken[]) {
-  return tokens
-    .filter((t) => t.type === "cw20" && t.pointerContract)
-    .map((t) => t.pointerContract);
-}
