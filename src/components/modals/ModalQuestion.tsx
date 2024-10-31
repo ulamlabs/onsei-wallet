@@ -1,7 +1,7 @@
 import { Question } from "@/store";
 import { Colors } from "@/styles";
 import { PropsWithChildren, useMemo } from "react";
-import { View } from "react-native";
+import { Linking, View } from "react-native";
 import { DangerButton, PrimaryButton, TertiaryButton } from "../buttons";
 import { Column } from "../layout";
 import { Headline, Paragraph } from "../typography";
@@ -26,6 +26,10 @@ export default function ModalQuestion({ isVisible, question }: ModalProps) {
   }
 
   function onSecondaryPress() {
+    if (question.options.cancelLink) {
+      Linking.openURL(question.options.cancelLink);
+      return;
+    }
     question.resolve(question.options.primary === "no");
   }
 

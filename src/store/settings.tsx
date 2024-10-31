@@ -13,6 +13,7 @@ const DEFAULT_SETTINGS = {
   localGasPrice: "Low" as FeeTier,
   allowNotifications: true,
   "walletConnet.sessions": [] as WalletConnectSession[],
+  acceptedNewTerms: true,
 };
 
 type Settings = typeof DEFAULT_SETTINGS;
@@ -34,7 +35,9 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
     const settings = {
       ...DEFAULT_SETTINGS,
       ...storedSettings,
+      acceptedNewTerms: storedSettings.acceptedNewTerms || false,
     };
+
     set({ settings });
   },
   setSetting: (key, value) => {
