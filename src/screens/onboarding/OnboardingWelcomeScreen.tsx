@@ -3,6 +3,7 @@ import {
   Headline,
   Paragraph,
   SafeLayoutBottom,
+  TextLink,
 } from "@/components";
 import { AddWallet } from "@/screens/newWallet";
 import { Dimensions, Image, View } from "react-native";
@@ -27,9 +28,28 @@ export default function OnboardingWelcomeScreen() {
         />
         <Headline>Welcome to Onsei Wallet</Headline>
 
-        <Paragraph style={{ textAlign: "center" }}>
-          To get started, create a new wallet or import one from a seed phrase.
-        </Paragraph>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 4,
+            width: "100%",
+            flexWrap: "wrap",
+            justifyContent: "center",
+          }}
+        >
+          <Paragraph>By proceeding I agree to the</Paragraph>
+          <TextLink
+            url="https://www.onseiwallet.io/terms-and-conditions"
+            text="Terms of Use"
+          />
+          <Paragraph>and</Paragraph>
+          <TextLink
+            url="https://www.onseiwallet.io/privacy-policy"
+            text="Privacy Policy"
+          />
+          <Paragraph>and confirm that I have read them</Paragraph>
+        </View>
       </View>
 
       <AddWallet />
