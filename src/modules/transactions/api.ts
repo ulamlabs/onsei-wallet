@@ -33,7 +33,9 @@ const getNodeUrl = (endpoint: string) => {
 export const getTokenPointee = async (
   address: `0x${string}` | undefined,
 ): Promise<PointeeResponse | undefined> => {
-  if (!address) return undefined;
+  if (!address) {
+    return undefined;
+  }
   try {
     const url = getNodeUrl(
       `/sei-protocol/seichain/evm/pointee?pointerType=3&pointer=${address}`,
