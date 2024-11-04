@@ -201,7 +201,7 @@ export function parseEvmToTransaction(
 
   const fee = (BigInt(tx.gas) * BigInt(tx.gasPrice || SZABO)) / SZABO;
   let contract = "";
-  let contractAction = "";
+  const contractAction = "";
   let to = tx.to || "";
   let amount =
     BigInt(tx.value) / BigInt(10 ** (etherUnits.wei - (token?.decimals || 6)));
