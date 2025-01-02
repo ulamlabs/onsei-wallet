@@ -49,7 +49,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import BottomBarsNavigation from "./BottomBarsNavigation";
 import { navigatorScreenOptions } from "./const";
-import AddressBookHeaderOptions from "./header/AddressBookHeader";
 import CancelHeaderRight from "./header/CancelHeaderRight";
 import DefaultHeaderLeft from "./header/DefaultHeaderLeft";
 import DefaultHeaderTitle from "./header/DefaultHeaderTitle";
@@ -282,11 +281,7 @@ export default function HomeNavigation() {
       <Screen name="Connect Wallet" component={ConnectWalletScreen} />
       <Screen name="Connected Apps" component={ConnectedAppsScreen} />
       <Screen name="Link Addresses" component={LinkAddressesScreen} />
-      <Screen
-        name="Address Book"
-        component={AddressBook}
-        options={({ route }) => AddressBookHeaderOptions(route, "Address Book")}
-      />
+      <Screen name="Address Book" component={AddressBook} />
     </Navigator>
   );
 }

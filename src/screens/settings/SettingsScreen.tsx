@@ -7,9 +7,10 @@ import {
   SwitchWithLabel,
 } from "@/components";
 import { APP_NAME, WALLET_ADMIN_ADDRESS } from "@/const";
-import { useSettingsStore } from "@/store";
+import { useAddressBookStore, useSettingsStore } from "@/store";
 import { Colors } from "@/styles";
 import {
+  Book,
   CardEdit,
   Document,
   Note,
@@ -28,6 +29,8 @@ export default function SettingsScreen() {
   const toggleNotifications = () => {
     setSetting("allowNotifications", !allowNotifications);
   };
+
+  const { addressBook } = useAddressBookStore();
 
   return (
     <SafeLayout>
@@ -50,6 +53,7 @@ export default function SettingsScreen() {
             icon={<CardEdit size={22} color={Colors.text} />}
             params={{ global: true }}
           />
+
           <SwitchWithLabel
             icon={<Notification size={22} color={Colors.text} />}
             label="Allow notifications"
@@ -71,6 +75,12 @@ export default function SettingsScreen() {
             params={{ addressCount: 0 }}
           />
           /> TODO: use again when mainnet ready */}
+          <Link
+            label="Address Book"
+            navigateTo="Address Book"
+            icon={<Book size={22} color={Colors.text} />}
+            labelRight={addressBook.length.toString()}
+          />
         </OptionGroup>
         <OptionGroup>
           <Link
