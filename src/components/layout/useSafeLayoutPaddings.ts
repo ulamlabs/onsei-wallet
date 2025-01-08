@@ -1,8 +1,7 @@
 import { scale, verticalScale } from "@/utils";
-import { ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export const useSafeLayoutPaddings = () => {
+const useSafeLayoutPaddings = () => {
   const insets = useSafeAreaInsets();
 
   const layoutPaddings = {
@@ -14,3 +13,5 @@ export const useSafeLayoutPaddings = () => {
 
   return layoutPaddings;
 };
+
+export default useSafeLayoutPaddings;

@@ -11,7 +11,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { useSafeLayoutPaddings } from "./";
+import useSafeLayoutPaddings from "./useSafeLayoutPaddings";
 
 type LayoutProps = PropsWithChildren & {
   staticView?: boolean;
