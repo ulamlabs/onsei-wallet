@@ -4,6 +4,7 @@ import { Colors, FontSizes } from "@/styles";
 import { StyleSheet, View } from "react-native";
 import { SelectorButton, selectorButtonHeight } from "./SelectorButton";
 import { Amount } from "./Amount";
+import { AmountInput } from "./AmountInput";
 
 type Props = {
   amount?: string;
@@ -29,7 +30,14 @@ export function SelectorField({
       <Text style={styles.label}>{label}</Text>
       <View style={styles.content}>
         <SelectorButton asset={asset} chain={chain} onPress={onSelectorOpen} />
-        {amount !== undefined && amountInputId && onAmountChange ? null : ( // /> //   onChange={onAmountChange} //   value={amount} //   id={amountInputId} //   decimals={asset?.decimals ?? 18} // <AmountInput
+        {amount !== undefined && amountInputId && onAmountChange ? (
+          <AmountInput
+            decimals={asset?.decimals ?? 18}
+            id={amountInputId}
+            value={amount}
+            onChange={onAmountChange}
+          />
+        ) : (
           <Amount amount={amount} />
         )}
       </View>
