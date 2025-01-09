@@ -17,9 +17,7 @@ type BridgeAggregatorProps = NativeStackScreenProps<
   "Bridge"
 >;
 
-export default function BridgeAggregator({
-  navigation,
-}: BridgeAggregatorProps) {
+export function BridgeAggregator({ navigation }: BridgeAggregatorProps) {
   const store = useAggregatorStore();
 
   const { isLoading: isLoadingAssets } = useMergedAssets();

@@ -2,6 +2,8 @@ import { MergedAsset } from "@/modules/mergedBridgeData/types";
 import { useChainById } from "@/modules/mergedBridgeData/useMergedChains";
 import { useAggregatorStore } from "@/store/bridgeAggregator";
 import { SelectorField } from "./components/SelectorField";
+import { useNavigation } from "@react-navigation/native";
+import { NavigationProp } from "@/types";
 
 type Props = {
   onAmountChange: (value: string) => void;
@@ -9,6 +11,8 @@ type Props = {
 };
 
 export function SelectorFrom({ onAmountChange, onAssetSelect }: Props) {
+  const navigation = useNavigation<NavigationProp>();
+
   const store = useAggregatorStore();
 
   const asset = store.fromAsset;
@@ -23,7 +27,7 @@ export function SelectorFrom({ onAmountChange, onAssetSelect }: Props) {
       amountInputId="amount-input"
       onAmountChange={onAmountChange}
       onSelectorOpen={() => {
-        console.log("from clicked");
+        navigation.navigate("BridgeAssets");
       }}
     />
   );

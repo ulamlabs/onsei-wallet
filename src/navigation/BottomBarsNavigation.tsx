@@ -9,7 +9,7 @@ import {
 } from "iconsax-react-native";
 import React from "react";
 import Bar from "./bar/Bar";
-import BridgeAggregator from "@/screens/bridgeAggregator/BridgeAggregator";
+import { BridgeAggregator } from "@/screens/bridgeAggregator";
 
 export type BottomTabsParamList = {
   Wallet: undefined;

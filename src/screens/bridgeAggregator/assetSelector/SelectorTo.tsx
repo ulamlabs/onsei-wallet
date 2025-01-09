@@ -3,6 +3,8 @@ import { useChainById } from "@/modules/mergedBridgeData/useMergedChains";
 import { useAggregatorStore } from "@/store/bridgeAggregator";
 import { SelectorField } from "./components/SelectorField";
 import { fromNormalizedAmount } from "@/utils/decimalUtils";
+import { useNavigation } from "@react-navigation/native";
+import { NavigationProp } from "@/types";
 
 type Props = {
   expectedAmount?: string;
@@ -10,6 +12,8 @@ type Props = {
 };
 
 export function SelectorTo({ expectedAmount, onAssetSelect }: Props) {
+  const navigation = useNavigation<NavigationProp>();
+
   const store = useAggregatorStore();
 
   const asset = store.toAsset;
@@ -26,7 +30,7 @@ export function SelectorTo({ expectedAmount, onAssetSelect }: Props) {
       chain={chain}
       label={"To"}
       onSelectorOpen={() => {
-        console.log("to clicked");
+        navigation.navigate("BridgeAssets");
       }}
     />
   );

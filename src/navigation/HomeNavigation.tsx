@@ -7,9 +7,7 @@ import AccountsScreen from "@/screens/WalletOverview/AccountsScreen";
 import EditAccountNameScreen from "@/screens/WalletOverview/EditAccountNameScreen";
 import LinkAddressesScreen from "@/screens/WalletOverview/LinkAddressesScreen";
 import AddOrEditAddress from "@/screens/addressBook/AddOrEditAddress";
-import AddressBook, {
-  AddressBookNavParams,
-} from "@/screens/addressBook/AddressBookScreen";
+import AddressBook from "@/screens/addressBook/AddressBookScreen";
 import AddressDetailsScreen from "@/screens/addressBook/AddressDetailsScreen";
 import TransactionsWithAddress from "@/screens/addressBook/TransactionsWithAddress";
 import { AuthorizeScreen, BiometricsDisableScreen } from "@/screens/auth";
@@ -55,6 +53,8 @@ import DefaultHeaderTitle from "./header/DefaultHeaderTitle";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
 import { SettingsHeaderLeft } from "./header/SettingsHeaderLeft";
 import SettingsHeaderRight from "./header/SettingsHeaderRight";
+import BridgeAggregatorAssets from "@/screens/bridgeAggregator/BridgeAggregatorAssets";
+import BridgeAggregatorChains from "@/screens/bridgeAggregator/BridgeAggregatorChains";
 
 export type Recipient = {
   address: string;
@@ -135,7 +135,9 @@ export type HomeParamList = {
   "Connect Wallet": undefined;
   "Connected Apps": undefined;
   "Link Addresses": { address: string };
-  "Address Book": AddressBookNavParams;
+  "Address Book": undefined;
+  BridgeAssets: undefined;
+  BridgeChains: undefined;
 };
 
 const { Navigator, Screen } = createNativeStackNavigator<HomeParamList>();
@@ -282,6 +284,20 @@ export default function HomeNavigation() {
       <Screen name="Connected Apps" component={ConnectedAppsScreen} />
       <Screen name="Link Addresses" component={LinkAddressesScreen} />
       <Screen name="Address Book" component={AddressBook} />
+      <Screen
+        name="BridgeAssets"
+        component={BridgeAggregatorAssets}
+        options={{
+          title: "Select token",
+        }}
+      />
+      <Screen
+        name="BridgeChains"
+        component={BridgeAggregatorChains}
+        options={{
+          title: "Select network",
+        }}
+      />
     </Navigator>
   );
 }
