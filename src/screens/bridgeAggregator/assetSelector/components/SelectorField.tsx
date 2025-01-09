@@ -3,6 +3,7 @@ import { MergedAsset, MergedChain } from "@/modules/mergedBridgeData/types";
 import { Colors, FontSizes } from "@/styles";
 import { StyleSheet, View } from "react-native";
 import { SelectorButton, selectorButtonHeight } from "./SelectorButton";
+import { Amount } from "./Amount";
 
 type Props = {
   amount?: string;
@@ -26,8 +27,11 @@ export function SelectorField({
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
-      <View>
+      <View style={styles.content}>
         <SelectorButton asset={asset} chain={chain} onPress={onSelectorOpen} />
+        {amount !== undefined && amountInputId && onAmountChange ? null : ( // /> //   onChange={onAmountChange} //   value={amount} //   id={amountInputId} //   decimals={asset?.decimals ?? 18} // <AmountInput
+          <Amount amount={amount} />
+        )}
       </View>
     </View>
   );
@@ -49,6 +53,11 @@ const styles = StyleSheet.create({
     color: Colors.text100,
     fontSize: labelFontSize,
     lineHeight: lableLineHeight,
+  },
+  content: {
+    gap: 8,
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
 });
 
