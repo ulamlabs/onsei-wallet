@@ -1,5 +1,6 @@
 import { Colors } from "@/styles";
 import { Image, StyleSheet, View } from "react-native";
+import { iconSize } from "./const";
 
 type Props = {
   assetIconUri?: string;
@@ -32,8 +33,6 @@ export function AssetChainIcon({ assetIconUri, chainIconUri }: Props) {
     </View>
   );
 }
-
-export const iconSize = 40;
 
 const styles = StyleSheet.create({
   container: { position: "relative" },

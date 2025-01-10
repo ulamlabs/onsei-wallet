@@ -45,9 +45,7 @@ const styles = StyleSheet.create({
   },
 });
 
-type SwitchArrowsProps = {};
-
-function SwitchArrows({}: SwitchArrowsProps) {
+function SwitchArrows() {
   return (
     <Svg width="24" height="24" viewBox="0 0 24 24" fill="none" color={"white"}>
       <Path

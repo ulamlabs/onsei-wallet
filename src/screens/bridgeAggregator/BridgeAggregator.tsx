@@ -2,8 +2,6 @@ import { SafeLayout } from "@/components";
 import { useMergedChains } from "@/modules/mergedBridgeData/useMergedChains";
 import DashboardHeader from "@/navigation/header/DashboardHeader";
 import DefaultHeaderTitle from "@/navigation/header/DefaultHeaderTitle";
-import { NavigatorParamsList } from "@/types";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
 import { SelectorFrom, SelectorTo, SwitchFromTo } from "./assetSelector/";
 import { useAggregatorStore } from "@/store/bridgeAggregator";
@@ -13,12 +11,7 @@ import { StyleSheet, View } from "react-native";
 import { selectorFieldsGap } from "./assetSelector/const";
 import { BridgeAggregatorLoader } from "./components/BridgeAggregatorLoader";
 
-type BridgeAggregatorProps = NativeStackScreenProps<
-  NavigatorParamsList,
-  "Bridge"
->;
-
-export function BridgeAggregator({ navigation }: BridgeAggregatorProps) {
+export function BridgeAggregator() {
   const store = useAggregatorStore();
 
   const { isLoading: isLoadingAssets } = useMergedAssets();

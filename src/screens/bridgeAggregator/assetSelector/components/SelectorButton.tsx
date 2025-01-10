@@ -1,9 +1,15 @@
 import { Text } from "@/components";
 import { MergedAsset, MergedChain } from "@/modules/mergedBridgeData/types";
-import { Colors, FontSizes, FontWeights } from "@/styles";
+import { Colors, FontWeights } from "@/styles";
 import { ArrowDown2 } from "iconsax-react-native";
-import { Image, Pressable, StyleSheet, View } from "react-native";
-import { AssetChainIcon, iconSize } from "./AssetChainIcon";
+import { Pressable, StyleSheet, View } from "react-native";
+import { AssetChainIcon } from "./AssetChainIcon";
+import {
+  chainFontSize,
+  chainLineHeight,
+  placeholderFontSize,
+  placeholderLineHeight,
+} from "./const";
 
 type Props = {
   asset?: MergedAsset;
@@ -47,13 +53,6 @@ function Labels({ assetSymbol, chainName }: LabelsProps) {
   );
 }
 
-const placeholderFontSize = FontSizes.lg;
-const placeholderLineHeight = placeholderFontSize * 1.2;
-const chainFontSize = FontSizes.sm;
-const chainLineHeight = chainFontSize * 1.5;
-
-const labelsHeight = placeholderLineHeight + chainLineHeight;
-
 const labelsStyles = StyleSheet.create({
   placeholder: {
     fontFamily: FontWeights.bold,
@@ -66,5 +65,3 @@ const labelsStyles = StyleSheet.create({
     lineHeight: chainLineHeight,
   },
 });
-
-export const selectorButtonHeight = Math.max(iconSize, labelsHeight);

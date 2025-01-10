@@ -4,13 +4,13 @@ import { useChainList } from "@/modules/mergedBridgeData/useMergedChains";
 import { SearchNormal } from "iconsax-react-native";
 import { useState } from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";
-import { iconSize } from "./components/AssetChainIcon";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { useAggregatorStore } from "@/store/bridgeAggregator";
 import { getExtraChain } from "./utils";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "@/types";
 import { NoData } from "./components/NoData";
+import { iconSize } from "./components/const";
 
 export function SelectChainView() {
   const store = useAggregatorStore();

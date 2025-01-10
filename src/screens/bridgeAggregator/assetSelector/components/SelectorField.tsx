@@ -2,9 +2,10 @@ import { Text } from "@/components";
 import { MergedAsset, MergedChain } from "@/modules/mergedBridgeData/types";
 import { Colors, FontSizes } from "@/styles";
 import { StyleSheet, View } from "react-native";
-import { SelectorButton, selectorButtonHeight } from "./SelectorButton";
+import { SelectorButton } from "./SelectorButton";
 import { Amount } from "./Amount";
 import { AmountInput } from "./AmountInput";
+import { selectorButtonHeight } from "./const";
 
 type Props = {
   amount?: string;
