@@ -1,10 +1,6 @@
-import {
-  ChainId,
-  MergedAsset,
-  MergedChain,
-} from "@/modules/mergedBridgeData/types";
-import { useMemo, useState } from "react";
-import { defaultExtraChain, frequentChains } from "./frequentChains";
+import { MergedAsset, MergedChain } from "@/modules/mergedBridgeData/types";
+import { useEffect, useMemo, useState } from "react";
+import { getExtraChain } from "./utils";
 import { useAggregatorStore } from "@/store/bridgeAggregator";
 import { Pressable, StyleSheet, View } from "react-native";
 import { QuickChainSelector } from "./components/QuickChainSelector";
@@ -18,9 +14,7 @@ import { SearchNormal } from "iconsax-react-native";
 import { AssetChainIcon } from "./components/AssetChainIcon";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 
-type Props = {};
-
-export function SelectAssetView({}: Props) {
+export function SelectAssetView() {
   const navigation = useNavigation<NavigationProp>();
 
   const store = useAggregatorStore();
@@ -28,12 +22,12 @@ export function SelectAssetView({}: Props) {
   const currentChainId =
     store.direction === "FROM" ? store.fromChain : store.toChain;
 
-  const [selectedChainId, setSelectedChainId] = useState(currentChainId);
-  const [extraChainId, setExtraChainId] = useState(() =>
-    getExtraChain(currentChainId),
-  );
+  useEffect(() => {
+    store.setSelectedChainId(currentChainId);
+    store.setExtraChainId(getExtraChain(currentChainId));
+  }, [currentChainId]);
 
-  const selectedChain = useChainById(selectedChainId);
+  const selectedChain = useChainById(store.selectedChainId);
 
   const [assetQuery, setAssetQuery] = useState("");
 
@@ -42,10 +36,13 @@ export function SelectAssetView({}: Props) {
   const optionAssets = useMemo(
     () =>
       Array.from(
-        (assets && selectedChainId && assets.get(selectedChainId)) || [],
+        (assets &&
+          store.selectedChainId &&
+          assets.get(store.selectedChainId)) ||
+          [],
         ([_, chain]) => chain,
       ),
-    [selectedChainId, assets],
+    [store.selectedChainId, assets],
   );
 
   const searchQueryLc = assetQuery.toLowerCase();
@@ -63,13 +60,14 @@ export function SelectAssetView({}: Props) {
   return (
     <View style={styles.container}>
       <QuickChainSelector
-        extraChainId={extraChainId}
+        extraChainId={store.extraChainId!}
         selectedChain={selectedChain}
         onOpenSelectChain={() => {
           navigation.navigate("BridgeChains");
         }}
         onChainSelect={(value) => {
-          setSelectedChainId(value);
+          store.setSelectedChainId(value);
+          store.setExtraChainId(getExtraChain(value, store.extraChainId));
         }}
       />
       <View style={styles.assets}>
@@ -109,19 +107,6 @@ const styles = StyleSheet.create({
     gap: 20,
   },
 });
-
-const getExtraChain = (
-  selectedChain?: ChainId,
-  currentExtraChain?: ChainId,
-) => {
-  if (!selectedChain) {
-    return defaultExtraChain;
-  }
-  if (!frequentChains.includes(selectedChain)) {
-    return selectedChain;
-  }
-  return currentExtraChain ?? defaultExtraChain;
-};
 
 type AssetButtonProps = {
   asset?: MergedAsset;

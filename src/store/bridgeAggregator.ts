@@ -6,14 +6,16 @@ import { create } from "zustand";
 type Direction = "FROM" | "TO";
 
 export type AggregatorState = {
-  // original (web version) state
+  // original (web version) state - also can be conceptually understood as general bridge aggregator state
   amount: string;
   fromAsset?: MergedAsset; // whole object - allows to write simpler code and easily add more logic in store actions
   fromChain?: ChainId; // only chain id - allows to set default id before fetching data from bridge providers
   toAsset?: MergedAsset;
   toChain?: ChainId;
-  // extra (mobile) state
+  // extra (mobile) state - conceptually asset selector state, i.e. temporary form state used when user browses available assets and chains
   direction?: Direction;
+  selectedChainId?: ChainId;
+  extraChainId?: ChainId;
 };
 
 type AggregatorActions = {
@@ -24,6 +26,8 @@ type AggregatorActions = {
   switchDirection: () => AggregatorState;
   // extra (mobile version) actions
   setDirection: (direction: Direction) => void;
+  setSelectedChainId: (chainId: ChainId | undefined) => void;
+  setExtraChainId: (chainId: ChainId) => void;
 };
 
 const initialValue: AggregatorState = {
@@ -116,6 +120,12 @@ export const useAggregatorStore = create<AggregatorState & AggregatorActions>()(
     },
     setDirection: (direction) => {
       set({ direction });
+    },
+    setSelectedChainId: (selectedChainId) => {
+      set({ selectedChainId });
+    },
+    setExtraChainId: (extraChainId) => {
+      set({ extraChainId });
     },
   }),
 );

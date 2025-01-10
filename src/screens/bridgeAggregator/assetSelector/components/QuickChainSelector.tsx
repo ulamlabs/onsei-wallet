@@ -4,7 +4,7 @@ import {
   useChainList,
 } from "@/modules/mergedBridgeData/useMergedChains";
 import { Image, Pressable, StyleSheet, View } from "react-native";
-import { frequentChains } from "../frequentChains";
+import { frequentChains } from "../utils";
 import { Colors, FontSizes } from "@/styles";
 import { Text } from "@/components";
 import { Header } from "./Header";

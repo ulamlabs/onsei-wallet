@@ -1,3 +1,4 @@
+import { ChainId } from "@/modules/mergedBridgeData/types";
 import * as popularChainIds from "@/utils/popularChainIds";
 
 export const defaultExtraChain = popularChainIds.arbitrum;
@@ -10,3 +11,16 @@ export const frequentChains = [
   popularChainIds.solana,
   // popularChainIds.polygon,
 ];
+
+export const getExtraChain = (
+  selectedChain?: ChainId,
+  currentExtraChain?: ChainId,
+) => {
+  if (!selectedChain) {
+    return defaultExtraChain;
+  }
+  if (!frequentChains.includes(selectedChain)) {
+    return selectedChain;
+  }
+  return currentExtraChain ?? defaultExtraChain;
+};
