@@ -10,6 +10,7 @@ import { useAggregatorStore } from "@/store/bridgeAggregator";
 import { getExtraChain } from "./utils";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "@/types";
+import { NoData } from "./components/NoData";
 
 export function SelectChainView() {
   const store = useAggregatorStore();
@@ -53,6 +54,12 @@ export function SelectChainView() {
             }}
           />
         ))}
+        {filteredChains.length === 0 && (
+          <NoData
+            label={"No networks found"}
+            secondaryLabel={"There are no networks matching your search query."}
+          />
+        )}
       </View>
     </View>
   );

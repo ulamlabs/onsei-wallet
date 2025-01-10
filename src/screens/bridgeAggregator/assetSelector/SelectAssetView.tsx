@@ -13,6 +13,7 @@ import { Header } from "./components/Header";
 import { SearchNormal } from "iconsax-react-native";
 import { AssetChainIcon } from "./components/AssetChainIcon";
 import { Colors, FontSizes, FontWeights } from "@/styles";
+import { NoData } from "./components/NoData";
 
 export function SelectAssetView() {
   const navigation = useNavigation<NavigationProp>();
@@ -93,6 +94,12 @@ export function SelectAssetView() {
               }}
             />
           ))}
+          {filteredAssets.length === 0 && (
+            <NoData
+              label={"No tokens found"}
+              secondaryLabel={"There are no tokens matching your search query."}
+            />
+          )}
         </View>
       </View>
     </View>
