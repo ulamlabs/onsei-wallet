@@ -27,6 +27,7 @@ export function SelectorFrom({ onAmountChange, onAssetSelect }: Props) {
       amountInputId="amount-input"
       onAmountChange={onAmountChange}
       onSelectorOpen={() => {
+        store.setDirection("FROM");
         navigation.navigate("BridgeAssets");
       }}
     />

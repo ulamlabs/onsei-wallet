@@ -3,19 +3,27 @@ import { ChainId, MergedAsset } from "@/modules/mergedBridgeData/types";
 import { ethereum, sei } from "@/utils/popularChainIds";
 import { create } from "zustand";
 
+type Direction = "FROM" | "TO";
+
 export type AggregatorState = {
+  // original (web version) state
   amount: string;
   fromAsset?: MergedAsset; // whole object - allows to write simpler code and easily add more logic in store actions
   fromChain?: ChainId; // only chain id - allows to set default id before fetching data from bridge providers
   toAsset?: MergedAsset;
   toChain?: ChainId;
+  // extra (mobile) state
+  direction?: Direction;
 };
 
 type AggregatorActions = {
+  // original (web version) actions
   setAmount: (amount: string) => AggregatorState;
   setFromAsset: (asset: MergedAsset) => AggregatorState;
   setToAsset: (asset: MergedAsset) => AggregatorState;
   switchDirection: () => AggregatorState;
+  // extra (mobile version) actions
+  setDirection: (direction: Direction) => void;
 };
 
 const initialValue: AggregatorState = {
@@ -105,6 +113,9 @@ export const useAggregatorStore = create<AggregatorState & AggregatorActions>()(
         toChain: prevState.fromChain,
       }));
       return get();
+    },
+    setDirection: (direction) => {
+      set({ direction });
     },
   }),
 );

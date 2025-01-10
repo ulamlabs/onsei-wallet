@@ -30,6 +30,7 @@ export function SelectorTo({ expectedAmount, onAssetSelect }: Props) {
       chain={chain}
       label={"To"}
       onSelectorOpen={() => {
+        store.setDirection("TO");
         navigation.navigate("BridgeAssets");
       }}
     />
