@@ -11,6 +11,7 @@ import { useMergedAssets } from "@/modules/mergedBridgeData/useMergedAssets";
 import { useMergedRoutes } from "@/modules/mergedBridgeData/useMergedRoutes";
 import { StyleSheet, View } from "react-native";
 import { selectorFieldsGap } from "./assetSelector/const";
+import { BridgeAggregatorLoader } from "./components/BridgeAggregatorLoader";
 
 type BridgeAggregatorProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -36,7 +37,10 @@ export function BridgeAggregator({ navigation }: BridgeAggregatorProps) {
         <DefaultHeaderTitle title="Onsei bridge aggregator" />
       </DashboardHeader>
       <SafeLayout style={{ paddingBottom: 80 }}>
-        <View style={styles.selectorsContainer}>
+        <BridgeAggregatorLoader />
+        <View
+          style={[styles.selectorsContainer, isLoading && { display: "none" }]}
+        >
           <View style={styles.selectors}>
             <SelectorFrom
               onAssetSelect={(value) => {
@@ -69,7 +73,9 @@ export function BridgeAggregator({ navigation }: BridgeAggregatorProps) {
 }
 
 const styles = StyleSheet.create({
-  selectorsContainer: { position: "relative" },
+  selectorsContainer: {
+    position: "relative", // for use in absolute positioning of SwitchFromTo
+  },
   selectors: {
     gap: selectorFieldsGap,
   },
