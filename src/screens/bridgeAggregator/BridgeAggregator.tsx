@@ -1,4 +1,4 @@
-import { SafeLayout } from "@/components";
+import { Loader, SafeLayout, Text } from "@/components";
 import { useMergedChains } from "@/modules/mergedBridgeData/useMergedChains";
 import DashboardHeader from "@/navigation/header/DashboardHeader";
 import DefaultHeaderTitle from "@/navigation/header/DefaultHeaderTitle";
@@ -10,6 +10,7 @@ import { useMergedRoutes } from "@/modules/mergedBridgeData/useMergedRoutes";
 import { StyleSheet, View } from "react-native";
 import { selectorFieldsGap } from "./assetSelector/const";
 import { BridgeAggregatorLoader } from "./components/BridgeAggregatorLoader";
+import { Colors, FontSizes } from "@/styles";
 
 export function BridgeAggregator() {
   const store = useAggregatorStore();
@@ -21,7 +22,7 @@ export function BridgeAggregator() {
 
   const {
     calculateRoutes,
-    // mutation: { isPending: isLoadingRoutes },
+    isLoading: isLoadingRoutes,
     routes,
   } = useMergedRoutes();
 
@@ -51,6 +52,12 @@ export function BridgeAggregator() {
             }}
           />
         </View>
+        {isLoadingRoutes && (
+          <View style={styles.loaderContainer}>
+            <Loader size="base" color={Colors.text100} />
+            <Text style={styles.loaderText}>Finding routes...</Text>
+          </View>
+        )}
       </SafeLayout>
     </>
   );
@@ -62,5 +69,16 @@ const styles = StyleSheet.create({
   },
   selectors: {
     gap: selectorFieldsGap,
+  },
+  loaderContainer: {
+    height: 240,
+    gap: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loaderText: {
+    fontSize: FontSizes.sm,
+    lineHeight: FontSizes.sm * 1.2,
+    color: Colors.text100,
   },
 });

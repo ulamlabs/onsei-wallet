@@ -1,4 +1,8 @@
-import { useMutation, useMutationState } from "@tanstack/react-query";
+import {
+  MutationState,
+  useMutation,
+  useMutationState,
+} from "@tanstack/react-query";
 import Decimal from "decimal.js";
 import debounce from "lodash/debounce";
 import { AggregatorState } from "@/store/bridgeAggregator";
@@ -55,14 +59,12 @@ export const useMergedRoutes = () => {
     [],
   );
 
-  const allPendingMutationsData = useMutationState<MergedRoute[]>({
+  const allMutations = useMutationState<MutationState<MergedRoute[]>>({
     filters: { mutationKey },
-    select: (mutation) => mutation.state.data as MergedRoute[],
   });
 
-  const routes = allPendingMutationsData.length
-    ? allPendingMutationsData[allPendingMutationsData.length - 1]
-    : undefined;
+  const routes = allMutations.at(-1)?.data;
+  const isLoading = allMutations.at(-1)?.status === "pending";
 
-  return { calculateRoutes, mutation, routes };
+  return { calculateRoutes, routes, isLoading };
 };
