@@ -11,6 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "@/types";
 import { NoData } from "./components/NoData";
 import { iconSize } from "./components/const";
+import { SvgUri } from "react-native-svg";
 
 export function SelectChainView() {
   const store = useAggregatorStore();
@@ -76,10 +77,14 @@ type ChainButtonProps = { chain: MergedChain; onPress?: () => void };
 function ChainButton({ chain, onPress }: ChainButtonProps) {
   return (
     <Pressable style={chainButtonStyles.container} onPress={onPress}>
-      <Image
-        style={chainButtonStyles.image}
-        source={{ uri: chain.chainIconUri }}
-      />
+      {chain.chainIconUri?.endsWith(".svg") ? (
+        <SvgUri uri={chain.chainIconUri} width={iconSize} height={iconSize} />
+      ) : (
+        <Image
+          style={chainButtonStyles.image}
+          source={{ uri: chain.chainIconUri }}
+        />
+      )}
       <Text style={chainButtonStyles.text}>{chain.chainName}</Text>
     </Pressable>
   );

@@ -1,33 +1,54 @@
 import { Colors } from "@/styles";
 import { Image, StyleSheet, View } from "react-native";
 import { iconSize } from "./const";
+import { SvgUri } from "react-native-svg";
 
 type Props = {
   assetIconUri?: string;
   chainIconUri?: string;
 };
 
+const chainIconSize = 14;
+
 export function AssetChainIcon({ assetIconUri, chainIconUri }: Props) {
   return (
     <View style={styles.container}>
-      <Image
-        style={styles.assetIcon}
-        source={
-          assetIconUri
-            ? {
-                uri: assetIconUri,
-              }
-            : require("../../../../../assets/token-placeholder.png")
-        }
-      />
+      {!assetIconUri ? (
+        <Image
+          style={styles.assetIcon}
+          source={require("../../../../../assets/token-placeholder.png")}
+        />
+      ) : assetIconUri.endsWith(".svg") ? (
+        <SvgUri uri={assetIconUri} width={iconSize} height={iconSize} />
+      ) : (
+        <Image
+          style={styles.assetIcon}
+          source={
+            assetIconUri
+              ? {
+                  uri: assetIconUri,
+                }
+              : require("../../../../../assets/token-placeholder.png")
+          }
+        />
+      )}
+
       {chainIconUri && (
         <View style={styles.chainIconWrapper}>
-          <Image
-            source={{
-              uri: chainIconUri,
-            }}
-            style={styles.chainIcon}
-          />
+          {chainIconUri.endsWith(".svg") ? (
+            <SvgUri
+              uri={chainIconUri}
+              width={chainIconSize}
+              height={chainIconSize}
+            />
+          ) : (
+            <Image
+              source={{
+                uri: chainIconUri,
+              }}
+              style={styles.chainIcon}
+            />
+          )}
         </View>
       )}
     </View>
@@ -41,8 +62,8 @@ const styles = StyleSheet.create({
     width: iconSize,
   },
   chainIconWrapper: {
-    width: 16,
-    height: 16,
+    width: chainIconSize + 2,
+    height: chainIconSize + 2,
     position: "absolute",
     bottom: 0,
     right: 0,
@@ -52,7 +73,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   chainIcon: {
-    height: 14,
-    width: 14,
+    height: chainIconSize,
+    width: chainIconSize,
   },
 });

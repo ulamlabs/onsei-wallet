@@ -8,6 +8,7 @@ import { frequentChains } from "../utils";
 import { Colors, FontSizes } from "@/styles";
 import { Text } from "@/components";
 import { Header } from "./Header";
+import { SvgUri } from "react-native-svg";
 
 type Props = {
   extraChainId: ChainId;
@@ -78,13 +79,19 @@ function NetworkButton({
       ]}
       onPress={onPress}
     >
-      <Image
-        source={{ uri: chain?.chainIconUri }}
-        style={networkButtonStyles.image}
-      />
+      {chain?.chainIconUri.endsWith(".svg") ? (
+        <SvgUri uri={chain?.chainIconUri} width={iconSize} height={iconSize} />
+      ) : (
+        <Image
+          source={{ uri: chain?.chainIconUri }}
+          style={networkButtonStyles.image}
+        />
+      )}
     </Pressable>
   );
 }
+
+const iconSize = 28;
 
 const networkButtonStyles = StyleSheet.create({
   button: {
@@ -96,8 +103,8 @@ const networkButtonStyles = StyleSheet.create({
     backgroundColor: Colors.grey826,
   },
   image: {
-    width: 28,
-    height: 28,
+    width: iconSize,
+    height: iconSize,
   },
 });
 
