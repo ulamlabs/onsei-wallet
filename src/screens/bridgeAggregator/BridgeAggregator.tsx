@@ -10,7 +10,8 @@ import { useMergedRoutes } from "@/modules/mergedBridgeData/useMergedRoutes";
 import { StyleSheet, View } from "react-native";
 import { selectorFieldsGap } from "./assetSelector/const";
 import { BridgeAggregatorLoader } from "./components/BridgeAggregatorLoader";
-import { Colors, FontSizes } from "@/styles";
+import { Colors, FontSizes, FontWeights } from "@/styles";
+import { RoutesList } from "./routes";
 
 export function BridgeAggregator() {
   const store = useAggregatorStore();
@@ -54,8 +55,18 @@ export function BridgeAggregator() {
         </View>
         {isLoadingRoutes && (
           <View style={styles.loaderContainer}>
-            <Loader size="base" color={Colors.text100} />
-            <Text style={styles.loaderText}>Finding routes...</Text>
+            <Loader size="base" color={Colors.text} />
+            <Text style={styles.loaderText}>
+              Looking for available routes...
+            </Text>
+          </View>
+        )}
+        {routes && (
+          <View style={styles.routesContainer}>
+            <Text
+              style={styles.routesHeader}
+            >{`Available quotes (${routes.length})`}</Text>
+            <RoutesList routes={routes} />
           </View>
         )}
       </SafeLayout>
@@ -77,8 +88,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   loaderText: {
-    fontSize: FontSizes.sm,
-    lineHeight: FontSizes.sm * 1.2,
-    color: Colors.text100,
+    fontSize: FontSizes.lg,
+    lineHeight: FontSizes.lg * 1.5,
+    color: Colors.text,
+  },
+  routesContainer: {},
+  routesHeader: {
+    marginVertical: 24,
+    color: Colors.text,
+    fontSize: FontSizes.lg,
+    fontFamily: FontWeights.bold,
   },
 });

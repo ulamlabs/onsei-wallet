@@ -9,7 +9,7 @@ import { useAggregatorStore } from "@/store/bridgeAggregator";
 import { getExtraChain } from "./utils";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "@/types";
-import { NoData } from "./components/NoData";
+import { NoData } from "../components/NoData";
 import { iconSize } from "./components/const";
 import { SvgUri } from "react-native-svg";
 

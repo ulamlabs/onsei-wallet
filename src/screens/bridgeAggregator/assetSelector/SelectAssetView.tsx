@@ -13,7 +13,7 @@ import { Header } from "./components/Header";
 import { SearchNormal } from "iconsax-react-native";
 import { AssetChainIcon } from "./components/AssetChainIcon";
 import { Colors, FontSizes, FontWeights } from "@/styles";
-import { NoData } from "./components/NoData";
+import { NoData } from "../components/NoData";
 import { useMergedRoutes } from "@/modules/mergedBridgeData/useMergedRoutes";
 
 export function SelectAssetView() {
