@@ -14,6 +14,7 @@ import { SearchNormal } from "iconsax-react-native";
 import { AssetChainIcon } from "./components/AssetChainIcon";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { NoData } from "./components/NoData";
+import { useMergedRoutes } from "@/modules/mergedBridgeData/useMergedRoutes";
 
 export function SelectAssetView() {
   const navigation = useNavigation<NavigationProp>();
@@ -58,6 +59,8 @@ export function SelectAssetView() {
       )
     : optionAssets;
 
+  const { calculateRoutes } = useMergedRoutes();
+
   return (
     <View style={styles.container}>
       <QuickChainSelector
@@ -87,9 +90,11 @@ export function SelectAssetView() {
               asset={asset}
               chain={selectedChain}
               onPress={() => {
-                store.direction === "FROM"
-                  ? store.setFromAsset(asset)
-                  : store.setToAsset(asset);
+                const nextState =
+                  store.direction === "FROM"
+                    ? store.setFromAsset(asset)
+                    : store.setToAsset(asset);
+                calculateRoutes(nextState);
                 navigation.goBack();
               }}
             />

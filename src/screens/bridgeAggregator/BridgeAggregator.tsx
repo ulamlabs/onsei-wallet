@@ -21,7 +21,8 @@ export function BridgeAggregator() {
 
   const {
     calculateRoutes,
-    mutation: { data: routes, isPending: isLoadingRoutes },
+    // mutation: { isPending: isLoadingRoutes },
+    routes,
   } = useMergedRoutes();
 
   return (
@@ -36,22 +37,12 @@ export function BridgeAggregator() {
         >
           <View style={styles.selectors}>
             <SelectorFrom
-              onAssetSelect={(value) => {
-                const nextState = store.setFromAsset(value);
-                calculateRoutes(nextState);
-              }}
               onAmountChange={(value) => {
                 const nextState = store.setAmount(value);
                 calculateRoutes(nextState);
               }}
             />
-            <SelectorTo
-              onAssetSelect={(value) => {
-                const nextState = store.setToAsset(value);
-                calculateRoutes(nextState);
-              }}
-              expectedAmount={routes?.[0]?.expectedReceive}
-            />
+            <SelectorTo expectedAmount={routes?.[0]?.expectedReceive} />
           </View>
           <SwitchFromTo
             onPress={() => {

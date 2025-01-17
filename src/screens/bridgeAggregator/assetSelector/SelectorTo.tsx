@@ -8,10 +8,9 @@ import { NavigationProp } from "@/types";
 
 type Props = {
   expectedAmount?: string;
-  onAssetSelect: (value: MergedAsset) => void;
 };
 
-export function SelectorTo({ expectedAmount, onAssetSelect }: Props) {
+export function SelectorTo({ expectedAmount }: Props) {
   const navigation = useNavigation<NavigationProp>();
 
   const store = useAggregatorStore();

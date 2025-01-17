@@ -1,11 +1,11 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useMutationState } from "@tanstack/react-query";
 import Decimal from "decimal.js";
 import debounce from "lodash/debounce";
 import { AggregatorState } from "@/store/bridgeAggregator";
 import { useCallback } from "react";
 import { getMergedRouteFromSkip } from "./getMergedRouteFromSkip";
 import { getMergedRouteFromSquid } from "./getMergedRouteFromSquid";
-import { RouteParams } from "./types";
+import { MergedRoute, RouteParams } from "./types";
 
 const getMergedRoutes = async (params: RouteParams) => {
   const results = await Promise.allSettled([
@@ -55,5 +55,14 @@ export const useMergedRoutes = () => {
     [],
   );
 
-  return { calculateRoutes, mutation };
+  const allPendingMutationsData = useMutationState<MergedRoute[]>({
+    filters: { mutationKey },
+    select: (mutation) => mutation.state.data as MergedRoute[],
+  });
+
+  const routes = allPendingMutationsData.length
+    ? allPendingMutationsData[allPendingMutationsData.length - 1]
+    : undefined;
+
+  return { calculateRoutes, mutation, routes };
 };
