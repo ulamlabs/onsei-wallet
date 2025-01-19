@@ -12,6 +12,24 @@ import { selectorFieldsGap } from "./assetSelector/const";
 import { BridgeAggregatorLoader } from "./components/BridgeAggregatorLoader";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { RoutesList } from "./routes";
+import { MergedRoute } from "@/modules/mergedBridgeData/types";
+
+const dummyRoutes: MergedRoute[] = [
+  {
+    bridge: "Skip",
+    expectedReceive: "100.0",
+    expectedReceiveUsd: "100.0",
+    expectedTime: 600,
+    minReceive: "99.0",
+  },
+  {
+    bridge: "Squid",
+    expectedReceive: "95.0",
+    expectedReceiveUsd: "95.0",
+    expectedTime: 600,
+    minReceive: "94.0",
+  },
+];
 
 export function BridgeAggregator() {
   const store = useAggregatorStore();
@@ -66,7 +84,7 @@ export function BridgeAggregator() {
             <Text
               style={styles.routesHeader}
             >{`Available quotes (${routes.length})`}</Text>
-            <RoutesList routes={routes} />
+            <RoutesList routes={dummyRoutes} />
           </View>
         )}
       </SafeLayout>
