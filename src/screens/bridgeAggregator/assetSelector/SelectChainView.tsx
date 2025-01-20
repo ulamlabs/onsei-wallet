@@ -77,7 +77,12 @@ type ChainButtonProps = { chain: MergedChain; onPress?: () => void };
 function ChainButton({ chain, onPress }: ChainButtonProps) {
   return (
     <Pressable style={chainButtonStyles.container} onPress={onPress}>
-      {chain.chainIconUri?.endsWith(".svg") ? (
+      {chain.chainIconUri?.startsWith("ipfs") ? (
+        <Image
+          style={chainButtonStyles.image}
+          source={require("../../../../assets/token-placeholder.png")}
+        />
+      ) : chain.chainIconUri?.endsWith(".svg") ? (
         <SvgUri uri={chain.chainIconUri} width={iconSize} height={iconSize} />
       ) : (
         <Image

@@ -1,4 +1,3 @@
-import { MergedAsset } from "@/modules/mergedBridgeData/types";
 import { useChainById } from "@/modules/mergedBridgeData/useMergedChains";
 import { useAggregatorStore } from "@/store/bridgeAggregator";
 import { SelectorField } from "./components/SelectorField";

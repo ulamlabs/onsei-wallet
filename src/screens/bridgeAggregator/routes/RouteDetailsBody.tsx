@@ -2,8 +2,9 @@ import { BridgeEnum } from "@/modules/mergedBridgeData/types";
 import { formatAmount } from "./utils";
 import { useAggregatorStore } from "@/store/bridgeAggregator";
 import { StyleSheet, View } from "react-native";
-import { Colors, FontSizes } from "@/styles";
+import { Colors, FontSizes, FontWeights } from "@/styles";
 import { Text } from "@/components";
+import { BridgeLink } from "./BridgeLink";
 
 type Props = {
   bridge: BridgeEnum;
@@ -55,7 +56,7 @@ export function RouteDetailsBody({
           </Text>
         </View>
       </View>
-      {/* <BridgeLink bridge={bridge} /> */}
+      <BridgeLink bridge={bridge} />
     </View>
   );
 }
@@ -95,5 +96,6 @@ const styles = StyleSheet.create({
     color: Colors.text,
     fontSize: FontSizes.sm,
     lineHeight: FontSizes.sm * 1.5,
+    fontFamily: FontWeights.medium,
   },
 });

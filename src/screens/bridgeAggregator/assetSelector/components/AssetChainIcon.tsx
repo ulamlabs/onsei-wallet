@@ -13,7 +13,7 @@ const chainIconSize = 14;
 export function AssetChainIcon({ assetIconUri, chainIconUri }: Props) {
   return (
     <View style={styles.container}>
-      {!assetIconUri ? (
+      {!assetIconUri || assetIconUri.startsWith("ipfs") ? (
         <Image
           style={styles.assetIcon}
           source={require("../../../../../assets/token-placeholder.png")}
@@ -23,13 +23,9 @@ export function AssetChainIcon({ assetIconUri, chainIconUri }: Props) {
       ) : (
         <Image
           style={styles.assetIcon}
-          source={
-            assetIconUri
-              ? {
-                  uri: assetIconUri,
-                }
-              : require("../../../../../assets/token-placeholder.png")
-          }
+          source={{
+            uri: assetIconUri,
+          }}
         />
       )}
 

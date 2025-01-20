@@ -79,7 +79,12 @@ function NetworkButton({
       ]}
       onPress={onPress}
     >
-      {chain?.chainIconUri.endsWith(".svg") ? (
+      {chain?.chainIconUri.startsWith("ipfs") ? (
+        <Image
+          style={networkButtonStyles.image}
+          source={require("../../../../../assets/token-placeholder.png")}
+        />
+      ) : chain?.chainIconUri.endsWith(".svg") ? (
         <SvgUri uri={chain?.chainIconUri} width={iconSize} height={iconSize} />
       ) : (
         <Image
