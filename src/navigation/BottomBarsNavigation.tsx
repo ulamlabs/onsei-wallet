@@ -12,6 +12,7 @@ import React from "react";
 import Bar from "./bar/Bar";
 import DApps from "@/screens/dApps/DAppsScreen";
 import NFTsGallery from "@/screens/nftsGallery/NFTsGallery";
+import { View } from "react-native";
 
 export type BottomTabsParamList = {
   Wallet: undefined;
@@ -29,6 +30,10 @@ export default function BottomBarsNavigation() {
       initialRouteName="Wallet"
       tabBar={(props) => <Bar {...props} />}
       tabBarPosition="bottom"
+      screenOptions={{
+        lazy: true,
+        lazyPlaceholder: () => <View style={{ backgroundColor: "black" }} />,
+      }}
     >
       <Screen
         name="Wallet"
