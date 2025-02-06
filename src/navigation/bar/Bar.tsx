@@ -10,7 +10,7 @@ import {
   TabNavigationState,
 } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Animated, View } from "react-native";
 import BarItem from "./BarItem";
 import { BAR_BORDER_RADIUS, BAR_HEIGHT, BAR_PADDING } from "./const";
@@ -31,14 +31,16 @@ export default function Bar({
   state: { index },
 }: BarProps) {
   const translateX = useRef(new Animated.Value(0)).current;
+  const [barWidth, setBarWidth] = useState(0);
 
   useEffect(() => {
+    const itemWidth = barWidth / state.routes.length;
     Animated.timing(translateX, {
-      toValue: index * 123,
+      toValue: index * itemWidth,
       duration: 150,
       useNativeDriver: true,
     }).start();
-  }, [index]);
+  }, [index, state.routes.length, barWidth]);
 
   return (
     <Row
@@ -71,12 +73,13 @@ export default function Bar({
         }}
       >
         <View
+          onLayout={(e) => setBarWidth(e.nativeEvent.layout.width)}
           style={{
             flexDirection: "row",
             borderRadius: BAR_BORDER_RADIUS,
             overflow: "hidden",
             height: "100%",
-            gap: 16,
+            gap: 8,
           }}
         >
           {state.routes.map((route, index) => (
@@ -87,6 +90,7 @@ export default function Bar({
               navigation={navigation}
               state={state}
               key={route.key}
+              totalTabs={state.routes.length}
             />
           ))}
           <Animated.View
@@ -95,7 +99,7 @@ export default function Bar({
               bottom: 0,
               height: "100%",
               transform: [{ translateX }],
-              width: 107,
+              width: `${100 / state.routes.length}%`,
               borderRadius: 28,
               backgroundColor: Colors.background,
               zIndex: -1,

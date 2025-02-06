@@ -10,7 +10,7 @@ import {
   Route,
   TabNavigationState,
 } from "@react-navigation/native";
-import { Pressable, View } from "react-native";
+import { DimensionValue, Pressable, View } from "react-native";
 
 type BarItemProps = {
   state: TabNavigationState<ParamListBase>;
@@ -21,6 +21,7 @@ type BarItemProps = {
     ParamListBase,
     MaterialTopTabNavigationEventMap
   >;
+  totalTabs: number;
 };
 
 export default function BarItem({
@@ -29,6 +30,7 @@ export default function BarItem({
   route,
   index,
   navigation,
+  totalTabs,
 }: BarItemProps) {
   const isFocused = state.index === index;
 
@@ -44,6 +46,8 @@ export default function BarItem({
     }
   };
 
+  const width: DimensionValue = `${100 / totalTabs}%`;
+
   return (
     <Pressable onPress={onPress} key={route.key}>
       <View
@@ -51,9 +55,10 @@ export default function BarItem({
           height: "100%",
           alignItems: "center",
           justifyContent: "center",
-          width: 107,
+          width,
+          minWidth: 80,
           borderRadius: 28,
-          paddingHorizontal: 16,
+          paddingHorizontal: 8,
           paddingVertical: 10,
           gap: 2,
         }}
@@ -63,6 +68,8 @@ export default function BarItem({
           color: Colors.text,
         })}
         <Text
+          adjustsFontSizeToFit
+          numberOfLines={1}
           style={{
             color: isFocused ? Colors.text : Colors.text100,
             fontSize: FontSizes.xs,
