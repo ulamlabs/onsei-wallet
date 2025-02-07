@@ -1,5 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 
+export type OwnershipRecord = {
+  address: string;
+  timestamp: string;
+  transactionHash: string;
+};
+
 export type NFT = {
   id: string;
   name: string;
@@ -7,15 +13,8 @@ export type NFT = {
   collection: string;
   description: string;
   creator?: string;
-  attributes?: {
-    Background?: string;
-    Body?: string;
-    Mouth?: string;
-    Headwear?: string;
-    Eyes?: string;
-    Clothing?: string;
-    Accessories?: string;
-  };
+  attributes?: Record<string, string>;
+  ownershipHistory?: OwnershipRecord[];
 };
 
 const mockNFTs: NFT[] = [
@@ -35,6 +34,18 @@ const mockNFTs: NFT[] = [
       Clothing: "Tattoos",
       Accessories: "None",
     },
+    ownershipHistory: [
+      {
+        address: "sei1current0owner000address0000000000000",
+        timestamp: "2024-03-15T10:30:00Z",
+        transactionHash: "0xabc123...",
+      },
+      {
+        address: "sei1previous0owner00address0000000000000",
+        timestamp: "2024-02-20T15:45:00Z",
+        transactionHash: "0xdef456...",
+      },
+    ],
   },
   {
     id: "sei1h2dj405zvhr6vz5c9vj0qr7x2v7mcxh8r5n2",

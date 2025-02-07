@@ -46,6 +46,9 @@ export default function NFTDetailsScreen({
     });
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleOpenTransaction = (hash: string) => {};
+
   return (
     <ScrollView style={styles.container}>
       <Image source={{ uri: nft.image }} style={styles.image} />
@@ -91,6 +94,33 @@ export default function NFTDetailsScreen({
                   <Text style={styles.attributeKey}>{key}</Text>
                   <Text style={styles.attributeValue}>{value}</Text>
                 </View>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {nft.ownershipHistory && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Ownership History</Text>
+            <View style={styles.historyContainer}>
+              {nft.ownershipHistory.map((record) => (
+                <TouchableOpacity
+                  key={record.transactionHash}
+                  style={styles.historyItem}
+                  onPress={() => handleOpenTransaction(record.transactionHash)}
+                >
+                  <View style={styles.historyHeader}>
+                    <Text style={styles.historyAddress}>
+                      {record.address.slice(0, 8)}...{record.address.slice(-8)}
+                    </Text>
+                    <Text style={styles.historyDate}>
+                      {new Date(record.timestamp).toLocaleDateString()}
+                    </Text>
+                  </View>
+                  <Text style={styles.historyHash}>
+                    Tx: {record.transactionHash.slice(0, 8)}...
+                  </Text>
+                </TouchableOpacity>
               ))}
             </View>
           </View>
@@ -248,5 +278,32 @@ const styles = StyleSheet.create({
   marketplaceButton: {
     backgroundColor: "#2A2A2A",
     marginTop: 8,
+  },
+  historyContainer: {
+    gap: 8,
+  },
+  historyItem: {
+    backgroundColor: "#1A1A1A",
+    padding: 12,
+    borderRadius: 8,
+  },
+  historyHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 4,
+  },
+  historyAddress: {
+    color: "#FFF",
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  historyDate: {
+    color: "#999",
+    fontSize: 12,
+  },
+  historyHash: {
+    color: "#666",
+    fontSize: 12,
   },
 });
