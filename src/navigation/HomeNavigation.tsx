@@ -288,7 +288,14 @@ export default function HomeNavigation() {
         component={AddressBook}
         options={({ route }) => AddressBookHeaderOptions(route, "Address Book")}
       />
-      <Screen name="NFTDetails" component={NFTDetailsScreen} />
+      <Screen
+        name="NFTDetails"
+        component={NFTDetailsScreen}
+        options={({ route }) => ({
+          title: route.params.nft.name,
+          headerTitle: undefined,
+        })}
+      />
     </Navigator>
   );
 }
