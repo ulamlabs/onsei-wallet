@@ -63,6 +63,13 @@ export default function SettingsScreen() {
             labelRight={
               sessions?.length > 0 ? sessions.length.toString() : undefined
             }
+          />
+          <Link
+            label="Address Book"
+            navigateTo="Address Book"
+            icon={<Book size={22} color={Colors.text} />}
+            params={{ addressCount: 0 }}
+          />
           /> TODO: use again when mainnet ready */}
         </OptionGroup>
         <OptionGroup>

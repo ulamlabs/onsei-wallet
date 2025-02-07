@@ -1,15 +1,17 @@
 import Dashboard from "@/screens/WalletOverview/Dashboard";
-import AddressBook from "@/screens/addressBook/AddressBookScreen";
 import Transactions from "@/screens/transactions/Transactions";
 import { Colors } from "@/styles";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { ArrangeHorizontalSquare, Book, Wallet2 } from "iconsax-react-native";
 import React from "react";
 import Bar from "./bar/Bar";
+import AddressBook, {
+  AddressBookNavParams,
+} from "@/screens/addressBook/AddressBookScreen";
 
 export type BottomTabsParamList = {
   Wallet: undefined;
-  "Address Book": undefined;
+  "Address Book": AddressBookNavParams;
   Transactions: { address: string };
 };
 

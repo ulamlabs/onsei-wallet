@@ -40,7 +40,7 @@ export default function TransferSentScreen({
 
   const handleShowDetails = () => {
     const network = NETWORK_NAMES[node];
-    const url = `https://www.seiscan.app/${network}/txs/${tx.transactionHash}`;
+    const url = `https://seitrace.com/tx/${tx.transactionHash}?chain=${network}`;
     Linking.openURL(url);
   };
 
@@ -79,7 +79,7 @@ export default function TransferSentScreen({
                 fontFamily: FontWeights.bold,
               }}
               iconSize={16}
-              title="View details on SeiScan"
+              title="View details on SEITRACE"
               icon={ExportSquare}
             />
           </>
@@ -92,7 +92,7 @@ export default function TransferSentScreen({
               }}
               iconSize={16}
               icon={ExportSquare}
-              title="View details on SeiScan"
+              title="View details on SEITRACE"
               onPress={handleShowDetails}
             />
             <TertiaryButton onPress={handleDone} title="Close" />

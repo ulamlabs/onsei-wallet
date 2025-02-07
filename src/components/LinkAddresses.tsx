@@ -1,4 +1,4 @@
-import { linkAddresses } from "@/services/evm";
+import { linkAddresses } from "@/services/evm/tx";
 import { useAccountsStore, useModalStore, useToastStore } from "@/store";
 import { Colors, FontWeights } from "@/styles";
 import { NavigationProp } from "@/types";

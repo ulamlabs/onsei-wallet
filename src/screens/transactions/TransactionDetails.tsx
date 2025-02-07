@@ -43,7 +43,7 @@ export default function TransactionDetails({
   const token = getTokenFromTxn(txn);
 
   const sentOrReceived = useMemo(
-    () => getSentOrReceived(txn, activeAccount!.address),
+    () => getSentOrReceived(txn, activeAccount!),
     [txn],
   );
 
@@ -62,7 +62,7 @@ export default function TransactionDetails({
 
   function onShowDetails() {
     const network = NETWORK_NAMES[node];
-    const url = `https://www.seiscan.app/${network}/txs/${txn.hash}`;
+    const url = `https://seitrace.com/tx/${txn.hash}?chain=${network}`;
     Linking.openURL(url);
   }
 
@@ -156,7 +156,7 @@ export default function TransactionDetails({
             }}
             style={{ marginTop: "auto" }}
             iconSize={16}
-            title="View details on SeiScan"
+            title="View details on SEITRACE"
             icon={ExportSquare}
           />
         )}

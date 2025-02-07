@@ -7,6 +7,9 @@ import AccountsScreen from "@/screens/WalletOverview/AccountsScreen";
 import EditAccountNameScreen from "@/screens/WalletOverview/EditAccountNameScreen";
 import LinkAddressesScreen from "@/screens/WalletOverview/LinkAddressesScreen";
 import AddOrEditAddress from "@/screens/addressBook/AddOrEditAddress";
+import AddressBook, {
+  AddressBookNavParams,
+} from "@/screens/addressBook/AddressBookScreen";
 import AddressDetailsScreen from "@/screens/addressBook/AddressDetailsScreen";
 import TransactionsWithAddress from "@/screens/addressBook/TransactionsWithAddress";
 import { AuthorizeScreen, BiometricsDisableScreen } from "@/screens/auth";
@@ -46,10 +49,12 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import BottomBarsNavigation from "./BottomBarsNavigation";
 import { navigatorScreenOptions } from "./const";
+import AddressBookHeaderOptions from "./header/AddressBookHeader";
 import CancelHeaderRight from "./header/CancelHeaderRight";
 import DefaultHeaderLeft from "./header/DefaultHeaderLeft";
 import DefaultHeaderTitle from "./header/DefaultHeaderTitle";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
+import { SettingsHeaderLeft } from "./header/SettingsHeaderLeft";
 import SettingsHeaderRight from "./header/SettingsHeaderRight";
 
 export type Recipient = {
@@ -97,6 +102,13 @@ export type HomeParamList = {
     intAmount: string;
     memo?: string;
     fee?: StdFee | null;
+    evmTransaction?: `0x${string}`;
+    evmTxData?: {
+      tokenAmount: string;
+      privateKey: `0x${string}`;
+      pointerContract: `0x${string}`;
+    };
+    decimalAmount?: string;
   };
   transferSending: {
     tokenId: string;
@@ -104,8 +116,18 @@ export type HomeParamList = {
     intAmount: string;
     fee: StdFee;
     memo?: string;
+    evmTransaction?: `0x${string}`;
+    evmTxData?: {
+      tokenAmount: string;
+      privateKey: `0x${string}`;
+      pointerContract: `0x${string}`;
+    };
   };
-  transferSent: { tx: DeliverTxResponse; amount?: string; symbol?: string };
+  transferSent: {
+    tx: DeliverTxResponse | { code: number; transactionHash: `0x${string}` };
+    amount?: string;
+    symbol?: string;
+  };
   "Set Name": { nextRoute: "Import Wallet" | "Generate Wallet" };
   "Scan QR code": undefined;
   "Transaction settings": { global?: boolean; gas?: number };
@@ -114,6 +136,7 @@ export type HomeParamList = {
   "Connect Wallet": undefined;
   "Connected Apps": undefined;
   "Link Addresses": { address: string };
+  "Address Book": AddressBookNavParams;
 };
 
 const { Navigator, Screen } = createNativeStackNavigator<HomeParamList>();
@@ -198,7 +221,13 @@ export default function HomeNavigation() {
         component={ImportWalletScreen}
         options={{ title: "" }}
       />
-      <Screen name="Settings" component={SettingsScreen} />
+      <Screen
+        name="Settings"
+        options={{
+          headerLeft: () => <SettingsHeaderLeft />,
+        }}
+        component={SettingsScreen}
+      />
       <Screen name="Manage Token List" component={ManageTokensScreen} />
       <Screen name="Wallets" component={AccountsScreen} />
       <Screen name="Wallet settings" component={AccountSettingsScreen} />
@@ -253,6 +282,11 @@ export default function HomeNavigation() {
       <Screen name="Connect Wallet" component={ConnectWalletScreen} />
       <Screen name="Connected Apps" component={ConnectedAppsScreen} />
       <Screen name="Link Addresses" component={LinkAddressesScreen} />
+      <Screen
+        name="Address Book"
+        component={AddressBook}
+        options={({ route }) => AddressBookHeaderOptions(route, "Address Book")}
+      />
     </Navigator>
   );
 }

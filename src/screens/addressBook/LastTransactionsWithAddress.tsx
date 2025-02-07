@@ -44,7 +44,7 @@ export default function LastTransactionsWithAddress({ addressData }: Props) {
           )}
         </Column>
       ) : (
-        <Column style={{ paddingVertical: 60, alignItems: "center" }}>
+        <Column style={{ padding: 60, alignItems: "center" }}>
           <EmptyList
             title="No transactions found"
             description="None of the last 100 transactions were made with this address"

@@ -35,6 +35,7 @@ export type TxResponse = {
   code: number;
   events: TxEvent[];
   tx?: TxData;
+  to?: string;
 };
 
 export type TxEvent = {
@@ -69,4 +70,50 @@ export type TxBody = {
   messages: any[];
   non_critical_extension_options: string[];
   timeout_height: string;
+};
+
+export type EvmTransaction = {
+  blockHash: string | null;
+  blockNumber: number | null;
+  chainId: number | undefined;
+  from: string;
+  gas: bigint;
+  gasPrice: bigint;
+  hash: string;
+  input: string;
+  nonce: number;
+  r: string;
+  s: string;
+  to: string | null;
+  transactionIndex: number | null;
+  type: string;
+  typeHex: string;
+  v: bigint;
+  value: bigint;
+};
+
+export type RpcResponseTxs = {
+  total_count: number;
+  txs: RpcResponseTx[];
+};
+
+export type RpcResponseTx = {
+  hash: string;
+  height: string;
+  index: number;
+  tx_result: {
+    data: string;
+    log: string;
+    gas_wanted: string;
+    gas_used: string;
+    evm_tx_info?: {
+      senderAddress: `0x${string}`;
+      nonce: string;
+      txHash: `0x${string}`;
+    };
+  };
+};
+
+export type BlockResponse = {
+  block: { header: { height: string; time: string } };
 };

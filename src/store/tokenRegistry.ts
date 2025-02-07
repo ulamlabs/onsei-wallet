@@ -14,12 +14,12 @@ type TokenPrice = {
 
 type TokenRegistryStore = {
   tokenRegistry: CosmToken[];
-  cw20Registry: CosmToken[];
+  nonNativeRegistry: CosmToken[];
   tokenRegistryMap: Map<string, CosmToken>;
   tokenPricesMap: Map<string, TokenPrice>;
   registryRefreshPromise: Promise<void> | null;
   init: () => Promise<void>;
-  addCW20ToRegistry: (newToken: CosmToken) => Promise<void>;
+  addNonNativeToRegistry: (newToken: CosmToken) => Promise<void>;
   getPrices: (tokens: CosmToken[]) => Promise<usdPrices[]>;
   getTokensWithPrices: (tokenIds: string[]) => Promise<CosmTokenWithPrice[]>;
   refreshRegistryCache: () => Promise<void>;
@@ -30,7 +30,7 @@ const PRICE_STALE_TIME = 10 * 60 * 1000; // 10 minutes
 
 export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
   tokenRegistry: [],
-  cw20Registry: [],
+  nonNativeRegistry: [],
   tokenRegistryMap: new Map(),
   tokenPricesMap: new Map(),
   registryRefreshPromise: null,
@@ -39,20 +39,22 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
       getRegistryKey(),
       [],
     );
-    const cw20Registry = await loadFromStorage<CosmToken[]>(
-      getCW20RegistryKey(),
+    const nonNativeRegistry = await loadFromStorage<CosmToken[]>(
+      getNonNativeKey(),
       [],
     );
     set({
       tokenRegistry: cachedTokenRegistry,
-      cw20Registry,
+      nonNativeRegistry,
       registryRefreshPromise: get()._refreshRegistryCache(),
       tokenRegistryMap: tokensToMap(cachedTokenRegistry),
     });
   },
-  addCW20ToRegistry: async (newToken) => {
-    const { cw20Registry, tokenRegistry, tokenPricesMap, getPrices } = get();
-    const exists = cw20Registry.find((t) => t.id === newToken.id);
+  addNonNativeToRegistry: async (newToken) => {
+    const { nonNativeRegistry, tokenRegistry, tokenPricesMap, getPrices } =
+      get();
+
+    const exists = nonNativeRegistry.find((t) => t.id === newToken.id);
     if (exists) {
       return;
     }
@@ -67,12 +69,14 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
     });
 
     const updatedRegistry = [...tokenRegistry, newToken];
-    const updatedCW20Registry = [...cw20Registry, newToken];
+    const updatedNonNativeRegistry = [...nonNativeRegistry, newToken];
+
     saveToStorage(getRegistryKey(), updatedRegistry);
-    saveToStorage(getCW20RegistryKey(), updatedCW20Registry);
+    saveToStorage(getNonNativeKey(), updatedNonNativeRegistry);
+
     set({
       tokenRegistry: updatedRegistry,
-      cw20Registry: updatedCW20Registry,
+      nonNativeRegistry: updatedNonNativeRegistry,
       tokenRegistryMap: tokensToMap(updatedRegistry),
       tokenPricesMap,
     });
@@ -149,7 +153,7 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
     const tokenRegistry = [
       ...registryTokens,
       ...uniqueNativeTokens,
-      ...get().cw20Registry,
+      ...get().nonNativeRegistry,
     ];
 
     saveToStorage(getRegistryKey(), tokenRegistry);
@@ -162,7 +166,7 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
 
 async function fetchRegistry(): Promise<CosmToken[]> {
   const url =
-    "https://raw.githubusercontent.com/sei-protocol/chain-registry/main/assetlist.json";
+    "https://raw.githubusercontent.com/Sei-Public-Goods/sei-assetlist/main/assetlist.json";
   try {
     const response = await fetchWithRetry(url);
     const data = await response.json();
@@ -209,8 +213,8 @@ function getRegistryKey() {
   return `tokenRegistry-${getNode()}.json`;
 }
 
-function getCW20RegistryKey() {
-  return `tokenCW20Registry-${getNode()}.json`;
+function getNonNativeKey() {
+  return `nonNativeRegistry-${getNode()}.json`;
 }
 
 function getNode() {
@@ -238,6 +242,7 @@ type RegistryToken = {
   };
   coingecko_id?: string;
   type_asset: "sdk.coin" | "cw20" | "erc20" | "ics20";
+  pointer_contract?: { address: `0x${string}`; type_asset: string };
 };
 
 type NativeTokenMetadata = {
@@ -260,6 +265,7 @@ function parseRegistryToken(token: RegistryToken): CosmToken {
     symbol: token.symbol,
     logo: token.images.png ?? token.images.svg ?? "",
     coingeckoId: token.coingecko_id ?? "",
+    pointerContract: token.pointer_contract?.address,
   };
 }
 

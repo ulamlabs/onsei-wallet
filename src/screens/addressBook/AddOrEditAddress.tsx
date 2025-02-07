@@ -73,7 +73,7 @@ export default function AddOrEditAddress({ navigation, route }: Props) {
         maxHeight: "100%",
       }}
     >
-      <View style={{ flex: 1, justifyContent: "space-between" }}>
+      <View style={{ flex: 1 }}>
         <Column style={{ gap: 16 }}>
           <TextInput
             label="Name"

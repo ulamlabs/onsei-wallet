@@ -9,7 +9,8 @@ import {
 } from "@/components";
 import { useGasPrice } from "@/hooks";
 import { estimateTransferFee } from "@/services/cosmos/tx";
-import { useTokensStore } from "@/store";
+import { simulateEvmTx } from "@/services/evm/tx";
+import { useAccountsStore, useTokensStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { checkFundsForFee, formatAmount, trimAddress } from "@/utils";
@@ -17,6 +18,7 @@ import { StdFee } from "@cosmjs/stargate";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
+import { isAddress as isEvmAddress } from "viem";
 import TransferAmount from "./TransferAmount";
 
 type TransferSummaryScreenProps = NativeStackScreenProps<
@@ -33,6 +35,7 @@ export default function TransferSummaryScreen({
   const [estimationFailed, setEstimationFailed] = useState(false);
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [fee, setFee] = useState<StdFee | null>(null);
+  const { activeAccount, getMnemonic } = useAccountsStore();
 
   const { gasPrice } = useGasPrice();
 
@@ -72,6 +75,21 @@ export default function TransferSummaryScreen({
     setEstimationFailed(false);
 
     updateBalances([sei]);
+
+    if (isEvmAddress(transfer.recipient.address)) {
+      simulateEvmTx(
+        getMnemonic(activeAccount!.address!),
+        transfer.recipient.address as `0x${string}`,
+        intAmount,
+        token,
+        transfer.decimalAmount || "0",
+        transfer.memo || "",
+      )
+        .then((simulation) => setFee(simulation.stdFee))
+        .catch(() => setEstimationFailed(true));
+      return;
+    }
+
     estimateTransferFee(transfer.recipient.address, token, intAmount, gasPrice)
       .then(setFee)
       .catch(() => setEstimationFailed(true));

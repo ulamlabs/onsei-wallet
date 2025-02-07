@@ -4,15 +4,23 @@ import {
   signDirectTxn,
   signGetAccountTxn,
 } from "@/services/cosmos/tx";
+import {
+  personalSign,
+  sendDirectTx,
+  sendRawTransaction,
+  signTransaction,
+  signTypedData,
+} from "@/services/evm/tx";
 import { useAccountsStore, useModalStore, useSettingsStore } from "@/store";
 import { Colors, FontSizes, FontWeights } from "@/styles";
+import { isCorrectAddress } from "@/utils";
 import { getSdkError } from "@walletconnect/utils";
 import { Web3WalletTypes } from "@walletconnect/web3wallet";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Image, Linking } from "react-native";
 import { createWeb3Wallet, onConnect, web3wallet } from "./init";
 import { WalletConnectSession } from "./types";
-import { disconnectApp, getNamespaces } from "./utils";
+import { disconnectApp, findAccount, getNamespaces } from "./utils";
 
 export default function Web3WalletController() {
   const { activeAccount, accounts } = useAccountsStore();
@@ -134,18 +142,20 @@ export default function Web3WalletController() {
     }
     if (
       !proposal.params.optionalNamespaces.cosmos &&
-      !proposal.params.requiredNamespaces.cosmos
+      !proposal.params.requiredNamespaces.cosmos &&
+      !proposal.params.requiredNamespaces.eip155 &&
+      !proposal.params.optionalNamespaces.eip155
     ) {
       return alert({
         title: "Unable to connect",
-        description: "This dApp doesn't support SEI chain",
+        description: "This dApp doesn't support SEI and EVM chain",
       });
     }
 
     try {
       const session = await web3wallet.approveSession({
         id: proposal.id,
-        namespaces: getNamespaces(proposal, activeAccount!.address),
+        namespaces: getNamespaces(proposal, activeAccount!),
       });
 
       await web3wallet.respondSessionRequest({
@@ -184,6 +194,25 @@ export default function Web3WalletController() {
     setProposal(null);
   }
 
+  const requestAccount = useMemo(() => {
+    if (!requestEvent?.params?.request?.params) {
+      return undefined;
+    }
+
+    const [param0, param1] = requestEvent.params.request.params;
+
+    const address =
+      param0?.from ||
+      (isCorrectAddress(param0) ? param0 : param1) ||
+      param0?.from;
+
+    if (!address) {
+      return undefined;
+    }
+
+    return findAccount(accounts, address);
+  }, [requestEvent]);
+
   async function onRequest() {
     if (!isTopicKnown()) {
       rejectRequest(getSdkError("USER_DISCONNECTED").message);
@@ -199,11 +228,7 @@ export default function Web3WalletController() {
               <Row>
                 <Text style={{ color: Colors.text100 }}>Account</Text>
                 <Text style={{ flex: 1, textAlign: "right" }}>
-                  {accounts.find(
-                    (a) =>
-                      a.address ===
-                      requestEvent?.params.request.params.signerAddress,
-                  )?.name ?? "?"}
+                  {requestAccount?.name ?? "?"}
                 </Text>
               </Row>
             </Option>
@@ -242,7 +267,9 @@ export default function Web3WalletController() {
     const { params, id, topic } = requestEvent!;
     const { request } = params;
     let sig: any;
-
+    if (!requestAccount) {
+      throw new Error("Requested account has not been found");
+    }
     try {
       switch (request.method) {
         case "cosmos_getAccounts":
@@ -253,6 +280,24 @@ export default function Web3WalletController() {
           break;
         case "cosmos_signAmino":
           sig = await signAminoTxn(request.params);
+          break;
+        case "eth_sendTransaction":
+          sig = await sendDirectTx(request.params[0], requestAccount);
+          break;
+        case "personal_sign":
+          sig = await personalSign(request.params[0], requestAccount);
+          break;
+        case "eth_signTransaction":
+          sig = await signTransaction(request.params[0], requestAccount);
+          break;
+        case "eth_signTypedData":
+          sig = await signTypedData(request.params, requestAccount);
+          break;
+        case "eth_signTypedData_v4":
+          sig = await signTypedData(request.params, requestAccount);
+          break;
+        case "eth_sendRawTransaction":
+          sig = await sendRawTransaction(request.params, requestAccount);
           break;
         default:
           throw new Error(getSdkError("INVALID_METHOD").message);
@@ -270,7 +315,8 @@ export default function Web3WalletController() {
     } catch (e: any) {
       alert({
         title: "Error on signing",
-        description: e.message,
+        description:
+          e.info.error.message.replace(/^:\s*/, "") || "Something went wrong",
       });
       rejectRequest();
     }
