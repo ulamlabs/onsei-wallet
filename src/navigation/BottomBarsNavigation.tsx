@@ -35,15 +35,6 @@ export default function BottomBarsNavigation() {
         }}
       />
       <Screen
-        name="DApps"
-        component={DApps}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <Global color={focused ? Colors.text : Colors.text100} />
-          ),
-        }}
-      />
-      <Screen
         name="Transactions"
         component={Transactions}
         options={{
@@ -51,6 +42,15 @@ export default function BottomBarsNavigation() {
             <ArrangeHorizontalSquare
               color={focused ? Colors.text : Colors.text100}
             />
+          ),
+        }}
+      />
+      <Screen
+        name="Address Book"
+        component={AddressBook}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Global color={focused ? Colors.text : Colors.text100} />
           ),
         }}
       />

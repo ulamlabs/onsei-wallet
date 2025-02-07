@@ -10,11 +10,6 @@ import { APP_NAME, WALLET_ADMIN_ADDRESS } from "@/const";
 import { useSettingsStore } from "@/store";
 import { Colors } from "@/styles";
 import {
-<<<<<<< HEAD
-  Blend,
-  Book,
-=======
->>>>>>> b41f33d (WA-198: hide coming soon (#114))
   CardEdit,
   Document,
   Note,
