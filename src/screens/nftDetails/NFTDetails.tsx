@@ -10,7 +10,7 @@ import { Text } from "@/components";
 import { CARD_MARGIN } from "@/components/Card";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useAccountsStore, useSettingsStore } from "@/store";
+import { useAccountsStore, useSettingsStore, useToastStore } from "@/store";
 import { useNFTGalleryStore } from "@/store/nftGallery";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -29,6 +29,7 @@ export default function NFTDetailsScreen({
   const isHidden = isNFTHidden(nft.id);
   const queryClient = useQueryClient();
   const { activeAccount } = useAccountsStore();
+  const { info } = useToastStore();
 
   const handleSetAvatar = () => {
     setSetting("avatar", nft.image);
@@ -96,7 +97,15 @@ export default function NFTDetailsScreen({
             {isHidden ? "Show in gallery" : "Hide from gallery"}
           </Text>
         </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.bottomButton, styles.marketplaceButton]}
+          onPress={() => info({ description: "Coming soon" })}
+        >
+          <Text style={styles.actionButtonText}>View on Marketplace</Text>
+        </TouchableOpacity>
       </View>
+      <View style={{ margin: 16 }} />
     </ScrollView>
   );
 }
@@ -215,5 +224,9 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 14,
     fontWeight: "600",
+  },
+  marketplaceButton: {
+    backgroundColor: "#2A2A2A",
+    marginTop: 8,
   },
 });
