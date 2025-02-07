@@ -64,6 +64,10 @@ export default function NFTDetailsScreen({
           {nft.collection || "Uncategorized"}
         </Text>
 
+        {nft.creator && (
+          <Text style={styles.creator}>Created by {nft.creator}</Text>
+        )}
+
         <View style={styles.idRow}>
           <View style={styles.seiTag}>
             <Text style={styles.seiTagText}>Sei</Text>
@@ -140,6 +144,11 @@ const styles = StyleSheet.create({
   },
   collection: {
     fontSize: 16,
+    color: "#999",
+    marginBottom: 16,
+  },
+  creator: {
+    fontSize: 14,
     color: "#999",
     marginBottom: 16,
   },

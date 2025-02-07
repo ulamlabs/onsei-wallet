@@ -6,6 +6,7 @@ export type NFT = {
   image: string;
   collection: string;
   description: string;
+  creator?: string;
   attributes?: {
     Background?: string;
     Body?: string;
@@ -24,6 +25,7 @@ const mockNFTs: NFT[] = [
     image: "https://picsum.photos/300/300?random=1",
     collection: "So Cubs",
     description: "3,333 Carefree Cubs spreading love on the Sei Network.",
+    creator: "SoCubs Team",
     attributes: {
       Background: "Bubbles",
       Body: "Doodle",
@@ -40,6 +42,7 @@ const mockNFTs: NFT[] = [
     image: "https://picsum.photos/300/300?random=2",
     collection: "So Cubs",
     description: "3,333 Carefree Cubs spreading love on the Sei Network.",
+    creator: "SoCubs Team",
     attributes: {
       Background: "Stars",
       Body: "Classic",
@@ -54,6 +57,7 @@ const mockNFTs: NFT[] = [
     image: "https://picsum.photos/300/300?random=3",
     collection: "So Cubs",
     description: "3,333 Carefree Cubs spreading love on the Sei Network.",
+    creator: "SoCubs Team",
   },
   {
     id: "sei1qj2wd4p3c4qx6y5jl4vxqtmxqgvwkrzuf6n6",
@@ -61,6 +65,7 @@ const mockNFTs: NFT[] = [
     image: "https://picsum.photos/300/300?random=4",
     collection: "So Cubs",
     description: "3,333 Carefree Cubs spreading love on the Sei Network.",
+    creator: "SoCubs Team",
     attributes: {
       Background: "Rainbow",
       Body: "Golden",
@@ -77,6 +82,7 @@ const mockNFTs: NFT[] = [
     image: "https://picsum.photos/300/300?random=1",
     collection: "Bored Ape Yacht Club",
     description: "A unique digital collectible from the BAYC collection",
+    creator: "Bored Ape Yacht Club",
   },
   {
     id: "sei1qj2wd4p3c4qx6y5jl4vxqtmxqgvwkrzuf6n8",
@@ -84,6 +90,7 @@ const mockNFTs: NFT[] = [
     image: "https://picsum.photos/300/300?random=2",
     collection: "CryptoPunks",
     description: "One of 10,000 unique collectible characters",
+    creator: "CryptoPunks",
   },
   {
     id: "sei1qj2wd4p3c4qx6y5jl4vxqtmxqgvwkrzuf6n9",
@@ -91,6 +98,7 @@ const mockNFTs: NFT[] = [
     image: "https://picsum.photos/300/300?random=3",
     collection: "Doodles",
     description: "A joyful collection of doodles",
+    creator: "Doodles",
   },
   {
     id: "sei1qj2wd4p3c4qx6y5jl4vxqtmxqgvwkrzuf6na",
@@ -98,6 +106,7 @@ const mockNFTs: NFT[] = [
     image: "https://picsum.photos/300/300?random=4",
     collection: "Azuki",
     description: "Enter the garden. A new kind of brand.",
+    creator: "Azuki",
   },
   {
     id: "sei1qj2wd4p3c4qx6y5jl4vxqtmxqgvwkrzuf6nb",
@@ -105,6 +114,7 @@ const mockNFTs: NFT[] = [
     image: "https://picsum.photos/300/300?random=5",
     collection: "Clone X",
     description: "The next generation of digital identity",
+    creator: "Clone X",
   },
   {
     id: "sei1qj2wd4p3c4qx6y5jl4vxqtmxqgvwkrzuf6nc",
@@ -112,6 +122,7 @@ const mockNFTs: NFT[] = [
     image: "https://picsum.photos/300/300?random=6",
     collection: "Bored Ape Yacht Club",
     description: "A rare golden fur BAYC with laser eyes and crown",
+    creator: "Bored Ape Yacht Club",
   },
   {
     id: "sei1qj2wd4p3c4qx6y5jl4vxqtmxqgvwkrzuf6nd",
@@ -119,6 +130,7 @@ const mockNFTs: NFT[] = [
     image: "https://picsum.photos/300/300?random=7",
     collection: "Bored Ape Yacht Club",
     description: "A zombie BAYC wearing a leather jacket and chain",
+    creator: "Bored Ape Yacht Club",
   },
   {
     id: "sei1qj2wd4p3c4qx6y5jl4vxqtmxqgvwkrzuf6ne",
@@ -126,6 +138,7 @@ const mockNFTs: NFT[] = [
     image: "https://picsum.photos/300/300?random=8",
     collection: "Bored Ape Yacht Club",
     description: "A rainbow fur BAYC with 3D glasses and party hat",
+    creator: "Bored Ape Yacht Club",
   },
 ];
 
