@@ -1,9 +1,16 @@
 import React from "react";
-import { View, StyleSheet, Image, ScrollView } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import { Text } from "@/components";
 import { CARD_MARGIN } from "@/components/Card";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useSettingsStore } from "@/store";
 
 type NFTDetailsScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -15,12 +22,26 @@ export default function NFTDetailsScreen({
     params: { nft },
   },
 }: NFTDetailsScreenProps) {
+  const { setSetting } = useSettingsStore();
+
+  const handleSetAvatar = () => {
+    setSetting("avatar", nft.image);
+  };
+
   return (
     <ScrollView style={styles.container}>
       <Image source={{ uri: nft.image }} style={styles.image} />
 
       <View style={styles.content}>
-        <Text style={styles.title}>{nft.name}</Text>
+        <View style={styles.titleRow}>
+          <Text style={styles.title}>{nft.name}</Text>
+          <TouchableOpacity
+            style={styles.avatarButton}
+            onPress={handleSetAvatar}
+          >
+            <Text style={styles.avatarButtonText}>Set as Avatar</Text>
+          </TouchableOpacity>
+        </View>
         <Text style={styles.collection}>
           {nft.collection || "Uncategorized"}
         </Text>
@@ -67,11 +88,17 @@ const styles = StyleSheet.create({
   content: {
     padding: CARD_MARGIN,
   },
+  titleRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     color: "#FFF",
-    marginBottom: 8,
+    flex: 1,
+    marginRight: 12,
   },
   collection: {
     fontSize: 16,
@@ -123,5 +150,17 @@ const styles = StyleSheet.create({
   attributeValue: {
     fontSize: 14,
     color: "#FFF",
+  },
+  avatarButton: {
+    backgroundColor: "#1A1A1A",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    alignSelf: "center",
+  },
+  avatarButtonText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "600",
   },
 });
