@@ -64,8 +64,11 @@ export default function NFTDetailsScreen({
           {nft.collection || "Uncategorized"}
         </Text>
 
-        <View style={styles.seiTag}>
-          <Text style={styles.seiTagText}>Sei</Text>
+        <View style={styles.idRow}>
+          <View style={styles.seiTag}>
+            <Text style={styles.seiTagText}>Sei</Text>
+          </View>
+          <Text style={styles.idText}>ID: {nft.id}</Text>
         </View>
 
         <View style={styles.section}>
@@ -145,12 +148,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 16,
-    alignSelf: "flex-start",
-    marginBottom: 24,
   },
   seiTagText: {
     color: "#FFFFFF",
     fontSize: 12,
+  },
+  idRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    marginBottom: 24,
+  },
+  idText: {
+    color: "#999",
+    fontSize: 14,
   },
   section: {
     marginBottom: 24,
