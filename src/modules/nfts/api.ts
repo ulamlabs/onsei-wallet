@@ -133,7 +133,6 @@ export async function getNFTs(address: string | undefined) {
   if (!address) {
     return [];
   }
-  console.log("getNFTs", address);
   await new Promise((resolve) => setTimeout(resolve, 1000));
   const shouldError = Math.random() > 0.5;
   if (shouldError) {

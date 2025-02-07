@@ -2,13 +2,14 @@ import { NFT } from "@/modules/nfts/api";
 import { FlatList, StyleSheet, View, TouchableOpacity } from "react-native";
 import { CARD_MARGIN } from "../../components/Card";
 import { Text } from "@/components";
-import React from "react";
+import React, { useMemo, useState } from "react";
 
 import { Dimensions } from "react-native";
 import Card from "../../components/Card";
 import pluralize from "@/utils/pluralize";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "@/types";
+import SearchInput from "@/components/forms/SearchInput";
 
 const { width } = Dimensions.get("window");
 
@@ -96,20 +97,43 @@ const CollectionsList = ({
 );
 
 export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
-  const [activeFilter, setActiveFilter] = React.useState<"all" | "collections">(
+  const [activeFilter, setActiveFilter] = useState<"all" | "collections">(
     "all",
   );
+  const [searchQuery, setSearchQuery] = useState("");
   const numColumns = width < 480 ? 1 : 2;
 
-  const collections = React.useMemo(() => {
-    const grouped = nfts.reduce((acc: { [key: string]: NFT[] }, nft) => {
-      const collectionName = nft.collection || "Uncategorized";
-      if (!acc[collectionName]) {
-        acc[collectionName] = [];
-      }
-      acc[collectionName].push(nft);
-      return acc;
-    }, {});
+  const filteredNFTs = useMemo(() => {
+    const query = searchQuery.toLowerCase();
+    return nfts.filter((nft) => {
+      const matchesName = nft.name.toLowerCase().includes(query);
+      const matchesCollection = (nft.collection || "Uncategorized")
+        .toLowerCase()
+        .includes(query);
+      const matchesAttributes = nft.attributes
+        ? Object.entries(nft.attributes).some(
+            ([trait_type, value]) =>
+              value?.toLowerCase().includes(query) ||
+              trait_type.toLowerCase().includes(query),
+          )
+        : false;
+
+      return matchesName || matchesCollection || matchesAttributes;
+    });
+  }, [nfts, searchQuery]);
+
+  const collections = useMemo(() => {
+    const grouped = filteredNFTs.reduce(
+      (acc: { [key: string]: NFT[] }, nft) => {
+        const collectionName = nft.collection || "Uncategorized";
+        if (!acc[collectionName]) {
+          acc[collectionName] = [];
+        }
+        acc[collectionName].push(nft);
+        return acc;
+      },
+      {},
+    );
 
     return Object.entries(grouped).map(
       ([name, nfts]): Collection => ({
@@ -118,10 +142,20 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
         firstNftImage: nfts[0]?.image || "",
       }),
     );
-  }, [nfts]);
+  }, [filteredNFTs]);
 
   return (
     <View>
+      <SearchInput
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        placeholder="Search NFTs, collections, attributes..."
+        containerStyle={{
+          marginBottom: CARD_MARGIN,
+          paddingHorizontal: CARD_MARGIN,
+        }}
+      />
+
       <View style={styles.filterContainer}>
         <TouchableOpacity
           style={[
@@ -158,7 +192,7 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
       </View>
 
       {activeFilter === "all" ? (
-        <NFTsList nfts={nfts} numColumns={numColumns} />
+        <NFTsList nfts={filteredNFTs} numColumns={numColumns} />
       ) : (
         <CollectionsList collections={collections} numColumns={numColumns} />
       )}
@@ -174,7 +208,8 @@ const styles = StyleSheet.create({
   filterContainer: {
     flexDirection: "row",
     paddingHorizontal: CARD_MARGIN,
-    marginBottom: CARD_MARGIN,
+    marginBottom: 8,
+    marginTop: 16,
   },
   filterButton: {
     paddingHorizontal: 16,
