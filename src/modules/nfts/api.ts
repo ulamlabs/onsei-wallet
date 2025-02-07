@@ -25,6 +25,10 @@ export type NFT = {
   creator?: CreatorProfile;
   attributes?: Record<string, string>;
   ownershipHistory?: OwnershipRecord[];
+  royalty?: {
+    percentage: number;
+    recipient: string;
+  };
 };
 
 const mockNFTs: NFT[] = [
@@ -65,6 +69,10 @@ const mockNFTs: NFT[] = [
         transactionHash: "0xdef456...",
       },
     ],
+    royalty: {
+      percentage: 5.5,
+      recipient: "sei1creator0address000000000000000000000",
+    },
   },
   {
     id: "sei1h2dj405zvhr6vz5c9vj0qr7x2v7mcxh8r5n2",

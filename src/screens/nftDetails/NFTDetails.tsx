@@ -141,6 +141,21 @@ export default function NFTDetailsScreen({
           </View>
         )}
 
+        {nft.royalty && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Royalties</Text>
+            <View style={styles.royaltyContainer}>
+              <Text style={styles.description}>
+                {nft.royalty.percentage}% of secondary sales go to creator
+              </Text>
+              <Text style={styles.royaltyAddress}>
+                Recipient: {nft.royalty.recipient.slice(0, 8)}...
+                {nft.royalty.recipient.slice(-8)}
+              </Text>
+            </View>
+          </View>
+        )}
+
         <TouchableOpacity
           style={[styles.bottomButton, isHidden && styles.showButton]}
           onPress={handleToggleVisibility}
@@ -324,5 +339,15 @@ const styles = StyleSheet.create({
   creatorLink: {
     textDecorationLine: "underline",
     color: "#FFF",
+  },
+  royaltyContainer: {
+    backgroundColor: "#1A1A1A",
+    padding: 12,
+    borderRadius: 8,
+  },
+  royaltyAddress: {
+    color: "#666",
+    fontSize: 12,
+    marginTop: 4,
   },
 });
