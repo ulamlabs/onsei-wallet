@@ -134,7 +134,7 @@ export async function getNFTs(address: string | undefined) {
     return [];
   }
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  const shouldError = Math.random() > 0.5;
+  const shouldError = Math.random() > 1;
   if (shouldError) {
     throw new Error("Failed to fetch NFTs");
   }

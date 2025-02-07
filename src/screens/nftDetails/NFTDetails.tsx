@@ -10,7 +10,9 @@ import { Text } from "@/components";
 import { CARD_MARGIN } from "@/components/Card";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useSettingsStore } from "@/store";
+import { useAccountsStore, useSettingsStore } from "@/store";
+import { useNFTGalleryStore } from "@/store/nftGallery";
+import { useQueryClient } from "@tanstack/react-query";
 
 type NFTDetailsScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -23,9 +25,24 @@ export default function NFTDetailsScreen({
   },
 }: NFTDetailsScreenProps) {
   const { setSetting } = useSettingsStore();
+  const { isNFTHidden, hideNFT, showNFT } = useNFTGalleryStore();
+  const isHidden = isNFTHidden(nft.id);
+  const queryClient = useQueryClient();
+  const { activeAccount } = useAccountsStore();
 
   const handleSetAvatar = () => {
     setSetting("avatar", nft.image);
+  };
+
+  const handleToggleVisibility = () => {
+    if (isHidden) {
+      showNFT(nft.id);
+    } else {
+      hideNFT(nft.id);
+    }
+    queryClient.invalidateQueries({
+      queryKey: ["nfts", activeAccount?.address],
+    });
   };
 
   return (
@@ -36,10 +53,10 @@ export default function NFTDetailsScreen({
         <View style={styles.titleRow}>
           <Text style={styles.title}>{nft.name}</Text>
           <TouchableOpacity
-            style={styles.avatarButton}
+            style={styles.actionButton}
             onPress={handleSetAvatar}
           >
-            <Text style={styles.avatarButtonText}>Set as Avatar</Text>
+            <Text style={styles.actionButtonText}>Set as Avatar</Text>
           </TouchableOpacity>
         </View>
         <Text style={styles.collection}>
@@ -70,6 +87,15 @@ export default function NFTDetailsScreen({
             </View>
           </View>
         )}
+
+        <TouchableOpacity
+          style={[styles.bottomButton, isHidden && styles.showButton]}
+          onPress={handleToggleVisibility}
+        >
+          <Text style={styles.actionButtonText}>
+            {isHidden ? "Show in gallery" : "Hide from gallery"}
+          </Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -159,6 +185,33 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   avatarButtonText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  actionButton: {
+    backgroundColor: "#1A1A1A",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    alignSelf: "center",
+  },
+  bottomButton: {
+    backgroundColor: "#1A1A1A",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 20,
+    alignItems: "center",
+    marginTop: 24,
+  },
+  showButton: {
+    backgroundColor: "#2A2A2A",
+  },
+  actionButtonText: {
     color: "#FFFFFF",
     fontSize: 14,
     fontWeight: "600",

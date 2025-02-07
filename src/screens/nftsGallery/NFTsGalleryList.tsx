@@ -10,6 +10,7 @@ import pluralize from "@/utils/pluralize";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "@/types";
 import SearchInput from "@/components/forms/SearchInput";
+import { useNFTGalleryStore } from "@/store/nftGallery";
 
 const { width } = Dimensions.get("window");
 
@@ -97,6 +98,7 @@ const CollectionsList = ({
 );
 
 export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
+  const { isNFTHidden, hiddenNFTs } = useNFTGalleryStore();
   const [activeFilter, setActiveFilter] = useState<"all" | "collections">(
     "all",
   );
@@ -106,6 +108,10 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
   const filteredNFTs = useMemo(() => {
     const query = searchQuery.toLowerCase();
     return nfts.filter((nft) => {
+      if (isNFTHidden(nft.id)) {
+        return false;
+      }
+
       const matchesName = nft.name.toLowerCase().includes(query);
       const matchesCollection = (nft.collection || "Uncategorized")
         .toLowerCase()
@@ -120,20 +126,17 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
 
       return matchesName || matchesCollection || matchesAttributes;
     });
-  }, [nfts, searchQuery]);
+  }, [nfts, searchQuery, isNFTHidden, hiddenNFTs]);
 
   const collections = useMemo(() => {
-    const grouped = filteredNFTs.reduce(
-      (acc: { [key: string]: NFT[] }, nft) => {
-        const collectionName = nft.collection || "Uncategorized";
-        if (!acc[collectionName]) {
-          acc[collectionName] = [];
-        }
-        acc[collectionName].push(nft);
-        return acc;
-      },
-      {},
-    );
+    const grouped = filteredNFTs.reduce<Record<string, NFT[]>>((acc, nft) => {
+      const collectionName = nft.collection || "Uncategorized";
+      if (!acc[collectionName]) {
+        acc[collectionName] = [];
+      }
+      acc[collectionName].push(nft);
+      return acc;
+    }, {});
 
     return Object.entries(grouped).map(
       ([name, nfts]): Collection => ({

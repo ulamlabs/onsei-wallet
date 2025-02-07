@@ -36,6 +36,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import "react-native-get-random-values";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { useNFTGalleryStore } from "@/store/nftGallery";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -62,6 +63,7 @@ export default function App() {
   const tokenRegistryStore = useTokenRegistryStore();
   const isAppActive = useAppIsActive();
   const dAppsStore = useDAppsStore();
+  const nftGalleryStore = useNFTGalleryStore();
 
   async function onRestore() {
     await tokenRegistryStore.refreshRegistryCache();
@@ -99,6 +101,7 @@ export default function App() {
       authStore.init(),
       addressStore.init(),
       dAppsStore.init(),
+      nftGalleryStore.init(),
     ]);
     setReady(true);
   }
