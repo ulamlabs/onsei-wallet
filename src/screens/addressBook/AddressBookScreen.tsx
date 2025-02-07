@@ -8,6 +8,10 @@ import AddressBookEntry from "./AddressBookEntry";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamsList } from "@/types";
 
+export type AddressBookNavParams =
+  | { addressCount?: number; allAddressCount?: number }
+  | undefined;
+
 type Props = NativeStackScreenProps<NavigatorParamsList, "Address Book">;
 
 export default function AddressBook({ navigation }: Props) {

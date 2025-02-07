@@ -8,7 +8,6 @@ export default function PrimaryButton({
 }: BaseButtonProps) {
   return (
     <BaseButton
-      disabled={disabled}
       {...props}
       color={disabled ? Colors.disabledButtonText : Colors.background}
       style={[

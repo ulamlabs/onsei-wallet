@@ -5,11 +5,13 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { ArrangeHorizontalSquare, Global, Wallet2 } from "iconsax-react-native";
 import React from "react";
 import Bar from "./bar/Bar";
-import DApps from "@/screens/dApps/DAppsScreen";
+import AddressBook, {
+  AddressBookNavParams,
+} from "@/screens/addressBook/AddressBookScreen";
 
 export type BottomTabsParamList = {
   Wallet: undefined;
-  DApps: undefined;
+  "Address Book": AddressBookNavParams;
   Transactions: { address: string };
 };
 

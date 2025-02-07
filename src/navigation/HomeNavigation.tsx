@@ -7,7 +7,9 @@ import AccountsScreen from "@/screens/WalletOverview/AccountsScreen";
 import EditAccountNameScreen from "@/screens/WalletOverview/EditAccountNameScreen";
 import LinkAddressesScreen from "@/screens/WalletOverview/LinkAddressesScreen";
 import AddOrEditAddress from "@/screens/addressBook/AddOrEditAddress";
-import AddressBook from "@/screens/addressBook/AddressBookScreen";
+import AddressBook, {
+  AddressBookNavParams,
+} from "@/screens/addressBook/AddressBookScreen";
 import AddressDetailsScreen from "@/screens/addressBook/AddressDetailsScreen";
 import TransactionsWithAddress from "@/screens/addressBook/TransactionsWithAddress";
 import { AuthorizeScreen, BiometricsDisableScreen } from "@/screens/auth";
@@ -134,7 +136,7 @@ export type HomeParamList = {
   "Connect Wallet": undefined;
   "Connected Apps": undefined;
   "Link Addresses": { address: string };
-  "Address Book": { addressCount?: number; allAddressCount?: number };
+  "Address Book": AddressBookNavParams;
 };
 
 const { Navigator, Screen } = createNativeStackNavigator<HomeParamList>();

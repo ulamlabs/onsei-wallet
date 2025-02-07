@@ -10,8 +10,8 @@ export default function AddressBookHeaderOptions(
   route: RouteProp<HomeParamList, "Address Book">,
   title: string,
 ): NativeStackNavigationOptions {
-  const addressCount = route.params.addressCount || 0;
-  const allAddressCount = route.params.allAddressCount || 0;
+  const addressCount = route.params?.addressCount || 0;
+  const allAddressCount = route.params?.allAddressCount || 0;
 
   return {
     headerTitle: () => (
