@@ -6,13 +6,23 @@ export type OwnershipRecord = {
   transactionHash: string;
 };
 
+export type CreatorProfile = {
+  name: string;
+  description?: string;
+  avatar?: string;
+  website?: string;
+  twitter?: string;
+  collections?: string[];
+  totalNFTs?: number;
+};
+
 export type NFT = {
   id: string;
   name: string;
   image: string;
   collection: string;
   description: string;
-  creator?: string;
+  creator?: CreatorProfile;
   attributes?: Record<string, string>;
   ownershipHistory?: OwnershipRecord[];
 };
@@ -24,7 +34,16 @@ const mockNFTs: NFT[] = [
     image: "https://picsum.photos/300/300?random=1",
     collection: "So Cubs",
     description: "3,333 Carefree Cubs spreading love on the Sei Network.",
-    creator: "SoCubs Team",
+    creator: {
+      name: "SoCubs Team",
+      description:
+        "Creating cute and carefree cubs on the Sei Network. Our mission is to spread joy through digital art.",
+      avatar: "https://picsum.photos/200/200?random=creator1",
+      website: "https://socubs.io",
+      twitter: "@SoCubsNFT",
+      collections: ["So Cubs", "So Bears"],
+      totalNFTs: 3333,
+    },
     attributes: {
       Background: "Bubbles",
       Body: "Doodle",
@@ -53,13 +72,15 @@ const mockNFTs: NFT[] = [
     image: "https://picsum.photos/300/300?random=2",
     collection: "So Cubs",
     description: "3,333 Carefree Cubs spreading love on the Sei Network.",
-    creator: "SoCubs Team",
-    attributes: {
-      Background: "Stars",
-      Body: "Classic",
-      Mouth: "Happy",
-      Eyes: "Sleepy",
-      Clothing: "Hoodie",
+    creator: {
+      name: "SoCubs Team",
+      description:
+        "Creating cute and carefree cubs on the Sei Network. Our mission is to spread joy through digital art.",
+      avatar: "https://picsum.photos/200/200?random=creator1",
+      website: "https://socubs.io",
+      twitter: "@SoCubsNFT",
+      collections: ["So Cubs", "So Bears"],
+      totalNFTs: 3333,
     },
   },
   {
@@ -68,7 +89,16 @@ const mockNFTs: NFT[] = [
     image: "https://picsum.photos/300/300?random=3",
     collection: "So Cubs",
     description: "3,333 Carefree Cubs spreading love on the Sei Network.",
-    creator: "SoCubs Team",
+    creator: {
+      name: "SoCubs Team",
+      description:
+        "Creating cute and carefree cubs on the Sei Network. Our mission is to spread joy through digital art.",
+      avatar: "https://picsum.photos/200/200?random=creator1",
+      website: "https://socubs.io",
+      twitter: "@SoCubsNFT",
+      collections: ["So Cubs", "So Bears"],
+      totalNFTs: 3333,
+    },
   },
   {
     id: "sei1qj2wd4p3c4qx6y5jl4vxqtmxqgvwkrzuf6n6",
@@ -76,7 +106,16 @@ const mockNFTs: NFT[] = [
     image: "https://picsum.photos/300/300?random=4",
     collection: "So Cubs",
     description: "3,333 Carefree Cubs spreading love on the Sei Network.",
-    creator: "SoCubs Team",
+    creator: {
+      name: "SoCubs Team",
+      description:
+        "Creating cute and carefree cubs on the Sei Network. Our mission is to spread joy through digital art.",
+      avatar: "https://picsum.photos/200/200?random=creator1",
+      website: "https://socubs.io",
+      twitter: "@SoCubsNFT",
+      collections: ["So Cubs", "So Bears"],
+      totalNFTs: 3333,
+    },
     attributes: {
       Background: "Rainbow",
       Body: "Golden",
@@ -93,7 +132,16 @@ const mockNFTs: NFT[] = [
     image: "https://picsum.photos/300/300?random=1",
     collection: "Bored Ape Yacht Club",
     description: "A unique digital collectible from the BAYC collection",
-    creator: "Bored Ape Yacht Club",
+    creator: {
+      name: "Bored Ape Yacht Club",
+      description:
+        "The Bored Ape Yacht Club is a collection of 10,000 unique Bored Ape NFTs—unique digital collectibles living on the Ethereum blockchain. Your Bored Ape doubles as your Yacht Club membership card, and grants access to members-only benefits, the first of which is access to THE BATHROOM, a collaborative graffiti board. Available only to Bored Ape owners.",
+      avatar: "https://boredapeyachtclub.com/api/jwt/ape",
+      website: "https://boredapeyachtclub.com",
+      twitter: "@BoredApeYC",
+      collections: ["Bored Ape Yacht Club"],
+      totalNFTs: 10000,
+    },
   },
   {
     id: "sei1qj2wd4p3c4qx6y5jl4vxqtmxqgvwkrzuf6n8",
@@ -101,7 +149,16 @@ const mockNFTs: NFT[] = [
     image: "https://picsum.photos/300/300?random=2",
     collection: "CryptoPunks",
     description: "One of 10,000 unique collectible characters",
-    creator: "CryptoPunks",
+    creator: {
+      name: "CryptoPunks",
+      description:
+        "CryptoPunks is a collection of 10,000 unique characters. No two characters are alike, and each one of them can be officially owned by a Ethereum account.",
+      avatar: "https://cryptopunks.app/cryptopunks.png",
+      website: "https://cryptopunks.app",
+      twitter: "@CryptoPunks",
+      collections: ["CryptoPunks"],
+      totalNFTs: 10000,
+    },
   },
   {
     id: "sei1qj2wd4p3c4qx6y5jl4vxqtmxqgvwkrzuf6n9",
@@ -109,7 +166,16 @@ const mockNFTs: NFT[] = [
     image: "https://picsum.photos/300/300?random=3",
     collection: "Doodles",
     description: "A joyful collection of doodles",
-    creator: "Doodles",
+    creator: {
+      name: "Doodles",
+      description:
+        "Doodles is a collection of 10,000 generative art pieces created by Burnt Toast and friends. Each Doodle is unique and randomly generated from over 100 possible attributes.",
+      avatar: "https://doodles.app/doodles.png",
+      website: "https://doodles.app",
+      twitter: "@DoodlesNFT",
+      collections: ["Doodles"],
+      totalNFTs: 10000,
+    },
   },
   {
     id: "sei1qj2wd4p3c4qx6y5jl4vxqtmxqgvwkrzuf6na",
@@ -117,7 +183,16 @@ const mockNFTs: NFT[] = [
     image: "https://picsum.photos/300/300?random=4",
     collection: "Azuki",
     description: "Enter the garden. A new kind of brand.",
-    creator: "Azuki",
+    creator: {
+      name: "Azuki",
+      description:
+        "Azuki is a collection of 10,000 generative art pieces created by Burnt Toast and friends. Each Azuki is unique and randomly generated from over 100 possible attributes.",
+      avatar: "https://azuki.app/azuki.png",
+      website: "https://azuki.app",
+      twitter: "@AzukiOfficial",
+      collections: ["Azuki"],
+      totalNFTs: 10000,
+    },
   },
   {
     id: "sei1qj2wd4p3c4qx6y5jl4vxqtmxqgvwkrzuf6nb",
@@ -125,7 +200,16 @@ const mockNFTs: NFT[] = [
     image: "https://picsum.photos/300/300?random=5",
     collection: "Clone X",
     description: "The next generation of digital identity",
-    creator: "Clone X",
+    creator: {
+      name: "Clone X",
+      description:
+        "Clone X is a collection of 10,000 generative art pieces created by Burnt Toast and friends. Each Clone X is unique and randomly generated from over 100 possible attributes.",
+      avatar: "https://clonex.app/clonex.png",
+      website: "https://clonex.app",
+      twitter: "@CloneXNFT",
+      collections: ["Clone X"],
+      totalNFTs: 10000,
+    },
   },
   {
     id: "sei1qj2wd4p3c4qx6y5jl4vxqtmxqgvwkrzuf6nc",
@@ -133,7 +217,16 @@ const mockNFTs: NFT[] = [
     image: "https://picsum.photos/300/300?random=6",
     collection: "Bored Ape Yacht Club",
     description: "A rare golden fur BAYC with laser eyes and crown",
-    creator: "Bored Ape Yacht Club",
+    creator: {
+      name: "Bored Ape Yacht Club",
+      description:
+        "The Bored Ape Yacht Club is a collection of 10,000 unique Bored Ape NFTs—unique digital collectibles living on the Ethereum blockchain. Your Bored Ape doubles as your Yacht Club membership card, and grants access to members-only benefits, the first of which is access to THE BATHROOM, a collaborative graffiti board. Available only to Bored Ape owners.",
+      avatar: "https://boredapeyachtclub.com/api/jwt/ape",
+      website: "https://boredapeyachtclub.com",
+      twitter: "@BoredApeYC",
+      collections: ["Bored Ape Yacht Club"],
+      totalNFTs: 10000,
+    },
   },
   {
     id: "sei1qj2wd4p3c4qx6y5jl4vxqtmxqgvwkrzuf6nd",
@@ -141,7 +234,16 @@ const mockNFTs: NFT[] = [
     image: "https://picsum.photos/300/300?random=7",
     collection: "Bored Ape Yacht Club",
     description: "A zombie BAYC wearing a leather jacket and chain",
-    creator: "Bored Ape Yacht Club",
+    creator: {
+      name: "Bored Ape Yacht Club",
+      description:
+        "The Bored Ape Yacht Club is a collection of 10,000 unique Bored Ape NFTs—unique digital collectibles living on the Ethereum blockchain. Your Bored Ape doubles as your Yacht Club membership card, and grants access to members-only benefits, the first of which is access to THE BATHROOM, a collaborative graffiti board. Available only to Bored Ape owners.",
+      avatar: "https://boredapeyachtclub.com/api/jwt/ape",
+      website: "https://boredapeyachtclub.com",
+      twitter: "@BoredApeYC",
+      collections: ["Bored Ape Yacht Club"],
+      totalNFTs: 10000,
+    },
   },
   {
     id: "sei1qj2wd4p3c4qx6y5jl4vxqtmxqgvwkrzuf6ne",
@@ -149,7 +251,16 @@ const mockNFTs: NFT[] = [
     image: "https://picsum.photos/300/300?random=8",
     collection: "Bored Ape Yacht Club",
     description: "A rainbow fur BAYC with 3D glasses and party hat",
-    creator: "Bored Ape Yacht Club",
+    creator: {
+      name: "Bored Ape Yacht Club",
+      description:
+        "The Bored Ape Yacht Club is a collection of 10,000 unique Bored Ape NFTs—unique digital collectibles living on the Ethereum blockchain. Your Bored Ape doubles as your Yacht Club membership card, and grants access to members-only benefits, the first of which is access to THE BATHROOM, a collaborative graffiti board. Available only to Bored Ape owners.",
+      avatar: "https://boredapeyachtclub.com/api/jwt/ape",
+      website: "https://boredapeyachtclub.com",
+      twitter: "@BoredApeYC",
+      collections: ["Bored Ape Yacht Club"],
+      totalNFTs: 10000,
+    },
   },
 ];
 

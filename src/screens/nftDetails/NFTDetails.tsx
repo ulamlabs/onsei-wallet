@@ -8,11 +8,12 @@ import {
 } from "react-native";
 import { Text } from "@/components";
 import { CARD_MARGIN } from "@/components/Card";
-import { NavigatorParamsList } from "@/types";
+import { NavigationProp, NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useAccountsStore, useSettingsStore, useToastStore } from "@/store";
 import { useNFTGalleryStore } from "@/store/nftGallery";
 import { useQueryClient } from "@tanstack/react-query";
+import { useNavigation } from "@react-navigation/native";
 
 type NFTDetailsScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -30,6 +31,7 @@ export default function NFTDetailsScreen({
   const queryClient = useQueryClient();
   const { activeAccount } = useAccountsStore();
   const { info } = useToastStore();
+  const navigation = useNavigation<NavigationProp>();
 
   const handleSetAvatar = () => {
     setSetting("avatar", nft.image);
@@ -48,6 +50,12 @@ export default function NFTDetailsScreen({
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleOpenTransaction = (hash: string) => {};
+
+  const handleCreatorPress = () => {
+    if (nft.creator) {
+      navigation.navigate("CreatorProfile", { profile: nft.creator });
+    }
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -68,7 +76,14 @@ export default function NFTDetailsScreen({
         </Text>
 
         {nft.creator && (
-          <Text style={styles.creator}>Created by {nft.creator}</Text>
+          <TouchableOpacity
+            onPress={handleCreatorPress}
+            disabled={!nft.creator}
+          >
+            <Text style={[styles.creator, nft.creator && styles.creatorLink]}>
+              Created by {nft.creator.name}
+            </Text>
+          </TouchableOpacity>
         )}
 
         <View style={styles.idRow}>
@@ -305,5 +320,9 @@ const styles = StyleSheet.create({
   historyHash: {
     color: "#666",
     fontSize: 12,
+  },
+  creatorLink: {
+    textDecorationLine: "underline",
+    color: "#FFF",
   },
 });
