@@ -54,6 +54,8 @@ import DefaultHeaderTitle from "./header/DefaultHeaderTitle";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
 import { SettingsHeaderLeft } from "./header/SettingsHeaderLeft";
 import SettingsHeaderRight from "./header/SettingsHeaderRight";
+import { NFT } from "@/modules/nfts/api";
+import NFTDetailsScreen from "@/screens/nftDetails/NFTDetails";
 
 export type Recipient = {
   address: string;
@@ -135,6 +137,7 @@ export type HomeParamList = {
   "Connected Apps": undefined;
   "Link Addresses": { address: string };
   "Address Book": { addressCount?: number; allAddressCount?: number };
+  NFTDetails: { nft: NFT };
 };
 
 const { Navigator, Screen } = createNativeStackNavigator<HomeParamList>();
@@ -285,6 +288,7 @@ export default function HomeNavigation() {
         component={AddressBook}
         options={({ route }) => AddressBookHeaderOptions(route, "Address Book")}
       />
+      <Screen name="NFTDetails" component={NFTDetailsScreen} />
     </Navigator>
   );
 }

@@ -1,7 +1,5 @@
 import { Text } from "@/components";
-import { NFT } from "@/modules/nfts/api";
 import { View, Image, StyleSheet } from "react-native";
-
 import { Dimensions } from "react-native";
 
 const { width } = Dimensions.get("window");
@@ -9,28 +7,33 @@ const { width } = Dimensions.get("window");
 export const CARD_MARGIN = 8;
 const CARD_WIDTH = Math.floor((width - CARD_MARGIN * 3) / 2);
 
-type NFTCardProps = {
-  nft: NFT;
+type BaseCardProps = {
+  image: string;
+  title: string;
+  subtitle?: string;
   numColumns: number;
 };
 
-export default function NFTCard({ nft, numColumns }: NFTCardProps) {
-  const nftNameId = `#${nft.name.split("#")[1]}`;
-
+export default function Card({
+  image,
+  title,
+  subtitle,
+  numColumns,
+}: BaseCardProps) {
   return (
-    <View style={[styles.nftCard, numColumns === 1 && styles.fullWidthCard]}>
-      <Image source={{ uri: nft.image }} style={styles.nftImage} />
-      <View style={styles.nftInfo}>
-        <Text style={styles.nftCollection}>{nft.collection}</Text>
-        <Text style={styles.nftName}>{nftNameId}</Text>
+    <View style={[styles.card, numColumns === 1 && styles.fullWidthCard]}>
+      <Image source={{ uri: image }} style={styles.cardImage} />
+      <View style={styles.cardInfo}>
+        <Text style={styles.cardTitle}>{title}</Text>
+        {subtitle && <Text style={styles.cardSubtitle}>{subtitle}</Text>}
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  nftCard: {
-    width: CARD_WIDTH,
+  card: {
+    flex: 1,
     margin: CARD_MARGIN,
     backgroundColor: "#1a1a1a",
     borderRadius: 12,
@@ -39,30 +42,27 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    overflow: "hidden",
   },
-  nftImage: {
+  cardImage: {
     width: "100%",
+    // aspectRatio: 1,
     height: CARD_WIDTH,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
   },
-  nftInfo: {
+  cardInfo: {
     padding: 12,
   },
-  nftName: {
+  cardTitle: {
     fontSize: 16,
-    fontWeight: "500",
-    color: "#999",
-    marginBottom: 4,
-  },
-  nftId: {
-    fontSize: 14,
-    color: "#999",
-  },
-  nftCollection: {
-    fontSize: 14,
     fontWeight: "600",
     color: "#fff",
+    marginBottom: 4,
+  },
+  cardSubtitle: {
+    fontSize: 14,
+    color: "#999",
   },
   fullWidthCard: {
     width: width - CARD_MARGIN * 6,
