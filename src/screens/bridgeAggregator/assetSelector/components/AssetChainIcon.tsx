@@ -2,6 +2,7 @@ import { Colors } from "@/styles";
 import { Image, StyleSheet, View } from "react-native";
 import { iconSize } from "./const";
 import { SvgUri } from "react-native-svg";
+import { useState } from "react";
 
 type Props = {
   assetIconUri?: string;
@@ -9,23 +10,37 @@ type Props = {
 };
 
 const chainIconSize = 14;
+const placeholder = require("../../../../../assets/token-placeholder.png");
 
 export function AssetChainIcon({ assetIconUri, chainIconUri }: Props) {
+  const [isValid, setIsValid] = useState<boolean>(true);
+
+  if (!isValid || assetIconUri?.startsWith("ipfs")) {
+    return <Image style={styles.assetIcon} source={placeholder} />;
+  }
+
   return (
     <View style={styles.container}>
       {!assetIconUri || assetIconUri.startsWith("ipfs") ? (
         <Image
           style={styles.assetIcon}
-          source={require("../../../../../assets/token-placeholder.png")}
+          source={placeholder}
+          onError={() => setIsValid(false)}
         />
       ) : assetIconUri.endsWith(".svg") ? (
-        <SvgUri uri={assetIconUri} width={iconSize} height={iconSize} />
+        <SvgUri
+          uri={assetIconUri}
+          width={iconSize}
+          height={iconSize}
+          fallback={<Image style={styles.assetIcon} source={placeholder} />}
+        />
       ) : (
         <Image
           style={styles.assetIcon}
           source={{
             uri: assetIconUri,
           }}
+          onError={() => setIsValid(false)}
         />
       )}
 
@@ -36,6 +51,7 @@ export function AssetChainIcon({ assetIconUri, chainIconUri }: Props) {
               uri={chainIconUri}
               width={chainIconSize}
               height={chainIconSize}
+              fallback={<Image style={styles.assetIcon} source={placeholder} />}
             />
           ) : (
             <Image
@@ -43,6 +59,7 @@ export function AssetChainIcon({ assetIconUri, chainIconUri }: Props) {
                 uri: chainIconUri,
               }}
               style={styles.chainIcon}
+              onError={() => setIsValid(true)}
             />
           )}
         </View>
