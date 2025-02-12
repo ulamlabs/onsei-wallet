@@ -1,6 +1,6 @@
 import { Node } from "@/types";
 import { CosmToken } from "../types";
-import { queryCW20 } from "./queryCW20";
+import { queryCW } from "./queryCW";
 import { CW20MarketingInfo, CW20TokenInfo } from "./types";
 
 export async function fetchCW20Token(
@@ -8,8 +8,8 @@ export async function fetchCW20Token(
   node: Node,
 ): Promise<CosmToken> {
   const [tokenInfo, marketingInfo] = await Promise.all([
-    queryCW20<CW20TokenInfo>(contractAddress, { token_info: {} }, node),
-    queryCW20<CW20MarketingInfo>(contractAddress, { marketing_info: {} }, node),
+    queryCW<CW20TokenInfo>(contractAddress, { token_info: {} }, node),
+    queryCW<CW20MarketingInfo>(contractAddress, { marketing_info: {} }, node),
   ]);
 
   return {

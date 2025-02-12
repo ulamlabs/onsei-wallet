@@ -54,9 +54,10 @@ import DefaultHeaderTitle from "./header/DefaultHeaderTitle";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
 import { SettingsHeaderLeft } from "./header/SettingsHeaderLeft";
 import SettingsHeaderRight from "./header/SettingsHeaderRight";
-import { CreatorProfile, NFT } from "@/modules/nfts/api";
-import NFTDetailsScreen from "@/screens/nftDetails/NFTDetails";
-import CreatorProfileScreen from "@/screens/nftDetails/CreatorProfile";
+import { CreatorProfile } from "@/modules/nfts/api";
+import NFTDetailsScreen from "@/screens/nftsGallery/NFTDetails";
+import CreatorProfileScreen from "@/screens/nftsGallery/CreatorProfile";
+import { NFTInfo } from "@/modules/nfts/api";
 
 export type Recipient = {
   address: string;
@@ -138,7 +139,7 @@ export type HomeParamList = {
   "Connected Apps": undefined;
   "Link Addresses": { address: string };
   "Address Book": { addressCount?: number; allAddressCount?: number };
-  NFTDetails: { nft: NFT };
+  NFTDetails: { nft: NFTInfo };
   CreatorProfile: { profile: CreatorProfile };
 };
 
@@ -294,7 +295,7 @@ export default function HomeNavigation() {
         name="NFTDetails"
         component={NFTDetailsScreen}
         options={({ route }) => ({
-          title: route.params.nft.name,
+          title: route.params.nft.info.extension?.name || "NFT Details",
         })}
       />
       <Screen

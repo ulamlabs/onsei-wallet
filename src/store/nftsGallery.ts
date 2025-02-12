@@ -1,19 +1,22 @@
 import { create } from "zustand";
 import { loadFromStorage, saveToStorage } from "@/utils";
-import { NFT } from "@/modules/nfts/api";
+import { NFTInfo } from "@/modules/nfts/api";
 
-type NFTGalleryStore = {
-  hiddenNFTs: NFT["id"][];
+type NFTsGalleryStore = {
+  hiddenNFTs: NFTInfo["tokenId"][];
   init: () => Promise<void>;
-  hideNFT: (nftId: NFT["id"]) => void;
-  showNFT: (nftId: NFT["id"]) => void;
-  isNFTHidden: (nftId: NFT["id"]) => boolean;
+  hideNFT: (nftId: NFTInfo["tokenId"]) => void;
+  showNFT: (nftId: NFTInfo["tokenId"]) => void;
+  isNFTHidden: (nftId: NFTInfo["tokenId"]) => boolean;
 };
 
-export const useNFTGalleryStore = create<NFTGalleryStore>((set, get) => ({
+export const useNFTsGalleryStore = create<NFTsGalleryStore>((set, get) => ({
   hiddenNFTs: [],
   init: async () => {
-    const hiddenNFTs = await loadFromStorage<NFT["id"][]>("hiddenNFTs", []);
+    const hiddenNFTs = await loadFromStorage<NFTInfo["tokenId"][]>(
+      "hiddenNFTs",
+      [],
+    );
     set({ hiddenNFTs });
   },
   hideNFT: (nftId) => {

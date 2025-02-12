@@ -17,3 +17,52 @@ export type CW20MarketingInfo = {
 export type CW20BalanceInfo = {
   balance: string;
 };
+
+export type CW721Tokens = {
+  tokens: string[];
+};
+
+export type CW721ContractInfo = {
+  name: string;
+  symbol: string;
+};
+
+export type CW721NumTokens = {
+  count: number;
+};
+
+export type CW721Ownership = {
+  collection_ownership: {
+    owner: string;
+    pending_expiry: string | null;
+    pending_owner: string | null;
+  }[];
+};
+
+export type CW721AllTokenInfo = {
+  access: {
+    owner: string;
+    approvals: unknown[];
+  };
+  info: {
+    token_uri: string;
+    extension: {
+      image: string | null;
+      image_data: string | null;
+      external_url: string | null;
+      description: string | null;
+      name: string | null;
+      attributes: Record<string, string> | null;
+      background_color: string | null;
+      animation_url: string | null;
+      youtube_url: string | null;
+      royalty_percentage: number;
+      royalty_payment_address: string;
+    };
+  };
+};
+
+export type CW721OwnerOf = {
+  owner: string;
+  approvals: unknown[];
+};

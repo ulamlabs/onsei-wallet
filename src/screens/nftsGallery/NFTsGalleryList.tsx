@@ -1,4 +1,3 @@
-import { NFT } from "@/modules/nfts/api";
 import { FlatList, StyleSheet, View, TouchableOpacity } from "react-native";
 import { CARD_MARGIN } from "../../components/Card";
 import { Text } from "@/components";
@@ -10,22 +9,20 @@ import pluralize from "@/utils/pluralize";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "@/types";
 import SearchInput from "@/components/forms/SearchInput";
-import { useNFTGalleryStore } from "@/store/nftGallery";
+import { useNFTsGalleryStore } from "@/store/nftsGallery";
+import { NFTInfo } from "@/modules/nfts/api";
+import { mapAttributesFromObject } from "./utils";
 
 const { width } = Dimensions.get("window");
 
-type NFTsGalleryListProps = {
-  nfts: NFT[];
-};
-
 type Collection = {
   name: string;
-  nfts: NFT[];
-  firstNftImage: string;
+  nfts: NFTInfo[];
+  firstNftImage: string | null;
 };
 
 type NFTsListProps = {
-  nfts: NFT[];
+  nfts: NFTInfo[];
   numColumns: number;
 };
 
@@ -46,19 +43,23 @@ const NFTsList = ({ nfts, numColumns }: NFTsListProps) => {
         numColumns={numColumns}
         scrollEnabled={false}
         contentContainerStyle={styles.container}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={() => navigation.navigate("NFTDetails", { nft: item })}
-          >
-            <Card
-              image={item.image}
-              title={item.collection || "Uncategorized"}
-              subtitle={`#${item.name.split("#")[1]}`}
-              numColumns={numColumns}
-            />
-          </TouchableOpacity>
-        )}
+        keyExtractor={(item) => item.tokenId.toString()}
+        renderItem={({ item }) => {
+          const image = item.tokenMetadata.image || item.info.extension?.image;
+
+          return (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("NFTDetails", { nft: item })}
+            >
+              <Card
+                image={image}
+                title={item.collection?.name || "Name unavailable"}
+                subtitle={`#${item.tokenId}`}
+                numColumns={numColumns}
+              />
+            </TouchableOpacity>
+          );
+        }}
       />
     </View>
   );
@@ -97,8 +98,11 @@ const CollectionsList = ({
   </View>
 );
 
+type NFTsGalleryListProps = {
+  nfts: NFTInfo[];
+};
 export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
-  const { isNFTHidden, hiddenNFTs } = useNFTGalleryStore();
+  const { isNFTHidden, hiddenNFTs } = useNFTsGalleryStore();
   const [activeFilter, setActiveFilter] = useState<"all" | "collections">(
     "all",
   );
@@ -108,43 +112,57 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
   const filteredNFTs = useMemo(() => {
     const query = searchQuery.toLowerCase();
     return nfts.filter((nft) => {
-      if (isNFTHidden(nft.id)) {
+      if (isNFTHidden(nft.tokenId)) {
         return false;
       }
+      const name = nft.tokenMetadata.name || nft.info.extension?.name;
+      const attributes = mapAttributesFromObject(
+        nft.tokenMetadata.attributes || nft.info.extension?.attributes,
+      );
 
-      const matchesName = nft.name.toLowerCase().includes(query);
-      const matchesCollection = (nft.collection || "Uncategorized")
+      const matchesName = name?.toLowerCase().includes(query);
+      const matchesCollection = (nft.collection?.name || "Uncategorized")
         .toLowerCase()
         .includes(query);
-      const matchesAttributes = nft.attributes
-        ? Object.entries(nft.attributes).some(
-            ([trait_type, value]) =>
-              value?.toLowerCase().includes(query) ||
-              trait_type.toLowerCase().includes(query),
-          )
-        : false;
+      const matchesAttributes = attributes?.some(
+        (attribute) =>
+          attribute.value?.toLowerCase().includes(query) ||
+          attribute.trait_type.toLowerCase().includes(query),
+      );
 
       return matchesName || matchesCollection || matchesAttributes;
     });
   }, [nfts, searchQuery, isNFTHidden, hiddenNFTs]);
 
   const collections = useMemo(() => {
-    const grouped = filteredNFTs.reduce<Record<string, NFT[]>>((acc, nft) => {
-      const collectionName = nft.collection || "Uncategorized";
-      if (!acc[collectionName]) {
-        acc[collectionName] = [];
-      }
-      acc[collectionName].push(nft);
-      return acc;
-    }, {});
+    const grouped = filteredNFTs.reduce<Record<string, typeof filteredNFTs>>(
+      (acc, nft) => {
+        const collectionName = nft.collection?.name || "Uncategorized";
+        if (!acc[collectionName]) {
+          acc[collectionName] = [];
+        }
+        acc[collectionName].push(nft);
+        return acc;
+      },
+      {},
+    );
 
-    return Object.entries(grouped).map(
-      ([name, nfts]): Collection => ({
+    return Object.entries(grouped).map(([name, nfts]) => {
+      const images = nfts.filter(
+        (nft) =>
+          !isNFTHidden(nft.tokenId) &&
+          (nft.tokenMetadata.image || nft.info.extension?.image),
+      );
+
+      const firstNftImage =
+        images[0]?.tokenMetadata.image || images[0]?.info.extension?.image;
+
+      return {
         name,
         nfts,
-        firstNftImage: nfts[0]?.image || "",
-      }),
-    );
+        firstNftImage,
+      };
+    });
   }, [filteredNFTs]);
 
   return (

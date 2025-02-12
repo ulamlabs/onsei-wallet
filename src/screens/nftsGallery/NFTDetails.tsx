@@ -1,20 +1,25 @@
-import React from "react";
 import {
   View,
   StyleSheet,
-  Image,
   ScrollView,
   TouchableOpacity,
+  Linking,
 } from "react-native";
 import { Text } from "@/components";
 import { CARD_MARGIN } from "@/components/Card";
 import { NavigationProp, NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useAccountsStore, useSettingsStore, useToastStore } from "@/store";
-import { useNFTGalleryStore } from "@/store/nftGallery";
-import { useQueryClient } from "@tanstack/react-query";
+import { useSettingsStore, useToastStore } from "@/store";
+import { useNFTsGalleryStore } from "@/store/nftsGallery";
 import { useNavigation } from "@react-navigation/native";
-
+import { getHttpUrl, useInvalidateNFTs } from "@/modules/nfts/api";
+import {
+  formatNFTName,
+  getTokenExplorerURL,
+  mapAttributesFromObject,
+} from "./utils";
+import { useState } from "react";
+import Image from "../../components/Image";
 type NFTDetailsScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
   "NFTDetails"
@@ -26,62 +31,100 @@ export default function NFTDetailsScreen({
   },
 }: NFTDetailsScreenProps) {
   const { setSetting } = useSettingsStore();
-  const { isNFTHidden, hideNFT, showNFT } = useNFTGalleryStore();
-  const isHidden = isNFTHidden(nft.id);
-  const queryClient = useQueryClient();
-  const { activeAccount } = useAccountsStore();
-  const { info } = useToastStore();
+  const { isNFTHidden, hideNFT, showNFT } = useNFTsGalleryStore();
+  const isHidden = isNFTHidden(nft.tokenId);
+  const { info, error } = useToastStore();
   const navigation = useNavigation<NavigationProp>();
+  const invalidateNFTs = useInvalidateNFTs();
+  const [isImageError, setIsImageError] = useState(true);
+
+  const name = nft.tokenMetadata.name || nft.info.extension?.name;
+  const description =
+    nft.tokenMetadata.description ||
+    nft.info.extension?.description ||
+    "No description available";
+  const image = nft.tokenMetadata.image || nft.info.extension?.image;
+
+  const attributes = mapAttributesFromObject(
+    nft.tokenMetadata.attributes || nft.info.extension?.attributes,
+  );
 
   const handleSetAvatar = () => {
-    setSetting("avatar", nft.image);
+    if (image) {
+      setSetting("avatar", getHttpUrl(image));
+    } else {
+      error({ description: "Image not available" });
+    }
   };
 
   const handleToggleVisibility = () => {
     if (isHidden) {
-      showNFT(nft.id);
+      showNFT(nft.tokenId);
     } else {
-      hideNFT(nft.id);
+      hideNFT(nft.tokenId);
     }
-    queryClient.invalidateQueries({
-      queryKey: ["nfts", activeAccount?.address],
-    });
+    invalidateNFTs();
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleOpenTransaction = (hash: string) => {};
-
   const handleCreatorPress = () => {
-    if (nft.creator) {
-      navigation.navigate("CreatorProfile", { profile: nft.creator });
+    if (nft.creatorProfile) {
+      navigation.navigate("CreatorProfile", { profile: nft.creatorProfile });
+    } else {
+      error({ description: "Creator profile not available" });
+    }
+  };
+
+  const handleOpenOwnershipHistory = () => {
+    if (nft.collection_address) {
+      Linking.openURL(getTokenExplorerURL(nft.collection_address));
+    } else {
+      error({ description: "Collection address not available" });
     }
   };
 
   return (
     <ScrollView style={styles.container}>
-      <Image source={{ uri: nft.image }} style={styles.image} />
+      <Image
+        image={image}
+        style={styles.image}
+        isError={isImageError}
+        onError={() => {
+          // TODO: change the state logic
+          setIsImageError(true);
+        }}
+        onLoad={() => {
+          setIsImageError(false);
+        }}
+      />
 
       <View style={styles.content}>
         <View style={styles.titleRow}>
-          <Text style={styles.title}>{nft.name}</Text>
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={handleSetAvatar}
-          >
-            <Text style={styles.actionButtonText}>Set as Avatar</Text>
-          </TouchableOpacity>
+          <Text style={styles.title}>{formatNFTName(name)}</Text>
+          {image && !isImageError && (
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={handleSetAvatar}
+            >
+              <Text style={styles.actionButtonText}>Set as Avatar</Text>
+            </TouchableOpacity>
+          )}
         </View>
         <Text style={styles.collection}>
-          {nft.collection || "Uncategorized"}
+          {nft.collection?.name || "Collection name unavailable"}
         </Text>
 
-        {nft.creator && (
+        {nft.creatorProfile?.name && (
           <TouchableOpacity
             onPress={handleCreatorPress}
-            disabled={!nft.creator}
+            disabled={!nft.creatorProfile?.name}
           >
-            <Text style={[styles.creator, nft.creator && styles.creatorLink]}>
-              Created by {nft.creator.name}
+            <Text
+              style={[
+                styles.creator,
+                !!nft.creatorProfile?.name && styles.creatorLink,
+              ]}
+            >
+              Created by {nft.creatorProfile?.name}
             </Text>
           </TouchableOpacity>
         )}
@@ -90,67 +133,54 @@ export default function NFTDetailsScreen({
           <View style={styles.seiTag}>
             <Text style={styles.seiTagText}>Sei</Text>
           </View>
-          <Text style={styles.idText}>ID: {nft.id}</Text>
+          <Text style={styles.idText}>ID: {nft.tokenId}</Text>
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>About</Text>
-          <Text style={styles.description}>
-            {nft.description || "No description available"}
-          </Text>
+          <Text style={styles.description}>{description}</Text>
         </View>
 
-        {nft.attributes && (
+        {attributes.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Attributes</Text>
             <View style={styles.attributes}>
-              {Object.entries(nft.attributes).map(([key, value]) => (
-                <View key={key} style={styles.attribute}>
-                  <Text style={styles.attributeKey}>{key}</Text>
-                  <Text style={styles.attributeValue}>{value}</Text>
+              {attributes.map((attribute) => (
+                <View key={attribute.trait_type} style={styles.attribute}>
+                  <Text style={styles.attributeKey}>
+                    {attribute.trait_type}
+                  </Text>
+                  <Text style={styles.attributeValue}>{attribute.value}</Text>
                 </View>
               ))}
             </View>
           </View>
         )}
 
-        {nft.ownershipHistory && (
+        {nft.collection_address && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Ownership History</Text>
-            <View style={styles.historyContainer}>
-              {nft.ownershipHistory.map((record) => (
-                <TouchableOpacity
-                  key={record.transactionHash}
-                  style={styles.historyItem}
-                  onPress={() => handleOpenTransaction(record.transactionHash)}
-                >
-                  <View style={styles.historyHeader}>
-                    <Text style={styles.historyAddress}>
-                      {record.address.slice(0, 8)}...{record.address.slice(-8)}
-                    </Text>
-                    <Text style={styles.historyDate}>
-                      {new Date(record.timestamp).toLocaleDateString()}
-                    </Text>
-                  </View>
-                  <Text style={styles.historyHash}>
-                    Tx: {record.transactionHash.slice(0, 8)}...
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            <TouchableOpacity
+              style={styles.explorerButton}
+              onPress={handleOpenOwnershipHistory}
+            >
+              <Text style={styles.actionButtonText}>View on Explorer</Text>
+            </TouchableOpacity>
           </View>
         )}
 
-        {nft.royalty && (
+        {nft.info.extension?.royalty_percentage && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Royalties</Text>
             <View style={styles.royaltyContainer}>
               <Text style={styles.description}>
-                {nft.royalty.percentage}% of secondary sales go to creator
+                {nft.info.extension?.royalty_percentage}% of secondary sales go
+                to creator
               </Text>
               <Text style={styles.royaltyAddress}>
-                Recipient: {nft.royalty.recipient.slice(0, 8)}...
-                {nft.royalty.recipient.slice(-8)}
+                Recipient:{" "}
+                {nft.info.extension?.royalty_payment_address.slice(0, 8)}...
+                {nft.info.extension?.royalty_payment_address.slice(-8)}
               </Text>
             </View>
           </View>
@@ -349,5 +379,12 @@ const styles = StyleSheet.create({
     color: "#666",
     fontSize: 12,
     marginTop: 4,
+  },
+  explorerButton: {
+    backgroundColor: "#1A1A1A",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: "center",
   },
 });

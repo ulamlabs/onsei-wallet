@@ -1,5 +1,6 @@
 import { Text } from "@/components";
-import { View, Image, StyleSheet } from "react-native";
+import Image from "@/components/Image";
+import { View, StyleSheet } from "react-native";
 import { Dimensions } from "react-native";
 
 const { width } = Dimensions.get("window");
@@ -8,7 +9,7 @@ export const CARD_MARGIN = 8;
 const CARD_WIDTH = Math.floor((width - CARD_MARGIN * 3) / 2);
 
 type BaseCardProps = {
-  image: string;
+  image: string | null;
   title: string;
   subtitle?: string;
   numColumns: number;
@@ -22,7 +23,7 @@ export default function Card({
 }: BaseCardProps) {
   return (
     <View style={[styles.card, numColumns === 1 && styles.fullWidthCard]}>
-      <Image source={{ uri: image }} style={styles.cardImage} />
+      <Image image={image} style={styles.cardImage} />
       <View style={styles.cardInfo}>
         <Text style={styles.cardTitle}>{title}</Text>
         {subtitle && <Text style={styles.cardSubtitle}>{subtitle}</Text>}
@@ -46,7 +47,6 @@ const styles = StyleSheet.create({
   },
   cardImage: {
     width: "100%",
-    // aspectRatio: 1,
     height: CARD_WIDTH,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,

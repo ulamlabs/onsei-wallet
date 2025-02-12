@@ -13,18 +13,21 @@ import Bar from "./bar/Bar";
 import DApps from "@/screens/dApps/DAppsScreen";
 import NFTsGallery from "@/screens/nftsGallery/NFTsGallery";
 import { View } from "react-native";
+import { useCodes } from "@/modules/nfts/api";
 
 export type BottomTabsParamList = {
   Wallet: undefined;
   DApps: undefined;
-  NFTs: undefined;
   Transactions: { address: string };
+  NFTs: undefined;
 };
 
 const { Navigator, Screen } =
   createMaterialTopTabNavigator<BottomTabsParamList>();
 
 export default function BottomBarsNavigation() {
+  useCodes(); // prefetch codes for nfts gallery
+
   return (
     <Navigator
       initialRouteName="Wallet"
@@ -54,15 +57,6 @@ export default function BottomBarsNavigation() {
         }}
       />
       <Screen
-        name="NFTs"
-        component={NFTsGallery}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <Gallery color={focused ? Colors.text : Colors.text100} />
-          ),
-        }}
-      />
-      <Screen
         name="Transactions"
         component={Transactions}
         options={{
@@ -70,6 +64,15 @@ export default function BottomBarsNavigation() {
             <ArrangeHorizontalSquare
               color={focused ? Colors.text : Colors.text100}
             />
+          ),
+        }}
+      />
+      <Screen
+        name="NFTs"
+        component={NFTsGallery}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Gallery color={focused ? Colors.text : Colors.text100} />
           ),
         }}
       />

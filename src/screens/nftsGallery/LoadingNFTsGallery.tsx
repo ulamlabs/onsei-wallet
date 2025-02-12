@@ -1,12 +1,17 @@
 import { Loader } from "@/components";
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import { View, StyleSheet } from "react-native";
 
-export default function LoadingNFTsGallery() {
+type LoadingNFTsGalleryProps = PropsWithChildren;
+
+export default function LoadingNFTsGallery({
+  children,
+}: LoadingNFTsGalleryProps) {
   return (
     <View style={styles.container}>
       <View style={styles.loaderContainer}>
         <Loader size="big" />
+        {children}
       </View>
     </View>
   );

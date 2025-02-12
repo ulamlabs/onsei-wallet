@@ -1,5 +1,5 @@
 import { Node } from "@/types";
-import { queryCW20 } from "./queryCW20";
+import { queryCW } from "./queryCW";
 import { CW20BalanceInfo } from "./types";
 
 export async function fetchCW20TokenBalance(
@@ -9,7 +9,7 @@ export async function fetchCW20TokenBalance(
 ): Promise<bigint> {
   try {
     const query = { balance: { address: accountAddress } };
-    const balanceInfo = await queryCW20<CW20BalanceInfo>(
+    const balanceInfo = await queryCW<CW20BalanceInfo>(
       contractAddress,
       query,
       node,
