@@ -1,29 +1,25 @@
 import { Text } from "@/components";
 import Image from "@/components/Image";
-import { View, StyleSheet } from "react-native";
-import { Dimensions } from "react-native";
-
-const { width } = Dimensions.get("window");
+import { View, StyleSheet, StyleProp, ImageStyle } from "react-native";
 
 export const CARD_MARGIN = 8;
-const CARD_WIDTH = Math.floor((width - CARD_MARGIN * 3) / 2);
 
 type BaseCardProps = {
   image: string | null;
   title: string;
   subtitle?: string;
-  numColumns: number;
+  imageStyle?: StyleProp<ImageStyle>;
 };
 
 export default function Card({
   image,
   title,
   subtitle,
-  numColumns,
+  imageStyle,
 }: BaseCardProps) {
   return (
-    <View style={[styles.card, numColumns === 1 && styles.fullWidthCard]}>
-      <Image image={image} style={styles.cardImage} />
+    <View style={[styles.card]}>
+      <Image image={image} style={[styles.cardImage, imageStyle]} />
       <View style={styles.cardInfo}>
         <Text style={styles.cardTitle}>{title}</Text>
         {subtitle && <Text style={styles.cardSubtitle}>{subtitle}</Text>}
@@ -36,23 +32,16 @@ const styles = StyleSheet.create({
   card: {
     flex: 1,
     margin: CARD_MARGIN,
-    backgroundColor: "#1a1a1a",
-    borderRadius: 12,
-    shadowColor: "#999",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
     overflow: "hidden",
   },
   cardImage: {
     width: "100%",
-    height: CARD_WIDTH,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
+    aspectRatio: 1,
+    borderRadius: 12,
+    backgroundColor: "#1a1a1a",
   },
   cardInfo: {
-    padding: 12,
+    paddingVertical: 12,
   },
   cardTitle: {
     fontSize: 16,
@@ -63,8 +52,5 @@ const styles = StyleSheet.create({
   cardSubtitle: {
     fontSize: 14,
     color: "#999",
-  },
-  fullWidthCard: {
-    width: width - CARD_MARGIN * 6,
   },
 });

@@ -1,9 +1,13 @@
-import { FlatList, StyleSheet, View, TouchableOpacity } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import { CARD_MARGIN } from "../../components/Card";
 import { Text } from "@/components";
 import React, { useMemo, useState } from "react";
-
-import { Dimensions } from "react-native";
 import Card from "../../components/Card";
 import pluralize from "@/utils/pluralize";
 import { useNavigation } from "@react-navigation/native";
@@ -13,8 +17,6 @@ import { useNFTsGalleryStore } from "@/store/nftsGallery";
 import { NFTInfo } from "@/modules/nfts/api";
 import { mapAttributesFromObject } from "./utils";
 
-const { width } = Dimensions.get("window");
-
 type Collection = {
   name: string;
   nfts: NFTInfo[];
@@ -23,10 +25,9 @@ type Collection = {
 
 type NFTsListProps = {
   nfts: NFTInfo[];
-  numColumns: number;
 };
 
-const NFTsList = ({ nfts, numColumns }: NFTsListProps) => {
+const NFTsList = ({ nfts }: NFTsListProps) => {
   const navigation = useNavigation<NavigationProp>();
 
   return (
@@ -38,9 +39,9 @@ const NFTsList = ({ nfts, numColumns }: NFTsListProps) => {
         </Text>
       </View>
       <FlatList
-        key={`${numColumns}-nfts`}
+        key="nfts"
         data={nfts}
-        numColumns={numColumns}
+        numColumns={2}
         scrollEnabled={false}
         contentContainerStyle={styles.container}
         keyExtractor={(item) => item.tokenId.toString()}
@@ -55,7 +56,9 @@ const NFTsList = ({ nfts, numColumns }: NFTsListProps) => {
                 image={image}
                 title={item.collection?.name || "Name unavailable"}
                 subtitle={`#${item.tokenId}`}
-                numColumns={numColumns}
+                imageStyle={{
+                  height: Dimensions.get("window").width / 2 - CARD_MARGIN * 4,
+                }}
               />
             </TouchableOpacity>
           );
@@ -65,13 +68,11 @@ const NFTsList = ({ nfts, numColumns }: NFTsListProps) => {
   );
 };
 
-const CollectionsList = ({
-  collections,
-  numColumns,
-}: {
+type CollectionsListProps = {
   collections: Collection[];
-  numColumns: number;
-}) => (
+};
+
+const CollectionsList = ({ collections }: CollectionsListProps) => (
   <View>
     <View style={styles.collectionsHeader}>
       <View />
@@ -80,9 +81,9 @@ const CollectionsList = ({
       </Text>
     </View>
     <FlatList
-      key={`${numColumns}-collections`}
+      key="collections"
       data={collections}
-      numColumns={numColumns}
+      numColumns={2}
       scrollEnabled={false}
       contentContainerStyle={styles.container}
       keyExtractor={(item) => item.name}
@@ -91,7 +92,9 @@ const CollectionsList = ({
           image={item.firstNftImage}
           title={item.name}
           subtitle={pluralize(item.nfts.length, "NFT")}
-          numColumns={numColumns}
+          imageStyle={{
+            height: Dimensions.get("window").width / 2 - CARD_MARGIN * 4,
+          }}
         />
       )}
     />
@@ -107,7 +110,6 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
     "all",
   );
   const [searchQuery, setSearchQuery] = useState("");
-  const numColumns = width < 480 ? 1 : 2;
 
   const filteredNFTs = useMemo(() => {
     const query = searchQuery.toLowerCase();
@@ -213,9 +215,9 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
       </View>
 
       {activeFilter === "all" ? (
-        <NFTsList nfts={filteredNFTs} numColumns={numColumns} />
+        <NFTsList nfts={filteredNFTs} />
       ) : (
-        <CollectionsList collections={collections} numColumns={numColumns} />
+        <CollectionsList collections={collections} />
       )}
     </View>
   );
