@@ -37,7 +37,7 @@ export default function NFTDetailsScreen({
   const isHidden = isNFTHidden(nft.tokenId);
   const { error } = useToastStore();
   const invalidateNFTs = useInvalidateNFTs();
-  const [isImageError, setIsImageError] = useState(true);
+  const [isImageValid, setIsImageValid] = useState<boolean | null>(null);
 
   const name = nft.tokenMetadata.name || nft.info.extension?.name;
   const description =
@@ -88,20 +88,19 @@ export default function NFTDetailsScreen({
       <Image
         image={image}
         style={styles.image}
-        isError={isImageError}
+        isError={!isImageValid}
         onError={() => {
-          // TODO: change the state logic
-          setIsImageError(true);
+          setIsImageValid(false);
         }}
         onLoad={() => {
-          setIsImageError(false);
+          setIsImageValid(true);
         }}
       />
 
       <View style={styles.content}>
         <View style={styles.titleRow}>
           <Text style={styles.title}>{formatNFTName(name)}</Text>
-          {image && !isImageError && (
+          {image && isImageValid && (
             <TouchableOpacity
               style={styles.actionButton}
               onPress={handleSetAvatar}

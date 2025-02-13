@@ -17,13 +17,13 @@ export default function Image({
   onError,
   onLoad,
 }: ImageProps) {
-  const [hasError, setHasError] = useState(false);
+  const [isValid, setIsValid] = useState<boolean | null>(null);
 
   const handleError = () => {
     if (onError) {
       onError();
     } else {
-      setHasError(true);
+      setIsValid(false);
     }
   };
 
@@ -31,11 +31,13 @@ export default function Image({
     if (onLoad) {
       onLoad();
     } else {
-      setHasError(false);
+      setIsValid(true);
     }
   };
 
-  return image && (!hasError || !isError) ? (
+  const shouldShowImage = image && (isValid || isValid === null || !isError);
+
+  return shouldShowImage ? (
     <RNImage
       source={{ uri: getHttpUrl(image) }}
       style={style}
