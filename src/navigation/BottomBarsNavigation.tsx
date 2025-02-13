@@ -6,7 +6,7 @@ import {
   ArrangeHorizontalSquare,
   Global,
   Wallet2,
-  Gallery,
+  FlashCircle,
 } from "iconsax-react-native";
 import React from "react";
 import Bar from "./bar/Bar";
@@ -72,7 +72,7 @@ export default function BottomBarsNavigation() {
         component={NFTsGallery}
         options={{
           tabBarIcon: ({ focused }) => (
-            <Gallery color={focused ? Colors.text : Colors.text100} />
+            <FlashCircle color={focused ? Colors.text : Colors.text100} />
           ),
         }}
       />
