@@ -7,19 +7,21 @@ import {
 } from "react-native";
 import { Text } from "@/components";
 import { CARD_MARGIN } from "@/components/Card";
-import { NavigationProp, NavigatorParamsList } from "@/types";
+import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useSettingsStore, useToastStore } from "@/store";
 import { useNFTsGalleryStore } from "@/store/nftsGallery";
-import { useNavigation } from "@react-navigation/native";
 import { getHttpUrl, useInvalidateNFTs } from "@/modules/nfts/api";
 import {
   formatNFTName,
+  getAccountExplorerURL,
   getTokenExplorerURL,
   mapAttributesFromObject,
 } from "./utils";
 import { useState } from "react";
 import Image from "../../components/Image";
+import { trimAddress } from "@/utils";
+
 type NFTDetailsScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
   "NFTDetails"
@@ -33,8 +35,7 @@ export default function NFTDetailsScreen({
   const { setSetting } = useSettingsStore();
   const { isNFTHidden, hideNFT, showNFT } = useNFTsGalleryStore();
   const isHidden = isNFTHidden(nft.tokenId);
-  const { info, error } = useToastStore();
-  const navigation = useNavigation<NavigationProp>();
+  const { error } = useToastStore();
   const invalidateNFTs = useInvalidateNFTs();
   const [isImageError, setIsImageError] = useState(true);
 
@@ -67,16 +68,16 @@ export default function NFTDetailsScreen({
   };
 
   const handleCreatorPress = () => {
-    if (nft.creatorProfile) {
-      navigation.navigate("CreatorProfile", { profile: nft.creatorProfile });
+    if (nft.minterAddress) {
+      Linking.openURL(getAccountExplorerURL(nft.minterAddress));
     } else {
-      error({ description: "Creator profile not available" });
+      error({ description: "Creator address not available" });
     }
   };
 
   const handleOpenOwnershipHistory = () => {
-    if (nft.collection_address) {
-      Linking.openURL(getTokenExplorerURL(nft.collection_address));
+    if (nft.collectionAddress) {
+      Linking.openURL(getTokenExplorerURL(nft.collectionAddress));
     } else {
       error({ description: "Collection address not available" });
     }
@@ -113,18 +114,16 @@ export default function NFTDetailsScreen({
           {nft.collection?.name || "Collection name unavailable"}
         </Text>
 
-        {nft.creatorProfile?.name && (
+        {nft.minterAddress && (
           <TouchableOpacity
             onPress={handleCreatorPress}
-            disabled={!nft.creatorProfile?.name}
+            disabled={!nft.minterAddress}
           >
-            <Text
-              style={[
-                styles.creator,
-                !!nft.creatorProfile?.name && styles.creatorLink,
-              ]}
-            >
-              Created by {nft.creatorProfile?.name}
+            <Text style={styles.creator}>
+              Created by{" "}
+              <Text style={styles.creatorLink}>
+                {trimAddress(nft.minterAddress)}
+              </Text>
             </Text>
           </TouchableOpacity>
         )}
@@ -157,7 +156,7 @@ export default function NFTDetailsScreen({
           </View>
         )}
 
-        {nft.collection_address && (
+        {nft.collectionAddress && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Ownership History</Text>
             <TouchableOpacity
@@ -179,8 +178,7 @@ export default function NFTDetailsScreen({
               </Text>
               <Text style={styles.royaltyAddress}>
                 Recipient:{" "}
-                {nft.info.extension?.royalty_payment_address.slice(0, 8)}...
-                {nft.info.extension?.royalty_payment_address.slice(-8)}
+                {trimAddress(nft.info.extension?.royalty_payment_address)}
               </Text>
             </View>
           </View>
@@ -193,13 +191,6 @@ export default function NFTDetailsScreen({
           <Text style={styles.actionButtonText}>
             {isHidden ? "Show in gallery" : "Hide from gallery"}
           </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.bottomButton, styles.marketplaceButton]}
-          onPress={() => info({ description: "Coming soon" })}
-        >
-          <Text style={styles.actionButtonText}>View on Marketplace</Text>
         </TouchableOpacity>
       </View>
       <View style={{ margin: 16 }} />

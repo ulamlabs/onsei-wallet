@@ -10,18 +10,9 @@ import {
   CW721Ownership,
   CW721AllTokenInfo,
   CW721Tokens,
+  CW721Minter,
 } from "@/services/cosmos";
 import { isValidUrl } from "@/utils/isValidUrl";
-
-export type CreatorProfile = {
-  name: string;
-  description?: string;
-  avatar?: string;
-  website?: string;
-  twitter?: string;
-  collections?: string[];
-  totalNFTs?: number;
-};
 
 export type TokenAttribute = {
   trait_type: string;
@@ -45,10 +36,9 @@ const defaultMetadata = {
 export type NFTInfo = {
   tokenId: string;
   ownership: CW721Ownership;
-  //   TODO: how to get creator profile?
-  creatorProfile?: CreatorProfile;
-  collection_address?: string;
-  collection?: {
+  minterAddress: string;
+  collectionAddress: string;
+  collection: {
     name: string;
     symbol: string;
   };
@@ -157,13 +147,17 @@ export async function queryNFTsByOwner(
     const ownershipQuery = {
       ownership: {},
     };
+    const minterQuery = {
+      minter: {},
+    };
 
-    const [tokensResult, contractInfo, numTokens, ownership] =
+    const [tokensResult, contractInfo, numTokens, ownership, minterResult] =
       await Promise.all([
         queryCW<CW721Tokens>(contractAddress, tokensQuery, node),
         queryCW<CW721ContractInfo>(contractAddress, contractInfoQuery, node),
         queryCW<CW721NumTokens>(contractAddress, numTokensQuery, node),
         queryCW<CW721Ownership>(contractAddress, ownershipQuery, node),
+        queryCW<CW721Minter>(contractAddress, minterQuery, node),
       ]);
 
     const nftInfoPromises = tokensResult.tokens.map<Promise<NFTInfo>>(
@@ -174,25 +168,27 @@ export async function queryNFTsByOwner(
           },
         };
 
-        const info = await queryCW<CW721AllTokenInfo>(
+        const allTokenInfo = await queryCW<CW721AllTokenInfo>(
           contractAddress,
           allInfoQuery,
           node,
         );
 
         const tokenMetadata = await fetchTokenMetadata(
-          info.info.token_uri,
+          allTokenInfo.info.token_uri,
           tokenId,
         );
 
         return {
           tokenId,
+          minterAddress: minterResult.minter,
+          collectionAddress: contractAddress,
           collection: contractInfo,
           numTokens,
           ownership,
           tokenMetadata,
-          access: info.access,
-          info: info.info,
+          access: allTokenInfo.access,
+          info: allTokenInfo.info,
         };
       },
     );

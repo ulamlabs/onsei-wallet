@@ -5,6 +5,12 @@ export function trimAddress(
   if (!address) {
     return "";
   }
+
+  const totalCut = options.prefixCut + options.suffixCut;
+  if (address.length <= totalCut) {
+    return address;
+  }
+
   return (
     address.slice(0, options.prefixCut) +
     "...." +

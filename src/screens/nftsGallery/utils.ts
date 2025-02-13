@@ -37,3 +37,8 @@ export function getTokenExplorerURL(collectionAddress: string) {
   const baseUrl = getExplorerBaseUrl();
   return `https://${baseUrl}/tokens/${collectionAddress}?tab=transfers`;
 }
+
+export function getAccountExplorerURL(accountAddress: string) {
+  const baseUrl = getExplorerBaseUrl();
+  return `https://${baseUrl}/account/${accountAddress}`;
+}

@@ -66,3 +66,7 @@ export type CW721OwnerOf = {
   owner: string;
   approvals: unknown[];
 };
+
+export type CW721Minter = {
+  minter: string;
+};
