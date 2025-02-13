@@ -1,3 +1,4 @@
+import { APP_HORIZONTAL_PADDING } from "@/const";
 import { useToastStore } from "@/store";
 import { Colors } from "@/styles";
 import { scale, verticalScale } from "@/utils";
@@ -37,8 +38,8 @@ export default function SafeLayout({
     minHeight: "100%",
     paddingTop: verticalScale(24), // No need for insets at the top, beacuse header handles it
     paddingBottom: Math.max(verticalScale(50), insets.bottom),
-    paddingLeft: Math.max(scale(16), insets.left),
-    paddingRight: Math.max(scale(16), insets.right),
+    paddingLeft: Math.max(scale(APP_HORIZONTAL_PADDING), insets.left),
+    paddingRight: Math.max(scale(APP_HORIZONTAL_PADDING), insets.right),
   };
   const { error } = useToastStore();
   const navigation = useNavigation();

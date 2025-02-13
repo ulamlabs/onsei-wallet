@@ -1,9 +1,8 @@
 import { Text } from "@/components";
 import Image from "@/components/Image";
+import { Colors, FontSizes, FontWeights } from "@/styles";
 import { ReactNode } from "react";
 import { View, StyleSheet, StyleProp, ImageStyle } from "react-native";
-
-export const CARD_MARGIN = 8;
 
 type CardProps = {
   imageSrc: string | null;
@@ -52,26 +51,30 @@ export function BasicCardSubtitle({ subtitle }: BasicCardSubtitleProps) {
 const styles = StyleSheet.create({
   card: {
     flex: 1,
-    margin: CARD_MARGIN,
     overflow: "hidden",
   },
   cardImage: {
     width: "100%",
     aspectRatio: 1,
     borderRadius: 12,
-    backgroundColor: "#1a1a1a",
+    backgroundColor: Colors.tokenBoxBackground,
   },
   cardInfo: {
-    paddingVertical: 12,
+    paddingVertical: 8,
   },
   cardTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#fff",
+    fontSize: FontSizes.base,
+    color: Colors.text,
     marginBottom: 4,
+    fontFamily: FontWeights.bold,
+    lineHeight: 19.2,
+    letterSpacing: 0,
   },
   cardSubtitle: {
-    fontSize: 14,
-    color: "#999",
+    fontSize: FontSizes.sm,
+    color: Colors.text100,
+    fontFamily: FontWeights.regular,
+    lineHeight: 21,
+    letterSpacing: 0,
   },
 });

@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-import { CARD_MARGIN } from "../../components/Card";
 import { Text } from "@/components";
 import React, { useMemo, useState } from "react";
 import Card from "../../components/Card";
@@ -16,6 +15,8 @@ import SearchInput from "@/components/forms/SearchInput";
 import { useNFTsGalleryStore } from "@/store/nftsGallery";
 import { NFTInfo, useCollectionInfo } from "@/modules/nfts/api";
 import { mapAttributesFromObject } from "./utils";
+import { Colors, FontSizes, FontWeights } from "@/styles";
+import { APP_HORIZONTAL_PADDING } from "@/const";
 
 const UNKNOWN_COLLECTION_ADDRESS = "Uncategorized";
 
@@ -23,32 +24,6 @@ type Collection = {
   address: string;
   nfts: NFTInfo[];
   firstNftImage: string | null;
-};
-
-type NFTsListProps = {
-  nfts: NFTInfo[];
-};
-
-const NFTsList = ({ nfts }: NFTsListProps) => {
-  return (
-    <View>
-      <View style={styles.collectionsHeader}>
-        <View />
-        <Text style={styles.collectionCount}>
-          {pluralize(nfts.length, "NFT")}
-        </Text>
-      </View>
-      <FlatList
-        key="nfts"
-        data={nfts}
-        numColumns={2}
-        scrollEnabled={false}
-        contentContainerStyle={styles.container}
-        keyExtractor={(item) => item.tokenId.toString()}
-        renderItem={({ item }) => <NFTGalleryCard nft={item} />}
-      />
-    </View>
-  );
 };
 
 function formatCollectionName(
@@ -64,9 +39,17 @@ function formatTokenId(tokenId: string) {
   return `#${tokenId}`;
 }
 
+function formatAllFilterTag(count: number) {
+  return `All (${count})`;
+}
+
 type NFTGalleryCardProps = {
   nft: NFTInfo;
 };
+
+const CARDS_GAP = 16;
+const cardSize =
+  (Dimensions.get("window").width - CARDS_GAP - 2 * APP_HORIZONTAL_PADDING) / 2;
 
 function NFTGalleryCard({ nft }: NFTGalleryCardProps) {
   const navigation = useNavigation<NavigationProp>();
@@ -85,38 +68,13 @@ function NFTGalleryCard({ nft }: NFTGalleryCardProps) {
         )}
         subtitle={formatTokenId(nft.tokenId)}
         imageStyle={{
-          height: Dimensions.get("window").width / 2 - CARD_MARGIN * 4,
+          height: cardSize,
+          borderRadius: 18,
         }}
       />
     </TouchableOpacity>
   );
 }
-
-type CollectionsListProps = {
-  collections: Collection[];
-};
-
-const CollectionsList = ({ collections }: CollectionsListProps) => {
-  return (
-    <View>
-      <View style={styles.collectionsHeader}>
-        <View />
-        <Text style={styles.collectionCount}>
-          {pluralize(collections.length, "Collection")}
-        </Text>
-      </View>
-      <FlatList
-        key="collections"
-        data={collections}
-        numColumns={2}
-        scrollEnabled={false}
-        contentContainerStyle={styles.container}
-        keyExtractor={(item) => item.address}
-        renderItem={({ item }) => <CollectionCard collection={item} />}
-      />
-    </View>
-  );
-};
 
 type CollectionCardProps = {
   collection: Collection;
@@ -134,7 +92,8 @@ function CollectionCard({ collection }: CollectionCardProps) {
       )}
       subtitle={pluralize(collection.nfts.length, "NFT")}
       imageStyle={{
-        height: Dimensions.get("window").width / 2 - CARD_MARGIN * 4,
+        height: cardSize,
+        borderRadius: 18,
       }}
     />
   );
@@ -215,10 +174,6 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
         value={searchQuery}
         onChangeText={setSearchQuery}
         placeholder="Search NFTs, collections, attributes..."
-        containerStyle={{
-          marginBottom: CARD_MARGIN,
-          paddingHorizontal: CARD_MARGIN,
-        }}
       />
 
       <View style={styles.filterContainer}>
@@ -235,7 +190,7 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
               activeFilter === "all" && styles.activeFilterText,
             ]}
           >
-            All
+            {formatAllFilterTag(filteredNFTs.length)}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -257,9 +212,27 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
       </View>
 
       {activeFilter === "all" ? (
-        <NFTsList nfts={filteredNFTs} />
+        <FlatList
+          key="nfts"
+          data={filteredNFTs}
+          numColumns={2}
+          scrollEnabled={false}
+          contentContainerStyle={styles.flatList}
+          keyExtractor={(item) => item.tokenId}
+          renderItem={({ item }) => <NFTGalleryCard nft={item} />}
+          columnWrapperStyle={styles.columnWrapper}
+        />
       ) : (
-        <CollectionsList collections={collections} />
+        <FlatList
+          key="collections"
+          data={collections}
+          numColumns={2}
+          scrollEnabled={false}
+          contentContainerStyle={styles.flatList}
+          keyExtractor={(item) => item.address}
+          renderItem={({ item }) => <CollectionCard collection={item} />}
+          columnWrapperStyle={styles.columnWrapper}
+        />
       )}
     </View>
   );
@@ -267,50 +240,40 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
 
 const styles = StyleSheet.create({
   container: {
-    padding: CARD_MARGIN,
+    paddingVertical: 8,
     paddingHorizontal: 0,
   },
   filterContainer: {
     flexDirection: "row",
-    paddingHorizontal: CARD_MARGIN,
-    marginBottom: 8,
-    marginTop: 16,
+    marginTop: 32,
+    gap: 8,
   },
   filterButton: {
-    paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 20,
-    marginRight: 8,
+    paddingHorizontal: 16,
+    borderRadius: 18,
+    backgroundColor: Colors.background,
+    borderColor: Colors.inputBorderColor,
+    borderWidth: 1,
   },
   activeFilter: {
-    backgroundColor: "#fff",
+    borderColor: Colors.markerBackground,
   },
   filterText: {
-    color: "#999",
-    fontSize: 14,
+    color: Colors.text100,
+    fontFamily: FontWeights.regular,
+    fontSize: FontSizes.sm,
+    letterSpacing: 0,
+    lineHeight: 21,
   },
   activeFilterText: {
-    color: "#000",
+    color: Colors.text,
   },
-  collectionsHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: CARD_MARGIN,
-    marginBottom: 12,
+  flatList: {
+    gap: CARDS_GAP,
+    marginTop: 32,
   },
-  seiTag: {
-    backgroundColor: "#1A1A1A",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 16,
-    marginRight: 8,
-  },
-  seiTagText: {
-    color: "#FFFFFF",
-    fontSize: 12,
-  },
-  collectionCount: {
-    fontSize: 14,
+  columnWrapper: {
+    gap: CARDS_GAP,
   },
 });

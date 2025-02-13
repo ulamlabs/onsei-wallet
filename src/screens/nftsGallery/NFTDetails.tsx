@@ -6,7 +6,6 @@ import {
   Linking,
 } from "react-native";
 import { Text } from "@/components";
-import { CARD_MARGIN } from "@/components/Card";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useSettingsStore, useToastStore } from "@/store";
@@ -213,7 +212,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#1A1A1A",
   },
   content: {
-    padding: CARD_MARGIN,
+    padding: 8,
   },
   titleRow: {
     flexDirection: "row",
