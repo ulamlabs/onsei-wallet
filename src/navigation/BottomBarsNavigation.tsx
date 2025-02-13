@@ -17,17 +17,6 @@ export type BottomTabsParamList = {
   Transactions: { address: string };
 };
 
-// import { ArrangeHorizontalSquare, Global, Wallet2 } from "iconsax-react-native";
-// import React from "react";
-// import Bar from "./bar/Bar";
-// import AddressBook, {
-//   AddressBookNavParams,
-// } from "@/screens/addressBook/AddressBookScreen";
-
-// export type BottomTabsParamList = {
-//   Wallet: undefined;
-//   "Address Book": AddressBookNavParams;
-
 const { Navigator, Screen } =
   createMaterialTopTabNavigator<BottomTabsParamList>();
 
