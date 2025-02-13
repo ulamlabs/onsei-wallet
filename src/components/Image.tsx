@@ -3,7 +3,7 @@ import { useState } from "react";
 import { View, Image as RNImage, ImageStyle, StyleProp } from "react-native";
 
 type ImageProps = {
-  image: string | null;
+  src: string | null;
   style?: StyleProp<ImageStyle>;
   isError?: boolean;
   onError?: () => void;
@@ -11,7 +11,7 @@ type ImageProps = {
 };
 
 export default function Image({
-  image,
+  src,
   style,
   isError,
   onError,
@@ -35,11 +35,11 @@ export default function Image({
     }
   };
 
-  const shouldShowImage = image && (isValid || isValid === null || !isError);
+  const shouldShowImage = src && (isValid || isValid === null || !isError);
 
   return shouldShowImage ? (
     <RNImage
-      source={{ uri: getHttpUrl(image) }}
+      source={{ uri: getHttpUrl(src) }}
       style={style}
       onError={handleError}
       onLoad={handleLoad}

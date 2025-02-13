@@ -121,12 +121,10 @@ async function queryCollectionMinter(collectionAddress: string, node: Node) {
   const minterQuery = {
     minter: {},
   };
-  return queryCW<CW721Minter>(
-    collectionAddress,
-    minterQuery,
+  return queryCW<CW721Minter>(collectionAddress, minterQuery, {
     node,
-    "Error querying NFT minter",
-  );
+    errorMessage: "Error querying NFT minter",
+  });
 }
 
 export function getCollectionMinterQueryKey(
@@ -152,12 +150,10 @@ async function queryCollectionNumTokens(contractAddress: string, node: Node) {
   const numTokensQuery = {
     num_tokens: {},
   };
-  return queryCW<CW721NumTokens>(
-    contractAddress,
-    numTokensQuery,
+  return queryCW<CW721NumTokens>(contractAddress, numTokensQuery, {
     node,
-    "Error querying NFT collection num tokens",
-  );
+    errorMessage: "Error querying NFT collection num tokens",
+  });
 }
 
 export function getCollectionNumTokensQueryKey(
@@ -183,12 +179,10 @@ async function queryCollectionInfo(collectionAddress: string, node: Node) {
   const contractInfoQuery = {
     contract_info: {},
   };
-  return queryCW<CW721CollectionInfo>(
-    collectionAddress,
-    contractInfoQuery,
+  return queryCW<CW721CollectionInfo>(collectionAddress, contractInfoQuery, {
     node,
-    "Error querying NFT collection info",
-  );
+    errorMessage: "Error querying NFT collection info",
+  });
 }
 
 export function getCollectionInfoQueryKey(
@@ -220,12 +214,10 @@ async function queryTokenInfo(
       token_id: tokenId,
     },
   };
-  return queryCW<CW721AllTokenInfo>(
-    collectionAddress,
-    allInfoQuery,
+  return queryCW<CW721AllTokenInfo>(collectionAddress, allInfoQuery, {
     node,
-    "Error querying NFT all token info",
-  );
+    errorMessage: "Error querying NFT all token info",
+  });
 }
 
 export function getTokenInfoQueryKey(
@@ -290,7 +282,7 @@ export async function queryCollectionTokens(
     const { tokens } = await queryCW<CW721Tokens>(
       contractAddress,
       tokensQuery,
-      node,
+      { node, errorMessage: "Error querying NFT tokens" },
     );
 
     const nftInfoPromises = tokens.map<Promise<NFTInfo>>(
@@ -304,7 +296,7 @@ export async function queryCollectionTokens(
         const allTokenInfo = await queryCW<CW721AllTokenInfo>(
           contractAddress,
           allInfoQuery,
-          node,
+          { node, errorMessage: "Error querying NFT all token info" },
         );
 
         const tokenMetadata = await fetchTokenMetadata(

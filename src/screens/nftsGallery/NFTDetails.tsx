@@ -53,15 +53,15 @@ export default function NFTDetailsScreen({
     nft.tokenMetadata?.description ||
     extensionInfo?.description ||
     "No description available";
-  const image = nft.tokenMetadata?.image || extensionInfo?.image || null;
+  const imageSrc = nft.tokenMetadata?.image || extensionInfo?.image || null;
 
   const attributes = mapAttributesFromObject(
     nft.tokenMetadata?.attributes || extensionInfo?.attributes,
   );
 
   const handleSetAvatar = () => {
-    if (image) {
-      setSetting("avatar", getHttpUrl(image));
+    if (imageSrc) {
+      setSetting("avatar", getHttpUrl(imageSrc));
     } else {
       error({ description: "Image not available" });
     }
@@ -95,7 +95,7 @@ export default function NFTDetailsScreen({
   return (
     <ScrollView style={styles.container}>
       <Image
-        image={image}
+        src={imageSrc}
         style={styles.image}
         isError={!isImageValid}
         onError={() => {
@@ -109,7 +109,7 @@ export default function NFTDetailsScreen({
       <View style={styles.content}>
         <View style={styles.titleRow}>
           <Text style={styles.title}>{formatNFTName(name)}</Text>
-          {image && isImageValid && (
+          {imageSrc && isImageValid && (
             <TouchableOpacity
               style={styles.actionButton}
               onPress={handleSetAvatar}
@@ -137,9 +137,6 @@ export default function NFTDetailsScreen({
         )}
 
         <View style={styles.idRow}>
-          <View style={styles.seiTag}>
-            <Text style={styles.seiTagText}>Sei</Text>
-          </View>
           <Text style={styles.idText}>ID: {nft.tokenId}</Text>
         </View>
 
@@ -239,16 +236,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#999",
     marginBottom: 16,
-  },
-  seiTag: {
-    backgroundColor: "#1A1A1A",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 16,
-  },
-  seiTagText: {
-    color: "#FFFFFF",
-    fontSize: 12,
   },
   idRow: {
     flexDirection: "row",

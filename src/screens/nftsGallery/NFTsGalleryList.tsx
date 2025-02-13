@@ -51,6 +51,19 @@ const NFTsList = ({ nfts }: NFTsListProps) => {
   );
 };
 
+function formatCollectionName(
+  collectionAddress: string,
+  collectionName: string | undefined,
+) {
+  return collectionAddress === UNKNOWN_COLLECTION_ADDRESS
+    ? "Uncategorized"
+    : collectionName || "Unknown collection";
+}
+
+function formatTokenId(tokenId: string) {
+  return `#${tokenId}`;
+}
+
 type NFTGalleryCardProps = {
   nft: NFTInfo;
 };
@@ -59,19 +72,18 @@ function NFTGalleryCard({ nft }: NFTGalleryCardProps) {
   const navigation = useNavigation<NavigationProp>();
   const image = nft.tokenMetadata?.image || nft.info.extension?.image || null;
   const collection = useCollectionInfo(nft.collectionAddress);
-  const title =
-    nft.collectionAddress === UNKNOWN_COLLECTION_ADDRESS
-      ? "Uncategorized"
-      : collection.data?.name || "Name unavailable";
 
   return (
     <TouchableOpacity
       onPress={() => navigation.navigate("NFTDetails", { nft })}
     >
       <Card
-        image={image}
-        title={title}
-        subtitle={`#${nft.tokenId}`}
+        imageSrc={image}
+        title={formatCollectionName(
+          nft.collectionAddress,
+          collection.data?.name,
+        )}
+        subtitle={formatTokenId(nft.tokenId)}
         imageStyle={{
           height: Dimensions.get("window").width / 2 - CARD_MARGIN * 4,
         }}
@@ -115,8 +127,11 @@ function CollectionCard({ collection }: CollectionCardProps) {
 
   return (
     <Card
-      image={collection.firstNftImage}
-      title={collectionInfo.data?.name || "Name unavailable"}
+      imageSrc={collection.firstNftImage}
+      title={formatCollectionName(
+        collection.address,
+        collectionInfo.data?.name,
+      )}
       subtitle={pluralize(collection.nfts.length, "NFT")}
       imageStyle={{
         height: Dimensions.get("window").width / 2 - CARD_MARGIN * 4,
