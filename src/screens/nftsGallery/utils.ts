@@ -2,7 +2,7 @@ import { TokenAttribute } from "@/modules/nfts/api";
 import { useSettingsStore } from "@/store";
 
 export function mapAttributesFromObject(
-  attributes: Record<string, string> | TokenAttribute[] | null,
+  attributes: Record<string, string> | TokenAttribute[] | null | undefined,
 ) {
   if (!attributes) {
     return [];

@@ -14,11 +14,13 @@ import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "@/types";
 import SearchInput from "@/components/forms/SearchInput";
 import { useNFTsGalleryStore } from "@/store/nftsGallery";
-import { NFTInfo } from "@/modules/nfts/api";
+import { NFTInfo, useCollectionInfo } from "@/modules/nfts/api";
 import { mapAttributesFromObject } from "./utils";
 
+const UNKNOWN_COLLECTION_ADDRESS = "Uncategorized";
+
 type Collection = {
-  name: string;
+  address: string;
   nfts: NFTInfo[];
   firstNftImage: string | null;
 };
@@ -28,8 +30,6 @@ type NFTsListProps = {
 };
 
 const NFTsList = ({ nfts }: NFTsListProps) => {
-  const navigation = useNavigation<NavigationProp>();
-
   return (
     <View>
       <View style={styles.collectionsHeader}>
@@ -45,61 +45,85 @@ const NFTsList = ({ nfts }: NFTsListProps) => {
         scrollEnabled={false}
         contentContainerStyle={styles.container}
         keyExtractor={(item) => item.tokenId.toString()}
-        renderItem={({ item }) => {
-          const image = item.tokenMetadata.image || item.info.extension?.image;
-
-          return (
-            <TouchableOpacity
-              onPress={() => navigation.navigate("NFTDetails", { nft: item })}
-            >
-              <Card
-                image={image}
-                title={item.collection?.name || "Name unavailable"}
-                subtitle={`#${item.tokenId}`}
-                imageStyle={{
-                  height: Dimensions.get("window").width / 2 - CARD_MARGIN * 4,
-                }}
-              />
-            </TouchableOpacity>
-          );
-        }}
+        renderItem={({ item }) => <NFTGalleryCard nft={item} />}
       />
     </View>
   );
 };
 
+type NFTGalleryCardProps = {
+  nft: NFTInfo;
+};
+
+function NFTGalleryCard({ nft }: NFTGalleryCardProps) {
+  const navigation = useNavigation<NavigationProp>();
+  const image = nft.tokenMetadata?.image || nft.info.extension?.image || null;
+  const collection = useCollectionInfo(nft.collectionAddress);
+  const title =
+    nft.collectionAddress === UNKNOWN_COLLECTION_ADDRESS
+      ? "Uncategorized"
+      : collection.data?.name || "Name unavailable";
+
+  return (
+    <TouchableOpacity
+      onPress={() => navigation.navigate("NFTDetails", { nft })}
+    >
+      <Card
+        image={image}
+        title={title}
+        subtitle={`#${nft.tokenId}`}
+        imageStyle={{
+          height: Dimensions.get("window").width / 2 - CARD_MARGIN * 4,
+        }}
+      />
+    </TouchableOpacity>
+  );
+}
+
 type CollectionsListProps = {
   collections: Collection[];
 };
 
-const CollectionsList = ({ collections }: CollectionsListProps) => (
-  <View>
-    <View style={styles.collectionsHeader}>
-      <View />
-      <Text style={styles.collectionCount}>
-        {pluralize(collections.length, "Collection")}
-      </Text>
+const CollectionsList = ({ collections }: CollectionsListProps) => {
+  return (
+    <View>
+      <View style={styles.collectionsHeader}>
+        <View />
+        <Text style={styles.collectionCount}>
+          {pluralize(collections.length, "Collection")}
+        </Text>
+      </View>
+      <FlatList
+        key="collections"
+        data={collections}
+        numColumns={2}
+        scrollEnabled={false}
+        contentContainerStyle={styles.container}
+        keyExtractor={(item) => item.address}
+        renderItem={({ item }) => <CollectionCard collection={item} />}
+      />
     </View>
-    <FlatList
-      key="collections"
-      data={collections}
-      numColumns={2}
-      scrollEnabled={false}
-      contentContainerStyle={styles.container}
-      keyExtractor={(item) => item.name}
-      renderItem={({ item }) => (
-        <Card
-          image={item.firstNftImage}
-          title={item.name}
-          subtitle={pluralize(item.nfts.length, "NFT")}
-          imageStyle={{
-            height: Dimensions.get("window").width / 2 - CARD_MARGIN * 4,
-          }}
-        />
-      )}
+  );
+};
+
+type CollectionCardProps = {
+  collection: Collection;
+};
+
+function CollectionCard({ collection }: CollectionCardProps) {
+  const collectionInfo = useCollectionInfo(collection.address);
+
+  return (
+    <Card
+      image={collection.firstNftImage}
+      title={collectionInfo.data?.name || "Name unavailable"}
+      subtitle={pluralize(collection.nfts.length, "NFT")}
+      imageStyle={{
+        height: Dimensions.get("window").width / 2 - CARD_MARGIN * 4,
+      }}
     />
-  </View>
-);
+  );
+}
 
 type NFTsGalleryListProps = {
   nfts: NFTInfo[];
@@ -123,7 +147,9 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
       );
 
       const matchesName = name?.toLowerCase().includes(query);
-      const matchesCollection = (nft.collection?.name || "Uncategorized")
+      const matchesCollection = (
+        nft.collectionAddress || UNKNOWN_COLLECTION_ADDRESS
+      )
         .toLowerCase()
         .includes(query);
       const matchesAttributes = attributes?.some(
@@ -136,20 +162,21 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
     });
   }, [nfts, searchQuery, isNFTHidden, hiddenNFTs]);
 
-  const collections = useMemo(() => {
+  const collections: Collection[] = useMemo(() => {
     const grouped = filteredNFTs.reduce<Record<string, typeof filteredNFTs>>(
       (acc, nft) => {
-        const collectionName = nft.collection?.name || "Uncategorized";
-        if (!acc[collectionName]) {
-          acc[collectionName] = [];
+        const collectionAddress =
+          nft.collectionAddress || UNKNOWN_COLLECTION_ADDRESS;
+        if (!acc[collectionAddress]) {
+          acc[collectionAddress] = [];
         }
-        acc[collectionName].push(nft);
+        acc[collectionAddress].push(nft);
         return acc;
       },
       {},
     );
 
-    return Object.entries(grouped).map(([name, nfts]) => {
+    return Object.entries(grouped).map(([address, nfts]) => {
       const images = nfts.filter(
         (nft) =>
           !isNFTHidden(nft.tokenId) &&
@@ -160,7 +187,7 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
         images[0]?.tokenMetadata.image || images[0]?.info.extension?.image;
 
       return {
-        name,
+        address,
         nfts,
         firstNftImage,
       };

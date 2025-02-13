@@ -5,9 +5,8 @@ import { LONG_STALE_TIME } from "@/modules/query/consts";
 import { getCosmWasmClient } from "@sei-js/cosmjs";
 import { getCWClient, queryCW } from "@/services/cosmos/query/queryCW";
 import {
-  CW721ContractInfo,
+  CW721CollectionInfo,
   CW721NumTokens,
-  CW721Ownership,
   CW721AllTokenInfo,
   CW721Tokens,
   CW721Minter,
@@ -35,13 +34,7 @@ const defaultMetadata = {
 
 export type NFTInfo = {
   tokenId: string;
-  ownership: CW721Ownership;
-  minterAddress: string;
   collectionAddress: string;
-  collection: {
-    name: string;
-    symbol: string;
-  };
   tokenMetadata: TokenMetadata;
 } & CW721AllTokenInfo;
 
@@ -76,10 +69,10 @@ export function getHttpUrl(uri: string): string {
 }
 
 async function fetchTokenMetadata(
-  uri: string,
+  uri: string | undefined,
   tokenId?: string,
 ): Promise<TokenMetadata> {
-  if (!isValidUrl(uri)) {
+  if (!uri || !isValidUrl(uri)) {
     return defaultMetadata;
   }
 
@@ -124,7 +117,162 @@ async function fetchTokenMetadata(
   }
 }
 
-export async function queryNFTsByOwner(
+async function queryCollectionMinter(collectionAddress: string, node: Node) {
+  const minterQuery = {
+    minter: {},
+  };
+  return queryCW<CW721Minter>(
+    collectionAddress,
+    minterQuery,
+    node,
+    "Error querying NFT minter",
+  );
+}
+
+export function getCollectionMinterQueryKey(
+  collectionAddress: string,
+  node: Node,
+) {
+  return ["nftCollectionMinter", collectionAddress, node];
+}
+
+export function useCollectionMinter(collectionAddress: string) {
+  const {
+    settings: { node },
+  } = useSettingsStore();
+  return useQuery({
+    queryKey: getCollectionMinterQueryKey(collectionAddress, node),
+    queryFn: () => queryCollectionMinter(collectionAddress, node),
+    enabled: !!collectionAddress && !!node,
+    staleTime: LONG_STALE_TIME,
+  });
+}
+
+async function queryCollectionNumTokens(contractAddress: string, node: Node) {
+  const numTokensQuery = {
+    num_tokens: {},
+  };
+  return queryCW<CW721NumTokens>(
+    contractAddress,
+    numTokensQuery,
+    node,
+    "Error querying NFT collection num tokens",
+  );
+}
+
+export function getCollectionNumTokensQueryKey(
+  collectionAddress: string,
+  node: Node,
+) {
+  return ["collectionNumTokens", collectionAddress, node];
+}
+
+export function useCollectionNumTokens(collectionAddress: string) {
+  const {
+    settings: { node },
+  } = useSettingsStore();
+  return useQuery({
+    queryKey: getCollectionNumTokensQueryKey(collectionAddress, node),
+    queryFn: () => queryCollectionNumTokens(collectionAddress, node),
+    enabled: !!collectionAddress && !!node,
+    staleTime: LONG_STALE_TIME,
+  });
+}
+
+async function queryCollectionInfo(collectionAddress: string, node: Node) {
+  const contractInfoQuery = {
+    contract_info: {},
+  };
+  return queryCW<CW721CollectionInfo>(
+    collectionAddress,
+    contractInfoQuery,
+    node,
+    "Error querying NFT collection info",
+  );
+}
+
+export function getCollectionInfoQueryKey(
+  collectionAddress: string,
+  node: Node,
+) {
+  return ["collectionInfo", collectionAddress, node];
+}
+
+export function useCollectionInfo(collectionAddress: string) {
+  const {
+    settings: { node },
+  } = useSettingsStore();
+  return useQuery({
+    queryKey: getCollectionInfoQueryKey(collectionAddress, node),
+    queryFn: () => queryCollectionInfo(collectionAddress, node),
+    enabled: !!collectionAddress && !!node,
+    staleTime: LONG_STALE_TIME,
+  });
+}
+
+async function queryTokenInfo(
+  collectionAddress: string,
+  tokenId: string,
+  node: Node,
+) {
+  const allInfoQuery = {
+    all_nft_info: {
+      token_id: tokenId,
+    },
+  };
+  return queryCW<CW721AllTokenInfo>(
+    collectionAddress,
+    allInfoQuery,
+    node,
+    "Error querying NFT all token info",
+  );
+}
+
+export function getTokenInfoQueryKey(
+  collectionAddress: string,
+  tokenId: string,
+  node: Node,
+) {
+  return ["tokenInfo", collectionAddress, tokenId, node];
+}
+
+export function useTokenInfo(collectionAddress: string, tokenId: string) {
+  const {
+    settings: { node },
+  } = useSettingsStore();
+  return useQuery({
+    queryKey: getTokenInfoQueryKey(collectionAddress, tokenId, node),
+    queryFn: () => queryTokenInfo(collectionAddress, tokenId, node),
+    enabled: !!collectionAddress && !!tokenId && !!node,
+    staleTime: LONG_STALE_TIME,
+  });
+}
+
+export function getTokenMetadataQueryKey(
+  collectionAddress: string,
+  tokenId: string,
+  node: Node,
+) {
+  return ["tokenMetadata", collectionAddress, tokenId, node];
+}
+
+export function useTokenMetadata(
+  collectionAddress: string,
+  tokenUri: string | undefined,
+  tokenId: string,
+) {
+  const {
+    settings: { node },
+  } = useSettingsStore();
+  return useQuery({
+    queryKey: getTokenMetadataQueryKey(collectionAddress, tokenId, node),
+    queryFn: () => fetchTokenMetadata(tokenUri, tokenId),
+    enabled: !!collectionAddress && !!tokenUri && !!tokenId && !!node,
+    staleTime: LONG_STALE_TIME,
+  });
+}
+
+export async function queryCollectionTokens(
   contractAddress: string,
   ownerAddress: string,
   node: Node,
@@ -138,29 +286,14 @@ export async function queryNFTsByOwner(
         limit: 30,
       },
     };
-    const contractInfoQuery = {
-      contract_info: {},
-    };
-    const numTokensQuery = {
-      num_tokens: {},
-    };
-    const ownershipQuery = {
-      ownership: {},
-    };
-    const minterQuery = {
-      minter: {},
-    };
 
-    const [tokensResult, contractInfo, numTokens, ownership, minterResult] =
-      await Promise.all([
-        queryCW<CW721Tokens>(contractAddress, tokensQuery, node),
-        queryCW<CW721ContractInfo>(contractAddress, contractInfoQuery, node),
-        queryCW<CW721NumTokens>(contractAddress, numTokensQuery, node),
-        queryCW<CW721Ownership>(contractAddress, ownershipQuery, node),
-        queryCW<CW721Minter>(contractAddress, minterQuery, node),
-      ]);
+    const { tokens } = await queryCW<CW721Tokens>(
+      contractAddress,
+      tokensQuery,
+      node,
+    );
 
-    const nftInfoPromises = tokensResult.tokens.map<Promise<NFTInfo>>(
+    const nftInfoPromises = tokens.map<Promise<NFTInfo>>(
       async (tokenId: string) => {
         const allInfoQuery = {
           all_nft_info: {
@@ -181,11 +314,7 @@ export async function queryNFTsByOwner(
 
         return {
           tokenId,
-          minterAddress: minterResult.minter,
           collectionAddress: contractAddress,
-          collection: contractInfo,
-          numTokens,
-          ownership,
           tokenMetadata,
           access: allTokenInfo.access,
           info: allTokenInfo.info,
@@ -195,8 +324,8 @@ export async function queryNFTsByOwner(
 
     return (await Promise.all(nftInfoPromises)).flat();
   } catch (error) {
-    console.error("Failed to query NFTs:", error);
-    throw new Error("Failed to query NFTs");
+    console.error("Failed to query collection tokens:", error);
+    throw new Error("Failed to query collection tokens");
   }
 }
 
@@ -212,16 +341,7 @@ export async function queryAllNFTsByOwner(
   try {
     const contractQueries = contractAddresses.map(async (contractAddress) => {
       try {
-        const nfts = await queryNFTsByOwner(
-          contractAddress,
-          ownerAddress,
-          node,
-        );
-
-        return nfts.map((nft) => ({
-          ...nft,
-          collection: nft.collection,
-        }));
+        return await queryCollectionTokens(contractAddress, ownerAddress, node);
       } catch (error) {
         console.error(`Error querying contract ${contractAddress}:`, error);
         return [];
@@ -260,7 +380,6 @@ export async function fetchCW721Contracts(
 ): Promise<Contracts> {
   try {
     const client = await getCWClient(node);
-
     return await client.getContracts(codeId);
   } catch (error) {
     console.error(`Failed to fetch contracts for code ${codeId}:`, error);

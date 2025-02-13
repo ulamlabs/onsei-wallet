@@ -22,21 +22,13 @@ export type CW721Tokens = {
   tokens: string[];
 };
 
-export type CW721ContractInfo = {
+export type CW721CollectionInfo = {
   name: string;
   symbol: string;
 };
 
 export type CW721NumTokens = {
   count: number;
-};
-
-export type CW721Ownership = {
-  collection_ownership: {
-    owner: string;
-    pending_expiry: string | null;
-    pending_owner: string | null;
-  }[];
 };
 
 export type CW721AllTokenInfo = {

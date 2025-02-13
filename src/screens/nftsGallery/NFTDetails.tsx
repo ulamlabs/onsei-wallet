@@ -11,7 +11,12 @@ import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useSettingsStore, useToastStore } from "@/store";
 import { useNFTsGalleryStore } from "@/store/nftsGallery";
-import { getHttpUrl, useInvalidateNFTs } from "@/modules/nfts/api";
+import {
+  getHttpUrl,
+  useInvalidateNFTs,
+  useCollectionMinter,
+  useCollectionInfo,
+} from "@/modules/nfts/api";
 import {
   formatNFTName,
   getAccountExplorerURL,
@@ -38,16 +43,20 @@ export default function NFTDetailsScreen({
   const { error } = useToastStore();
   const invalidateNFTs = useInvalidateNFTs();
   const [isImageValid, setIsImageValid] = useState<boolean | null>(null);
+  const collectionMinter = useCollectionMinter(nft.collectionAddress);
+  const minterAddress = collectionMinter.data?.minter;
 
-  const name = nft.tokenMetadata.name || nft.info.extension?.name;
+  const collection = useCollectionInfo(nft.collectionAddress);
+  const extensionInfo = nft.info.extension;
+  const name = nft.tokenMetadata?.name || extensionInfo?.name;
   const description =
-    nft.tokenMetadata.description ||
-    nft.info.extension?.description ||
+    nft.tokenMetadata?.description ||
+    extensionInfo?.description ||
     "No description available";
-  const image = nft.tokenMetadata.image || nft.info.extension?.image;
+  const image = nft.tokenMetadata?.image || extensionInfo?.image || null;
 
   const attributes = mapAttributesFromObject(
-    nft.tokenMetadata.attributes || nft.info.extension?.attributes,
+    nft.tokenMetadata?.attributes || extensionInfo?.attributes,
   );
 
   const handleSetAvatar = () => {
@@ -68,8 +77,8 @@ export default function NFTDetailsScreen({
   };
 
   const handleCreatorPress = () => {
-    if (nft.minterAddress) {
-      Linking.openURL(getAccountExplorerURL(nft.minterAddress));
+    if (minterAddress) {
+      Linking.openURL(getAccountExplorerURL(minterAddress));
     } else {
       error({ description: "Creator address not available" });
     }
@@ -110,18 +119,18 @@ export default function NFTDetailsScreen({
           )}
         </View>
         <Text style={styles.collection}>
-          {nft.collection?.name || "Collection name unavailable"}
+          {collection.data?.name || "Collection name unavailable"}
         </Text>
 
-        {nft.minterAddress && (
+        {minterAddress && (
           <TouchableOpacity
             onPress={handleCreatorPress}
-            disabled={!nft.minterAddress}
+            disabled={!minterAddress}
           >
             <Text style={styles.creator}>
               Created by{" "}
               <Text style={styles.creatorLink}>
-                {trimAddress(nft.minterAddress)}
+                {trimAddress(minterAddress)}
               </Text>
             </Text>
           </TouchableOpacity>
@@ -167,17 +176,16 @@ export default function NFTDetailsScreen({
           </View>
         )}
 
-        {nft.info.extension?.royalty_percentage && (
+        {extensionInfo?.royalty_percentage && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Royalties</Text>
             <View style={styles.royaltyContainer}>
               <Text style={styles.description}>
-                {nft.info.extension?.royalty_percentage}% of secondary sales go
-                to creator
+                {extensionInfo?.royalty_percentage}% of secondary sales go to
+                creator
               </Text>
               <Text style={styles.royaltyAddress}>
-                Recipient:{" "}
-                {trimAddress(nft.info.extension?.royalty_payment_address)}
+                Recipient: {trimAddress(extensionInfo?.royalty_payment_address)}
               </Text>
             </View>
           </View>
