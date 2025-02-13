@@ -89,7 +89,7 @@ export default function TransactionDetails({
               <Text
                 style={{
                   fontFamily: FontWeights.bold,
-                  fontSize: FontSizes["2xl"],
+                  fontSize: FontSizes["3xl"],
                   color:
                     txn.status === "success" ? Colors.text : Colors.danger100,
                 }}

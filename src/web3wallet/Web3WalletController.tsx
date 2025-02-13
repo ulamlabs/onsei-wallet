@@ -111,7 +111,7 @@ export default function Web3WalletController() {
           />
           <Text
             style={{
-              fontSize: FontSizes.xl,
+              fontSize: FontSizes["2xl"],
               fontFamily: FontWeights.bold,
               textAlign: "center",
             }}
@@ -337,5 +337,5 @@ export default function Web3WalletController() {
     setRequestEvent(null);
   }
 
-  return <></>;
+  return null;
 }

@@ -1,5 +1,6 @@
 import { Text } from "@/components";
-import { Tag } from "iconsax-react-native";
+import { Colors, FontSizes, FontWeights } from "@/styles";
+import { SearchNormal } from "iconsax-react-native";
 import React from "react";
 import { View, StyleSheet } from "react-native";
 
@@ -8,9 +9,9 @@ export default function EmptyNFTsGallery() {
     <View style={styles.container}>
       <View style={styles.emptyStateContainer}>
         <View style={styles.iconContainer}>
-          <Tag size={32} color="#FFFFFF" />
+          <SearchNormal size={64} color={Colors.text400} />
         </View>
-        <Text style={styles.title}>No NFTs collected</Text>
+        <Text style={styles.title}>No NFT collected</Text>
         <Text style={styles.subtitle}>Your assets will appear here</Text>
       </View>
     </View>
@@ -30,19 +31,25 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: "#333333",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 16,
   },
   title: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: "#FFFFFF",
+    fontSize: FontSizes.lg,
+    fontFamily: FontWeights.bold,
+    color: Colors.text400,
     marginBottom: 8,
+    lineHeight: 24,
+    letterSpacing: 0,
+    textAlign: "center",
   },
   subtitle: {
-    fontSize: 16,
-    color: "#999999",
+    fontSize: FontSizes.sm,
+    color: Colors.text400,
+    fontFamily: FontWeights.regular,
+    lineHeight: 21,
+    textAlign: "center",
+    letterSpacing: 0,
   },
 });
