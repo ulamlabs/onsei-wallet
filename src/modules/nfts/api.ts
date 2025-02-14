@@ -12,6 +12,7 @@ import {
   CW721Minter,
 } from "@/services/cosmos";
 import { isValidUrl } from "@/utils/isValidUrl";
+import { loadFromStorage, saveToStorage } from "@/utils";
 
 export type TokenAttribute = {
   trait_type: string;
@@ -51,7 +52,13 @@ function getCodeIdsByOwner(
   return codeIds.map((code) => code.id);
 }
 
-async function getContractAddressesByCodeIds(codeIds: number[], node: Node) {
+async function getContractAddressesByCodeIds(
+  codeIds: number[] | undefined,
+  node: Node,
+) {
+  if (!codeIds) {
+    return [];
+  }
   const contractAddresses = [];
   for (const codeId of codeIds) {
     const contracts = await fetchCW721Contracts(codeId, node);
@@ -60,7 +67,7 @@ async function getContractAddressesByCodeIds(codeIds: number[], node: Node) {
   return contractAddresses;
 }
 
-export function getHttpUrl(uri: string): string {
+export function formatIpfsToHttpUrl(uri: string): string {
   if (uri.startsWith("ipfs://")) {
     const ipfsHash = uri.replace("ipfs://", "");
     return `https://ipfs.io/ipfs/${ipfsHash}`;
@@ -77,7 +84,7 @@ async function fetchTokenMetadata(
   }
 
   try {
-    const httpUrl = getHttpUrl(uri);
+    const httpUrl = formatIpfsToHttpUrl(uri);
 
     try {
       const metadataResponse = await fetch(httpUrl);
@@ -390,7 +397,7 @@ export function useCodes() {
   return useQuery({
     queryKey: getCodesQueryKey(node),
     queryFn: () => fetchAllCodes(node),
-    staleTime: LONG_STALE_TIME,
+    staleTime: Infinity,
   });
 }
 
@@ -407,6 +414,7 @@ export function useNFTs() {
   const {
     settings: { node },
   } = useSettingsStore();
+  const activeAccountCodeIdsQuery = useActiveAccountCodeIds();
   const codesQuery = useCodes();
   const contractAddressesQuery = useContractAddresses();
   const nfts = useQuery({
@@ -421,10 +429,14 @@ export function useNFTs() {
         activeAccount?.address,
         node,
       ),
-    enabled: !!activeAccount?.address && !!contractAddressesQuery.data,
+    enabled:
+      !!activeAccount?.address &&
+      !!contractAddressesQuery.data &&
+      !!activeAccountCodeIdsQuery.data,
   });
   return {
     codesQuery,
+    activeAccountCodeIdsQuery,
     contractAddressesQuery,
     nfts,
   };
@@ -449,10 +461,51 @@ export function useInvalidateNFTs() {
 
 function getContractAddressesQueryKey(
   activeAccountAddress: Account["address"] | undefined,
-  codeIds: number[],
+  codeIds: number[] | undefined,
   node: Node,
 ) {
   return ["contractAddresses", activeAccountAddress, codeIds, node];
+}
+
+async function fetchActiveAccountCodeIds(
+  activeAccountAddress: Account["address"] | undefined,
+  codes: Codes | undefined,
+) {
+  const storedCodeIds = await loadFromStorage<number[]>("codeIds", []);
+
+  if (!codes) {
+    return storedCodeIds;
+  }
+  const currentCodeIds = getCodeIdsByOwner(codes, activeAccountAddress);
+  await saveToStorage("codeIds", currentCodeIds);
+
+  return currentCodeIds;
+}
+
+function getActiveAccountCodeIdsQueryKey(
+  activeAccountAddress: Account["address"] | undefined,
+  codes: Codes | undefined,
+  node: Node,
+) {
+  return ["activeAccountCodeIds", activeAccountAddress, codes, node];
+}
+
+export function useActiveAccountCodeIds() {
+  const { activeAccount } = useAccountsStore();
+  const {
+    settings: { node },
+  } = useSettingsStore();
+  const codes = useCodes();
+  return useQuery({
+    queryKey: getActiveAccountCodeIdsQueryKey(
+      activeAccount?.address,
+      codes.data,
+      node,
+    ),
+    queryFn: () =>
+      fetchActiveAccountCodeIds(activeAccount?.address, codes.data),
+    enabled: !!activeAccount?.address && !!node,
+  });
 }
 
 function useContractAddresses() {
@@ -460,16 +513,16 @@ function useContractAddresses() {
   const {
     settings: { node },
   } = useSettingsStore();
-  const codes = useCodes();
-  const codeIds = getCodeIdsByOwner(codes.data, activeAccount?.address);
+  const activeAccountCodeIds = useActiveAccountCodeIds();
   const contractAddresses = useQuery({
     queryKey: getContractAddressesQueryKey(
       activeAccount?.address,
-      codeIds,
+      activeAccountCodeIds.data,
       node,
     ),
-    queryFn: () => getContractAddressesByCodeIds(codeIds, node),
-    enabled: !!activeAccount?.address && !!codeIds,
+    queryFn: () =>
+      getContractAddressesByCodeIds(activeAccountCodeIds.data, node),
+    enabled: !!activeAccount?.address && !!activeAccountCodeIds.data && !!node,
     staleTime: LONG_STALE_TIME,
   });
   return contractAddresses;

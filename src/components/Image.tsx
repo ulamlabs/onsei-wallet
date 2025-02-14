@@ -1,4 +1,4 @@
-import { getHttpUrl } from "@/modules/nfts/api";
+import { formatIpfsToHttpUrl } from "@/modules/nfts/api";
 import { useState } from "react";
 import { View, Image as RNImage, ImageStyle, StyleProp } from "react-native";
 
@@ -39,7 +39,7 @@ export default function Image({
 
   return shouldShowImage ? (
     <RNImage
-      source={{ uri: getHttpUrl(src) }}
+      source={{ uri: formatIpfsToHttpUrl(src) }}
       style={style}
       onError={handleError}
       onLoad={handleLoad}

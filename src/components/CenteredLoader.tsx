@@ -2,15 +2,20 @@ import { Loader } from "@/components";
 import React, { PropsWithChildren } from "react";
 import { View, StyleSheet } from "react-native";
 
-type LoadingNFTsGalleryProps = PropsWithChildren;
+type LoaderSizes = Parameters<typeof Loader>[0]["size"];
 
-export default function LoadingNFTsGallery({
+type CenteredLoaderProps = PropsWithChildren<{
+  size?: LoaderSizes;
+}>;
+
+export default function CenteredLoader({
   children,
-}: LoadingNFTsGalleryProps) {
+  size = "base",
+}: CenteredLoaderProps) {
   return (
     <View style={styles.container}>
       <View style={styles.loaderContainer}>
-        <Loader size="big" />
+        <Loader size={size} />
         {children}
       </View>
     </View>

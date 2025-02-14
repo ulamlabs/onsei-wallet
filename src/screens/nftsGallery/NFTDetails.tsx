@@ -11,7 +11,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useSettingsStore, useToastStore } from "@/store";
 import { useNFTsGalleryStore } from "@/store/nftsGallery";
 import {
-  getHttpUrl,
+  formatIpfsToHttpUrl,
   useInvalidateNFTs,
   useCollectionMinter,
   useCollectionInfo,
@@ -60,7 +60,7 @@ export default function NFTDetailsScreen({
 
   const handleSetAvatar = () => {
     if (imageSrc) {
-      setSetting("avatar", getHttpUrl(imageSrc));
+      setSetting("avatar", formatIpfsToHttpUrl(imageSrc));
     } else {
       error({ description: "Image not available" });
     }

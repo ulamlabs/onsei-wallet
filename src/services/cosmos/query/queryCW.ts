@@ -8,7 +8,7 @@ export async function getCWClient(node: Node) {
 
 type QueryCWOptions = {
   node: Node;
-  errorMessage?: string;
+  errorMessage?: string | ((error: any) => string);
 };
 
 export async function queryCW<T>(
@@ -24,6 +24,10 @@ export async function queryCW<T>(
     if (message.includes("Query failed")) {
       throw Error("Not a valid CW token");
     }
-    throw Error(options.errorMessage ?? "Failed to query token data");
+    throw Error(
+      typeof options.errorMessage === "function"
+        ? options.errorMessage(error)
+        : options.errorMessage ?? "Failed to query token data",
+    );
   }
 }

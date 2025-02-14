@@ -2,7 +2,7 @@ import { SafeLayout, Text } from "@/components";
 import DashboardHeader from "@/navigation/header/DashboardHeader";
 import DefaultHeaderTitle from "@/navigation/header/DefaultHeaderTitle";
 import EmptyNFTsGallery from "./EmptyNFTsGallery";
-import LoadingNFTsGallery from "./LoadingNFTsGallery";
+import CenteredLoader from "../../components/CenteredLoader";
 import NFTsGalleryList from "./NFTsGalleryList";
 import { useNFTs } from "@/modules/nfts/api";
 import ErrorNFTsGallery from "./ErrorNFTsGallery";
@@ -25,24 +25,43 @@ export default function NFTsGallery() {
 }
 
 function NFTGalleryStates() {
-  const { nfts, contractAddressesQuery, codesQuery } = useNFTs();
+  const {
+    nfts,
+    contractAddressesQuery,
+    codesQuery,
+    activeAccountCodeIdsQuery,
+  } = useNFTs();
+
+  const isLoadingCodes =
+    codesQuery.isLoading &&
+    !activeAccountCodeIdsQuery.isLoading &&
+    !activeAccountCodeIdsQuery.data?.length;
 
   if (
     nfts.isLoading ||
     contractAddressesQuery.isLoading ||
-    codesQuery.isLoading
+    activeAccountCodeIdsQuery.isLoading ||
+    isLoadingCodes
   ) {
     return (
-      <LoadingNFTsGallery>
-        {codesQuery.isLoading && (
+      <CenteredLoader size="big">
+        {
           <Text style={styles.loadingText}>
-            Collecting data. This may take a while...
+            {isLoadingCodes
+              ? "Collecting data. This may take a while..."
+              : // leave white space to avoid layout shift
+                "  "}
           </Text>
-        )}
-      </LoadingNFTsGallery>
+        }
+      </CenteredLoader>
     );
   }
-  if (nfts.isError || contractAddressesQuery.isError || codesQuery.isError) {
+  if (
+    nfts.isError ||
+    contractAddressesQuery.isError ||
+    codesQuery.isError ||
+    activeAccountCodeIdsQuery.isError
+  ) {
     return <ErrorNFTsGallery />;
   }
   if (nfts.isSuccess && nfts.data?.length === 0) {
