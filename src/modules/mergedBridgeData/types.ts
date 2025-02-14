@@ -1,4 +1,4 @@
-export type BridgeEnum = "Skip" | "Squid";
+export type BridgeEnum = "Skip" | "Squid" | "Symbiosis";
 
 export type ChainId = string;
 export type AssetId = string; // chain id and asset address concatenated with "-", for native tokens (e.g. ETH on Ethereum) special address is used
@@ -20,6 +20,7 @@ export type MergedAsset = {
   name: string;
   skipDenom?: string;
   squidAddress?: string;
+  symbiosisAddress?: string;
   symbol: string;
 };
 

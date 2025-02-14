@@ -1,10 +1,12 @@
 import { SkipChain } from "@/modules/skipApi/types";
 import { SquidChain } from "@/modules/squidApi/types";
 import { ChainId, MergedChain } from "./types";
+import { SymbiosisChain } from "@/modules/symbiosisApi/types";
 
 export const mergedChains = (
   skipChains: SkipChain[],
   squidChains: SquidChain[],
+  symbiosisChains: SymbiosisChain[],
 ) => {
   const result = new Map<ChainId, MergedChain>();
 
@@ -28,6 +30,21 @@ export const mergedChains = (
         chainId: chainId,
         chainName: chain.chainName,
         bridges: ["Squid"],
+      });
+    }
+  });
+
+  symbiosisChains.forEach((chain) => {
+    const chainId = chain.id.toString();
+    const foundChain = result.get(chainId);
+    if (foundChain) {
+      foundChain.bridges.push("Symbiosis");
+    } else {
+      result.set(chainId, {
+        chainIconUri: chain.icon,
+        chainId: chainId,
+        chainName: chain.name,
+        bridges: ["Symbiosis"],
       });
     }
   });
