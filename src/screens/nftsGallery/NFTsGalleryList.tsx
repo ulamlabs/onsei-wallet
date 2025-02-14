@@ -6,7 +6,7 @@ import {
   Dimensions,
 } from "react-native";
 import { Text } from "@/components";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Card from "../../components/Card";
 import pluralize from "@/utils/pluralize";
 import { useNavigation } from "@react-navigation/native";
@@ -17,6 +17,7 @@ import { NFTInfo, useCollectionInfo } from "@/modules/nfts/api";
 import { mapAttributesFromObject } from "./utils";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { APP_HORIZONTAL_PADDING } from "@/const";
+import { Skeleton } from "@/components/Skeleton";
 
 const UNKNOWN_COLLECTION_ADDRESS = "Uncategorized";
 
@@ -62,10 +63,13 @@ function NFTGalleryCard({ nft }: NFTGalleryCardProps) {
     >
       <Card
         imageSrc={image}
-        title={formatCollectionName(
-          nft.collectionAddress,
-          collection.data?.name,
-        )}
+        title={
+          collection.isLoading ? (
+            <Skeleton width={100} height={20} />
+          ) : (
+            formatCollectionName(nft.collectionAddress, collection.data?.name)
+          )
+        }
         subtitle={formatTokenId(nft.tokenId)}
         imageStyle={{
           height: cardSize,
@@ -86,10 +90,13 @@ function CollectionCard({ collection }: CollectionCardProps) {
   return (
     <Card
       imageSrc={collection.firstNftImage}
-      title={formatCollectionName(
-        collection.address,
-        collectionInfo.data?.name,
-      )}
+      title={
+        collectionInfo.isLoading ? (
+          <Skeleton width={100} height={20} />
+        ) : (
+          formatCollectionName(collection.address, collectionInfo.data?.name)
+        )
+      }
       subtitle={pluralize(collection.nfts.length, "NFT")}
       imageStyle={{
         height: cardSize,

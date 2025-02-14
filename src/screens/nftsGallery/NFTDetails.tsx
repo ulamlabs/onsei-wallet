@@ -25,6 +25,7 @@ import {
 import { useState } from "react";
 import Image from "../../components/Image";
 import { trimAddress } from "@/utils";
+import { Skeleton } from "@/components/Skeleton";
 
 type NFTDetailsScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -117,22 +118,30 @@ export default function NFTDetailsScreen({
             </TouchableOpacity>
           )}
         </View>
-        <Text style={styles.collection}>
-          {collection.data?.name || "Collection name unavailable"}
-        </Text>
+        {collection.isLoading ? (
+          <Skeleton width={150} height={20} style={styles.collection} />
+        ) : (
+          <Text style={styles.collection}>
+            {collection.data?.name || "Collection name unavailable"}
+          </Text>
+        )}
 
-        {minterAddress && (
-          <TouchableOpacity
-            onPress={handleCreatorPress}
-            disabled={!minterAddress}
-          >
-            <Text style={styles.creator}>
-              Created by{" "}
-              <Text style={styles.creatorLink}>
-                {trimAddress(minterAddress)}
+        {collectionMinter.isLoading ? (
+          <Skeleton width={250} height={20} style={styles.creator} />
+        ) : (
+          minterAddress && (
+            <TouchableOpacity
+              onPress={handleCreatorPress}
+              disabled={!minterAddress}
+            >
+              <Text style={styles.creator}>
+                Created by{" "}
+                <Text style={styles.creatorLink}>
+                  {trimAddress(minterAddress)}
+                </Text>
               </Text>
-            </Text>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          )
         )}
 
         <View style={styles.idRow}>
