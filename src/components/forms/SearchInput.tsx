@@ -1,4 +1,3 @@
-import { Colors } from "@/styles";
 import { SearchNormal1 } from "iconsax-react-native";
 import TextInput from "./TextInput";
 import { StyleProp, ViewStyle } from "react-native";
@@ -13,7 +12,7 @@ type SearchInputProps = {
 export default function SearchInput({
   value,
   onChangeText,
-  placeholder = "Szukaj...",
+  placeholder = "Search...",
   containerStyle,
 }: SearchInputProps) {
   return (
@@ -24,10 +23,6 @@ export default function SearchInput({
       icon={SearchNormal1}
       showClear={true}
       containerStyle={containerStyle}
-      style={{
-        backgroundColor: Colors.background200,
-        borderWidth: 0,
-      }}
     />
   );
 }

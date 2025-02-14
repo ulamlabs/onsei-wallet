@@ -5,8 +5,8 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-import { Text } from "@/components";
-import React, { useEffect, useMemo, useState } from "react";
+import { IconButton, Text } from "@/components";
+import React, { useMemo, useRef, useEffect, useState } from "react";
 import Card from "../../components/Card";
 import pluralize from "@/utils/pluralize";
 import { useNavigation } from "@react-navigation/native";
@@ -18,6 +18,8 @@ import { mapAttributesFromObject } from "./utils";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { APP_HORIZONTAL_PADDING } from "@/const";
 import { Skeleton } from "@/components/Skeleton";
+import { Sort } from "iconsax-react-native";
+import { Portal } from "react-native-paper";
 
 const UNKNOWN_COLLECTION_ADDRESS = "Uncategorized";
 
@@ -106,15 +108,114 @@ function CollectionCard({ collection }: CollectionCardProps) {
   );
 }
 
+type SortOption =
+  | "newest"
+  | "oldest"
+  | "highest-value"
+  | "lowest-value"
+  | "collections";
+
+function SortDropdown({
+  visible,
+  onClose,
+  onSort,
+  buttonRef,
+}: {
+  visible: boolean;
+  onClose: () => void;
+  onSort: (option: SortOption) => void;
+  buttonRef: React.RefObject<View>;
+}) {
+  const [activeSort, setActiveSort] = useState<SortOption>("newest");
+  const [dropdownLayout, setDropdownLayout] = useState({
+    x: 0,
+    y: 0,
+    width: 0,
+  });
+
+  useEffect(() => {
+    if (visible && buttonRef.current) {
+      buttonRef.current.measureInWindow((x, y, width, height) => {
+        setDropdownLayout({ x, y: y + height + 10, width });
+      });
+    }
+  }, [visible, buttonRef]);
+
+  const options: Array<{ label: string; value: SortOption }> = [
+    { label: "Newest", value: "newest" },
+    { label: "Oldest", value: "oldest" },
+    { label: "Highest Value", value: "highest-value" },
+    { label: "Lowest Value", value: "lowest-value" },
+    { label: "Collections", value: "collections" },
+  ];
+
+  if (!visible) return null;
+
+  return (
+    <Portal>
+      <TouchableOpacity
+        style={styles.overlay}
+        activeOpacity={1}
+        onPress={onClose}
+      >
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={(e) => e.stopPropagation()}
+        >
+          <View
+            style={[
+              styles.dropdownContainer,
+              {
+                position: "absolute",
+                top: dropdownLayout.y,
+                right: APP_HORIZONTAL_PADDING,
+              },
+            ]}
+          >
+            {options.map((option) => {
+              const isActive = activeSort === option.value;
+              return (
+                <TouchableOpacity
+                  key={option.value}
+                  style={styles.dropdownItem}
+                  onPress={() => {
+                    setActiveSort(option.value);
+                    onSort(option.value);
+                    onClose();
+                  }}
+                >
+                  <Text
+                    style={[
+                      styles.dropdownText,
+                      {
+                        color: isActive ? Colors.markerBackground : Colors.text,
+                      },
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </TouchableOpacity>
+      </TouchableOpacity>
+    </Portal>
+  );
+}
+
 type NFTsGalleryListProps = {
   nfts: NFTInfo[];
 };
+
 export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
   const { isNFTHidden, hiddenNFTs } = useNFTsGalleryStore();
   const [activeFilter, setActiveFilter] = useState<"all" | "collections">(
     "all",
   );
   const [searchQuery, setSearchQuery] = useState("");
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
+  const buttonRef = useRef<View>(null);
 
   const filteredNFTs = useMemo(() => {
     const query = searchQuery.toLowerCase();
@@ -175,13 +276,35 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
     });
   }, [filteredNFTs]);
 
+  function handleSort(option: SortOption) {
+    console.log(option);
+  }
+
   return (
     <View>
-      <SearchInput
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        placeholder="Search NFTs, collections, attributes..."
-      />
+      <View style={styles.searchContainer}>
+        <SearchInput
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholder="Search by name, collection or attributes..."
+          containerStyle={styles.searchInput}
+        />
+        <View ref={buttonRef}>
+          <IconButton
+            icon={Sort}
+            onPress={() => setShowSortDropdown(!showSortDropdown)}
+            style={styles.sortButton}
+            iconSize={FontSizes.base}
+            iconColor={Colors.text100}
+          />
+          <SortDropdown
+            visible={showSortDropdown}
+            onClose={() => setShowSortDropdown(false)}
+            onSort={handleSort}
+            buttonRef={buttonRef}
+          />
+        </View>
+      </View>
 
       <View style={styles.filterContainer}>
         <TouchableOpacity
@@ -282,5 +405,58 @@ const styles = StyleSheet.create({
   },
   columnWrapper: {
     gap: CARDS_GAP,
+  },
+  searchContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 8,
+  },
+  searchInput: {
+    flex: 1,
+    height: 48,
+  },
+  sortButton: {
+    borderWidth: 1,
+    backgroundColor: Colors.background100,
+    borderColor: Colors.inputBorderColor,
+    borderRadius: 18,
+    padding: 16,
+    height: 48,
+    width: 48,
+  },
+  dropdownContainer: {
+    backgroundColor: Colors.background100,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: Colors.inputBorderColor,
+    minWidth: 150,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  dropdownItem: {
+    paddingVertical: 20,
+    paddingHorizontal: 24,
+  },
+  dropdownText: {
+    color: Colors.text,
+    fontSize: FontSizes.base,
+    fontFamily: FontWeights.bold,
+    textAlign: "right",
+    lineHeight: 24,
+    letterSpacing: 0,
+  },
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
 });
