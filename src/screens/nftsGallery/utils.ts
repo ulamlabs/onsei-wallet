@@ -1,4 +1,4 @@
-import { TokenAttribute } from "@/modules/nfts/api";
+import { NFTInfo, TokenAttribute } from "@/modules/nfts/api";
 import { useSettingsStore } from "@/store";
 
 export function mapAttributesFromObject(
@@ -41,4 +41,22 @@ export function getTokenExplorerURL(collectionAddress: string) {
 export function getAccountExplorerURL(accountAddress: string) {
   const baseUrl = getExplorerBaseUrl();
   return `https://${baseUrl}/account/${accountAddress}`;
+}
+
+export function formatTokenId(tokenId: string) {
+  return `#${tokenId}`;
+}
+
+export function getNFTImage(nft: NFTInfo): string | null {
+  return nft.tokenMetadata.image || nft.info.extension?.image;
+}
+
+export function getNFTName(nft: NFTInfo): string | null {
+  return nft.tokenMetadata.name || nft.info.extension?.name;
+}
+
+export function getNFTAttributes(nft: NFTInfo): TokenAttribute[] {
+  return mapAttributesFromObject(
+    nft.tokenMetadata.attributes || nft.info.extension?.attributes,
+  );
 }

@@ -1,90 +1,46 @@
+import { View, StyleSheet, ScrollView, Linking, FlatList } from "react-native";
+import { Box, SecondaryButton, Text } from "@/components";
+import { useToastStore } from "@/store";
+import { NFTInfo, useCollectionInfo } from "@/modules/nfts/api";
 import {
-  View,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Linking,
-} from "react-native";
-import { Text } from "@/components";
-import { NavigatorParamsList } from "@/types";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useSettingsStore, useToastStore } from "@/store";
-import { useNFTsGalleryStore } from "@/store/nftsGallery";
-import {
-  formatIpfsToHttpUrl,
-  useInvalidateNFTs,
-  useCollectionMinter,
-  useCollectionInfo,
-} from "@/modules/nfts/api";
-import {
-  formatNFTName,
-  getAccountExplorerURL,
+  formatTokenId,
+  getNFTAttributes,
+  getNFTImage,
   getTokenExplorerURL,
-  mapAttributesFromObject,
 } from "./utils";
-import { useState } from "react";
 import Image from "../../components/Image";
-import { trimAddress } from "@/utils";
 import { Skeleton } from "@/components/Skeleton";
+import { APP_HORIZONTAL_PADDING } from "@/const";
+import { Colors, FontSizes, FontWeights } from "@/styles";
+import { ExportSquare, Send2 } from "iconsax-react-native";
+import { DetailsSection } from "@/screens/nftsGallery/nftDetails/DetailsSection";
+import SectionTitle from "./nftDetails/SectionTitle";
 
-type NFTDetailsScreenProps = NativeStackScreenProps<
-  NavigatorParamsList,
-  "NFTDetails"
->;
+type NFTDetailsScreenProps = {
+  nft: NFTInfo;
+  isImageValid: boolean;
+  onImageError: () => void;
+  onImageLoad: () => void;
+};
 
 export default function NFTDetailsScreen({
-  route: {
-    params: { nft },
-  },
+  nft,
+  isImageValid,
+  onImageError,
+  onImageLoad,
 }: NFTDetailsScreenProps) {
-  const { setSetting } = useSettingsStore();
-  const { isNFTHidden, hideNFT, showNFT } = useNFTsGalleryStore();
-  const isHidden = isNFTHidden(nft.tokenId);
-  const { error } = useToastStore();
-  const invalidateNFTs = useInvalidateNFTs();
-  const [isImageValid, setIsImageValid] = useState<boolean | null>(null);
-  const collectionMinter = useCollectionMinter(nft.collectionAddress);
-  const minterAddress = collectionMinter.data?.minter;
+  const { error, info } = useToastStore();
 
   const collection = useCollectionInfo(nft.collectionAddress);
   const extensionInfo = nft.info.extension;
-  const name = nft.tokenMetadata?.name || extensionInfo?.name;
   const description =
     nft.tokenMetadata?.description ||
     extensionInfo?.description ||
     "No description available";
-  const imageSrc = nft.tokenMetadata?.image || extensionInfo?.image || null;
+  const imageSrc = getNFTImage(nft);
+  const attributes = getNFTAttributes(nft);
 
-  const attributes = mapAttributesFromObject(
-    nft.tokenMetadata?.attributes || extensionInfo?.attributes,
-  );
-
-  const handleSetAvatar = () => {
-    if (imageSrc) {
-      setSetting("avatar", formatIpfsToHttpUrl(imageSrc));
-    } else {
-      error({ description: "Image not available" });
-    }
-  };
-
-  const handleToggleVisibility = () => {
-    if (isHidden) {
-      showNFT(nft.tokenId);
-    } else {
-      hideNFT(nft.tokenId);
-    }
-    invalidateNFTs();
-  };
-
-  const handleCreatorPress = () => {
-    if (minterAddress) {
-      Linking.openURL(getAccountExplorerURL(minterAddress));
-    } else {
-      error({ description: "Creator address not available" });
-    }
-  };
-
-  const handleOpenOwnershipHistory = () => {
+  const handleOpenTokenExplorer = () => {
     if (nft.collectionAddress) {
       Linking.openURL(getTokenExplorerURL(nft.collectionAddress));
     } else {
@@ -92,292 +48,168 @@ export default function NFTDetailsScreen({
     }
   };
 
+  const handleSend = () => {
+    info({ description: "Coming soon" });
+  };
+
   return (
-    <ScrollView style={styles.container}>
-      <Image
-        src={imageSrc}
-        style={styles.image}
-        isError={!isImageValid}
-        onError={() => {
-          setIsImageValid(false);
-        }}
-        onLoad={() => {
-          setIsImageValid(true);
-        }}
-      />
+    <View style={styles.container}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+      >
+        <Image
+          src={imageSrc}
+          style={styles.image}
+          isError={!isImageValid}
+          onError={onImageError}
+          onLoad={onImageLoad}
+        />
 
-      <View style={styles.content}>
-        <View style={styles.titleRow}>
-          <Text style={styles.title}>{formatNFTName(name)}</Text>
-          {imageSrc && isImageValid && (
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={handleSetAvatar}
-            >
-              <Text style={styles.actionButtonText}>Set as Avatar</Text>
-            </TouchableOpacity>
+        <View style={styles.content}>
+          <View>
+            {collection.isLoading ? (
+              <Skeleton width={150} height={20} style={styles.name} />
+            ) : (
+              <Text style={styles.name}>
+                {collection.data?.name || "Collection name unavailable"}
+              </Text>
+            )}
+            <Text style={styles.id}>{formatTokenId(nft.tokenId)}</Text>
+          </View>
+
+          <View style={styles.actionButtons}>
+            <SecondaryButton
+              style={{ flex: 1 }}
+              icon={ExportSquare}
+              onPress={handleOpenTokenExplorer}
+              title="View on Explorer"
+            />
+            <SecondaryButton
+              style={{ flex: 1, maxWidth: 64 }}
+              icon={Send2}
+              onPress={handleSend}
+            />
+          </View>
+
+          <View style={styles.section}>
+            <SectionTitle>About</SectionTitle>
+            <Box style={{ backgroundColor: Colors.tokenBoxBackground }}>
+              <Text style={styles.description}>{description}</Text>
+            </Box>
+          </View>
+
+          {attributes.length > 0 && (
+            <View style={styles.section}>
+              <SectionTitle>Attributes ({attributes.length})</SectionTitle>
+              <View>
+                <FlatList
+                  data={attributes}
+                  numColumns={3}
+                  scrollEnabled={false}
+                  columnWrapperStyle={{ gap: 10 }}
+                  contentContainerStyle={{ gap: 10 }}
+                  renderItem={({ item }) => (
+                    <Box key={item.trait_type} style={styles.attribute}>
+                      <Text style={styles.attributeKey}>{item.trait_type}</Text>
+                      <Text style={styles.attributeValue}>{item.value}</Text>
+                    </Box>
+                  )}
+                />
+              </View>
+            </View>
           )}
+
+          <DetailsSection nft={nft} />
         </View>
-        {collection.isLoading ? (
-          <Skeleton width={150} height={20} style={styles.collection} />
-        ) : (
-          <Text style={styles.collection}>
-            {collection.data?.name || "Collection name unavailable"}
-          </Text>
-        )}
-
-        {collectionMinter.isLoading ? (
-          <Skeleton width={250} height={20} style={styles.creator} />
-        ) : (
-          minterAddress && (
-            <TouchableOpacity
-              onPress={handleCreatorPress}
-              disabled={!minterAddress}
-            >
-              <Text style={styles.creator}>
-                Created by{" "}
-                <Text style={styles.creatorLink}>
-                  {trimAddress(minterAddress)}
-                </Text>
-              </Text>
-            </TouchableOpacity>
-          )
-        )}
-
-        <View style={styles.idRow}>
-          <Text style={styles.idText}>ID: {nft.tokenId}</Text>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>About</Text>
-          <Text style={styles.description}>{description}</Text>
-        </View>
-
-        {attributes.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Attributes</Text>
-            <View style={styles.attributes}>
-              {attributes.map((attribute) => (
-                <View key={attribute.trait_type} style={styles.attribute}>
-                  <Text style={styles.attributeKey}>
-                    {attribute.trait_type}
-                  </Text>
-                  <Text style={styles.attributeValue}>{attribute.value}</Text>
-                </View>
-              ))}
-            </View>
-          </View>
-        )}
-
-        {nft.collectionAddress && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Ownership History</Text>
-            <TouchableOpacity
-              style={styles.explorerButton}
-              onPress={handleOpenOwnershipHistory}
-            >
-              <Text style={styles.actionButtonText}>View on Explorer</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-
-        {extensionInfo?.royalty_percentage && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Royalties</Text>
-            <View style={styles.royaltyContainer}>
-              <Text style={styles.description}>
-                {extensionInfo?.royalty_percentage}% of secondary sales go to
-                creator
-              </Text>
-              <Text style={styles.royaltyAddress}>
-                Recipient: {trimAddress(extensionInfo?.royalty_payment_address)}
-              </Text>
-            </View>
-          </View>
-        )}
-
-        <TouchableOpacity
-          style={[styles.bottomButton, isHidden && styles.showButton]}
-          onPress={handleToggleVisibility}
-        >
-          <Text style={styles.actionButtonText}>
-            {isHidden ? "Show in gallery" : "Hide from gallery"}
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <View style={{ margin: 16 }} />
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+  },
+  scrollView: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
+  scrollContent: {
+    padding: APP_HORIZONTAL_PADDING,
+    paddingBottom: 24,
   },
   image: {
     width: "100%",
     aspectRatio: 1,
-    backgroundColor: "#1A1A1A",
+    backgroundColor: Colors.tokenBoxBackground,
+    borderRadius: 18,
   },
   content: {
-    padding: 8,
+    marginTop: 12,
+    display: "flex",
+    flexDirection: "column",
+    gap: 27,
   },
-  titleRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#FFF",
+  name: {
+    color: Colors.text,
     flex: 1,
-    marginRight: 12,
+    fontFamily: FontWeights.bold,
+    fontSize: FontSizes.xl,
+    lineHeight: 24,
+    letterSpacing: 0,
   },
-  collection: {
-    fontSize: 16,
-    color: "#999",
-    marginBottom: 16,
-  },
-  creator: {
-    fontSize: 14,
-    color: "#999",
-    marginBottom: 16,
-  },
-  idRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    marginBottom: 24,
-  },
-  idText: {
-    color: "#999",
-    fontSize: 14,
+  id: {
+    fontFamily: FontWeights.regular,
+    fontSize: FontSizes.lg,
+    color: Colors.text100,
+    lineHeight: 27,
+    letterSpacing: 0,
   },
   section: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#FFF",
-    marginBottom: 12,
+    gap: 10,
   },
   description: {
-    fontSize: 14,
-    color: "#999",
-    lineHeight: 20,
+    fontFamily: FontWeights.regular,
+    fontSize: FontSizes.base,
+    lineHeight: 24,
+    letterSpacing: 0,
+    color: Colors.text100,
   },
   attributes: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
+    gap: 10,
   },
   attribute: {
-    backgroundColor: "#1A1A1A",
-    padding: 12,
-    borderRadius: 8,
-    minWidth: "45%",
+    flex: 1,
+    flexDirection: "column",
+    gap: 2,
+    alignItems: "flex-start",
+    backgroundColor: Colors.tokenBoxBackground,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 14,
   },
   attributeKey: {
-    fontSize: 12,
-    color: "#999",
-    marginBottom: 4,
+    fontFamily: FontWeights.regular,
+    fontSize: FontSizes.xs,
+    lineHeight: 18,
+    letterSpacing: 0,
+    color: Colors.text100,
   },
   attributeValue: {
-    fontSize: 14,
-    color: "#FFF",
+    marginTop: 2,
+    fontFamily: FontWeights.regular,
+    fontSize: FontSizes.base,
+    lineHeight: 24,
+    letterSpacing: 0,
+    color: Colors.text,
   },
-  avatarButton: {
-    backgroundColor: "#1A1A1A",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    alignSelf: "center",
-  },
-  avatarButtonText: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  buttonContainer: {
+  actionButtons: {
     flexDirection: "row",
     gap: 8,
-  },
-  actionButton: {
-    backgroundColor: "#1A1A1A",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    alignSelf: "center",
-  },
-  bottomButton: {
-    backgroundColor: "#1A1A1A",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 20,
-    alignItems: "center",
-    marginTop: 24,
-  },
-  showButton: {
-    backgroundColor: "#2A2A2A",
-  },
-  actionButtonText: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  marketplaceButton: {
-    backgroundColor: "#2A2A2A",
-    marginTop: 8,
-  },
-  historyContainer: {
-    gap: 8,
-  },
-  historyItem: {
-    backgroundColor: "#1A1A1A",
-    padding: 12,
-    borderRadius: 8,
-  },
-  historyHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 4,
-  },
-  historyAddress: {
-    color: "#FFF",
-    fontSize: 14,
-    fontWeight: "500",
-  },
-  historyDate: {
-    color: "#999",
-    fontSize: 12,
-  },
-  historyHash: {
-    color: "#666",
-    fontSize: 12,
-  },
-  creatorLink: {
-    textDecorationLine: "underline",
-    color: "#FFF",
-  },
-  royaltyContainer: {
-    backgroundColor: "#1A1A1A",
-    padding: 12,
-    borderRadius: 8,
-  },
-  royaltyAddress: {
-    color: "#666",
-    fontSize: 12,
-    marginTop: 4,
-  },
-  explorerButton: {
-    backgroundColor: "#1A1A1A",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: "center",
   },
 });

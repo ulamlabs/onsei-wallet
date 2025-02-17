@@ -3,37 +3,40 @@ import { loadFromStorage, saveToStorage } from "@/utils";
 import { NFTInfo } from "@/modules/nfts/api";
 
 type NFTsGalleryStore = {
-  hiddenNFTs: NFTInfo["tokenId"][];
+  hiddenCollections: NFTInfo["collectionAddress"][];
   init: () => Promise<void>;
-  hideNFT: (nftId: NFTInfo["tokenId"]) => void;
-  showNFT: (nftId: NFTInfo["tokenId"]) => void;
-  isNFTHidden: (nftId: NFTInfo["tokenId"]) => boolean;
+  hideCollection: (collectionAddress: NFTInfo["collectionAddress"]) => void;
+  showCollection: (collectionAddress: NFTInfo["collectionAddress"]) => void;
+  isCollectionHidden: (
+    collectionAddress: NFTInfo["collectionAddress"],
+  ) => boolean;
 };
 
 export const useNFTsGalleryStore = create<NFTsGalleryStore>((set, get) => ({
-  hiddenNFTs: [],
+  hiddenCollections: [],
   init: async () => {
-    const hiddenNFTs = await loadFromStorage<NFTInfo["tokenId"][]>(
-      "hiddenNFTs",
-      [],
-    );
-    set({ hiddenNFTs });
+    const hiddenCollections = await loadFromStorage<
+      NFTInfo["collectionAddress"][]
+    >("hiddenCollections", []);
+    set({ hiddenCollections });
   },
-  hideNFT: (nftId) => {
+  hideCollection: (collectionAddress) => {
     set((state) => {
-      const hiddenNFTs = [...state.hiddenNFTs, nftId];
-      saveToStorage("hiddenNFTs", hiddenNFTs);
-      return { hiddenNFTs };
+      const hiddenCollections = [...state.hiddenCollections, collectionAddress];
+      saveToStorage("hiddenCollections", hiddenCollections);
+      return { hiddenCollections };
     });
   },
-  showNFT: (nftId) => {
+  showCollection: (collectionAddress) => {
     set((state) => {
-      const hiddenNFTs = state.hiddenNFTs.filter((id) => id !== nftId);
-      saveToStorage("hiddenNFTs", hiddenNFTs);
-      return { hiddenNFTs };
+      const hiddenCollections = state.hiddenCollections.filter(
+        (address) => address !== collectionAddress,
+      );
+      saveToStorage("hiddenCollections", hiddenCollections);
+      return { hiddenCollections };
     });
   },
-  isNFTHidden: (nftId) => {
-    return get().hiddenNFTs.includes(nftId);
+  isCollectionHidden: (collectionAddress) => {
+    return get().hiddenCollections.includes(collectionAddress);
   },
 }));

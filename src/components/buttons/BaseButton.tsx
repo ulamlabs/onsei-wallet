@@ -22,6 +22,7 @@ export type BaseButtonProps = {
   loading?: boolean;
   testID?: string;
   elevate?: boolean;
+  ref?: React.Ref<View>;
 };
 
 export default function BaseButton({
@@ -39,6 +40,7 @@ export default function BaseButton({
   loading = false,
   testID,
   elevate = false,
+  ref,
 }: BaseButtonProps) {
   const insets = useSafeAreaInsets();
 
@@ -46,6 +48,7 @@ export default function BaseButton({
     <Pressable
       testID={testID}
       disabled={disabled || loading}
+      ref={ref}
       style={[
         {
           alignItems: "center",
