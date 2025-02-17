@@ -271,18 +271,31 @@ export function useTokenMetadata(
   });
 }
 
+export type PaginationParams = {
+  limit?: number;
+  startAfter?: string;
+};
+
+export type PaginatedResponse<T> = {
+  data: T[];
+  pagination: {
+    hasMore: boolean;
+    nextStartAfter?: string;
+  };
+};
+
 export async function queryCollectionTokens(
   contractAddress: string,
   ownerAddress: string,
   node: Node,
-) {
+  { limit = 10, startAfter }: PaginationParams = {},
+): Promise<PaginatedResponse<NFTInfo>> {
   try {
-    // TODO: add pagination
     const tokensQuery = {
       tokens: {
         owner: ownerAddress,
-        // start_after: "some_token_id", ?
-        limit: 30,
+        start_after: startAfter,
+        limit: limit + 1, // Request one extra item to determine if there are more
       },
     };
 
@@ -292,7 +305,10 @@ export async function queryCollectionTokens(
       { node, errorMessage: "Error querying NFT tokens" },
     );
 
-    const nftInfoPromises = tokens.map<Promise<NFTInfo>>(
+    const hasMore = tokens.length > limit;
+    const paginatedTokens = tokens.slice(0, limit);
+
+    const nftInfoPromises = paginatedTokens.map<Promise<NFTInfo>>(
       async (tokenId: string) => {
         const allInfoQuery = {
           all_nft_info: {
@@ -321,11 +337,50 @@ export async function queryCollectionTokens(
       },
     );
 
-    return (await Promise.all(nftInfoPromises)).flat();
+    const nftInfos = await Promise.all(nftInfoPromises);
+
+    return {
+      data: nftInfos,
+      pagination: {
+        hasMore,
+        nextStartAfter: hasMore
+          ? paginatedTokens[paginatedTokens.length - 1]
+          : undefined,
+      },
+    };
   } catch (error) {
     console.error("Failed to query collection tokens:", error);
     throw new Error("Failed to query collection tokens");
   }
+}
+
+export async function queryAllCollectionTokens(
+  contractAddress: string,
+  ownerAddress: string,
+  node: Node,
+  pageSize = 10,
+): Promise<NFTInfo[]> {
+  const allTokens: NFTInfo[] = [];
+  let startAfter: string | undefined;
+  let hasMore = true;
+
+  while (hasMore) {
+    const response = await queryCollectionTokens(
+      contractAddress,
+      ownerAddress,
+      node,
+      {
+        limit: pageSize,
+        startAfter,
+      },
+    );
+
+    allTokens.push(...response.data);
+    hasMore = response.pagination.hasMore;
+    startAfter = response.pagination.nextStartAfter;
+  }
+
+  return allTokens;
 }
 
 export async function queryAllNFTsByOwner(
@@ -340,7 +395,11 @@ export async function queryAllNFTsByOwner(
   try {
     const contractQueries = contractAddresses.map(async (contractAddress) => {
       try {
-        return await queryCollectionTokens(contractAddress, ownerAddress, node);
+        return await queryAllCollectionTokens(
+          contractAddress,
+          ownerAddress,
+          node,
+        );
       } catch (error) {
         console.error(`Error querying contract ${contractAddress}:`, error);
         return [];
