@@ -17,7 +17,6 @@ module.exports = {
     ],
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-var-requires": "off",
-    "react-hooks/exhaustive-deps": "off",
     curly: "error",
     "no-constant-condition": "off",
   },
