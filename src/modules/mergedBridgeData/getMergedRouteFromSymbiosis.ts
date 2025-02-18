@@ -12,17 +12,12 @@ export const getMergedRouteFromSymbiosis = async ({
   toAsset,
   toChain,
 }: RouteParams): Promise<MergedRoute> => {
-  console.log("no halo 111");
-  console.log(fromAsset);
-  console.log(toAsset);
   if (
     !fromAsset.bridges.includes("Symbiosis") ||
     !toAsset.bridges.includes("Symbiosis")
   ) {
     throw new Error("Asset pair not supported by Symbiosis.");
   }
-
-  console.log("no halo");
 
   const payload: SymbiosisSwapPayload = {
     tokenAmountIn: {
@@ -44,7 +39,6 @@ export const getMergedRouteFromSymbiosis = async ({
   };
 
   const response = await postSwap(payload);
-  console.log(response);
   return buildMergedRouteFromSymbiosis(response.data);
 };
 

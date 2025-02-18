@@ -63,11 +63,11 @@ const buildBridgeLink = (bridge: BridgeEnum, store: AggregatorState) => {
 
     case "Symbiosis":
       params = {
-        chains: [store.fromChain ?? "", store.toChain ?? ""],
-        tokens: [
-          store.fromAsset?.symbiosisAddress ?? "",
-          store.toAsset?.symbiosisAddress ?? "",
-        ],
+        amountIn: store.amount,
+        chainOut: store.fromChain,
+        chainIn: store.toChain,
+        tokenIn: store.toAsset?.symbol,
+        tokenOut: store.fromAsset?.symbol,
       };
       return bridgeUrlMap["Symbiosis"] + toQueryString(params);
   }

@@ -12,9 +12,6 @@ export const mergedAssets = (
 ) => {
   const result = new Map<ChainId, Map<AssetId, MergedAsset>>();
 
-  console.log("skipAssetMap");
-  console.log(Object.entries(skipAssetMap).length);
-
   Object.entries(skipAssetMap).forEach(([chainId, { assets }]) => {
     const chainAssets = new Map<AssetId, MergedAsset>();
     assets.forEach((asset) => {
@@ -40,9 +37,6 @@ export const mergedAssets = (
     result.set(chainId, chainAssets);
   });
 
-  console.log("squidAssets");
-  console.log(squidAssets.length);
-
   squidAssets.forEach((asset) => {
     if (!asset.name || !asset.symbol) {
       return;
@@ -51,6 +45,7 @@ export const mergedAssets = (
     const assetId = `${chainId}--${asset.address}`;
 
     let chainAssets = result.get(chainId);
+    // console.log(chainAssets);
     if (!chainAssets) {
       chainAssets = new Map<AssetId, MergedAsset>();
       result.set(chainId, chainAssets);
@@ -75,17 +70,13 @@ export const mergedAssets = (
     });
   });
 
-  console.log("symbiosisAssets");
-  console.log(symbiosisAssets.length);
-
   symbiosisAssets.forEach((asset) => {
-    console.log(asset);
-    console.log("----------tu");
     if (!asset.symbol) {
       return;
     }
+
     const chainId = asset.chainId.toString();
-    const assetId = `${chainId}--${asset.address}`;
+    const assetId = `${chainId}--${asset.symbol}`;
 
     let chainAssets = result.get(chainId);
     if (!chainAssets) {
@@ -99,6 +90,7 @@ export const mergedAssets = (
       foundAsset.symbiosisAddress = asset.address;
       return;
     }
+
     chainAssets.set(assetId, {
       assetIconUri: asset.icon,
       assetId,
