@@ -1,15 +1,12 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { toQueryString } from "@/utils/toQueryString";
 
-const integratorId =
-  "sei-bridge-aggregator-1e7f5aee-4f3c-4371-b548-668387ffd5ee";
-
 const apiBaseURL = "https://api.0xsquid.com/v1";
 
 const api = axios.create({
   baseURL: apiBaseURL,
   headers: {
-    "X-Integrator-Id": integratorId,
+    "X-Integrator-Id": process.env.SQUID_INTEGRATOR_ID,
   },
 });
 

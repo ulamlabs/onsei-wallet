@@ -3,7 +3,7 @@ import { toQueryString } from "@/utils/toQueryString";
 
 const apiBaseUrl = "https://api.skip.money";
 
-const client_id = "8ea9bfa5-d1ce-4a10-9bbf-fed3f33e795b";
+const client_id = process.env.SKIP_GO_CLIENT_ID || "";
 
 const api = axios.create({
   baseURL: apiBaseUrl,

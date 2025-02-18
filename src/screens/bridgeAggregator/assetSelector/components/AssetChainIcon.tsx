@@ -33,6 +33,9 @@ export function AssetChainIcon({ assetIconUri, chainIconUri }: Props) {
           width={iconSize}
           height={iconSize}
           fallback={<Image style={styles.assetIcon} source={placeholder} />}
+          onError={(error) => {
+            console.log("Cannot load svg icon", error);
+          }}
         />
       ) : (
         <Image
@@ -52,6 +55,9 @@ export function AssetChainIcon({ assetIconUri, chainIconUri }: Props) {
               width={chainIconSize}
               height={chainIconSize}
               fallback={<Image style={styles.assetIcon} source={placeholder} />}
+              onError={(error) => {
+                console.log("Cannot load svg icon", error);
+              }}
             />
           ) : (
             <Image

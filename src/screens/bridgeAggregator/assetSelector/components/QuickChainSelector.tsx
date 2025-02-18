@@ -33,9 +33,9 @@ export function QuickChainSelector({
     <View style={styles.container}>
       <Header>{`Select network: ${selectedChain?.chainName}`}</Header>
       <View style={styles.buttons}>
-        {quickAccessChains.map((chainId) => (
+        {quickAccessChains.map((chainId, i) => (
           <NetworkButton
-            key={chainId}
+            key={`${chainId}-${i}`}
             active={selectedChain?.chainId === chainId}
             chainId={chainId}
             onPress={() => onChainSelect(chainId)}
