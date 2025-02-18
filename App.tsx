@@ -2,6 +2,10 @@ import "globals"; // it has to be on top to override global settings
 
 import "@walletconnect/react-native-compat"; // This has to be second import. WalletConnet's functions won't work otherwise
 
+// polyfills
+import "core-js/actual/url";
+import "core-js/actual/url-search-params";
+
 import { Modals, SafeLayout, SplashAnimation } from "@/components";
 import { Toasts } from "@/components/toasts";
 import { useAppIsActive, useInactivityLock } from "@/hooks";
