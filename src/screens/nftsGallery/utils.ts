@@ -60,3 +60,7 @@ export function getNFTAttributes(nft: NFTInfo): TokenAttribute[] {
     nft.tokenMetadata.attributes || nft.info.extension?.attributes,
   );
 }
+
+export function getNFTDescription(nft: NFTInfo): string | null {
+  return nft.tokenMetadata.description || nft.info.extension?.description;
+}

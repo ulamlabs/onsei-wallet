@@ -7,45 +7,55 @@ import {
   Easing,
 } from "react-native";
 
-const MIN_OPACITY = 0.3;
-const MAX_OPACITY = 0.1;
+const ANIMATION_CONFIG = {
+  duration: 1000,
+  minOpacity: 0.3,
+  maxOpacity: 0.1,
+} as const;
 
 type SkeletonProps = ViewProps & {
   width?: DimensionValue;
   height?: DimensionValue;
-  style?: ViewProps["style"];
 };
 
-export const Skeleton = ({
+const createSkeletonAnimation = (opacity: Animated.Value) => {
+  return Animated.loop(
+    Animated.sequence([
+      Animated.timing(opacity, {
+        toValue: ANIMATION_CONFIG.maxOpacity,
+        duration: ANIMATION_CONFIG.duration,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacity, {
+        toValue: ANIMATION_CONFIG.minOpacity,
+        duration: ANIMATION_CONFIG.duration,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: true,
+      }),
+    ]),
+  );
+};
+
+export default function Skeleton({
   width = "100%",
   height = 100,
   style,
   ...props
-}: SkeletonProps) => {
-  const opacity = useRef(new Animated.Value(MIN_OPACITY)).current;
+}: SkeletonProps) {
+  const opacity = useRef(
+    new Animated.Value(ANIMATION_CONFIG.minOpacity),
+  ).current;
 
   useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: MAX_OPACITY,
-          duration: 1000,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: MIN_OPACITY,
-          duration: 1000,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
+    const animation = createSkeletonAnimation(opacity);
+    animation.start();
 
     return () => {
+      animation.stop();
       opacity.stopAnimation();
     };
-  }, []);
+  }, [opacity]);
 
   return (
     <Animated.View
@@ -53,11 +63,11 @@ export const Skeleton = ({
       {...props}
     />
   );
-};
+}
 
 const styles = StyleSheet.create({
   skeleton: {
-    backgroundColor: `rgba(255, 255, 255, ${MIN_OPACITY})`,
+    backgroundColor: `rgba(255, 255, 255, ${ANIMATION_CONFIG.minOpacity})`,
     borderRadius: 4,
   },
 });

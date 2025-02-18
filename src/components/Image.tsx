@@ -7,7 +7,11 @@ import {
   ImageStyle,
   StyleProp,
   Text,
+  ViewStyle,
+  StyleSheet,
 } from "react-native";
+
+const DEFAULT_PLACEHOLDER_TEXT = "Image not found";
 
 type ImageProps = {
   src: string | null;
@@ -55,18 +59,28 @@ export default function Image({
       onLoad={handleLoad}
     />
   ) : (
-    <View
-      style={[
-        {
-          justifyContent: "center",
-          alignItems: "center",
-        },
-        style,
-      ]}
-    >
+    <ImagePlaceholder placeholderText={placeholderText} style={style} />
+  );
+}
+
+type ImagePlaceholderProps = {
+  placeholderText?: string;
+  style?: StyleProp<ViewStyle>;
+};
+
+function ImagePlaceholder({ placeholderText, style }: ImagePlaceholderProps) {
+  return (
+    <View style={[styles.placeholder, style]}>
       <Text style={{ color: Colors.text300 }}>
-        {placeholderText ?? "Image not found"}
+        {placeholderText ?? DEFAULT_PLACEHOLDER_TEXT}
       </Text>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  placeholder: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});

@@ -6,7 +6,7 @@ import SectionTitle from "./SectionTitle";
 import { trimAddress } from "@/utils";
 import { NFTInfo, useCollectionMinter } from "@/modules/nfts/api";
 import { ReactNode } from "react";
-import { Skeleton } from "@/components/Skeleton";
+import Skeleton from "@/components/Skeleton";
 
 type DetailItem = {
   title: string;

@@ -25,7 +25,7 @@ import {
 } from "./utils";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { APP_HORIZONTAL_PADDING } from "@/const";
-import { Skeleton } from "@/components/Skeleton";
+import Skeleton from "@/components/Skeleton";
 import { Sort } from "iconsax-react-native";
 import { Dropdown } from "@/components/Dropdown";
 import NFTDetailsScreen from "./NFTDetails";

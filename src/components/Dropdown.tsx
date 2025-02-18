@@ -26,10 +26,10 @@ type DropdownContentProps<T> = {
   value?: T;
   align?: "left" | "right";
   style?: StyleProp<ViewStyle>;
-  onClose: () => void;
-  onSelect: (value: T) => void;
   disabled?: boolean;
   anchorPosition: AnchorPosition;
+  onClose: () => void;
+  onSelect: (value: T) => void;
 };
 
 type DropdownProps<T> = {
@@ -68,10 +68,10 @@ function DropdownContent<T>({
   value,
   align = "right",
   style,
-  onClose,
-  onSelect,
   disabled,
   anchorPosition,
+  onClose,
+  onSelect,
 }: DropdownContentProps<T>) {
   const dropdownRef = useRef<View>(null);
 
@@ -108,28 +108,58 @@ function DropdownContent<T>({
         {options.map((option) => {
           const isActive = value === option.value;
           return (
-            <TouchableOpacity
+            <DropdownItem
               key={String(option.value)}
-              style={styles.dropdownItem}
-              onPress={(e) => handleOptionPress(e, option)}
-              disabled={disabled || option.disabled}
-            >
-              <Text
-                style={[
-                  styles.dropdownText,
-                  {
-                    color: isActive ? Colors.markerBackground : Colors.text,
-                    textAlign: align,
-                  },
-                  (disabled || option.disabled) && styles.disabledText,
-                ]}
-              >
-                {option.label}
-              </Text>
-            </TouchableOpacity>
+              option={option}
+              isActive={isActive}
+              align={align}
+              handleOptionPress={handleOptionPress}
+              disabled={!!(disabled || option.disabled)}
+            />
           );
         })}
       </View>
+    </TouchableOpacity>
+  );
+}
+
+type DropdownItemProps<T> = {
+  option: DropdownOption<T>;
+  isActive: boolean;
+  align: "left" | "right";
+  disabled: boolean;
+  handleOptionPress: (
+    e: GestureResponderEvent,
+    option: DropdownOption<T>,
+  ) => void;
+};
+
+function DropdownItem<T>({
+  option,
+  isActive,
+  align,
+  disabled,
+  handleOptionPress,
+}: DropdownItemProps<T>) {
+  return (
+    <TouchableOpacity
+      key={String(option.value)}
+      style={styles.dropdownItem}
+      onPress={(e) => handleOptionPress(e, option)}
+      disabled={disabled || option.disabled}
+    >
+      <Text
+        style={[
+          styles.dropdownText,
+          {
+            color: isActive ? Colors.markerBackground : Colors.text,
+            textAlign: align,
+          },
+          (disabled || option.disabled) && styles.disabledText,
+        ]}
+      >
+        {option.label}
+      </Text>
     </TouchableOpacity>
   );
 }

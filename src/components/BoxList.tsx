@@ -20,12 +20,8 @@ const BoxItem = ({ children, position, ...itemProps }: BoxItemProps) => (
   <Box
     {...itemProps}
     style={[
+      styles.box,
       {
-        flex: 1,
-        backgroundColor: Colors.tokenBoxBackground,
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-        borderRadius: 14,
         ...(position.isFirstItem && {
           borderBottomLeftRadius: 0,
           borderBottomRightRadius: 0,
@@ -80,5 +76,12 @@ const styles = StyleSheet.create({
     width: "100%",
     display: "flex",
     flexDirection: "column",
+  },
+  box: {
+    flex: 1,
+    backgroundColor: Colors.tokenBoxBackground,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 14,
   },
 });

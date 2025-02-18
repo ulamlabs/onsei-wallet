@@ -35,7 +35,9 @@ export default function BottomBarsNavigation() {
       tabBarPosition="bottom"
       screenOptions={{
         lazy: true,
-        lazyPlaceholder: () => <View style={{ backgroundColor: "black" }} />,
+        lazyPlaceholder: () => (
+          <View style={{ backgroundColor: Colors.background }} />
+        ),
       }}
     >
       <Screen

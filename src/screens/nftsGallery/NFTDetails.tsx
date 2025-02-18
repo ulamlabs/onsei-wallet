@@ -5,11 +5,12 @@ import { NFTInfo, useCollectionInfo } from "@/modules/nfts/api";
 import {
   formatTokenId,
   getNFTAttributes,
+  getNFTDescription,
   getNFTImage,
   getTokenExplorerURL,
 } from "./utils";
 import Image from "../../components/Image";
-import { Skeleton } from "@/components/Skeleton";
+import Skeleton from "@/components/Skeleton";
 import { APP_HORIZONTAL_PADDING } from "@/const";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { ExportSquare, Send2 } from "iconsax-react-native";
@@ -32,11 +33,7 @@ export default function NFTDetailsScreen({
   const { error, info } = useToastStore();
 
   const collection = useCollectionInfo(nft.collectionAddress);
-  const extensionInfo = nft.info.extension;
-  const description =
-    nft.tokenMetadata?.description ||
-    extensionInfo?.description ||
-    "No description available";
+  const description = getNFTDescription(nft);
   const imageSrc = getNFTImage(nft);
   const attributes = getNFTAttributes(nft);
 
@@ -71,7 +68,7 @@ export default function NFTDetailsScreen({
         <View style={styles.content}>
           <View>
             {collection.isLoading ? (
-              <Skeleton width={150} height={20} style={styles.name} />
+              <Skeleton width={150} height={24} style={styles.name} />
             ) : (
               <Text style={styles.name}>
                 {collection.data?.name || "Collection name unavailable"}
@@ -97,7 +94,9 @@ export default function NFTDetailsScreen({
           <View style={styles.section}>
             <SectionTitle>About</SectionTitle>
             <Box style={{ backgroundColor: Colors.tokenBoxBackground }}>
-              <Text style={styles.description}>{description}</Text>
+              <Text style={styles.description}>
+                {description || "No description available"}
+              </Text>
             </Box>
           </View>
 
