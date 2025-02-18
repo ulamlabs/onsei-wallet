@@ -15,6 +15,7 @@ export const bridgeUrlMap: {
 } = {
   Skip: "https://ibc.fun",
   Squid: "https://app.squidrouter.com",
+  Symbiosis: "https://app.symbiosis.finance/swap",
 };
 
 export const bridgeNameMap: {
@@ -22,4 +23,5 @@ export const bridgeNameMap: {
 } = {
   Skip: "Skip",
   Squid: "Squid",
+  Symbiosis: "Symbiosis",
 };

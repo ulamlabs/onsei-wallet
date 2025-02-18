@@ -60,5 +60,15 @@ const buildBridgeLink = (bridge: BridgeEnum, store: AggregatorState) => {
         ],
       };
       return bridgeUrlMap["Squid"] + toQueryString(params);
+
+    case "Symbiosis":
+      params = {
+        amountIn: store.amount,
+        chainOut: store.fromChain,
+        chainIn: store.toChain,
+        tokenIn: store.toAsset?.symbol,
+        tokenOut: store.fromAsset?.symbol,
+      };
+      return bridgeUrlMap["Symbiosis"] + toQueryString(params);
   }
 };

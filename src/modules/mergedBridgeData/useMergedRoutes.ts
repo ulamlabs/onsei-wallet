@@ -10,11 +10,13 @@ import { useCallback } from "react";
 import { getMergedRouteFromSkip } from "./getMergedRouteFromSkip";
 import { getMergedRouteFromSquid } from "./getMergedRouteFromSquid";
 import { MergedRoute, RouteParams } from "./types";
+import { getMergedRouteFromSymbiosis } from "./getMergedRouteFromSymbiosis";
 
 const getMergedRoutes = async (params: RouteParams) => {
   const results = await Promise.allSettled([
     getMergedRouteFromSkip(params),
     getMergedRouteFromSquid(params),
+    getMergedRouteFromSymbiosis(params),
   ]);
 
   const routes = [];
@@ -23,6 +25,9 @@ const getMergedRoutes = async (params: RouteParams) => {
   }
   if (results[1].status === "fulfilled") {
     routes.push(results[1].value);
+  }
+  if (results[2].status === "fulfilled") {
+    routes.push(results[2].value);
   }
   return routes
     .sort((a, b) =>

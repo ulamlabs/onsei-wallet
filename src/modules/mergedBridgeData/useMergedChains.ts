@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { getInfoChains } from "@/modules/skipApi/getInfoChains";
-import { getChains } from "@/modules/squidApi/getChains";
+import { getChains as getSquidChains } from "@/modules/squidApi/getChains";
+import { getChains } from "@/modules/symbiosisApi/getChains";
 import { LONG_STALE_TIME } from "@/modules/query/consts";
 import { useMemo } from "react";
 import { mergedChains } from "./mergedChains";
@@ -12,12 +13,15 @@ export const useMergedChains = () =>
     queryKey: ["merged-chains"],
     queryFn: async () => {
       const skipRequest = getInfoChains();
-      const squidRequest = getChains();
-      const [skipResponse, squidResponse] = await Promise.all([
-        skipRequest,
-        squidRequest,
-      ]);
-      return mergedChains(skipResponse.data.chains, squidResponse.data.chains);
+      const squidRequest = getSquidChains();
+      const symbiosisRequest = getChains();
+      const [skipResponse, squidResponse, symbiosisResponse] =
+        await Promise.all([skipRequest, squidRequest, symbiosisRequest]);
+      return mergedChains(
+        skipResponse.data.chains,
+        squidResponse.data.chains,
+        symbiosisResponse.data,
+      );
     },
     staleTime: LONG_STALE_TIME,
   });

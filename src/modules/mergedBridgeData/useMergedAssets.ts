@@ -1,25 +1,26 @@
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { getFungibleAssets } from "@/modules/skipApi/getFungibleAssets";
-import { getTokens } from "@/modules/squidApi/getTokens";
+import { getTokens as getSquidTokens } from "@/modules/squidApi/getTokens";
 import { LONG_STALE_TIME } from "@/modules/query/consts";
 import { mergedAssets } from "./mergedAssets";
 import { AssetId, ChainId, MergedAsset } from "./types";
+import { getTokens as getSymbiosisTokens } from "@/modules/symbiosisApi/getTokens";
 
 export const useMergedAssets = () =>
   useQuery<Map<ChainId, Map<AssetId, MergedAsset>>, AxiosError>({
     queryKey: ["merged-assets"] as const,
     queryFn: async () => {
-      const squidRequest = getTokens();
+      const squidRequest = getSquidTokens();
       const skipRequest = getFungibleAssets();
-      const [squidResponse, skipResponse] = await Promise.all([
-        squidRequest,
-        skipRequest,
-      ]);
+      const symbiosisRequest = getSymbiosisTokens();
+      const [squidResponse, skipResponse, symbiosisResponse] =
+        await Promise.all([squidRequest, skipRequest, symbiosisRequest]);
 
       return mergedAssets(
         skipResponse.data.chain_to_assets_map,
         squidResponse.data.tokens,
+        symbiosisResponse.data,
       );
     },
     retry: false,
