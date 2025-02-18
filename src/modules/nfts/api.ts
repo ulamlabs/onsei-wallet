@@ -13,6 +13,7 @@ import {
 } from "@/services/cosmos";
 import { isValidUrl } from "@/utils/isValidUrl";
 import { loadFromStorage, saveToStorage } from "@/utils";
+import omit from "@/utils/omit";
 
 export type TokenAttribute = {
   trait_type: string;
@@ -493,11 +494,41 @@ export function useNFTs() {
       !!contractAddressesQuery.data &&
       !!activeAccountCodeIdsQuery.data,
   });
+
+  const isLoadingCodes =
+    codesQuery.isLoading &&
+    !activeAccountCodeIdsQuery.isLoading &&
+    !activeAccountCodeIdsQuery.data?.length;
+
+  const listStates = {
+    isLoadingCodes: isLoadingCodes,
+
+    isLoading:
+      nfts.isLoading ||
+      contractAddressesQuery.isLoading ||
+      activeAccountCodeIdsQuery.isLoading ||
+      isLoadingCodes,
+
+    isError:
+      nfts.isError ||
+      contractAddressesQuery.isError ||
+      codesQuery.isError ||
+      activeAccountCodeIdsQuery.isError,
+
+    isEmpty: nfts.isSuccess && nfts.data?.length === 0,
+
+    isSuccess: nfts.isSuccess && nfts.data?.length > 0,
+  };
+
   return {
+    nfts: listStates.isSuccess
+      ? // to satisfy typescript
+        { ...omit(nfts, "data"), data: nfts.data ?? [] }
+      : nfts,
+    contractAddressesQuery,
     codesQuery,
     activeAccountCodeIdsQuery,
-    contractAddressesQuery,
-    nfts,
+    listStates,
   };
 }
 

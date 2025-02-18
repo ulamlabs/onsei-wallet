@@ -25,29 +25,14 @@ export default function NFTsGallery() {
 }
 
 function NFTGalleryStates() {
-  const {
-    nfts,
-    contractAddressesQuery,
-    codesQuery,
-    activeAccountCodeIdsQuery,
-  } = useNFTs();
+  const { nfts, listStates } = useNFTs();
 
-  const isLoadingCodes =
-    codesQuery.isLoading &&
-    !activeAccountCodeIdsQuery.isLoading &&
-    !activeAccountCodeIdsQuery.data?.length;
-
-  if (
-    nfts.isLoading ||
-    contractAddressesQuery.isLoading ||
-    activeAccountCodeIdsQuery.isLoading ||
-    isLoadingCodes
-  ) {
+  if (listStates.isLoading) {
     return (
       <CenteredLoader size="big">
         {
           <Text style={styles.loadingText}>
-            {isLoadingCodes
+            {listStates.isLoadingCodes
               ? "Collecting data. This may take a while..."
               : // leave white space to avoid layout shift
                 "  "}
@@ -56,18 +41,13 @@ function NFTGalleryStates() {
       </CenteredLoader>
     );
   }
-  if (
-    nfts.isError ||
-    contractAddressesQuery.isError ||
-    codesQuery.isError ||
-    activeAccountCodeIdsQuery.isError
-  ) {
+  if (listStates.isError) {
     return <ErrorNFTsGallery />;
   }
-  if (nfts.isSuccess && nfts.data?.length === 0) {
+  if (listStates.isEmpty) {
     return <EmptyNFTsGallery />;
   }
-  if (nfts.isSuccess && nfts.data?.length > 0) {
+  if (listStates.isSuccess) {
     return <NFTsGalleryList nfts={nfts.data} />;
   }
 }

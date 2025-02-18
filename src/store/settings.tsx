@@ -13,7 +13,6 @@ type Settings = {
   localGasPrice: FeeTier;
   allowNotifications: boolean;
   "walletConnet.sessions": WalletConnectSession[];
-  avatar: string | null;
 };
 
 const DEFAULT_SETTINGS = {
@@ -23,7 +22,6 @@ const DEFAULT_SETTINGS = {
   localGasPrice: "Low",
   allowNotifications: true,
   "walletConnet.sessions": [],
-  avatar: null,
 } satisfies Settings;
 
 type SettingsStore = {

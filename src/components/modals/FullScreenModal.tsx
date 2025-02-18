@@ -19,8 +19,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { More } from "iconsax-react-native";
-import { Text } from "@/components";
-import XIcon from "@/components/XIcon";
+import { CloseIcon, Text } from "@/components";
 import { Dropdown, DropdownOption } from "../Dropdown";
 
 const ANIMATION_CONFIG = {
@@ -201,7 +200,7 @@ function ModalHeader({
   return (
     <View {...containerProps} style={styles.header}>
       <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-        <XIcon color={Colors.text} size={32} />
+        <CloseIcon color={Colors.text} size={FontSizes.base} />
       </TouchableOpacity>
       {title && <Text style={styles.headerTitle}>{title}</Text>}
       {hasMoreOptions && (

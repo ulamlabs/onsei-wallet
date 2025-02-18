@@ -40,7 +40,7 @@ import {
 import ScanAddressScreen from "@/screens/transfer/ScanAddressScreen";
 import TransactionSettingscreen from "@/screens/transfer/TransactionSettingsScreen";
 import { Account, SavedAddress, Wallet } from "@/store";
-import { NavigatorParamsList } from "@/types";
+import { NavigationProp, NavigatorParamsList } from "@/types";
 import { trimAddress } from "@/utils";
 import { DeliverTxResponse, StdFee } from "@cosmjs/stargate";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -52,8 +52,10 @@ import CancelHeaderRight from "./header/CancelHeaderRight";
 import DefaultHeaderLeft from "./header/DefaultHeaderLeft";
 import DefaultHeaderTitle from "./header/DefaultHeaderTitle";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
-import { SettingsHeaderLeft } from "./header/SettingsHeaderLeft";
+import { SubScreenHeader } from "../components/SubScreenHeader";
 import SettingsHeaderRight from "./header/SettingsHeaderRight";
+import { useNavigation } from "@react-navigation/native";
+import ChooseWalletAvatarScreen from "@/screens/WalletOverview/ChooseWalletAvatarScreen";
 
 export type Recipient = {
   address: string;
@@ -135,11 +137,14 @@ export type HomeParamList = {
   "Connected Apps": undefined;
   "Link Addresses": { address: string };
   "Address Book": { addressCount?: number; allAddressCount?: number };
+  "Choose Wallet Avatar": { account: Account };
 };
 
 const { Navigator, Screen } = createNativeStackNavigator<HomeParamList>();
 
 export default function HomeNavigation() {
+  const navigation = useNavigation<NavigationProp>();
+
   return (
     <Navigator
       id="home"
@@ -222,13 +227,55 @@ export default function HomeNavigation() {
       <Screen
         name="Settings"
         options={{
-          headerLeft: () => <SettingsHeaderLeft />,
+          header: () => (
+            <SubScreenHeader
+              title="Settings"
+              onIconPress={() => navigation.navigate("Home")}
+            />
+          ),
         }}
         component={SettingsScreen}
       />
       <Screen name="Manage Token List" component={ManageTokensScreen} />
-      <Screen name="Wallets" component={AccountsScreen} />
-      <Screen name="Wallet settings" component={AccountSettingsScreen} />
+      <Screen
+        name="Wallets"
+        options={{
+          header: () => (
+            <SubScreenHeader
+              title="Wallets"
+              icon="back"
+              onIconPress={() => navigation.goBack()}
+            />
+          ),
+        }}
+        component={AccountsScreen}
+      />
+      <Screen
+        name="Wallet settings"
+        options={{
+          header: () => (
+            <SubScreenHeader
+              title="Wallet settings"
+              icon="back"
+              onIconPress={() => navigation.goBack()}
+            />
+          ),
+        }}
+        component={AccountSettingsScreen}
+      />
+      <Screen
+        name="Choose Wallet Avatar"
+        component={ChooseWalletAvatarScreen}
+        options={{
+          header: () => (
+            <SubScreenHeader
+              title="Choose Wallet Avatar"
+              icon="back"
+              onIconPress={() => navigation.goBack()}
+            />
+          ),
+        }}
+      />
       <Screen name="Edit name" component={EditAccountNameScreen} />
       <Screen
         name="transferSelectToken"

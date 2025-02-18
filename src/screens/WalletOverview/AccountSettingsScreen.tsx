@@ -1,7 +1,5 @@
 import {
   Column,
-  Headline,
-  IconButton,
   Link,
   LinkIcon,
   NoBackupIcon,
@@ -11,6 +9,7 @@ import {
   TertiaryButton,
   Text,
 } from "@/components";
+import Avatar from "@/components/Avatar";
 import { NETWORK_NAMES } from "@/const";
 import { clearTransactionsForAddress } from "@/modules/transactions/storage";
 import { useAccountsStore, useModalStore, useSettingsStore } from "@/store";
@@ -24,7 +23,7 @@ import {
   SecuritySafe,
   Trash,
 } from "iconsax-react-native";
-import { Linking, View } from "react-native";
+import { Linking, TouchableOpacity, View } from "react-native";
 
 type AccountSettingsProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -78,26 +77,51 @@ export default function AccountSettingsScreen({
   };
 
   return (
-    <SafeLayout>
-      <Column style={{ justifyContent: "space-between", minHeight: "100%" }}>
+    <SafeLayout subScreen>
+      <Column
+        style={{
+          justifyContent: "space-between",
+          minHeight: "100%",
+        }}
+      >
         <View>
-          <Row
-            style={{
-              paddingHorizontal: 22,
-              paddingVertical: 16,
-              marginBottom: 32,
-            }}
-          >
-            <Headline size="lg">{account?.name}</Headline>
-            <IconButton
-              icon={Edit2}
-              onPress={() =>
-                navigation.navigate("Edit name", { account: account! })
-              }
-            />
-          </Row>
+          {account && (
+            <TouchableOpacity
+              style={{ position: "relative", alignItems: "center" }}
+              onPress={() => {
+                navigation.navigate("Choose Wallet Avatar", {
+                  account,
+                });
+              }}
+            >
+              <Avatar
+                src={account?.avatar}
+                name={account?.name}
+                size={144}
+                rounded
+              />
+              <View
+                style={{
+                  position: "absolute",
+                  bottom: -8,
+                  right: 144 / 2 + 24 + 16,
+                  borderRadius: 300,
+                  backgroundColor: Colors.background,
+                  padding: 10,
+                }}
+              >
+                <Edit2 size={22} color={Colors.text} />
+              </View>
+            </TouchableOpacity>
+          )}
 
-          <OptionGroup>
+          <OptionGroup style={{ marginTop: 28 }}>
+            <Link
+              label="Wallet Name"
+              navigateTo="Edit name"
+              labelRight={account?.name}
+              params={{ account: account! }}
+            />
             {account?.passphraseSkipped ? (
               <Link
                 label="Recovery phrase"

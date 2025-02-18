@@ -2,41 +2,43 @@ import { create } from "zustand";
 import { loadFromStorage, saveToStorage } from "@/utils";
 import { NFTInfo } from "@/modules/nfts/api";
 
+export type NFTKey = `${NFTInfo["collectionAddress"]}:${NFTInfo["tokenId"]}`;
+
+function getNFTKey(nft: NFTInfo): NFTKey {
+  return `${nft.collectionAddress}:${nft.tokenId}`;
+}
+
 type NFTsGalleryStore = {
-  hiddenCollections: NFTInfo["collectionAddress"][];
+  hiddenNFTs: NFTKey[];
   init: () => Promise<void>;
-  hideCollection: (collectionAddress: NFTInfo["collectionAddress"]) => void;
-  showCollection: (collectionAddress: NFTInfo["collectionAddress"]) => void;
-  isCollectionHidden: (
-    collectionAddress: NFTInfo["collectionAddress"],
-  ) => boolean;
+  hideNFT: (nft: NFTInfo) => void;
+  showNFT: (nft: NFTInfo) => void;
+  isNFTHidden: (nft: NFTInfo) => boolean;
 };
 
 export const useNFTsGalleryStore = create<NFTsGalleryStore>((set, get) => ({
-  hiddenCollections: [],
+  hiddenNFTs: [],
   init: async () => {
-    const hiddenCollections = await loadFromStorage<
-      NFTInfo["collectionAddress"][]
-    >("hiddenCollections", []);
-    set({ hiddenCollections });
+    const hiddenNFTs = await loadFromStorage<NFTKey[]>("hiddenNFTs", []);
+    set({ hiddenNFTs });
   },
-  hideCollection: (collectionAddress) => {
+  hideNFT: (nft) => {
     set((state) => {
-      const hiddenCollections = [...state.hiddenCollections, collectionAddress];
-      saveToStorage("hiddenCollections", hiddenCollections);
-      return { hiddenCollections };
+      const hiddenNFTs = [...state.hiddenNFTs, getNFTKey(nft)];
+      saveToStorage("hiddenNFTs", hiddenNFTs);
+      return { hiddenNFTs };
     });
   },
-  showCollection: (collectionAddress) => {
+  showNFT: (nft) => {
     set((state) => {
-      const hiddenCollections = state.hiddenCollections.filter(
-        (address) => address !== collectionAddress,
+      const hiddenNFTs = state.hiddenNFTs.filter(
+        (nftKey) => nftKey !== getNFTKey(nft),
       );
-      saveToStorage("hiddenCollections", hiddenCollections);
-      return { hiddenCollections };
+      saveToStorage("hiddenNFTs", hiddenNFTs);
+      return { hiddenNFTs };
     });
   },
-  isCollectionHidden: (collectionAddress) => {
-    return get().hiddenCollections.includes(collectionAddress);
+  isNFTHidden: (nft) => {
+    return get().hiddenNFTs.includes(getNFTKey(nft));
   },
 }));

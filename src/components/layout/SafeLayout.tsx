@@ -21,9 +21,12 @@ type LayoutProps = PropsWithChildren & {
   style?: StyleProp<ViewStyle>;
   scrollEnabled?: boolean;
   containerStyle?: StyleProp<ViewStyle>;
+  subScreen?: boolean;
 };
 
-// Layout with safe paddings that ensure that content won't be hidden behind phone elements (like front camera)
+/**
+ * Layout with safe paddings that ensure that content won't be hidden behind phone elements (like front camera)
+ */
 export default function SafeLayout({
   children,
   staticView,
@@ -31,16 +34,27 @@ export default function SafeLayout({
   style,
   scrollEnabled = true,
   containerStyle,
+  subScreen = false,
 }: LayoutProps) {
   const [refreshing, setRefreshing] = useState(false);
   const insets = useSafeAreaInsets();
   const layoutStyle: ViewStyle = {
     minHeight: "100%",
     paddingTop: verticalScale(24), // No need for insets at the top, beacuse header handles it
-    paddingBottom: Math.max(verticalScale(50), insets.bottom),
+    paddingBottom: subScreen
+      ? insets.bottom + insets.top + 40
+      : Math.max(verticalScale(50), insets.bottom),
     paddingLeft: Math.max(scale(APP_HORIZONTAL_PADDING), insets.left),
     paddingRight: Math.max(scale(APP_HORIZONTAL_PADDING), insets.right),
   };
+
+  const subScreenStyle: ViewStyle = {
+    borderRightWidth: 2,
+    borderLeftWidth: 2,
+    borderStyle: "solid",
+    borderColor: Colors.inputBorderColor,
+  };
+
   const { error } = useToastStore();
   const navigation = useNavigation();
 
@@ -71,12 +85,17 @@ export default function SafeLayout({
     >
       {staticView ? (
         <View
-          style={[layoutStyle, { backgroundColor: Colors.background }, style]}
+          style={[
+            layoutStyle,
+            { backgroundColor: Colors.background },
+            subScreen && subScreenStyle,
+            style,
+          ]}
         >
           {children}
         </View>
       ) : (
-        <View style={[layoutStyle, style]}>
+        <View style={[layoutStyle, subScreen && subScreenStyle, style]}>
           <ScrollView
             contentContainerStyle={{
               flexGrow: 1,

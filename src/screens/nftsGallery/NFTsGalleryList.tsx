@@ -30,7 +30,7 @@ import { Sort } from "iconsax-react-native";
 import { Dropdown } from "@/components/Dropdown";
 import NFTDetailsScreen from "./NFTDetails";
 import FullScreenModal from "@/components/modals/FullScreenModal";
-import { useSettingsStore, useToastStore } from "@/store";
+import { useAccountsStore, useToastStore } from "@/store";
 
 const UNKNOWN_COLLECTION_ADDRESS = "Uncategorized";
 
@@ -62,7 +62,7 @@ type NFTGalleryCardProps = {
   onPress: () => void;
 };
 
-function NFTGalleryCard({ nft, onPress }: NFTGalleryCardProps) {
+export function NFTGalleryCard({ nft, onPress }: NFTGalleryCardProps) {
   const image = getNFTImage(nft);
   const collection = useCollectionInfo(nft.collectionAddress);
 
@@ -125,9 +125,7 @@ type NFTsGalleryListProps = {
 };
 
 export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
-  const { isCollectionHidden, hideCollection, showCollection } =
-    useNFTsGalleryStore();
-  const isHidden = isCollectionHidden(nfts[0].collectionAddress);
+  const { isNFTHidden, hideNFT, showNFT } = useNFTsGalleryStore();
   const [activeFilter, setActiveFilter] = useState<"all" | "collections">(
     "all",
   );
@@ -136,7 +134,7 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
   const buttonRef = useRef<View>(null);
   const [sortOption, setSortOption] = useState<SortOption>("newest");
   const [selectedNFT, setSelectedNFT] = useState<NFTInfo | null>(null);
-  const { setSetting } = useSettingsStore();
+  const { setAvatar, activeAccount } = useAccountsStore();
   const invalidateNFTs = useInvalidateNFTs();
   const { error, info } = useToastStore();
   const [isImageValid, setIsImageValid] = useState<boolean | null>(null);
@@ -144,7 +142,7 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
   const filteredNFTs = useMemo(() => {
     const query = searchQuery.toLowerCase();
     return nfts.filter((nft) => {
-      if (isCollectionHidden(nft.collectionAddress)) {
+      if (isNFTHidden(nft)) {
         return false;
       }
       const name = getNFTName(nft);
@@ -164,7 +162,7 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
 
       return matchesName || matchesCollection || matchesAttributes;
     });
-  }, [nfts, searchQuery, isCollectionHidden]);
+  }, [nfts, searchQuery, isNFTHidden]);
 
   const collections: Collection[] = useMemo(() => {
     const grouped = filteredNFTs.reduce<Record<string, typeof filteredNFTs>>(
@@ -182,7 +180,7 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
 
     return Object.entries(grouped).map(([address, nfts]) => {
       const images = nfts.filter(
-        (nft) => !isCollectionHidden(nft.collectionAddress) && getNFTImage(nft),
+        (nft) => !isNFTHidden(nft) && getNFTImage(nft),
       );
 
       const firstNftImage = getNFTImage(images[0]);
@@ -193,7 +191,7 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
         firstNftImage,
       };
     });
-  }, [filteredNFTs, isCollectionHidden]);
+  }, [filteredNFTs, isNFTHidden]);
 
   const sortOptions: Array<{ label: string; value: SortOption }> = [
     { label: "Newest", value: "newest" },
@@ -212,9 +210,13 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
       error({ description: "NFT not selected" });
       return;
     }
+    if (!activeAccount?.address) {
+      error({ description: "No active account" });
+      return;
+    }
     const imageSrc = getNFTImage(selectedNFT);
     if (imageSrc) {
-      setSetting("avatar", formatIpfsToHttpUrl(imageSrc));
+      setAvatar(activeAccount.address, formatIpfsToHttpUrl(imageSrc));
       info({ description: "Avatar updated successfully" });
     } else {
       error({ description: "Image not available" });
@@ -226,11 +228,11 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
       error({ description: "Collection address not available" });
       return;
     }
-    if (isHidden) {
-      showCollection(selectedNFT?.collectionAddress);
+    if (isNFTHidden(selectedNFT)) {
+      showNFT(selectedNFT);
       info({ description: "Collection is now visible" });
     } else {
-      hideCollection(selectedNFT?.collectionAddress);
+      hideNFT(selectedNFT);
       info({ description: "Collection is now hidden" });
     }
     invalidateNFTs();
@@ -336,6 +338,7 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
         />
       )}
 
+      {/* TODO: navigate to NFT details screen instead of using a modal */}
       <FullScreenModal
         isVisible={!!selectedNFT}
         onBackdropPress={() => setSelectedNFT(null)}
@@ -348,7 +351,10 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
             disabled: !isImageValid,
           },
           {
-            label: isHidden ? "Show Collection" : "Hide Collection",
+            label:
+              selectedNFT?.collectionAddress && isNFTHidden(selectedNFT)
+                ? "Show NFT"
+                : "Hide NFT",
             value: "visibility",
             onPress: handleToggleVisibility,
             disabled: true,

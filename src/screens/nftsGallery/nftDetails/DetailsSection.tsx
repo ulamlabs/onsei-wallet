@@ -1,6 +1,5 @@
 import { View, StyleSheet } from "react-native";
-import { Text } from "@/components";
-import RoundedBoxList from "../../../components/BoxList";
+import { Box, OptionGroup, Text } from "@/components";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import SectionTitle from "./SectionTitle";
 import { trimAddress } from "@/utils";
@@ -46,19 +45,14 @@ export const DetailsSection = ({ nft }: DetailsSectionProps) => {
   return (
     <View style={styles.container}>
       <SectionTitle>Details</SectionTitle>
-      <RoundedBoxList>
-        {({ Box, getPosition }) =>
-          data.map((item, index) => {
-            const position = getPosition(index, data.length);
-            return (
-              <Box key={item.title} position={position}>
-                <Text style={styles.title}>{item.title}</Text>
-                <Text style={styles.value}>{item.value}</Text>
-              </Box>
-            );
-          })
-        }
-      </RoundedBoxList>
+      <OptionGroup>
+        {data.map((item) => (
+          <Box key={item.title} style={styles.item}>
+            <Text style={styles.title}>{item.title}</Text>
+            <Text style={styles.value}>{item.value}</Text>
+          </Box>
+        ))}
+      </OptionGroup>
     </View>
   );
 };
@@ -80,5 +74,8 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     letterSpacing: 0,
     color: Colors.text,
+  },
+  item: {
+    borderRadius: 0,
   },
 });
