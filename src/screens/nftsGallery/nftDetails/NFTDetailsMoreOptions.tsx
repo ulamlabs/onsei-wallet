@@ -22,7 +22,7 @@ export default function NFTDetailsMoreOptions({ nft }: { nft: NFTInfo }) {
       error({ description: "No active account" });
       return;
     }
-    const imageSrc = getNFTImage(nft);
+
     if (imageSrc) {
       setAvatar(activeAccount.address, formatIpfsToHttpUrl(imageSrc));
       info({ description: "Avatar updated successfully" });

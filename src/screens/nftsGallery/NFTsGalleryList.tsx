@@ -26,6 +26,7 @@ import { Dropdown } from "@/components/Dropdown";
 import { useAccountsStore } from "@/store";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "@/types";
+import CardHorizontal from "@/components/CardHorizontal";
 
 const UNKNOWN_COLLECTION_ADDRESS = "Uncategorized";
 
@@ -90,7 +91,7 @@ function CollectionCard({ collection }: CollectionCardProps) {
   const collectionInfo = useCollectionInfo(collection.address);
 
   return (
-    <Card
+    <CardHorizontal
       imageSrc={collection.firstNftImage}
       title={
         collectionInfo.isLoading ? (
@@ -99,11 +100,7 @@ function CollectionCard({ collection }: CollectionCardProps) {
           formatCollectionName(collection.address, collectionInfo.data?.name)
         )
       }
-      subtitle={pluralize(collection.nfts.length, "NFT")}
-      imageStyle={{
-        height: cardSize,
-        borderRadius: 18,
-      }}
+      subtitle={pluralize(collection.nfts.length, "item")}
     />
   );
 }
@@ -352,7 +349,7 @@ const styles = StyleSheet.create({
     color: Colors.text,
   },
   listContainer: {
-    marginTop: 32,
+    marginTop: 16,
   },
   flatList: {
     gap: CARDS_GAP,
