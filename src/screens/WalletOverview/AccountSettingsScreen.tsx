@@ -9,21 +9,25 @@ import {
   TertiaryButton,
   Text,
 } from "@/components";
-import Avatar from "@/components/Avatar";
+import { EditableAvatar } from "@/components/Avatar";
 import { NETWORK_NAMES } from "@/const";
 import { clearTransactionsForAddress } from "@/modules/transactions/storage";
-import { useAccountsStore, useModalStore, useSettingsStore } from "@/store";
+import {
+  Account,
+  useAccountsStore,
+  useModalStore,
+  useSettingsStore,
+} from "@/store";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
-  Edit2,
   ExportSquare,
   LinkCircle,
   SecuritySafe,
   Trash,
 } from "iconsax-react-native";
-import { Linking, TouchableOpacity, View } from "react-native";
+import { Linking, View } from "react-native";
 
 type AccountSettingsProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -76,6 +80,12 @@ export default function AccountSettingsScreen({
     Linking.openURL(url);
   };
 
+  const handleAvatarPress = (account: Account) => {
+    navigation.navigate("Choose Wallet Avatar", {
+      account,
+    });
+  };
+
   return (
     <SafeLayout subScreen>
       <Column
@@ -85,35 +95,17 @@ export default function AccountSettingsScreen({
         }}
       >
         <View>
-          {account && (
-            <TouchableOpacity
-              style={{ position: "relative", alignItems: "center" }}
-              onPress={() => {
-                navigation.navigate("Choose Wallet Avatar", {
-                  account,
-                });
-              }}
-            >
-              <Avatar
+          <View style={{ alignItems: "center" }}>
+            {account && (
+              <EditableAvatar
                 src={account?.avatar}
                 name={account?.name}
                 size={144}
                 rounded
+                onPress={() => handleAvatarPress(account)}
               />
-              <View
-                style={{
-                  position: "absolute",
-                  bottom: -8,
-                  right: 144 / 2 + 24 + 16,
-                  borderRadius: 300,
-                  backgroundColor: Colors.background,
-                  padding: 10,
-                }}
-              >
-                <Edit2 size={22} color={Colors.text} />
-              </View>
-            </TouchableOpacity>
-          )}
+            )}
+          </View>
 
           <OptionGroup style={{ marginTop: 28 }}>
             <Link

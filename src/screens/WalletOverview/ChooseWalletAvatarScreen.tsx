@@ -4,7 +4,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { CloseIcon, PrimaryButton, SafeLayout, Text } from "@/components";
 import { TouchableOpacity, View, StyleSheet, ScrollView } from "react-native";
-import Avatar from "@/components/Avatar";
+import { EditableAvatar } from "@/components/Avatar";
 import { Colors } from "@/styles";
 import { Account, useAccountsStore } from "@/store";
 import { useState } from "react";
@@ -74,38 +74,19 @@ export default function ChooseWalletAvatarScreen({
     <SafeLayout subScreen staticView style={styles.container}>
       <ScrollView style={styles.scrollContainer}>
         <View style={styles.content}>
-          {account && (
-            <TouchableOpacity
-              style={{ position: "relative", alignItems: "center" }}
-              onPress={handleAvatarPress}
-            >
-              <Avatar
+          <View style={{ alignItems: "center" }}>
+            {account && (
+              <EditableAvatar
                 src={draftAvatar}
                 name={account?.name}
                 size={AVATAR_SIZE}
                 rounded
+                onPress={handleAvatarPress}
+                icon={<CloseIcon size={16} color={Colors.text} />}
+                displayIcon={!!draftAvatar}
               />
-              {draftAvatar && (
-                <View
-                  style={{
-                    position: "absolute",
-                    bottom: -8,
-                    right: AVATAR_SIZE / 2 + 24 + 16,
-                    borderRadius: 300,
-                    backgroundColor: Colors.tokenBoxBackground,
-                    borderWidth: 3,
-                    borderColor: Colors.background,
-                    width: 38,
-                    height: 38,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <CloseIcon size={18} color={Colors.text} />
-                </View>
-              )}
-            </TouchableOpacity>
-          )}
+            )}
+          </View>
 
           <View style={styles.tabContainer}>
             {tabs.map((tab) => (
