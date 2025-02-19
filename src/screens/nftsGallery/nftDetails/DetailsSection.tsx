@@ -17,12 +17,12 @@ type DetailsSectionProps = {
 };
 
 export const DetailsSection = ({ nft }: DetailsSectionProps) => {
-  const collectionMinter = useCollectionMinter(nft.collectionAddress);
+  const collectionMinter = useCollectionMinter(nft.collection.contractAddress);
 
   const data = [
     {
       title: "Contract Address",
-      value: trimAddress(nft.collectionAddress),
+      value: trimAddress(nft.collection.contractAddress),
     },
     {
       title: "Minter",

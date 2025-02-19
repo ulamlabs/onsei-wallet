@@ -13,6 +13,12 @@ import {
 } from "@/services/cosmos";
 import { isValidUrl } from "@/utils/isValidUrl";
 import { loadFromStorage, saveToStorage } from "@/utils";
+import {
+  filterNFTs,
+  groupNFTsByCollection,
+  useFilterHiddenNFTs,
+} from "@/screens/nftsGallery/utils";
+import formatIpfsToHttpUrl from "@/utils/formatIpfsToHttpUrl";
 
 export type TokenAttribute = {
   trait_type: string;
@@ -33,9 +39,15 @@ const defaultMetadata = {
   attributes: [],
 } satisfies TokenMetadata;
 
+export type CollectionInfo = {
+  contractAddress: string;
+  name: string;
+  symbol: string;
+};
+
 export type NFTInfo = {
   tokenId: string;
-  collectionAddress: string;
+  collection: CollectionInfo;
   tokenMetadata: TokenMetadata;
 } & CW721AllTokenInfo;
 
@@ -65,14 +77,6 @@ async function getContractAddressesByCodeIds(
     contractAddresses.push(...contracts);
   }
   return contractAddresses;
-}
-
-export function formatIpfsToHttpUrl(uri: string): string {
-  if (uri.startsWith("ipfs://")) {
-    const ipfsHash = uri.replace("ipfs://", "");
-    return `https://ipfs.io/ipfs/${ipfsHash}`;
-  }
-  return uri;
 }
 
 async function fetchTokenMetadata(
@@ -286,6 +290,7 @@ export type PaginatedResponse<T> = {
 
 export async function queryCollectionTokens(
   contractAddress: string,
+  collectionInfo: CW721CollectionInfo,
   ownerAddress: string,
   node: Node,
   { limit = 10, startAfter }: PaginationParams = {},
@@ -321,7 +326,6 @@ export async function queryCollectionTokens(
           allInfoQuery,
           { node, errorMessage: "Error querying NFT all token info" },
         );
-
         const tokenMetadata = await fetchTokenMetadata(
           allTokenInfo.info.token_uri,
           tokenId,
@@ -329,7 +333,10 @@ export async function queryCollectionTokens(
 
         return {
           tokenId,
-          collectionAddress: contractAddress,
+          collection: {
+            ...collectionInfo,
+            contractAddress,
+          },
           tokenMetadata,
           access: allTokenInfo.access,
           info: allTokenInfo.info,
@@ -360,6 +367,7 @@ export async function queryAllCollectionTokens(
   node: Node,
   pageSize = 10,
 ): Promise<NFTInfo[]> {
+  const collectionInfo = await queryCollectionInfo(contractAddress, node);
   const allTokens: NFTInfo[] = [];
   let startAfter: string | undefined;
   let hasMore = true;
@@ -367,6 +375,7 @@ export async function queryAllCollectionTokens(
   while (hasMore) {
     const response = await queryCollectionTokens(
       contractAddress,
+      collectionInfo,
       ownerAddress,
       node,
       {
@@ -614,4 +623,18 @@ function useContractAddresses() {
     staleTime: LONG_STALE_TIME,
   });
   return contractAddresses;
+}
+
+export function useNFTCollections() {
+  const { nfts } = useNFTs();
+  const filterHiddenNFTs = useFilterHiddenNFTs();
+  const filteredNFTs = filterNFTs(nfts.data ?? [], undefined, filterHiddenNFTs);
+  return groupNFTsByCollection(filteredNFTs);
+}
+
+export function useNFTCollection(collectionAddress: string) {
+  const collections = useNFTCollections();
+  return collections.find(
+    (collection) => collection.contractAddress === collectionAddress,
+  );
 }

@@ -56,10 +56,12 @@ import SettingsHeaderRight from "./header/SettingsHeaderRight";
 import { useNavigation } from "@react-navigation/native";
 import ChooseWalletAvatarScreen from "@/screens/WalletOverview/ChooseWalletAvatarScreen";
 import HiddenNFTsScreen from "@/screens/nftsGallery/HiddenNFTs";
-import { NFTInfo } from "@/modules/nfts/api";
+import { CollectionInfo, NFTInfo } from "@/modules/nfts/api";
 import NFTDetailsScreen from "@/screens/nftsGallery/NFTDetails";
 import { getNFTName } from "@/screens/nftsGallery/utils";
 import NFTDetailsMoreOptions from "@/screens/nftsGallery/nftDetails/NFTDetailsMoreOptions";
+import NFTCollectionsScreen from "@/screens/nftsGallery/NFTCollections";
+import NFTCollectionsScreenHeader from "@/screens/nftsGallery/NFTCollectionsScreenHeader";
 
 export type Recipient = {
   address: string;
@@ -144,6 +146,7 @@ export type HomeParamList = {
   "Choose Wallet Avatar": { account: Account };
   "Hidden NFTs": undefined;
   "NFT Details": { nft: NFTInfo };
+  "NFT Collections": { collection: CollectionInfo };
 };
 
 const { Navigator, Screen } = createNativeStackNavigator<HomeParamList>();
@@ -354,20 +357,28 @@ export default function HomeNavigation() {
       <Screen
         name="NFT Details"
         component={NFTDetailsScreen}
-        options={{
-          header: ({ route }) => {
-            const routeParams = route.params as HomeParamList["NFT Details"];
+        options={({ route }) => ({
+          header: () => {
             return (
               <SubScreenHeader
-                title={getNFTName(routeParams.nft) ?? "NFT Details"}
+                title={getNFTName(route.params.nft) ?? "NFT Details"}
                 icon="close"
                 onIconPress={() => navigation.goBack()}
               >
-                <NFTDetailsMoreOptions nft={routeParams.nft} />
+                <NFTDetailsMoreOptions nft={route.params.nft} />
               </SubScreenHeader>
             );
           },
-        }}
+        })}
+      />
+      <Screen
+        name="NFT Collections"
+        component={NFTCollectionsScreen}
+        options={({ route }) => ({
+          header: () => (
+            <NFTCollectionsScreenHeader collection={route.params.collection} />
+          ),
+        })}
       />
     </Navigator>
   );

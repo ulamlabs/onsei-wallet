@@ -3,10 +3,11 @@ import { loadFromStorage, saveToStorage } from "@/utils";
 import { NFTInfo } from "@/modules/nfts/api";
 import { Account } from "./account";
 
-export type NFTKey = `${NFTInfo["collectionAddress"]}:${NFTInfo["tokenId"]}`;
+export type NFTKey =
+  `${NFTInfo["collection"]["contractAddress"]}:${NFTInfo["tokenId"]}`;
 
 function getNFTKey(nft: NFTInfo): NFTKey {
-  return `${nft.collectionAddress}:${nft.tokenId}`;
+  return `${nft.collection.contractAddress}:${nft.tokenId}`;
 }
 
 type NFTsGalleryStore = {

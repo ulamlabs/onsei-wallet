@@ -1,7 +1,6 @@
 import { View, StyleSheet, ScrollView, Linking, FlatList } from "react-native";
 import { Box, SafeLayout, SecondaryButton, Text } from "@/components";
 import { useToastStore } from "@/store";
-import { useCollectionInfo } from "@/modules/nfts/api";
 import {
   formatTokenId,
   getNFTAttributes,
@@ -10,8 +9,6 @@ import {
   getTokenExplorerURL,
 } from "./utils";
 import Image from "../../components/Image";
-import Skeleton from "@/components/Skeleton";
-import { APP_HORIZONTAL_PADDING } from "@/const";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { ExportSquare, Send2 } from "iconsax-react-native";
 import { DetailsSection } from "@/screens/nftsGallery/nftDetails/DetailsSection";
@@ -31,14 +28,13 @@ export default function NFTDetailsScreen({
 }: NFTDetailsScreenProps) {
   const { error, info } = useToastStore();
 
-  const collection = useCollectionInfo(nft.collectionAddress);
   const description = getNFTDescription(nft);
   const imageSrc = getNFTImage(nft);
   const attributes = getNFTAttributes(nft);
 
   const handleOpenTokenExplorer = () => {
-    if (nft.collectionAddress) {
-      Linking.openURL(getTokenExplorerURL(nft.collectionAddress));
+    if (nft.collection.contractAddress) {
+      Linking.openURL(getTokenExplorerURL(nft.collection.contractAddress));
     } else {
       error({ description: "Collection address not available" });
     }
@@ -61,13 +57,7 @@ export default function NFTDetailsScreen({
 
           <View style={styles.content}>
             <View>
-              {collection.isLoading ? (
-                <Skeleton width={150} height={24} style={styles.name} />
-              ) : (
-                <Text style={styles.name}>
-                  {collection.data?.name || "Collection name unavailable"}
-                </Text>
-              )}
+              <Text style={styles.name}>{nft.collection.name}</Text>
               <Text style={styles.id}>{formatTokenId(nft.tokenId)}</Text>
             </View>
 
@@ -134,7 +124,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   scrollContent: {
-    padding: APP_HORIZONTAL_PADDING,
     paddingBottom: 24,
   },
   image: {

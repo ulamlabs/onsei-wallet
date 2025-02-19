@@ -6,35 +6,28 @@ import {
   Dimensions,
 } from "react-native";
 import { IconButton, Text } from "@/components";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Card from "../../components/Card";
 import pluralize from "@/utils/pluralize";
 import SearchInput from "@/components/forms/SearchInput";
-import { useNFTsGalleryStore } from "@/store/nftsGallery";
-import { NFTInfo, useCollectionInfo } from "@/modules/nfts/api";
+import { NFTInfo } from "@/modules/nfts/api";
 import {
+  Collection,
+  filterNFTs,
   formatTokenId,
-  getNFTAttributes,
   getNFTImage,
-  getNFTName,
+  groupNFTsByCollection,
+  UNKNOWN_COLLECTION_ADDRESS,
+  useFilterHiddenNFTs,
 } from "./utils";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { APP_HORIZONTAL_PADDING } from "@/const";
-import Skeleton from "@/components/Skeleton";
 import { Sort } from "iconsax-react-native";
 import { Dropdown } from "@/components/Dropdown";
-import { useAccountsStore } from "@/store";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "@/types";
 import CardHorizontal from "@/components/CardHorizontal";
-
-const UNKNOWN_COLLECTION_ADDRESS = "Uncategorized";
-
-type Collection = {
-  address: string;
-  nfts: NFTInfo[];
-  firstNftImage: string | null;
-};
+import { useToastStore } from "@/store";
 
 function formatCollectionName(
   collectionAddress: string,
@@ -60,19 +53,14 @@ type NFTGalleryCardProps = {
 
 export function NFTGalleryCard({ nft, onPress }: NFTGalleryCardProps) {
   const image = getNFTImage(nft);
-  const collection = useCollectionInfo(nft.collectionAddress);
-
   return (
     <TouchableOpacity onPress={onPress}>
       <Card
         imageSrc={image}
-        title={
-          collection.isLoading ? (
-            <Skeleton width={100} height={19.2} />
-          ) : (
-            formatCollectionName(nft.collectionAddress, collection.data?.name)
-          )
-        }
+        title={formatCollectionName(
+          nft.collection.contractAddress,
+          nft.collection.name,
+        )}
         subtitle={formatTokenId(nft.tokenId)}
         imageStyle={{
           height: cardSize,
@@ -88,20 +76,28 @@ type CollectionCardProps = {
 };
 
 function CollectionCard({ collection }: CollectionCardProps) {
-  const collectionInfo = useCollectionInfo(collection.address);
+  const navigation = useNavigation<NavigationProp>();
+  const { error } = useToastStore();
+
+  const handlePress = () => {
+    if (collection.nfts.length > 0) {
+      navigation.navigate("NFT Collections", { collection });
+    } else {
+      error({ description: "No visible NFTs in this collection" });
+    }
+  };
 
   return (
-    <CardHorizontal
-      imageSrc={collection.firstNftImage}
-      title={
-        collectionInfo.isLoading ? (
-          <Skeleton width={100} height={20} />
-        ) : (
-          formatCollectionName(collection.address, collectionInfo.data?.name)
-        )
-      }
-      subtitle={pluralize(collection.nfts.length, "item")}
-    />
+    <TouchableOpacity onPress={handlePress} style={{ flex: 1 }}>
+      <CardHorizontal
+        imageSrc={collection.firstNftImage}
+        title={formatCollectionName(
+          collection.contractAddress,
+          collection.name,
+        )}
+        subtitle={pluralize(collection.nfts.length, "item")}
+      />
+    </TouchableOpacity>
   );
 }
 
@@ -118,7 +114,6 @@ type NFTsGalleryContentProps = {
 
 export default function NFTsGalleryContent({ nfts }: NFTsGalleryContentProps) {
   const navigation = useNavigation<NavigationProp>();
-  const { isNFTHidden, hiddenNFTs } = useNFTsGalleryStore();
   const [activeFilter, setActiveFilter] = useState<"all" | "collections">(
     "all",
   );
@@ -126,65 +121,9 @@ export default function NFTsGalleryContent({ nfts }: NFTsGalleryContentProps) {
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const buttonRef = useRef<View>(null);
   const [sortOption, setSortOption] = useState<SortOption>("newest");
-  const { activeAccount } = useAccountsStore();
-
-  const filteredNFTs = useMemo(() => {
-    const query = searchQuery.toLowerCase();
-    return nfts.filter((nft) => {
-      if (activeAccount?.address && isNFTHidden(nft, activeAccount.address)) {
-        return false;
-      }
-      const name = getNFTName(nft);
-      const attributes = getNFTAttributes(nft);
-
-      const matchesName = name?.toLowerCase().includes(query);
-      const matchesCollection = (
-        nft.collectionAddress || UNKNOWN_COLLECTION_ADDRESS
-      )
-        .toLowerCase()
-        .includes(query);
-      const matchesAttributes = attributes?.some(
-        (attribute) =>
-          attribute.value?.toLowerCase().includes(query) ||
-          attribute.trait_type.toLowerCase().includes(query),
-      );
-
-      return matchesName || matchesCollection || matchesAttributes;
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchQuery, nfts, activeAccount?.address, isNFTHidden, hiddenNFTs]);
-
-  const collections: Collection[] = useMemo(() => {
-    const grouped = filteredNFTs.reduce<Record<string, typeof filteredNFTs>>(
-      (acc, nft) => {
-        const collectionAddress =
-          nft.collectionAddress || UNKNOWN_COLLECTION_ADDRESS;
-        if (!acc[collectionAddress]) {
-          acc[collectionAddress] = [];
-        }
-        acc[collectionAddress].push(nft);
-        return acc;
-      },
-      {},
-    );
-
-    return Object.entries(grouped).map(([address, nfts]) => {
-      const images = nfts.filter(
-        (nft) =>
-          activeAccount?.address &&
-          !isNFTHidden(nft, activeAccount.address) &&
-          getNFTImage(nft),
-      );
-
-      const firstNftImage = images.length > 0 ? getNFTImage(images[0]) : null;
-
-      return {
-        address,
-        nfts,
-        firstNftImage,
-      };
-    });
-  }, [activeAccount?.address, filteredNFTs, isNFTHidden]);
+  const filterHiddenNFTs = useFilterHiddenNFTs();
+  const filteredNFTs = filterNFTs(nfts, searchQuery, filterHiddenNFTs);
+  const collections = groupNFTsByCollection(filteredNFTs);
 
   const sortOptions: Array<{ label: string; value: SortOption }> = [
     { label: "Newest", value: "newest" },
@@ -311,7 +250,7 @@ function CollectionsList({ collections }: CollectionsListProps) {
       numColumns={2}
       scrollEnabled={false}
       contentContainerStyle={styles.collectionsFlatList}
-      keyExtractor={(item) => item.address}
+      keyExtractor={(item) => item.contractAddress}
       renderItem={({ item }) => <CollectionCard collection={item} />}
       columnWrapperStyle={styles.collectionsColumnWrapper}
     />

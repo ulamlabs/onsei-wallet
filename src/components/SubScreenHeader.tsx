@@ -8,12 +8,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type SubScreenHeaderProps = PropsWithChildren<{
   title: string;
+  subtitle?: string;
   icon?: "back" | "close";
   onIconPress: () => void;
 }>;
 
 export function SubScreenHeader({
   title,
+  subtitle,
   icon = "close",
   children,
   onIconPress,
@@ -33,6 +35,7 @@ export function SubScreenHeader({
         </Pressable>
         <View style={styles.title}>
           <Text style={styles.titleText}>{title}</Text>
+          {subtitle && <Text style={styles.subtitleText}>{subtitle}</Text>}
         </View>
         {children}
       </View>
@@ -61,6 +64,8 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
+    flexDirection: "row",
+    gap: 6,
     textAlign: "left",
   },
   titleText: {
@@ -68,5 +73,12 @@ const styles = StyleSheet.create({
     fontSize: FontSizes.lg,
     lineHeight: 21.6,
     letterSpacing: 0,
+  },
+  subtitleText: {
+    fontFamily: FontWeights.regular,
+    fontSize: FontSizes.sm,
+    lineHeight: 21,
+    letterSpacing: 0,
+    color: Colors.text100,
   },
 });

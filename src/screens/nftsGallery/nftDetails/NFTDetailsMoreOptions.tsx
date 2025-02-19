@@ -1,9 +1,10 @@
 import { useAccountsStore, useToastStore } from "@/store";
-import { formatIpfsToHttpUrl, NFTInfo } from "@/modules/nfts/api";
+import { NFTInfo } from "@/modules/nfts/api";
 import { getNFTImage } from "@/screens/nftsGallery/utils";
 import MoreOptions from "@/components/MoreOptions";
 import { useNFTsGalleryStore } from "@/store/nftsGallery";
 import useImageValidation from "@/hooks/useImageValidation";
+import formatIpfsToHttpUrl from "@/utils/formatIpfsToHttpUrl";
 
 export default function NFTDetailsMoreOptions({ nft }: { nft: NFTInfo }) {
   const imageSrc = getNFTImage(nft);
@@ -60,7 +61,7 @@ export default function NFTDetailsMoreOptions({ nft }: { nft: NFTInfo }) {
         },
         {
           label:
-            nft.collectionAddress &&
+            nft.collection.contractAddress &&
             activeAccount?.address &&
             isNFTHidden(nft, activeAccount.address)
               ? "Show NFT"

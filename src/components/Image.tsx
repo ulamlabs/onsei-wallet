@@ -1,5 +1,5 @@
 import useImageValidation from "@/hooks/useImageValidation";
-import { formatIpfsToHttpUrl } from "@/modules/nfts/api";
+import formatIpfsToHttpUrl from "@/utils/formatIpfsToHttpUrl";
 import { Colors } from "@/styles";
 import {
   View,
