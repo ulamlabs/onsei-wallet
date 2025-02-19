@@ -13,7 +13,6 @@ import {
 } from "@/services/cosmos";
 import { isValidUrl } from "@/utils/isValidUrl";
 import { loadFromStorage, saveToStorage } from "@/utils";
-import omit from "@/utils/omit";
 
 export type TokenAttribute = {
   trait_type: string;
@@ -493,6 +492,7 @@ export function useNFTs() {
       !!activeAccount?.address &&
       !!contractAddressesQuery.data &&
       !!activeAccountCodeIdsQuery.data,
+    staleTime: LONG_STALE_TIME,
   });
 
   const isLoadingCodes =
@@ -521,10 +521,7 @@ export function useNFTs() {
   };
 
   return {
-    nfts: listStates.isSuccess
-      ? // to satisfy typescript
-        { ...omit(nfts, "data"), data: nfts.data ?? [] }
-      : nfts,
+    nfts,
     contractAddressesQuery,
     codesQuery,
     activeAccountCodeIdsQuery,
@@ -595,6 +592,7 @@ export function useActiveAccountCodeIds() {
     queryFn: () =>
       fetchActiveAccountCodeIds(activeAccount?.address, codes.data),
     enabled: !!activeAccount?.address && !!node,
+    staleTime: LONG_STALE_TIME,
   });
 }
 

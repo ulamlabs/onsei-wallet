@@ -1,21 +1,51 @@
 import { SafeLayout, Text } from "@/components";
 import DashboardHeader from "@/navigation/header/DashboardHeader";
-import DefaultHeaderTitle from "@/navigation/header/DefaultHeaderTitle";
 import EmptyNFTsGallery from "./EmptyNFTsGallery";
 import CenteredLoader from "../../components/CenteredLoader";
-import NFTsGalleryList from "./NFTsGalleryList";
+import NFTsGalleryContent from "./NFTsGalleryList";
 import { useNFTs } from "@/modules/nfts/api";
 import ErrorNFTsGallery from "./ErrorNFTsGallery";
 import useRefreshNFTsGallery from "./hooks/useRefreshNFTsGallery";
 import { StyleSheet } from "react-native";
+import MoreOptions from "@/components/MoreOptions";
+import { FontSizes, FontWeights } from "@/styles";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { NavigatorParamsList } from "@/types";
+import { useNFTsGalleryStore } from "@/store/nftsGallery";
+import { useAccountsStore } from "@/store";
 
-export default function NFTsGallery() {
+type NFTsGalleryScreenProps = NativeStackScreenProps<
+  NavigatorParamsList,
+  "NFTs"
+>;
+export default function NFTsGallery({ navigation }: NFTsGalleryScreenProps) {
   const refreshGallery = useRefreshNFTsGallery();
+  const { activeAccount } = useAccountsStore();
+  const { listStates } = useNFTs();
+  const { hiddenNFTs } = useNFTsGalleryStore();
+
+  const moreOptions = [];
+  if (
+    listStates.isSuccess &&
+    activeAccount?.address &&
+    hiddenNFTs[activeAccount.address].length > 0
+  ) {
+    moreOptions.push({
+      label: "Hidden NFTs",
+      value: "hidden-nfts",
+      onPress: () => navigation.navigate("Hidden NFTs"),
+    });
+  }
 
   return (
     <>
-      <DashboardHeader>
-        <DefaultHeaderTitle title="NFT Collections" />
+      <DashboardHeader style={styles.header}>
+        <Text
+          style={[{ fontSize: FontSizes.lg, fontFamily: FontWeights.bold }]}
+        >
+          NFT Collections
+        </Text>
+        <MoreOptions options={moreOptions} />
       </DashboardHeader>
       <SafeLayout refreshFn={refreshGallery}>
         <NFTGalleryStates />
@@ -47,13 +77,18 @@ function NFTGalleryStates() {
   if (listStates.isEmpty) {
     return <EmptyNFTsGallery />;
   }
-  if (listStates.isSuccess) {
-    return <NFTsGalleryList nfts={nfts.data} />;
+  if (listStates.isSuccess && nfts.isSuccess) {
+    return <NFTsGalleryContent nfts={nfts.data} />;
   }
 }
 
 const styles = StyleSheet.create({
   loadingText: {
     marginTop: 8,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });

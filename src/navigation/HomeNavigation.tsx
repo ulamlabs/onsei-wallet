@@ -44,7 +44,6 @@ import { NavigationProp, NavigatorParamsList } from "@/types";
 import { trimAddress } from "@/utils";
 import { DeliverTxResponse, StdFee } from "@cosmjs/stargate";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import React from "react";
 import BottomBarsNavigation from "./BottomBarsNavigation";
 import { navigatorScreenOptions } from "./const";
 import AddressBookHeaderOptions from "./header/AddressBookHeader";
@@ -56,6 +55,11 @@ import { SubScreenHeader } from "../components/SubScreenHeader";
 import SettingsHeaderRight from "./header/SettingsHeaderRight";
 import { useNavigation } from "@react-navigation/native";
 import ChooseWalletAvatarScreen from "@/screens/WalletOverview/ChooseWalletAvatarScreen";
+import HiddenNFTsScreen from "@/screens/nftsGallery/HiddenNFTs";
+import { NFTInfo } from "@/modules/nfts/api";
+import NFTDetailsScreen from "@/screens/nftsGallery/NFTDetails";
+import { getNFTName } from "@/screens/nftsGallery/utils";
+import NFTDetailsMoreOptions from "@/screens/nftsGallery/nftDetails/NFTDetailsMoreOptions";
 
 export type Recipient = {
   address: string;
@@ -138,6 +142,8 @@ export type HomeParamList = {
   "Link Addresses": { address: string };
   "Address Book": { addressCount?: number; allAddressCount?: number };
   "Choose Wallet Avatar": { account: Account };
+  "Hidden NFTs": undefined;
+  "NFT Details": { nft: NFTInfo };
 };
 
 const { Navigator, Screen } = createNativeStackNavigator<HomeParamList>();
@@ -331,6 +337,37 @@ export default function HomeNavigation() {
         name="Address Book"
         component={AddressBook}
         options={({ route }) => AddressBookHeaderOptions(route, "Address Book")}
+      />
+      <Screen
+        name="Hidden NFTs"
+        options={{
+          header: () => (
+            <SubScreenHeader
+              title="Hidden NFTs"
+              icon="close"
+              onIconPress={() => navigation.navigate("NFTs")}
+            />
+          ),
+        }}
+        component={HiddenNFTsScreen}
+      />
+      <Screen
+        name="NFT Details"
+        component={NFTDetailsScreen}
+        options={{
+          header: ({ route }) => {
+            const routeParams = route.params as HomeParamList["NFT Details"];
+            return (
+              <SubScreenHeader
+                title={getNFTName(routeParams.nft) ?? "NFT Details"}
+                icon="close"
+                onIconPress={() => navigation.goBack()}
+              >
+                <NFTDetailsMoreOptions nft={routeParams.nft} />
+              </SubScreenHeader>
+            );
+          },
+        }}
       />
     </Navigator>
   );

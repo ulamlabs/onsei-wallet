@@ -11,12 +11,7 @@ import Card from "../../components/Card";
 import pluralize from "@/utils/pluralize";
 import SearchInput from "@/components/forms/SearchInput";
 import { useNFTsGalleryStore } from "@/store/nftsGallery";
-import {
-  formatIpfsToHttpUrl,
-  NFTInfo,
-  useCollectionInfo,
-  useInvalidateNFTs,
-} from "@/modules/nfts/api";
+import { NFTInfo, useCollectionInfo } from "@/modules/nfts/api";
 import {
   formatTokenId,
   getNFTAttributes,
@@ -28,9 +23,9 @@ import { APP_HORIZONTAL_PADDING } from "@/const";
 import Skeleton from "@/components/Skeleton";
 import { Sort } from "iconsax-react-native";
 import { Dropdown } from "@/components/Dropdown";
-import NFTDetailsScreen from "./NFTDetails";
-import FullScreenModal from "@/components/modals/FullScreenModal";
-import { useAccountsStore, useToastStore } from "@/store";
+import { useAccountsStore } from "@/store";
+import { useNavigation } from "@react-navigation/native";
+import { NavigationProp } from "@/types";
 
 const UNKNOWN_COLLECTION_ADDRESS = "Uncategorized";
 
@@ -120,12 +115,13 @@ type SortOption =
   | "lowest-value"
   | "collections";
 
-type NFTsGalleryListProps = {
+type NFTsGalleryContentProps = {
   nfts: NFTInfo[];
 };
 
-export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
-  const { isNFTHidden, hideNFT, showNFT } = useNFTsGalleryStore();
+export default function NFTsGalleryContent({ nfts }: NFTsGalleryContentProps) {
+  const navigation = useNavigation<NavigationProp>();
+  const { isNFTHidden, hiddenNFTs } = useNFTsGalleryStore();
   const [activeFilter, setActiveFilter] = useState<"all" | "collections">(
     "all",
   );
@@ -133,16 +129,12 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const buttonRef = useRef<View>(null);
   const [sortOption, setSortOption] = useState<SortOption>("newest");
-  const [selectedNFT, setSelectedNFT] = useState<NFTInfo | null>(null);
-  const { setAvatar, activeAccount } = useAccountsStore();
-  const invalidateNFTs = useInvalidateNFTs();
-  const { error, info } = useToastStore();
-  const [isImageValid, setIsImageValid] = useState<boolean | null>(null);
+  const { activeAccount } = useAccountsStore();
 
   const filteredNFTs = useMemo(() => {
     const query = searchQuery.toLowerCase();
     return nfts.filter((nft) => {
-      if (isNFTHidden(nft)) {
+      if (activeAccount?.address && isNFTHidden(nft, activeAccount.address)) {
         return false;
       }
       const name = getNFTName(nft);
@@ -162,7 +154,8 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
 
       return matchesName || matchesCollection || matchesAttributes;
     });
-  }, [nfts, searchQuery, isNFTHidden]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery, nfts, activeAccount?.address, isNFTHidden, hiddenNFTs]);
 
   const collections: Collection[] = useMemo(() => {
     const grouped = filteredNFTs.reduce<Record<string, typeof filteredNFTs>>(
@@ -180,10 +173,13 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
 
     return Object.entries(grouped).map(([address, nfts]) => {
       const images = nfts.filter(
-        (nft) => !isNFTHidden(nft) && getNFTImage(nft),
+        (nft) =>
+          activeAccount?.address &&
+          !isNFTHidden(nft, activeAccount.address) &&
+          getNFTImage(nft),
       );
 
-      const firstNftImage = getNFTImage(images[0]);
+      const firstNftImage = images.length > 0 ? getNFTImage(images[0]) : null;
 
       return {
         address,
@@ -191,59 +187,17 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
         firstNftImage,
       };
     });
-  }, [filteredNFTs, isNFTHidden]);
+  }, [activeAccount?.address, filteredNFTs, isNFTHidden]);
 
   const sortOptions: Array<{ label: string; value: SortOption }> = [
     { label: "Newest", value: "newest" },
     { label: "Oldest", value: "oldest" },
     { label: "Highest Value", value: "highest-value" },
     { label: "Lowest Value", value: "lowest-value" },
-    { label: "Collections", value: "collections" },
   ];
 
   function handleSort(option: SortOption) {
     setSortOption(option);
-  }
-
-  const handleSetAvatar = () => {
-    if (!selectedNFT) {
-      error({ description: "NFT not selected" });
-      return;
-    }
-    if (!activeAccount?.address) {
-      error({ description: "No active account" });
-      return;
-    }
-    const imageSrc = getNFTImage(selectedNFT);
-    if (imageSrc) {
-      setAvatar(activeAccount.address, formatIpfsToHttpUrl(imageSrc));
-      info({ description: "Avatar updated successfully" });
-    } else {
-      error({ description: "Image not available" });
-    }
-  };
-
-  const handleToggleVisibility = () => {
-    if (!selectedNFT?.collectionAddress) {
-      error({ description: "Collection address not available" });
-      return;
-    }
-    if (isNFTHidden(selectedNFT)) {
-      showNFT(selectedNFT);
-      info({ description: "Collection is now visible" });
-    } else {
-      hideNFT(selectedNFT);
-      info({ description: "Collection is now hidden" });
-    }
-    invalidateNFTs();
-  };
-
-  function getFullScreenModalTitle() {
-    const defaultTitle = "NFT Details";
-    if (!selectedNFT) {
-      return defaultTitle;
-    }
-    return getNFTName(selectedNFT) || defaultTitle;
   }
 
   return (
@@ -312,65 +266,58 @@ export default function NFTsGalleryList({ nfts }: NFTsGalleryListProps) {
         </TouchableOpacity>
       </View>
 
-      {activeFilter === "all" ? (
-        <FlatList
-          key="nfts"
-          data={filteredNFTs}
-          numColumns={2}
-          scrollEnabled={false}
-          contentContainerStyle={styles.flatList}
-          keyExtractor={(item) => item.tokenId}
-          renderItem={({ item }) => (
-            <NFTGalleryCard nft={item} onPress={() => setSelectedNFT(item)} />
-          )}
-          columnWrapperStyle={styles.columnWrapper}
-        />
-      ) : (
-        <FlatList
-          key="collections"
-          data={collections}
-          numColumns={2}
-          scrollEnabled={false}
-          contentContainerStyle={styles.flatList}
-          keyExtractor={(item) => item.address}
-          renderItem={({ item }) => <CollectionCard collection={item} />}
-          columnWrapperStyle={styles.columnWrapper}
-        />
-      )}
-
-      {/* TODO: navigate to NFT details screen instead of using a modal */}
-      <FullScreenModal
-        isVisible={!!selectedNFT}
-        onBackdropPress={() => setSelectedNFT(null)}
-        title={getFullScreenModalTitle()}
-        moreOptions={[
-          {
-            label: "Set as wallet avatar",
-            value: "avatar",
-            onPress: handleSetAvatar,
-            disabled: !isImageValid,
-          },
-          {
-            label:
-              selectedNFT?.collectionAddress && isNFTHidden(selectedNFT)
-                ? "Show NFT"
-                : "Hide NFT",
-            value: "visibility",
-            onPress: handleToggleVisibility,
-            disabled: true,
-          },
-        ]}
-      >
-        {selectedNFT && (
-          <NFTDetailsScreen
-            nft={selectedNFT}
-            isImageValid={!!isImageValid}
-            onImageError={() => setIsImageValid(false)}
-            onImageLoad={() => setIsImageValid(true)}
+      <View style={styles.listContainer}>
+        {activeFilter === "all" ? (
+          <NFTsGalleryList
+            nfts={filteredNFTs}
+            onItemPress={(nft) => navigation.navigate("NFT Details", { nft })}
           />
+        ) : (
+          <CollectionsList collections={collections} />
         )}
-      </FullScreenModal>
+      </View>
     </View>
+  );
+}
+
+type NFTsGalleryListProps = {
+  nfts: NFTInfo[];
+  onItemPress: (nft: NFTInfo) => void;
+};
+
+export function NFTsGalleryList({ nfts, onItemPress }: NFTsGalleryListProps) {
+  return (
+    <FlatList
+      key="nfts"
+      data={nfts}
+      numColumns={2}
+      scrollEnabled={false}
+      contentContainerStyle={styles.flatList}
+      keyExtractor={(item) => item.tokenId}
+      renderItem={({ item }) => (
+        <NFTGalleryCard nft={item} onPress={() => onItemPress(item)} />
+      )}
+      columnWrapperStyle={styles.columnWrapper}
+    />
+  );
+}
+
+type CollectionsListProps = {
+  collections: Collection[];
+};
+
+function CollectionsList({ collections }: CollectionsListProps) {
+  return (
+    <FlatList
+      key="collections"
+      data={collections}
+      numColumns={2}
+      scrollEnabled={false}
+      contentContainerStyle={styles.collectionsFlatList}
+      keyExtractor={(item) => item.address}
+      renderItem={({ item }) => <CollectionCard collection={item} />}
+      columnWrapperStyle={styles.collectionsColumnWrapper}
+    />
   );
 }
 
@@ -404,11 +351,19 @@ const styles = StyleSheet.create({
   activeFilterText: {
     color: Colors.text,
   },
-  flatList: {
-    gap: CARDS_GAP,
+  listContainer: {
     marginTop: 32,
   },
+  flatList: {
+    gap: CARDS_GAP,
+  },
   columnWrapper: {
+    gap: CARDS_GAP,
+  },
+  collectionsFlatList: {
+    gap: CARDS_GAP,
+  },
+  collectionsColumnWrapper: {
     gap: CARDS_GAP,
   },
   searchContainer: {

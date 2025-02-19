@@ -1,7 +1,7 @@
 import { View, StyleSheet, ScrollView, Linking, FlatList } from "react-native";
-import { Box, SecondaryButton, Text } from "@/components";
+import { Box, SafeLayout, SecondaryButton, Text } from "@/components";
 import { useToastStore } from "@/store";
-import { NFTInfo, useCollectionInfo } from "@/modules/nfts/api";
+import { useCollectionInfo } from "@/modules/nfts/api";
 import {
   formatTokenId,
   getNFTAttributes,
@@ -16,19 +16,18 @@ import { Colors, FontSizes, FontWeights } from "@/styles";
 import { ExportSquare, Send2 } from "iconsax-react-native";
 import { DetailsSection } from "@/screens/nftsGallery/nftDetails/DetailsSection";
 import SectionTitle from "./nftDetails/SectionTitle";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { NavigatorParamsList } from "@/types";
 
-type NFTDetailsScreenProps = {
-  nft: NFTInfo;
-  isImageValid: boolean;
-  onImageError: () => void;
-  onImageLoad: () => void;
-};
+type NFTDetailsScreenProps = NativeStackScreenProps<
+  NavigatorParamsList,
+  "NFT Details"
+>;
 
 export default function NFTDetailsScreen({
-  nft,
-  isImageValid,
-  onImageError,
-  onImageLoad,
+  route: {
+    params: { nft },
+  },
 }: NFTDetailsScreenProps) {
   const { error, info } = useToastStore();
 
@@ -50,81 +49,79 @@ export default function NFTDetailsScreen({
   };
 
   return (
-    <View style={styles.container}>
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        bounces={false}
-      >
-        <Image
-          src={imageSrc}
-          style={styles.image}
-          isError={!isImageValid}
-          onError={onImageError}
-          onLoad={onImageLoad}
-        />
+    <SafeLayout subScreen>
+      <View style={styles.container}>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+        >
+          <Image src={imageSrc} style={styles.image} />
 
-        <View style={styles.content}>
-          <View>
-            {collection.isLoading ? (
-              <Skeleton width={150} height={24} style={styles.name} />
-            ) : (
-              <Text style={styles.name}>
-                {collection.data?.name || "Collection name unavailable"}
-              </Text>
-            )}
-            <Text style={styles.id}>{formatTokenId(nft.tokenId)}</Text>
-          </View>
-
-          <View style={styles.actionButtons}>
-            <SecondaryButton
-              style={{ flex: 1 }}
-              icon={ExportSquare}
-              onPress={handleOpenTokenExplorer}
-              title="View on Explorer"
-            />
-            <SecondaryButton
-              style={{ flex: 1, maxWidth: 64 }}
-              icon={Send2}
-              onPress={handleSend}
-            />
-          </View>
-
-          <View style={styles.section}>
-            <SectionTitle>About</SectionTitle>
-            <Box style={{ backgroundColor: Colors.tokenBoxBackground }}>
-              <Text style={styles.description}>
-                {description || "No description available"}
-              </Text>
-            </Box>
-          </View>
-
-          {attributes.length > 0 && (
-            <View style={styles.section}>
-              <SectionTitle>Attributes ({attributes.length})</SectionTitle>
-              <View>
-                <FlatList
-                  data={attributes}
-                  numColumns={3}
-                  scrollEnabled={false}
-                  columnWrapperStyle={{ gap: 10 }}
-                  contentContainerStyle={{ gap: 10 }}
-                  renderItem={({ item }) => (
-                    <Box key={item.trait_type} style={styles.attribute}>
-                      <Text style={styles.attributeKey}>{item.trait_type}</Text>
-                      <Text style={styles.attributeValue}>{item.value}</Text>
-                    </Box>
-                  )}
-                />
-              </View>
+          <View style={styles.content}>
+            <View>
+              {collection.isLoading ? (
+                <Skeleton width={150} height={24} style={styles.name} />
+              ) : (
+                <Text style={styles.name}>
+                  {collection.data?.name || "Collection name unavailable"}
+                </Text>
+              )}
+              <Text style={styles.id}>{formatTokenId(nft.tokenId)}</Text>
             </View>
-          )}
 
-          <DetailsSection nft={nft} />
-        </View>
-      </ScrollView>
-    </View>
+            <View style={styles.actionButtons}>
+              <SecondaryButton
+                style={{ flex: 1 }}
+                icon={ExportSquare}
+                onPress={handleOpenTokenExplorer}
+                title="View on Explorer"
+              />
+              <SecondaryButton
+                style={{ flex: 1, maxWidth: 64 }}
+                icon={Send2}
+                onPress={handleSend}
+              />
+            </View>
+
+            <View style={styles.section}>
+              <SectionTitle>About</SectionTitle>
+              <Box style={{ backgroundColor: Colors.tokenBoxBackground }}>
+                <Text style={styles.description}>
+                  {description || "No description available"}
+                </Text>
+              </Box>
+            </View>
+
+            {attributes.length > 0 && (
+              <View style={styles.section}>
+                <SectionTitle>Attributes ({attributes.length})</SectionTitle>
+                <View>
+                  <FlatList
+                    data={attributes}
+                    numColumns={3}
+                    scrollEnabled={false}
+                    columnWrapperStyle={{ gap: 10 }}
+                    contentContainerStyle={{ gap: 10 }}
+                    renderItem={({ item }) => (
+                      <Box key={item.trait_type} style={styles.attribute}>
+                        <Text style={styles.attributeKey}>
+                          {item.trait_type}
+                        </Text>
+                        <Text style={styles.attributeValue}>{item.value}</Text>
+                      </Box>
+                    )}
+                  />
+                </View>
+              </View>
+            )}
+
+            <DetailsSection nft={nft} />
+          </View>
+        </ScrollView>
+      </View>
+    </SafeLayout>
   );
 }
 

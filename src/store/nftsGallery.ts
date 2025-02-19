@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { loadFromStorage, saveToStorage } from "@/utils";
 import { NFTInfo } from "@/modules/nfts/api";
+import { Account } from "./account";
 
 export type NFTKey = `${NFTInfo["collectionAddress"]}:${NFTInfo["tokenId"]}`;
 
@@ -9,36 +10,49 @@ function getNFTKey(nft: NFTInfo): NFTKey {
 }
 
 type NFTsGalleryStore = {
-  hiddenNFTs: NFTKey[];
+  hiddenNFTs: Record<Account["address"], NFTKey[]>;
   init: () => Promise<void>;
-  hideNFT: (nft: NFTInfo) => void;
-  showNFT: (nft: NFTInfo) => void;
-  isNFTHidden: (nft: NFTInfo) => boolean;
+  hideNFT: (nft: NFTInfo, accountAddress: Account["address"]) => void;
+  showNFT: (nft: NFTInfo, accountAddress: Account["address"]) => void;
+  isNFTHidden: (nft: NFTInfo, accountAddress: Account["address"]) => boolean;
 };
 
 export const useNFTsGalleryStore = create<NFTsGalleryStore>((set, get) => ({
-  hiddenNFTs: [],
+  hiddenNFTs: {},
   init: async () => {
-    const hiddenNFTs = await loadFromStorage<NFTKey[]>("hiddenNFTs", []);
+    const hiddenNFTs = await loadFromStorage<Record<string, NFTKey[]>>(
+      "hiddenNFTs",
+      {},
+    );
     set({ hiddenNFTs });
   },
-  hideNFT: (nft) => {
+  hideNFT: (nft, accountAddress) => {
     set((state) => {
-      const hiddenNFTs = [...state.hiddenNFTs, getNFTKey(nft)];
-      saveToStorage("hiddenNFTs", hiddenNFTs);
-      return { hiddenNFTs };
+      const accountHiddenNFTs = state.hiddenNFTs[accountAddress] || [];
+      const updatedHiddenNFTs = {
+        ...state.hiddenNFTs,
+        [accountAddress]: [...accountHiddenNFTs, getNFTKey(nft)],
+      };
+      saveToStorage("hiddenNFTs", updatedHiddenNFTs);
+      return { hiddenNFTs: updatedHiddenNFTs };
     });
   },
-  showNFT: (nft) => {
+  showNFT: (nft, accountAddress) => {
     set((state) => {
-      const hiddenNFTs = state.hiddenNFTs.filter(
+      const accountHiddenNFTs = state.hiddenNFTs[accountAddress] || [];
+      const updatedAccountNFTs = accountHiddenNFTs.filter(
         (nftKey) => nftKey !== getNFTKey(nft),
       );
-      saveToStorage("hiddenNFTs", hiddenNFTs);
-      return { hiddenNFTs };
+      const updatedHiddenNFTs = {
+        ...state.hiddenNFTs,
+        [accountAddress]: updatedAccountNFTs,
+      };
+      saveToStorage("hiddenNFTs", updatedHiddenNFTs);
+      return { hiddenNFTs: updatedHiddenNFTs };
     });
   },
-  isNFTHidden: (nft) => {
-    return get().hiddenNFTs.includes(getNFTKey(nft));
+  isNFTHidden: (nft, accountAddress) => {
+    const accountHiddenNFTs = get().hiddenNFTs[accountAddress] || [];
+    return accountHiddenNFTs.includes(getNFTKey(nft));
   },
 }));

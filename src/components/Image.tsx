@@ -1,6 +1,6 @@
+import useImageValidation from "@/hooks/useImageValidation";
 import { formatIpfsToHttpUrl } from "@/modules/nfts/api";
 import { Colors } from "@/styles";
-import { useState } from "react";
 import {
   View,
   Image as RNImage,
@@ -33,13 +33,13 @@ export default function Image({
   onError,
   onLoad,
 }: ImageProps) {
-  const [isValid, setIsValid] = useState<boolean | null>(null);
+  const [isImageValid, setIsImageValid] = useImageValidation(src);
 
   const handleError = () => {
     if (onError) {
       onError();
     } else {
-      setIsValid(false);
+      setIsImageValid(false);
     }
   };
 
@@ -47,12 +47,13 @@ export default function Image({
     if (onLoad) {
       onLoad();
     } else {
-      setIsValid(true);
+      setIsImageValid(true);
     }
   };
 
   const shouldShowImage =
-    src && (isValid === true || (isValid === null && isError === false));
+    src &&
+    (isImageValid === true || (isImageValid === null && isError === false));
 
   return shouldShowImage ? (
     <RNImage

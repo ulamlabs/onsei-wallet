@@ -3,18 +3,12 @@ import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { CloseIcon, PrimaryButton, SafeLayout, Text } from "@/components";
-import {
-  TouchableOpacity,
-  View,
-  StyleSheet,
-  FlatList,
-  ScrollView,
-} from "react-native";
+import { TouchableOpacity, View, StyleSheet, ScrollView } from "react-native";
 import Avatar from "@/components/Avatar";
 import { Colors } from "@/styles";
 import { Account, useAccountsStore } from "@/store";
 import { useState } from "react";
-import { NFTGalleryCard } from "@/screens/nftsGallery/NFTsGalleryList";
+import { NFTsGalleryList } from "@/screens/nftsGallery/NFTsGalleryList";
 import { FontWeights, FontSizes } from "@/styles";
 import { NFTInfo, useNFTs } from "@/modules/nfts/api";
 import { getNFTImage } from "../nftsGallery/utils";
@@ -28,7 +22,6 @@ type ChooseWalletAvatarScreenProps = NativeStackScreenProps<
   "Choose Wallet Avatar"
 >;
 
-const CARDS_GAP = 16;
 const AVATAR_SIZE = 144;
 
 const tabs = [
@@ -181,19 +174,8 @@ function NFTCollectionTab({ onNFTSelect }: NFTCollectionTabProps) {
           {listStates.isEmpty && <EmptyNFTsGallery />}
         </View>
       )}
-      {listStates.isSuccess && (
-        <FlatList
-          key="nfts"
-          data={nfts.data}
-          numColumns={2}
-          scrollEnabled={false}
-          contentContainerStyle={styles.flatList}
-          keyExtractor={(item) => item.tokenId}
-          renderItem={({ item }) => (
-            <NFTGalleryCard nft={item} onPress={() => onNFTSelect(item)} />
-          )}
-          columnWrapperStyle={styles.columnWrapper}
-        />
+      {listStates.isSuccess && nfts.isSuccess && (
+        <NFTsGalleryList nfts={nfts.data} onItemPress={onNFTSelect} />
       )}
     </View>
   );
@@ -250,11 +232,5 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     marginTop: 24,
-  },
-  flatList: {
-    gap: CARDS_GAP,
-  },
-  columnWrapper: {
-    gap: CARDS_GAP,
   },
 });

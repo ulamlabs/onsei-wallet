@@ -6,7 +6,7 @@ import { Colors } from "@/styles";
 
 type MoreOptionsProps<T> = {
   options: DropdownOption<T>[];
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
 };
 
 export default function MoreOptions<T>({ options, icon }: MoreOptionsProps<T>) {
