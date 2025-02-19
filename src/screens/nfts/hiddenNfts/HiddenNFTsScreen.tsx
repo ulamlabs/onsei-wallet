@@ -3,9 +3,8 @@ import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NFTsGalleryList } from "../NFTsGalleryList";
 import { useNFTs } from "@/modules/nfts/api";
-import { useNFTsGalleryStore } from "@/store/nftsGallery";
 import { View } from "react-native";
-import { useAccountsStore } from "@/store";
+import { useFilterHiddenNFTs } from "../utils";
 
 type HiddenNFTsScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -15,14 +14,9 @@ type HiddenNFTsScreenProps = NativeStackScreenProps<
 export default function HiddenNFTsScreen({
   navigation,
 }: HiddenNFTsScreenProps) {
-  const { isNFTHidden } = useNFTsGalleryStore();
   const { nfts } = useNFTs();
-  const { activeAccount } = useAccountsStore();
-  const hiddenNFTs =
-    nfts.data?.filter(
-      (nft) =>
-        activeAccount?.address && isNFTHidden(nft, activeAccount.address),
-    ) ?? [];
+  const filterHiddenNFTs = useFilterHiddenNFTs();
+  const hiddenNFTs = nfts.data?.filter((nft) => !filterHiddenNFTs(nft)) ?? [];
 
   return (
     <SafeLayout subScreen>

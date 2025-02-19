@@ -26,9 +26,7 @@ export default function EmptyNFTsGallery() {
   return (
     <View style={styles.container}>
       <View style={styles.emptyStateContainer}>
-        <View style={styles.iconContainer}>
-          <SearchNormal size={64} color={Colors.text400} />
-        </View>
+        <SearchNormal size={64} color={Colors.text400} />
         <Text style={styles.title}>No NFT collected</Text>
         <TouchableOpacity
           onPress={handleAddNFTInfo}
@@ -55,18 +53,11 @@ const styles = StyleSheet.create({
   emptyStateContainer: {
     alignItems: "center",
   },
-  iconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 16,
-  },
   title: {
     fontSize: FontSizes.lg,
     fontFamily: FontWeights.bold,
     color: Colors.text400,
+    marginTop: 16,
     marginBottom: 8,
     lineHeight: 24,
     letterSpacing: 0,

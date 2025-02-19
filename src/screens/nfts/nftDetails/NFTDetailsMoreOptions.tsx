@@ -50,6 +50,13 @@ export default function NFTDetailsMoreOptions({ nft }: { nft: NFTInfo }) {
     }
   };
 
+  const toggleVisibilityLabel =
+    nft.collection.contractAddress &&
+    activeAccount?.address &&
+    isNFTHidden(nft, activeAccount.address)
+      ? "Show NFT"
+      : "Hide NFT";
+
   return (
     <MoreOptions
       options={[
@@ -60,12 +67,7 @@ export default function NFTDetailsMoreOptions({ nft }: { nft: NFTInfo }) {
           disabled: !isImageValid,
         },
         {
-          label:
-            nft.collection.contractAddress &&
-            activeAccount?.address &&
-            isNFTHidden(nft, activeAccount.address)
-              ? "Show NFT"
-              : "Hide NFT",
+          label: toggleVisibilityLabel,
           value: "visibility",
           onPress: handleToggleVisibility,
           disabled: !activeAccount?.address,
