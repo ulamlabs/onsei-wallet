@@ -110,11 +110,15 @@ export const getTransactions = async (
   ].sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
 };
 
-export const useTransactions = (address: string) =>
+export const useTransactions = (address: string | undefined) =>
   useQuery({
     queryKey: ["transactions", address],
-    queryFn: () =>
-      getTransactions({ address }).then((response) =>
-        combineTransactionsWithStorage(address, response),
-      ),
+    queryFn: async () => {
+      if (!address) {
+        return [];
+      }
+      const response = await getTransactions({ address });
+      return await combineTransactionsWithStorage(address, response);
+    },
+    enabled: !!address,
   });

@@ -2,6 +2,7 @@ import { useToastStore } from "@/store";
 import * as ReactQuery from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { GC_TIME, SHORT_STALE_TIME } from "./consts";
+import { PropsWithChildren } from "react";
 
 const queryClient = new ReactQuery.QueryClient({
   defaultOptions: {
@@ -34,9 +35,7 @@ const queryClient = new ReactQuery.QueryClient({
   },
 });
 
-export const QueryClientProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => (
+export const QueryClientProvider = ({ children }: PropsWithChildren) => (
   <ReactQuery.QueryClientProvider client={queryClient}>
     {children}
   </ReactQuery.QueryClientProvider>

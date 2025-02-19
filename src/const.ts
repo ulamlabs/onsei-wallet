@@ -25,3 +25,5 @@ export const NETWORK_NAMES: Record<Node, string> = {
 };
 
 export const NODES: Node[] = ["MainNet", "TestNet"];
+
+export const APP_HORIZONTAL_PADDING = 16;

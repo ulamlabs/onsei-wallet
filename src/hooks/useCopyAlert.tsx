@@ -30,7 +30,7 @@ export function useCopyAlert() {
       no: "Cancel",
       primary: "yes",
       icon: SecuritySafe,
-      headerStyle: { textAlign: "left", fontSize: FontSizes.xl },
+      headerStyle: { textAlign: "left", fontSize: FontSizes["2xl"] },
       noTopBar: true,
     });
     return yesno;

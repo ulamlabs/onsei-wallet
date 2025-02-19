@@ -1,7 +1,7 @@
 import { useModalStore } from "@/store";
-import { Colors, FontSizes } from "@/styles";
+import { Colors, FontSizes, FontWeights } from "@/styles";
 import { InfoCircle } from "iconsax-react-native";
-import { TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import { Row } from "./layout";
 import { Paragraph, Text } from "./typography";
 
@@ -12,7 +12,7 @@ export default function NetworkFeeInfo() {
     alert({
       title: "",
       description: (
-        <Paragraph size="base" style={{ color: Colors.text }}>
+        <Paragraph size="base" style={styles.infoDescription}>
           A network fee is a blockchain charge for processing and confirming
           transactions. Onsei Wallet is free to use.
         </Paragraph>
@@ -39,3 +39,13 @@ export default function NetworkFeeInfo() {
     </TouchableOpacity>
   );
 }
+
+const styles = StyleSheet.create({
+  infoDescription: {
+    color: Colors.text,
+    fontFamily: FontWeights.regular,
+    fontSize: FontSizes.lg,
+    lineHeight: 27,
+    letterSpacing: 0,
+  },
+});

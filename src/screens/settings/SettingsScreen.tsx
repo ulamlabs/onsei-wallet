@@ -30,7 +30,7 @@ export default function SettingsScreen() {
   };
 
   return (
-    <SafeLayout>
+    <SafeLayout subScreen>
       <Column style={{ gap: 32 }}>
         <OptionGroup>
           <Link

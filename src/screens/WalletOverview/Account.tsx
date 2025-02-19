@@ -1,12 +1,13 @@
-import { Column, IconButton, LinkIcon, NoBackupIcon, Row } from "@/components";
+import { IconButton, LinkIcon, NoBackupIcon, Row } from "@/components";
 import { Account as AccountType, useAccountsStore } from "@/store";
 import { Colors } from "@/styles";
 import { NavigationProp } from "@/types";
 import { trimAddress } from "@/utils";
 import { useNavigation } from "@react-navigation/native";
 import { Setting2 } from "iconsax-react-native";
-import { TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Headline, Paragraph } from "../../components/typography";
+import Avatar from "@/components/Avatar";
 
 export type AccountProps = {
   item: AccountType;
@@ -27,56 +28,57 @@ export default function Account({ item }: AccountProps) {
 
   return (
     <TouchableOpacity
-      style={{
-        marginTop: 10,
-        backgroundColor: isActive ? Colors.text : Colors.background300,
-        paddingHorizontal: 22,
-        paddingVertical: 16,
-        borderRadius: 22,
-        justifyContent: "space-between",
-        flexDirection: "row",
-        alignItems: "center",
-      }}
+      style={[
+        styles.container,
+        { backgroundColor: isActive ? Colors.text : Colors.background300 },
+      ]}
       onPress={() => selectAccount(item.address)}
     >
-      <Column style={{ gap: 2 }}>
-        <Row>
-          <Headline
-            style={{
-              color: isActive ? Colors.background : Colors.text,
-              textAlign: "left",
-              marginBottom: 0,
-            }}
-            size="base"
-          >
-            {item.name}
-          </Headline>
-        </Row>
-        <Paragraph>({trimAddress(item.address)})</Paragraph>
-      </Column>
-      <View style={{ position: "relative" }}>
+      <View style={styles.infoContainer}>
+        <Avatar src={item.avatar} name={item.name} size={42} />
+        <View>
+          <Row>
+            <Headline
+              style={[
+                styles.name,
+                {
+                  color: isActive ? Colors.background : Colors.text,
+                },
+              ]}
+              size="base"
+            >
+              {item.name}
+            </Headline>
+          </Row>
+          <Paragraph>({trimAddress(item.address)})</Paragraph>
+        </View>
+      </View>
+
+      <View style={styles.actionsContainer}>
         <IconButton
           icon={Setting2}
           color={isActive ? Colors.background : Colors.text}
           testID={`${item.name.replaceAll(" ", "-")}-settings`}
-          style={{
-            backgroundColor: isActive
-              ? Colors.background500
-              : Colors.background200,
-          }}
+          style={[
+            styles.settingsIcon,
+            {
+              backgroundColor: isActive
+                ? Colors.background500
+                : Colors.background200,
+            },
+          ]}
           onPress={() =>
             navigation.navigate("Wallet settings", { address: item.address })
           }
         />
         {actionRequired && (
           <View
-            style={{
-              position: "absolute",
-              borderRadius: 100,
-              backgroundColor: isActive ? Colors.text : Colors.background300,
-              right: -6,
-              top: -6,
-            }}
+            style={[
+              styles.actionIcon,
+              {
+                backgroundColor: isActive ? Colors.text : Colors.background300,
+              },
+            ]}
           >
             {item.passphraseSkipped ? <NoBackupIcon /> : <LinkIcon />}
           </View>
@@ -85,3 +87,38 @@ export default function Account({ item }: AccountProps) {
     </TouchableOpacity>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    marginTop: 10,
+    paddingHorizontal: 22,
+    paddingVertical: 16,
+    borderRadius: 22,
+    justifyContent: "space-between",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  infoContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  name: {
+    textAlign: "left",
+    marginBottom: 0,
+  },
+  actionsContainer: {
+    position: "relative",
+  },
+  settingsIcon: {
+    borderRadius: 14,
+    width: 42,
+    height: 42,
+  },
+  actionIcon: {
+    position: "absolute",
+    borderRadius: 100,
+    right: -6,
+    top: -6,
+  },
+});

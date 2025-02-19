@@ -51,8 +51,9 @@ export const Colors = {
 };
 
 export const FontSizes = {
-  "2xl": 40,
-  xl: 26,
+  "3xl": 40,
+  "2xl": 26,
+  xl: 20,
   lg: 18,
   base: 16,
   sm: 14,

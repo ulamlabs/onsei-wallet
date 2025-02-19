@@ -1,7 +1,5 @@
 import {
   Column,
-  Headline,
-  IconButton,
   Link,
   LinkIcon,
   NoBackupIcon,
@@ -11,14 +9,19 @@ import {
   TertiaryButton,
   Text,
 } from "@/components";
+import { EditableAvatar } from "@/components/Avatar";
 import { NETWORK_NAMES } from "@/const";
 import { clearTransactionsForAddress } from "@/modules/transactions/storage";
-import { useAccountsStore, useModalStore, useSettingsStore } from "@/store";
+import {
+  Account,
+  useAccountsStore,
+  useModalStore,
+  useSettingsStore,
+} from "@/store";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
-  Edit2,
   ExportSquare,
   LinkCircle,
   SecuritySafe,
@@ -77,27 +80,40 @@ export default function AccountSettingsScreen({
     Linking.openURL(url);
   };
 
-  return (
-    <SafeLayout>
-      <Column style={{ justifyContent: "space-between", minHeight: "100%" }}>
-        <View>
-          <Row
-            style={{
-              paddingHorizontal: 22,
-              paddingVertical: 16,
-              marginBottom: 32,
-            }}
-          >
-            <Headline size="lg">{account?.name}</Headline>
-            <IconButton
-              icon={Edit2}
-              onPress={() =>
-                navigation.navigate("Edit name", { account: account! })
-              }
-            />
-          </Row>
+  const handleAvatarPress = (account: Account) => {
+    navigation.navigate("Choose Wallet Avatar", {
+      account,
+    });
+  };
 
-          <OptionGroup>
+  return (
+    <SafeLayout subScreen>
+      <Column
+        style={{
+          justifyContent: "space-between",
+          minHeight: "100%",
+        }}
+      >
+        <View>
+          <View style={{ alignItems: "center" }}>
+            {account && (
+              <EditableAvatar
+                src={account?.avatar}
+                name={account?.name}
+                size={144}
+                rounded
+                onPress={() => handleAvatarPress(account)}
+              />
+            )}
+          </View>
+
+          <OptionGroup style={{ marginTop: 28 }}>
+            <Link
+              label="Wallet Name"
+              navigateTo="Edit name"
+              labelRight={account?.name}
+              params={{ account: account! }}
+            />
             {account?.passphraseSkipped ? (
               <Link
                 label="Recovery phrase"

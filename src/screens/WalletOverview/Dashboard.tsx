@@ -33,6 +33,7 @@ import {
 import React, { useMemo } from "react";
 import { Image, TouchableOpacity, View } from "react-native";
 import { TokensList } from "../tokens";
+import Avatar from "@/components/Avatar";
 
 const DASHBOARD_IMG = require("../../../assets/dashboard-image.png");
 
@@ -138,6 +139,23 @@ export default function Dashboard({ navigation }: DashboardProps) {
           style={{ flexDirection: "row", gap: 4 }}
         >
           <Row style={{ gap: 4 }}>
+            {activeAccount && (
+              <Avatar
+                src={activeAccount.avatar}
+                name={activeAccount.name}
+                size={24}
+              />
+            )}
+            <Paragraph
+              style={{
+                color: Colors.text,
+                fontSize: 18,
+                fontFamily: FontWeights.bold,
+              }}
+            >
+              {activeAccount?.name}
+            </Paragraph>
+            <ArrowDown2 color={Colors.text} />
             {requiresAction && (
               <View style={{ position: "relative" }}>
                 <View
@@ -158,17 +176,6 @@ export default function Dashboard({ navigation }: DashboardProps) {
                 )}
               </View>
             )}
-
-            <Paragraph
-              style={{
-                color: Colors.text,
-                fontSize: 18,
-                fontFamily: FontWeights.bold,
-              }}
-            >
-              {activeAccount?.name}
-            </Paragraph>
-            <ArrowDown2 color={Colors.text} />
           </Row>
         </TouchableOpacity>
         <CopyAddress />

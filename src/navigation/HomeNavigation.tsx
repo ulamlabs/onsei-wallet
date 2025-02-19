@@ -40,11 +40,10 @@ import {
 import ScanAddressScreen from "@/screens/transfer/ScanAddressScreen";
 import TransactionSettingscreen from "@/screens/transfer/TransactionSettingsScreen";
 import { Account, SavedAddress, Wallet } from "@/store";
-import { NavigatorParamsList } from "@/types";
+import { NavigationProp, NavigatorParamsList } from "@/types";
 import { trimAddress } from "@/utils";
 import { DeliverTxResponse, StdFee } from "@cosmjs/stargate";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import React from "react";
 import BottomBarsNavigation from "./BottomBarsNavigation";
 import { navigatorScreenOptions } from "./const";
 import AddressBookHeaderOptions from "./header/AddressBookHeader";
@@ -52,8 +51,17 @@ import CancelHeaderRight from "./header/CancelHeaderRight";
 import DefaultHeaderLeft from "./header/DefaultHeaderLeft";
 import DefaultHeaderTitle from "./header/DefaultHeaderTitle";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
-import { SettingsHeaderLeft } from "./header/SettingsHeaderLeft";
+import { SubScreenHeader } from "../components/SubScreenHeader";
 import SettingsHeaderRight from "./header/SettingsHeaderRight";
+import { useNavigation } from "@react-navigation/native";
+import ChooseWalletAvatarScreen from "@/screens/WalletOverview/ChooseWalletAvatarScreen";
+import HiddenNFTsScreen from "@/screens/nfts/hiddenNfts/HiddenNFTsScreen";
+import { CollectionInfo, NFTInfo } from "@/modules/nfts/api";
+import NFTDetailsScreen from "@/screens/nfts/nftDetails/NFTDetailsScreen";
+import { getNFTName } from "@/screens/nfts/utils";
+import NFTDetailsMoreOptions from "@/screens/nfts/nftDetails/NFTDetailsMoreOptions";
+import NFTCollectionsScreen from "@/screens/nfts/nftCollections/NFTCollectionsScreen";
+import NFTCollectionsScreenHeader from "@/screens/nfts/nftCollections/NFTCollectionsScreenHeader";
 
 export type Recipient = {
   address: string;
@@ -135,11 +143,17 @@ export type HomeParamList = {
   "Connected Apps": undefined;
   "Link Addresses": { address: string };
   "Address Book": { addressCount?: number; allAddressCount?: number };
+  "Choose Wallet Avatar": { account: Account };
+  "Hidden NFTs": undefined;
+  "NFT Details": { nft: NFTInfo };
+  "NFT Collections": { collection: CollectionInfo };
 };
 
 const { Navigator, Screen } = createNativeStackNavigator<HomeParamList>();
 
 export default function HomeNavigation() {
+  const navigation = useNavigation<NavigationProp>();
+
   return (
     <Navigator
       id="home"
@@ -222,13 +236,55 @@ export default function HomeNavigation() {
       <Screen
         name="Settings"
         options={{
-          headerLeft: () => <SettingsHeaderLeft />,
+          header: () => (
+            <SubScreenHeader
+              title="Settings"
+              onIconPress={() => navigation.navigate("Home")}
+            />
+          ),
         }}
         component={SettingsScreen}
       />
       <Screen name="Manage Token List" component={ManageTokensScreen} />
-      <Screen name="Wallets" component={AccountsScreen} />
-      <Screen name="Wallet settings" component={AccountSettingsScreen} />
+      <Screen
+        name="Wallets"
+        options={{
+          header: () => (
+            <SubScreenHeader
+              title="Wallets"
+              icon="back"
+              onIconPress={() => navigation.goBack()}
+            />
+          ),
+        }}
+        component={AccountsScreen}
+      />
+      <Screen
+        name="Wallet settings"
+        options={{
+          header: () => (
+            <SubScreenHeader
+              title="Wallet settings"
+              icon="back"
+              onIconPress={() => navigation.goBack()}
+            />
+          ),
+        }}
+        component={AccountSettingsScreen}
+      />
+      <Screen
+        name="Choose Wallet Avatar"
+        component={ChooseWalletAvatarScreen}
+        options={{
+          header: () => (
+            <SubScreenHeader
+              title="Choose Wallet Avatar"
+              icon="back"
+              onIconPress={() => navigation.goBack()}
+            />
+          ),
+        }}
+      />
       <Screen name="Edit name" component={EditAccountNameScreen} />
       <Screen
         name="transferSelectToken"
@@ -284,6 +340,45 @@ export default function HomeNavigation() {
         name="Address Book"
         component={AddressBook}
         options={({ route }) => AddressBookHeaderOptions(route, "Address Book")}
+      />
+      <Screen
+        name="Hidden NFTs"
+        options={{
+          header: () => (
+            <SubScreenHeader
+              title="Hidden NFTs"
+              icon="close"
+              onIconPress={() => navigation.navigate("NFTs")}
+            />
+          ),
+        }}
+        component={HiddenNFTsScreen}
+      />
+      <Screen
+        name="NFT Details"
+        component={NFTDetailsScreen}
+        options={({ route }) => ({
+          header: () => {
+            return (
+              <SubScreenHeader
+                title={getNFTName(route.params.nft) ?? "NFT Details"}
+                icon="close"
+                onIconPress={() => navigation.goBack()}
+              >
+                <NFTDetailsMoreOptions nft={route.params.nft} />
+              </SubScreenHeader>
+            );
+          },
+        })}
+      />
+      <Screen
+        name="NFT Collections"
+        component={NFTCollectionsScreen}
+        options={({ route }) => ({
+          header: () => (
+            <NFTCollectionsScreenHeader collection={route.params.collection} />
+          ),
+        })}
       />
     </Navigator>
   );

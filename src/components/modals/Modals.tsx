@@ -18,5 +18,5 @@ export default function Modals() {
     return <ModalQuestion isVisible={true} question={modal} />;
   }
 
-  return <></>;
+  return null;
 }
