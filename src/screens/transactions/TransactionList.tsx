@@ -1,10 +1,17 @@
-import { Column, Option, OptionGroup, Row, Text } from "@/components";
+import {
+  Column,
+  Option,
+  OptionGroup,
+  Paragraph,
+  Row,
+  Text,
+} from "@/components";
 import { Transaction } from "@/modules/transactions";
 import { serializeTxn } from "@/modules/transactions/utils";
 import { useAccountsStore } from "@/store";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { NavigationProp } from "@/types";
-import { capitalize, formatAmount } from "@/utils";
+import { calculateTokenUsdBalance, capitalize, formatAmount } from "@/utils";
 import { trimAddress } from "@/utils/trimAddress";
 import { useNavigation } from "@react-navigation/native";
 import { isToday } from "date-fns";
@@ -91,6 +98,9 @@ function TransactionBox({ txn }: TransactionRenderProps) {
     return Coin;
   }, [txn]);
 
+  const timestampInMilliseconds = txn.timestamp.getTime();
+  console.log(timestampInMilliseconds);
+
   function getContent() {
     if (txn.token && sentOrReceived !== "") {
       return (
@@ -102,11 +112,18 @@ function TransactionBox({ txn }: TransactionRenderProps) {
             </Text>
           </View>
 
-          <Text style={{ color, fontFamily: FontWeights.bold }}>
-            {txn.status === "success" &&
-              (sentOrReceived === "sent" ? "-" : "+")}
-            {formatAmount(txn.amount, token.decimals)} {token.symbol}
-          </Text>
+          <View>
+            <Text style={{ color, fontFamily: FontWeights.bold }}>
+              {txn.status === "success" &&
+                (sentOrReceived === "sent" ? "-" : "+")}
+              {formatAmount(txn.amount, token.decimals)} {token.symbol}
+            </Text>
+            {!!token.price && (
+              <Paragraph>
+                ${calculateTokenUsdBalance(token, txn.amount)}
+              </Paragraph>
+            )}
+          </View>
         </Row>
       );
     }
