@@ -17,7 +17,7 @@ import {
   filterNFTs,
   groupNFTsByCollection,
   useFilterHiddenNFTs,
-} from "@/screens/nftsGallery/utils";
+} from "@/screens/nfts/utils";
 import formatIpfsToHttpUrl from "@/utils/formatIpfsToHttpUrl";
 
 export type TokenAttribute = {

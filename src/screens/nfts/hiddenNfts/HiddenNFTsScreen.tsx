@@ -1,7 +1,7 @@
 import { SafeLayout, Text } from "@/components";
 import { NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { NFTsGalleryList } from "./NFTsGalleryList";
+import { NFTsGalleryList } from "../NFTsGalleryList";
 import { useNFTs } from "@/modules/nfts/api";
 import { useNFTsGalleryStore } from "@/store/nftsGallery";
 import { View } from "react-native";

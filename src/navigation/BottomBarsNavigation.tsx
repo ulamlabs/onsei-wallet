@@ -11,7 +11,7 @@ import {
 import React from "react";
 import Bar from "./bar/Bar";
 import DApps from "@/screens/dApps/DAppsScreen";
-import NFTsGallery from "@/screens/nftsGallery/NFTsGallery";
+import NFTsGalleryScreen from "@/screens/nfts/nftsGallery/NFTsGalleryScreen";
 import { View } from "react-native";
 import { useCodes } from "@/modules/nfts/api";
 
@@ -71,7 +71,7 @@ export default function BottomBarsNavigation() {
       />
       <Screen
         name="NFTs"
-        component={NFTsGallery}
+        component={NFTsGalleryScreen}
         options={{
           tabBarIcon: ({ focused }) => (
             <FlashCircle color={focused ? Colors.text : Colors.text100} />

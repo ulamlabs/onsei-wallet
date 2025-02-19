@@ -7,12 +7,12 @@ import {
   getNFTDescription,
   getNFTImage,
   getTokenExplorerURL,
-} from "./utils";
-import Image from "../../components/Image";
+} from "../utils";
+import Image from "../../../components/Image";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { ExportSquare, Send2 } from "iconsax-react-native";
-import { DetailsSection } from "@/screens/nftsGallery/nftDetails/DetailsSection";
-import SectionTitle from "./nftDetails/SectionTitle";
+import { DetailsSection } from "@/screens/nfts/nftDetails/DetailsSection";
+import SectionTitle from "./SectionTitle";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamsList } from "@/types";
 

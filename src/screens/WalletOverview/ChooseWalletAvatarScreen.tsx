@@ -8,13 +8,13 @@ import { EditableAvatar } from "@/components/Avatar";
 import { Colors } from "@/styles";
 import { Account, useAccountsStore } from "@/store";
 import { useState } from "react";
-import { NFTsGalleryList } from "@/screens/nftsGallery/NFTsGalleryList";
+import { NFTsGalleryList } from "@/screens/nfts/NFTsGalleryList";
 import { FontWeights, FontSizes } from "@/styles";
 import { NFTInfo, useNFTs } from "@/modules/nfts/api";
-import { getNFTImage } from "../nftsGallery/utils";
+import { getNFTImage } from "../nfts/utils";
 import CenteredLoader from "@/components/CenteredLoader";
-import ErrorNFTsGallery from "../nftsGallery/ErrorNFTsGallery";
-import EmptyNFTsGallery from "../nftsGallery/EmptyNFTsGallery";
+import ErrorNFTsGallery from "../nfts/nftsGallery/ErrorNFTsGallery";
+import EmptyNFTsGallery from "../nfts/nftsGallery/EmptyNFTsGallery";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type ChooseWalletAvatarScreenProps = NativeStackScreenProps<
@@ -39,8 +39,7 @@ export default function ChooseWalletAvatarScreen({
   const [draftAvatar, setDraftAvatar] = useState<Account["avatar"]>(
     account?.avatar,
   );
-  console.log("draftAvatar", draftAvatar);
-  console.log("account?.avatar", account?.avatar);
+
   const inset = useSafeAreaInsets();
   const { setAvatar } = useAccountsStore();
   const [activeTab, setActiveTab] = useState<Tab>("NFT Collection");

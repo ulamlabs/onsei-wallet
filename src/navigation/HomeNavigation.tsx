@@ -55,13 +55,13 @@ import { SubScreenHeader } from "../components/SubScreenHeader";
 import SettingsHeaderRight from "./header/SettingsHeaderRight";
 import { useNavigation } from "@react-navigation/native";
 import ChooseWalletAvatarScreen from "@/screens/WalletOverview/ChooseWalletAvatarScreen";
-import HiddenNFTsScreen from "@/screens/nftsGallery/HiddenNFTs";
+import HiddenNFTsScreen from "@/screens/nfts/hiddenNfts/HiddenNFTsScreen";
 import { CollectionInfo, NFTInfo } from "@/modules/nfts/api";
-import NFTDetailsScreen from "@/screens/nftsGallery/NFTDetails";
-import { getNFTName } from "@/screens/nftsGallery/utils";
-import NFTDetailsMoreOptions from "@/screens/nftsGallery/nftDetails/NFTDetailsMoreOptions";
-import NFTCollectionsScreen from "@/screens/nftsGallery/NFTCollections";
-import NFTCollectionsScreenHeader from "@/screens/nftsGallery/NFTCollectionsScreenHeader";
+import NFTDetailsScreen from "@/screens/nfts/nftDetails/NFTDetailsScreen";
+import { getNFTName } from "@/screens/nfts/utils";
+import NFTDetailsMoreOptions from "@/screens/nfts/nftDetails/NFTDetailsMoreOptions";
+import NFTCollectionsScreen from "@/screens/nfts/nftCollections/NFTCollectionsScreen";
+import NFTCollectionsScreenHeader from "@/screens/nfts/nftCollections/NFTCollectionsScreenHeader";
 
 export type Recipient = {
   address: string;

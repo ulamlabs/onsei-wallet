@@ -3,7 +3,7 @@ import { useNFTCollection } from "@/modules/nfts/api";
 import { NavigationProp, NavigatorParamsList } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { View } from "react-native";
-import { NFTsGalleryList } from "./NFTsGalleryList";
+import { NFTsGalleryList } from "../NFTsGalleryList";
 import { useNavigation } from "@react-navigation/native";
 
 type NFTCollectionsScreenProps = NativeStackScreenProps<

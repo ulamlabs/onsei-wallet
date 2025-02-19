@@ -1,6 +1,6 @@
 import { useAccountsStore, useToastStore } from "@/store";
 import { NFTInfo } from "@/modules/nfts/api";
-import { getNFTImage } from "@/screens/nftsGallery/utils";
+import { getNFTImage } from "@/screens/nfts/utils";
 import MoreOptions from "@/components/MoreOptions";
 import { useNFTsGalleryStore } from "@/store/nftsGallery";
 import useImageValidation from "@/hooks/useImageValidation";

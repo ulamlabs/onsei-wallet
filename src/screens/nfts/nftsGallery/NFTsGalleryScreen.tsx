@@ -1,11 +1,11 @@
 import { SafeLayout, Text } from "@/components";
 import DashboardHeader from "@/navigation/header/DashboardHeader";
 import EmptyNFTsGallery from "./EmptyNFTsGallery";
-import CenteredLoader from "../../components/CenteredLoader";
-import NFTsGalleryContent from "./NFTsGalleryList";
+import CenteredLoader from "../../../components/CenteredLoader";
+import NFTsGalleryContent from "../NFTsGalleryList";
 import { useNFTs } from "@/modules/nfts/api";
 import ErrorNFTsGallery from "./ErrorNFTsGallery";
-import useRefreshNFTsGallery from "./hooks/useRefreshNFTsGallery";
+import useRefreshNFTsGallery from "../hooks/useRefreshNFTsGallery";
 import { StyleSheet } from "react-native";
 import MoreOptions from "@/components/MoreOptions";
 import { FontSizes, FontWeights } from "@/styles";
@@ -18,7 +18,9 @@ type NFTsGalleryScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
   "NFTs"
 >;
-export default function NFTsGallery({ navigation }: NFTsGalleryScreenProps) {
+export default function NFTsGalleryScreen({
+  navigation,
+}: NFTsGalleryScreenProps) {
   const refreshGallery = useRefreshNFTsGallery();
   const { activeAccount } = useAccountsStore();
   const { listStates } = useNFTs();
