@@ -98,9 +98,6 @@ function TransactionBox({ txn }: TransactionRenderProps) {
     return Coin;
   }, [txn]);
 
-  const timestampInMilliseconds = txn.timestamp.getTime();
-  console.log(timestampInMilliseconds);
-
   function getContent() {
     if (txn.token && sentOrReceived !== "") {
       return (
