@@ -14,12 +14,17 @@ import {
 
 const DEFAULT_PLACEHOLDER_TEXT = "Image not found";
 
+type PlaceholderConfig = {
+  text?: string;
+  style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
+};
+
 type ImageProps = {
   src: string | null;
   style?: StyleProp<ImageStyle>;
   isError?: boolean;
-  placeholderText?: string;
-  placeholderTextStyle?: StyleProp<TextStyle>;
+  placeholder?: PlaceholderConfig;
   onError?: () => void;
   onLoad?: () => void;
 };
@@ -28,8 +33,7 @@ export default function Image({
   src,
   style,
   isError,
-  placeholderText,
-  placeholderTextStyle,
+  placeholder,
   onError,
   onLoad,
 }: ImageProps) {
@@ -64,28 +68,24 @@ export default function Image({
     />
   ) : (
     <ImagePlaceholder
-      placeholderText={placeholderText}
-      style={style}
-      placeholderTextStyle={placeholderTextStyle}
+      text={placeholder?.text}
+      style={[style, placeholder?.style]}
+      textStyle={placeholder?.textStyle}
     />
   );
 }
 
 type ImagePlaceholderProps = {
-  placeholderText?: string;
+  text?: string;
   style?: StyleProp<ViewStyle>;
-  placeholderTextStyle?: StyleProp<TextStyle>;
+  textStyle?: StyleProp<TextStyle>;
 };
 
-function ImagePlaceholder({
-  placeholderText,
-  style,
-  placeholderTextStyle,
-}: ImagePlaceholderProps) {
+function ImagePlaceholder({ text, style, textStyle }: ImagePlaceholderProps) {
   return (
     <View style={[styles.placeholder, style]}>
-      <Text style={[styles.placeholderText, placeholderTextStyle]}>
-        {placeholderText ?? DEFAULT_PLACEHOLDER_TEXT}
+      <Text style={[styles.placeholderText, textStyle]}>
+        {text ?? DEFAULT_PLACEHOLDER_TEXT}
       </Text>
     </View>
   );

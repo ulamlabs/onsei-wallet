@@ -25,11 +25,10 @@ export default function Avatar({
     <Image
       src={src}
       style={[styles.avatar, { width: size, height: size, borderRadius }]}
-      placeholderTextStyle={[
-        styles.avatarPlaceholderText,
-        { fontSize, lineHeight },
-      ]}
-      placeholderText={getInitials(name)}
+      placeholder={{
+        text: getInitials(name),
+        textStyle: [styles.avatarPlaceholderText, { fontSize, lineHeight }],
+      }}
     />
   );
 }

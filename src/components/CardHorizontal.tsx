@@ -22,8 +22,10 @@ export default function CardHorizontal({
       <Image
         src={imageSrc}
         style={[styles.cardImage, imageStyle]}
-        placeholderTextStyle={styles.cardImagePlaceholderText}
-        placeholderText="No image"
+        placeholder={{
+          text: "No image",
+          textStyle: styles.cardImagePlaceholderText,
+        }}
       />
       <View style={styles.cardInfo}>
         {typeof title === "string" ? <BasicCardTitle title={title} /> : title}
