@@ -80,6 +80,11 @@ export default function TransferSelectAddressScreen({
     [typedAddress],
   );
 
+  const evmTransactionNotLinkedError = useMemo(
+    () => isAddress(typedAddress) && !activeAccount?.addressLinked,
+    [typedAddress, activeAccount],
+  );
+
   function select(recipientAddress: string) {
     const name = [...allAddressBook, ...allAccounts].find(
       (address) => address.address === recipientAddress,
@@ -147,6 +152,12 @@ export default function TransferSelectAddressScreen({
         {sameAddressError && (
           <Paragraph style={{ textAlign: "center" }}>
             Sender and receiver cannot be the same address
+          </Paragraph>
+        )}
+
+        {evmTransactionNotLinkedError && (
+          <Paragraph style={{ textAlign: "center" }}>
+            Account is not linked, unable to do transactions to EVM addresses
           </Paragraph>
         )}
 
@@ -220,9 +231,15 @@ export default function TransferSelectAddressScreen({
       <PrimaryButton
         title="Next"
         onPress={validateTypedAddress}
-        disabled={!searchInput.value || isInvalidAddress || sameAddressError}
+        disabled={
+          !searchInput.value ||
+          isInvalidAddress ||
+          sameAddressError ||
+          evmTransactionNotLinkedError
+        }
         elevate
       />
     </SafeLayout>
   );
 }
+
