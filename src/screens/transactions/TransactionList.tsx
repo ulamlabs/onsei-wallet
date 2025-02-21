@@ -1,10 +1,17 @@
-import { Column, Option, OptionGroup, Row, Text } from "@/components";
+import {
+  Column,
+  Option,
+  OptionGroup,
+  Paragraph,
+  Row,
+  Text,
+} from "@/components";
 import { Transaction } from "@/modules/transactions";
 import { serializeTxn } from "@/modules/transactions/utils";
 import { useAccountsStore } from "@/store";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import { NavigationProp } from "@/types";
-import { capitalize, formatAmount } from "@/utils";
+import { calculateTokenUsdBalance, capitalize, formatAmount } from "@/utils";
 import { trimAddress } from "@/utils/trimAddress";
 import { useNavigation } from "@react-navigation/native";
 import { isToday } from "date-fns";
@@ -93,6 +100,17 @@ function TransactionBox({ txn }: TransactionRenderProps) {
 
   function getContent() {
     if (txn.token && sentOrReceived !== "") {
+      const usdBalance = token.price
+        ? calculateTokenUsdBalance(token, txn.amount)
+        : 0;
+      const isUsdBalancePositive = !!token.price && txn.amount > 0;
+      const formattedUsdBalance =
+        usdBalance > 0
+          ? usdBalance.toFixed(2)
+          : isUsdBalancePositive // due to rounding usdBalance sometimes might be equal to 0 even though txn.amount is positive so we display $<0.01
+            ? "<0.01"
+            : "0.00";
+
       return (
         <Row style={{ flex: 1 }}>
           <View>
@@ -102,11 +120,25 @@ function TransactionBox({ txn }: TransactionRenderProps) {
             </Text>
           </View>
 
-          <Text style={{ color, fontFamily: FontWeights.bold }}>
-            {txn.status === "success" &&
-              (sentOrReceived === "sent" ? "-" : "+")}
-            {formatAmount(txn.amount, token.decimals)} {token.symbol}
-          </Text>
+          <View>
+            <Text style={{ color, fontFamily: FontWeights.bold }}>
+              {txn.status === "success" &&
+                (sentOrReceived === "sent" ? "-" : "+")}
+              {formatAmount(txn.amount, token.decimals)} {token.symbol}
+            </Text>
+            {!!token.price && (
+              <Paragraph
+                style={{
+                  alignSelf: "flex-end",
+                  color: Colors.text100,
+                  fontSize: FontSizes.xs,
+                  paddingTop: 2,
+                }}
+              >
+                ${formattedUsdBalance}
+              </Paragraph>
+            )}
+          </View>
         </Row>
       );
     }
