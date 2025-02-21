@@ -61,12 +61,12 @@ export const getBlockByHeight = async (height: number, rpcUrl: string) => {
 };
 
 export const getTxReceipt = async (hash: string) => {
-  const emvRpcUrl =
+  const evmRpcUrl =
     useSettingsStore.getState().settings.node === "MainNet"
       ? EVM_RPC_MAIN
       : EVM_RPC_TEST;
   try {
-    const { data } = await api.post(emvRpcUrl, {
+    const { data } = await api.post(evmRpcUrl, {
       jsonrpc: "2.0",
       method: "eth_getTransactionReceipt",
       params: [hash],
@@ -81,9 +81,9 @@ export const getTxReceipt = async (hash: string) => {
 
 export const getTxByHash = async (hash: string) => {
   const node = useSettingsStore.getState().settings.node;
-  const emvRpcUrl = node === "MainNet" ? EVM_RPC_MAIN : EVM_RPC_TEST;
+  const evmRpcUrl = node === "MainNet" ? EVM_RPC_MAIN : EVM_RPC_TEST;
   try {
-    const { data } = await api.post<{ result: evmTx }>(emvRpcUrl, {
+    const { data } = await api.post<{ result: evmTx }>(evmRpcUrl, {
       jsonrpc: "2.0",
       method: "eth_getTransactionByHash",
       params: [hash],

@@ -54,14 +54,14 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
     const { nonNativeRegistry, tokenRegistry, tokenPricesMap, getPrices } =
       get();
 
-    const hasSeiToken = nonNativeRegistry.some((t) => t.id === newToken.id);
-    const hasEvmToken = newToken.pointerContract
+    const existsOnSei = nonNativeRegistry.some((t) => t.id === newToken.id);
+    const existsOnEvm = newToken.pointerContract
       ? nonNativeRegistry.some(
           (t) => t.id === newToken.pointerContract?.toLowerCase(),
         )
       : false;
 
-    if (hasSeiToken && hasEvmToken) {
+    if (existsOnSei && existsOnEvm) {
       return;
     }
 
@@ -85,16 +85,16 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
     let updatedRegistry = [...tokenRegistry];
     let updatedNonNativeRegistry = [...nonNativeRegistry];
 
-    if (hasSeiToken && !hasEvmToken && tokenFromPointer) {
+    if (existsOnSei && !existsOnEvm && tokenFromPointer) {
       updatedRegistry = [...updatedRegistry, tokenFromPointer];
       updatedNonNativeRegistry = [
         ...updatedNonNativeRegistry,
         tokenFromPointer,
       ];
-    } else if (!hasSeiToken && hasEvmToken) {
+    } else if (!existsOnSei && existsOnEvm) {
       updatedRegistry = [...updatedRegistry, newToken];
       updatedNonNativeRegistry = [...updatedNonNativeRegistry, newToken];
-    } else if (!hasSeiToken && !hasEvmToken) {
+    } else if (!existsOnSei && !existsOnEvm) {
       updatedRegistry = [
         ...updatedRegistry,
         newToken,
