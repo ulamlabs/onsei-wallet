@@ -214,10 +214,13 @@ export default function TransferAmountScreen({
 
   async function feeEstimation(amount: bigint = intAmount) {
     try {
-      const changeAddress = token.type==="erc20" && !isEvmAddress(recipient.address);
-      let newAddress = ""
-      if(changeAddress) {newAddress = await getEVMAddressFromSeiAddress(recipient.address);}
-      const addressToUse = (changeAddress?newAddress:recipient.address)
+      const changeAddress =
+        token.type === "erc20" && !isEvmAddress(recipient.address);
+      let newAddress = "";
+      if (changeAddress) {
+        newAddress = await getEVMAddressFromSeiAddress(recipient.address);
+      }
+      const addressToUse = changeAddress ? newAddress : recipient.address;
       if (isEvmAddress(addressToUse)) {
         const simulation = await simulateEvmTx(
           getMnemonic(activeAccount!.address!),

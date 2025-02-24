@@ -39,9 +39,9 @@ export default function TransferSelectTokenScreen({
         const isLinkedToSei = await getSeiAddress(recipient.address);
         setLinkedToSei(!!isLinkedToSei);
         return;
-      } else{
-        const isLinkedToEvm = await isAddressLinked(recipient.address)
-        setLinkedToEvm(!!isLinkedToEvm)
+      } else {
+        const isLinkedToEvm = await isAddressLinked(recipient.address);
+        setLinkedToEvm(!!isLinkedToEvm);
         return;
       }
     }
@@ -63,7 +63,11 @@ export default function TransferSelectTokenScreen({
       return;
     }
 
-    if (token.type === "erc20" && !linkedToEvm && !isEvmAddress(recipient.address)) {
+    if (
+      token.type === "erc20" &&
+      !linkedToEvm &&
+      !isEvmAddress(recipient.address)
+    ) {
       alert({
         description:
           "You cannot transfer ERC20 tokens to an address that is not linked to EVM",
