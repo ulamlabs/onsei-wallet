@@ -7,32 +7,32 @@ import {
 } from "@/components";
 import CenteredLoader from "@/components/CenteredLoader";
 import {
-  Transaction,
+  NFTTransaction,
   deliverTxResponseToTxResponse,
-  parseEvmToTransaction,
-  parseTx,
+  parseEvmToNftTransaction,
+  parseNftTx,
 } from "@/modules/transactions";
-import { storeNewTransaction } from "@/modules/transactions/storage";
-import { transferToken } from "@/services/cosmos/tx";
+import { storeNewNftTransaction } from "@/modules/transactions/storage";
+import { transferNFT } from "@/services/cosmos/tx";
 import { WalletClientWithPublicActions, getEvmClient } from "@/services/evm";
-import { sendEvmTx } from "@/services/evm/tx";
-import { useAccountsStore, useSettingsStore, useTokensStore } from "@/store";
+import { sendEvmNftTx } from "@/services/evm/tx";
+import { useAccountsStore, useSettingsStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
-import { formatAmount, resetNavigationStack } from "@/utils";
+import { resetNavigationStack } from "@/utils";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { isAddress as isEvmAddress } from "viem";
 
-type TransferSendingScreenProps = NativeStackScreenProps<
+type SendNFTSendingScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
-  "transferSending"
+  "Send NFT - Sending"
 >;
 
-export default function TransferSendingScreen({
+export default function SendNFTSendingScreen({
   navigation,
   route,
-}: TransferSendingScreenProps) {
+}: SendNFTSendingScreenProps) {
   const { activeAccount, getMnemonic } = useAccountsStore();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -41,26 +41,16 @@ export default function TransferSendingScreen({
     settings: { node },
   } = useSettingsStore();
 
-  const transfer = route.params;
-
-  const { sei, updateBalances, tokenMap } = useTokensStore();
-
-  const token = tokenMap.get(transfer.tokenId);
-
-  const intAmount = BigInt(transfer.intAmount);
+  const { transfer, nft } = route.params;
 
   useEffect(() => {
     send();
   }, []);
 
   async function send() {
-    if (!token) {
-      return;
-    }
-    const amount = formatAmount(intAmount, token.decimals);
     try {
       if (
-        transfer.evmTxData?.pointerContract !== "0x" ||
+        transfer.evmTxData?.contractAddress !== "0x" ||
         isEvmAddress(transfer.recipient.address)
       ) {
         const evmClient = await getEvmClient(
@@ -69,35 +59,33 @@ export default function TransferSendingScreen({
         );
         const { walletClient } = evmClient;
 
-        if (transfer.evmTxData?.pointerContract !== "0x") {
-          await handleEvmPointerTransaction(walletClient, amount);
+        if (transfer.evmTxData?.contractAddress !== "0x") {
+          await handleEvmNftTransaction(walletClient);
           return;
         }
 
         if (transfer.evmTransaction !== "0x") {
-          await handleEvmRawTransaction(walletClient, amount);
+          await handleEvmRawTransaction(walletClient);
           return;
         }
       }
 
-      await handleCosmosTransaction(amount);
+      await handleCosmosTransaction();
     } catch (error: any) {
       setError(error.toString());
     } finally {
-      finishTransaction();
+      setLoading(false);
     }
   }
 
-  async function handleEvmPointerTransaction(
+  async function handleEvmNftTransaction(
     walletClient: WalletClientWithPublicActions,
-    amount: string,
   ) {
-    const { pointerContract, privateKey, tokenAmount } = transfer.evmTxData!;
-    const tx = await sendEvmTx(
-      pointerContract,
+    const { contractAddress, privateKey } = transfer.evmTxData!;
+    const tx = await sendEvmNftTx(
+      contractAddress,
       privateKey,
       transfer.recipient.address as `0x${string}`,
-      BigInt(tokenAmount),
       transfer.memo,
     );
 
@@ -108,91 +96,88 @@ export default function TransferSendingScreen({
       hash: transaction.hash,
     });
 
-    const parsedTx = parseEvmToTransaction(transaction, token, receipt.status);
-    storeNewTransaction(activeAccount!.address, parsedTx);
-    navigateToSuccess(tx.hash as `0x${string}`, amount, receipt.status);
+    const parsedTx = parseEvmToNftTransaction(
+      transaction,
+      nft.collection.contractAddress,
+      nft.tokenId,
+      receipt.status,
+    );
+    storeNewNftTransaction(activeAccount!.address, parsedTx);
+    navigateToSuccess(tx.hash as `0x${string}`, receipt.status);
   }
 
   async function handleEvmRawTransaction(
     walletClient: WalletClientWithPublicActions,
-    amount: string,
   ) {
     const hash = await walletClient.sendRawTransaction({
       serializedTransaction: transfer.evmTransaction!,
     });
     const transaction = await walletClient.getTransaction({ hash });
     const receipt = await walletClient.waitForTransactionReceipt({ hash });
-    const parsedTx = parseEvmToTransaction(transaction, token, receipt.status);
-    storeNewTransaction(activeAccount!.address, parsedTx);
-    navigateToSuccess(hash, amount, receipt.status);
+    const parsedTx = parseEvmToNftTransaction(
+      transaction,
+      nft.collection.contractAddress,
+      nft.tokenId,
+      receipt.status,
+    );
+    storeNewNftTransaction(activeAccount!.address, parsedTx);
+    navigateToSuccess(hash, receipt.status);
   }
 
-  async function handleCosmosTransaction(amount: string) {
-    if (!token) {
-      return;
-    }
-    const tx = await transferToken({
+  async function handleCosmosTransaction() {
+    console.log("transfer", JSON.stringify(transfer, null, 2));
+    const tx = await transferNFT({
       ...transfer,
-      token,
-      intAmount,
+      contractAddress: nft.collection.contractAddress,
+      tokenId: nft.tokenId,
       recipient: transfer.recipient.address,
     });
 
-    const parsedTx = parseTx(
+    console.log("tx", tx);
+    const parsedTx = parseNftTx(
       deliverTxResponseToTxResponse(tx),
       transfer.memo,
-      transfer.fee.amount[0].amount,
+      transfer.fee?.amount[0].amount,
     );
-
+    console.log("parsedTx", parsedTx);
     if (parsedTx.status === "fail") {
       updateParsedTxWithFailure(parsedTx);
     }
-
-    storeNewTransaction(activeAccount!.address, parsedTx);
+    console.log("ran1");
+    storeNewNftTransaction(activeAccount!.address, parsedTx);
+    console.log("ran2");
     queryClient.invalidateQueries({ queryKey: ["transactions"] });
+    console.log("ran3");
 
-    navigation.navigate("transferSent", {
+    navigation.navigate("Send NFT - Completed", {
       tx,
-      amount,
-      symbol: token.symbol,
+      nft,
     });
   }
 
-  function updateParsedTxWithFailure(parsedTx: Transaction) {
-    parsedTx.amount = BigInt(transfer.intAmount);
+  function updateParsedTxWithFailure(parsedTx: NFTTransaction) {
     parsedTx.from = activeAccount!.address;
     parsedTx.to = transfer.recipient.address;
-    parsedTx.token = transfer.tokenId;
+    parsedTx.contractAddress = nft.collection.contractAddress;
+    parsedTx.tokenId = nft.tokenId;
     parsedTx.type = "sent";
   }
 
   function navigateToSuccess(
     txHash: `0x${string}`,
-    amount: string,
     status: "success" | "reverted",
   ) {
     const sentTx = {
       code: status === "success" ? 0 : 1,
       transactionHash: txHash,
     };
-    navigation.navigate("transferSent", {
+    navigation.navigate("Send NFT - Completed", {
       tx: sentTx,
-      amount,
-      symbol: token?.symbol,
+      nft,
     });
   }
-
-  function finishTransaction() {
-    setLoading(false);
-    const tokensToUpdate = [sei];
-    if (token && token.id !== sei.id) {
-      tokensToUpdate.push(token);
-    }
-    updateBalances(tokensToUpdate);
-  }
-
   function handleClosePress() {
-    navigation.navigate("Home");
+    navigation.navigate("NFT Details", { nft });
     resetNavigationStack(navigation);
   }
 

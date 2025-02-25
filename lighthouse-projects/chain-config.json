@@ -1,0 +1,6 @@
+{
+  "private_key": "0xb51332eb001e65dd6cf5955c99b12911a8cba45ae21a594d32dcfc1ecc41f7d2",
+  "rpc_wasm": "https://rpc.atlantic-2.seinetwork.io/",
+  "rpc_evm": "https://evm-rpc.atlantic-2.seinetwork.io/",
+  "network": "atlantic-2"
+}

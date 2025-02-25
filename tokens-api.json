@@ -1,0 +1,482 @@
+[
+  {
+    "contract_address": "sei19nagaxsmtzwrc8ml7kd7vq47lnywr72kgs3d525vcsg05ecyh76scwj4z7",
+    "token_id": "1",
+    "access": {
+      "owner": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": "ipfs://bafybeihwkyfwgkvw2zlam2thomctz6a46z7eyqpdsob7unovhk25rn3z6i",
+      "extension": {
+        "image": null,
+        "image_data": null,
+        "external_url": null,
+        "description": null,
+        "name": null,
+        "attributes": null,
+        "background_color": null,
+        "animation_url": null,
+        "youtube_url": null,
+        "royalty_percentage": 5,
+        "royalty_payment_address": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90"
+      }
+    }
+  },
+  {
+    "contract_address": "sei19nagaxsmtzwrc8ml7kd7vq47lnywr72kgs3d525vcsg05ecyh76scwj4z7",
+    "token_id": "10",
+    "access": {
+      "owner": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": "ipfs://bafybeihwkyfwgkvw2zlam2thomctz6a46z7eyqpdsob7unovhk25rn3z6i",
+      "extension": {
+        "image": null,
+        "image_data": null,
+        "external_url": null,
+        "description": null,
+        "name": null,
+        "attributes": null,
+        "background_color": null,
+        "animation_url": null,
+        "youtube_url": null,
+        "royalty_percentage": 5,
+        "royalty_payment_address": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90"
+      }
+    }
+  },
+  {
+    "contract_address": "sei19nagaxsmtzwrc8ml7kd7vq47lnywr72kgs3d525vcsg05ecyh76scwj4z7",
+    "token_id": "11",
+    "access": {
+      "owner": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": "ipfs://bafybeihwkyfwgkvw2zlam2thomctz6a46z7eyqpdsob7unovhk25rn3z6i",
+      "extension": {
+        "image": null,
+        "image_data": null,
+        "external_url": null,
+        "description": null,
+        "name": null,
+        "attributes": null,
+        "background_color": null,
+        "animation_url": null,
+        "youtube_url": null,
+        "royalty_percentage": 5,
+        "royalty_payment_address": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90"
+      }
+    }
+  },
+  {
+    "contract_address": "sei19nagaxsmtzwrc8ml7kd7vq47lnywr72kgs3d525vcsg05ecyh76scwj4z7",
+    "token_id": "12",
+    "access": {
+      "owner": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": "ipfs://bafybeihwkyfwgkvw2zlam2thomctz6a46z7eyqpdsob7unovhk25rn3z6i",
+      "extension": {
+        "image": null,
+        "image_data": null,
+        "external_url": null,
+        "description": null,
+        "name": null,
+        "attributes": null,
+        "background_color": null,
+        "animation_url": null,
+        "youtube_url": null,
+        "royalty_percentage": 5,
+        "royalty_payment_address": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90"
+      }
+    }
+  },
+  {
+    "contract_address": "sei19nagaxsmtzwrc8ml7kd7vq47lnywr72kgs3d525vcsg05ecyh76scwj4z7",
+    "token_id": "13",
+    "access": {
+      "owner": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": "ipfs://bafybeihwkyfwgkvw2zlam2thomctz6a46z7eyqpdsob7unovhk25rn3z6i",
+      "extension": {
+        "image": null,
+        "image_data": null,
+        "external_url": null,
+        "description": null,
+        "name": null,
+        "attributes": null,
+        "background_color": null,
+        "animation_url": null,
+        "youtube_url": null,
+        "royalty_percentage": 5,
+        "royalty_payment_address": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90"
+      }
+    }
+  },
+  {
+    "contract_address": "sei19nagaxsmtzwrc8ml7kd7vq47lnywr72kgs3d525vcsg05ecyh76scwj4z7",
+    "token_id": "14",
+    "access": {
+      "owner": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": "ipfs://bafybeihwkyfwgkvw2zlam2thomctz6a46z7eyqpdsob7unovhk25rn3z6i",
+      "extension": {
+        "image": null,
+        "image_data": null,
+        "external_url": null,
+        "description": null,
+        "name": null,
+        "attributes": null,
+        "background_color": null,
+        "animation_url": null,
+        "youtube_url": null,
+        "royalty_percentage": 5,
+        "royalty_payment_address": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90"
+      }
+    }
+  },
+  {
+    "contract_address": "sei19nagaxsmtzwrc8ml7kd7vq47lnywr72kgs3d525vcsg05ecyh76scwj4z7",
+    "token_id": "15",
+    "access": {
+      "owner": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": "ipfs://bafybeihwkyfwgkvw2zlam2thomctz6a46z7eyqpdsob7unovhk25rn3z6i",
+      "extension": {
+        "image": null,
+        "image_data": null,
+        "external_url": null,
+        "description": null,
+        "name": null,
+        "attributes": null,
+        "background_color": null,
+        "animation_url": null,
+        "youtube_url": null,
+        "royalty_percentage": 5,
+        "royalty_payment_address": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90"
+      }
+    }
+  },
+  {
+    "contract_address": "sei19nagaxsmtzwrc8ml7kd7vq47lnywr72kgs3d525vcsg05ecyh76scwj4z7",
+    "token_id": "16",
+    "access": {
+      "owner": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": "ipfs://bafybeihwkyfwgkvw2zlam2thomctz6a46z7eyqpdsob7unovhk25rn3z6i",
+      "extension": {
+        "image": null,
+        "image_data": null,
+        "external_url": null,
+        "description": null,
+        "name": null,
+        "attributes": null,
+        "background_color": null,
+        "animation_url": null,
+        "youtube_url": null,
+        "royalty_percentage": 5,
+        "royalty_payment_address": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90"
+      }
+    }
+  },
+  {
+    "contract_address": "sei19nagaxsmtzwrc8ml7kd7vq47lnywr72kgs3d525vcsg05ecyh76scwj4z7",
+    "token_id": "17",
+    "access": {
+      "owner": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": "ipfs://bafybeihwkyfwgkvw2zlam2thomctz6a46z7eyqpdsob7unovhk25rn3z6i",
+      "extension": {
+        "image": null,
+        "image_data": null,
+        "external_url": null,
+        "description": null,
+        "name": null,
+        "attributes": null,
+        "background_color": null,
+        "animation_url": null,
+        "youtube_url": null,
+        "royalty_percentage": 5,
+        "royalty_payment_address": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90"
+      }
+    }
+  },
+  {
+    "contract_address": "sei19nagaxsmtzwrc8ml7kd7vq47lnywr72kgs3d525vcsg05ecyh76scwj4z7",
+    "token_id": "18",
+    "access": {
+      "owner": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": "ipfs://bafybeihwkyfwgkvw2zlam2thomctz6a46z7eyqpdsob7unovhk25rn3z6i",
+      "extension": {
+        "image": null,
+        "image_data": null,
+        "external_url": null,
+        "description": null,
+        "name": null,
+        "attributes": null,
+        "background_color": null,
+        "animation_url": null,
+        "youtube_url": null,
+        "royalty_percentage": 5,
+        "royalty_payment_address": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90"
+      }
+    }
+  },
+  {
+    "contract_address": "sei19nagaxsmtzwrc8ml7kd7vq47lnywr72kgs3d525vcsg05ecyh76scwj4z7",
+    "token_id": "19",
+    "access": {
+      "owner": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": "ipfs://bafybeihwkyfwgkvw2zlam2thomctz6a46z7eyqpdsob7unovhk25rn3z6i",
+      "extension": {
+        "image": null,
+        "image_data": null,
+        "external_url": null,
+        "description": null,
+        "name": null,
+        "attributes": null,
+        "background_color": null,
+        "animation_url": null,
+        "youtube_url": null,
+        "royalty_percentage": 5,
+        "royalty_payment_address": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90"
+      }
+    }
+  },
+  {
+    "contract_address": "sei19nagaxsmtzwrc8ml7kd7vq47lnywr72kgs3d525vcsg05ecyh76scwj4z7",
+    "token_id": "2",
+    "access": {
+      "owner": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": "ipfs://bafybeihwkyfwgkvw2zlam2thomctz6a46z7eyqpdsob7unovhk25rn3z6i",
+      "extension": {
+        "image": null,
+        "image_data": null,
+        "external_url": null,
+        "description": null,
+        "name": null,
+        "attributes": null,
+        "background_color": null,
+        "animation_url": null,
+        "youtube_url": null,
+        "royalty_percentage": 5,
+        "royalty_payment_address": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90"
+      }
+    }
+  },
+  {
+    "contract_address": "sei19nagaxsmtzwrc8ml7kd7vq47lnywr72kgs3d525vcsg05ecyh76scwj4z7",
+    "token_id": "20",
+    "access": {
+      "owner": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": "ipfs://bafybeihwkyfwgkvw2zlam2thomctz6a46z7eyqpdsob7unovhk25rn3z6i",
+      "extension": {
+        "image": null,
+        "image_data": null,
+        "external_url": null,
+        "description": null,
+        "name": null,
+        "attributes": null,
+        "background_color": null,
+        "animation_url": null,
+        "youtube_url": null,
+        "royalty_percentage": 5,
+        "royalty_payment_address": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90"
+      }
+    }
+  },
+  {
+    "contract_address": "sei19nagaxsmtzwrc8ml7kd7vq47lnywr72kgs3d525vcsg05ecyh76scwj4z7",
+    "token_id": "3",
+    "access": {
+      "owner": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": "ipfs://bafybeihwkyfwgkvw2zlam2thomctz6a46z7eyqpdsob7unovhk25rn3z6i",
+      "extension": {
+        "image": null,
+        "image_data": null,
+        "external_url": null,
+        "description": null,
+        "name": null,
+        "attributes": null,
+        "background_color": null,
+        "animation_url": null,
+        "youtube_url": null,
+        "royalty_percentage": 5,
+        "royalty_payment_address": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90"
+      }
+    }
+  },
+  {
+    "contract_address": "sei19nagaxsmtzwrc8ml7kd7vq47lnywr72kgs3d525vcsg05ecyh76scwj4z7",
+    "token_id": "4",
+    "access": {
+      "owner": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": "ipfs://bafybeihwkyfwgkvw2zlam2thomctz6a46z7eyqpdsob7unovhk25rn3z6i",
+      "extension": {
+        "image": null,
+        "image_data": null,
+        "external_url": null,
+        "description": null,
+        "name": null,
+        "attributes": null,
+        "background_color": null,
+        "animation_url": null,
+        "youtube_url": null,
+        "royalty_percentage": 5,
+        "royalty_payment_address": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90"
+      }
+    }
+  },
+  {
+    "contract_address": "sei19nagaxsmtzwrc8ml7kd7vq47lnywr72kgs3d525vcsg05ecyh76scwj4z7",
+    "token_id": "5",
+    "access": {
+      "owner": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": "ipfs://bafybeihwkyfwgkvw2zlam2thomctz6a46z7eyqpdsob7unovhk25rn3z6i",
+      "extension": {
+        "image": null,
+        "image_data": null,
+        "external_url": null,
+        "description": null,
+        "name": null,
+        "attributes": null,
+        "background_color": null,
+        "animation_url": null,
+        "youtube_url": null,
+        "royalty_percentage": 5,
+        "royalty_payment_address": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90"
+      }
+    }
+  },
+  {
+    "contract_address": "sei19nagaxsmtzwrc8ml7kd7vq47lnywr72kgs3d525vcsg05ecyh76scwj4z7",
+    "token_id": "6",
+    "access": {
+      "owner": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": "ipfs://bafybeihwkyfwgkvw2zlam2thomctz6a46z7eyqpdsob7unovhk25rn3z6i",
+      "extension": {
+        "image": null,
+        "image_data": null,
+        "external_url": null,
+        "description": null,
+        "name": null,
+        "attributes": null,
+        "background_color": null,
+        "animation_url": null,
+        "youtube_url": null,
+        "royalty_percentage": 5,
+        "royalty_payment_address": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90"
+      }
+    }
+  },
+  {
+    "contract_address": "sei19nagaxsmtzwrc8ml7kd7vq47lnywr72kgs3d525vcsg05ecyh76scwj4z7",
+    "token_id": "7",
+    "access": {
+      "owner": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": "ipfs://bafybeihwkyfwgkvw2zlam2thomctz6a46z7eyqpdsob7unovhk25rn3z6i",
+      "extension": {
+        "image": null,
+        "image_data": null,
+        "external_url": null,
+        "description": null,
+        "name": null,
+        "attributes": null,
+        "background_color": null,
+        "animation_url": null,
+        "youtube_url": null,
+        "royalty_percentage": 5,
+        "royalty_payment_address": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90"
+      }
+    }
+  },
+  {
+    "contract_address": "sei19nagaxsmtzwrc8ml7kd7vq47lnywr72kgs3d525vcsg05ecyh76scwj4z7",
+    "token_id": "8",
+    "access": {
+      "owner": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": "ipfs://bafybeihwkyfwgkvw2zlam2thomctz6a46z7eyqpdsob7unovhk25rn3z6i",
+      "extension": {
+        "image": null,
+        "image_data": null,
+        "external_url": null,
+        "description": null,
+        "name": null,
+        "attributes": null,
+        "background_color": null,
+        "animation_url": null,
+        "youtube_url": null,
+        "royalty_percentage": 5,
+        "royalty_payment_address": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90"
+      }
+    }
+  },
+  {
+    "contract_address": "sei19nagaxsmtzwrc8ml7kd7vq47lnywr72kgs3d525vcsg05ecyh76scwj4z7",
+    "token_id": "9",
+    "access": {
+      "owner": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90",
+      "approvals": []
+    },
+    "info": {
+      "token_uri": "ipfs://bafybeihwkyfwgkvw2zlam2thomctz6a46z7eyqpdsob7unovhk25rn3z6i",
+      "extension": {
+        "image": null,
+        "image_data": null,
+        "external_url": null,
+        "description": null,
+        "name": null,
+        "attributes": null,
+        "background_color": null,
+        "animation_url": null,
+        "youtube_url": null,
+        "royalty_percentage": 5,
+        "royalty_payment_address": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90"
+      }
+    }
+  }
+]

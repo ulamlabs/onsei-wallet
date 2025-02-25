@@ -1,0 +1,65 @@
+{
+  "items": [
+    {
+      "id": "1",
+      "owner": "sei17p0zxg3mxw8a26rmk2fsdkm79lp4ynap7haslv",
+      "tokenItemId": "1",
+      "tokenHash": "sei1zvefm09yn6yl8a2tsr7v02aac96aw2aqwvc0tldly2wlm383qtksn6n2nj",
+      "tokenMetadata": {
+        "name": "WeBump #1",
+        "image": "https://arweave.net/UJOiSA62e_cZX2D6RpLJltFgwxvAIElO2YNrXnZ1UTU/1.png",
+        "description": "WeBump is a nft collection on sei",
+        "attributes": [
+          { "trait_type": "Background", "value": "Red" },
+          { "trait_type": "Eyes", "value": "Blue" },
+          { "trait_type": "Mouth", "value": "Green" },
+          { "trait_type": "Head", "value": "Yellow" },
+          { "trait_type": "Body", "value": "Purple" }
+        ],
+        "extension": {
+          "image": null,
+          "image_data": null,
+          "external_url": null,
+          "description": null,
+          "name": null,
+          "attributes": null,
+          "background_color": null,
+          "animation_url": null,
+          "youtube_url": null,
+          "royalty_percentage": 7,
+          "royalty_payment_address": "sei14v72v7hgzuvgck6v6jsgjacxnt34gj06qnx53d"
+        }
+      },
+      "tokenUri": "https://arweave.net/t1S4RJWPM9MMcSydkL1FdeUns0ldqZAKfsmEYwrzE-E/1"
+    }
+  ],
+  "pagination": {
+    "pages": 1,
+    "rows": 1,
+    "currPage": 1,
+    "nextPage": null
+  },
+
+  "actual": {
+    "access": {
+      "approvals": [],
+      "owner": "sei17p0zxg3mxw8a26rmk2fsdkm79lp4ynap7haslv"
+    },
+    "info": {
+      "token_uri": "https://arweave.net/t1S4RJWPM9MMcSydkL1FdeUns0ldqZAKfsmEYwrzE-E/1",
+      "extension": {
+        "image": null,
+        "image_data": null,
+        "external_url": null,
+        "description": null,
+        "name": null,
+        "attributes": null,
+        "background_color": null,
+        "animation_url": null,
+        "youtube_url": null,
+        "royalty_percentage": 7,
+        "royalty_payment_address": "sei14v72v7hgzuvgck6v6jsgjacxnt34gj06qnx53d"
+      }
+    }
+  }
+}

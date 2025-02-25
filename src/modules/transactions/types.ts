@@ -17,8 +17,28 @@ export type Transaction = TransactionBase & {
   timestamp: Date;
 };
 
+export type NFTTransaction = {
+  contractAddress: string;
+  tokenId: string;
+  from: string;
+  to: string;
+  type: string;
+  status: "success" | "fail";
+  hash: string;
+  contractAction: string;
+  sender: string;
+  memo: string;
+  fee: bigint;
+  timestamp: Date;
+};
+
 export type SerializedTx = TransactionBase & {
   amount: string;
+  fee: string;
+  timestamp: string;
+};
+
+export type SerializedNftTxn = NFTTransaction & {
   fee: string;
   timestamp: string;
 };

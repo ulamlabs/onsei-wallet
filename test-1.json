@@ -1,0 +1,28 @@
+{
+  "chain": "wasm",
+  "collection_type": "721",
+  "name": "test-2",
+  "symbol": "TEST-2",
+  "supply": "4444",
+  "uri_suffix": "",
+  "token_uri": "ipfs://bafybeihwkyfwgkvw2zlam2thomctz6a46z7eyqpdsob7unovhk25rn3z6i/",
+  "fixed_uri": true,
+  "royalty_percent": "5",
+  "royalty_wallet": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90",
+  "creator_wallet": "sei1cw43y4mj8dllyydhlattwhtkmj524hynm6jh90",
+  "is_immutable": false,
+  "start_order": "1",
+  "frozen": false,
+  "unfreeze_time": null,
+  "hidden_metadata": false,
+  "placeholder_token_uri": "",
+  "groups": [
+    {
+      "name": "public",
+      "merkle_root": null,
+      "payments": [],
+      "start_time": "2025-02-10T09:50:50Z",
+      "end_time": null
+    }
+  ]
+}

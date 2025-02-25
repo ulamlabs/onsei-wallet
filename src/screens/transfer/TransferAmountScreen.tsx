@@ -21,11 +21,12 @@ import { Colors, FontWeights } from "@/styles";
 import { NavigatorParamsList } from "@/types";
 import { checkFundsForFee, parseAmount } from "@/utils";
 import { formatAmount } from "@/utils/formatAmount";
-import { SigningStargateClient, StdFee } from "@cosmjs/stargate";
+import { StdFee } from "@cosmjs/stargate";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useMemo, useState } from "react";
 import { isAddress as isEvmAddress } from "viem";
 import TransferAmount from "./TransferAmount";
+import { useQuery } from "@tanstack/react-query";
 
 type TransferAmountScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -46,9 +47,10 @@ export default function TransferAmountScreen({
   const [gas, setGas] = useState(0);
   const { gasPrice } = useGasPrice();
   const [loadingMaxAmount, setLoadingMaxAmount] = useState(false);
-  const [signingClientAndSender, setSigningClientAndSender] = useState<
-    [SigningStargateClient, string] | undefined
-  >(undefined);
+  const signingClientAndSender = useQuery({
+    queryKey: ["signingClientAndSender"],
+    queryFn: getSigningClientAndSender,
+  });
   const { getMnemonic, activeAccount } = useAccountsStore();
   const [evmTransaction, setEvmTransaction] = useState<`0x${string}`>(`0x`);
   const [evmTxData, setEvmTxData] = useState<{
@@ -62,28 +64,19 @@ export default function TransferAmountScreen({
   });
   const { error } = useToastStore();
 
-  const token = useMemo(() => tokenMap.get(tokenId)!, [tokenId, tokenMap]);
-  useEffect(() => {
-    getSigningClientAndSender()
-      .then((data) => {
-        setSigningClientAndSender(data);
-      })
-      .catch(console.error);
+  const token = tokenMap.get(tokenId);
 
+  const intAmount = token?.decimals
+    ? parseAmount(decimalAmount, token.decimals)
+    : 0n;
+  const hasFunds = token?.balance && token.balance >= intAmount;
+
+  useEffect(() => {
     return () => {
-      setSigningClientAndSender(undefined);
       setFee(null);
       setGas(0);
     };
   }, []);
-
-  const intAmount = useMemo(
-    () => parseAmount(decimalAmount, token.decimals),
-    [decimalAmount],
-  );
-  const hasFunds = useMemo(() => {
-    return token.balance >= intAmount;
-  }, [intAmount]);
 
   const feeInt = useMemo(() => {
     if (fee) {
@@ -92,9 +85,13 @@ export default function TransferAmountScreen({
     return 0n;
   }, [fee]);
 
-  const hasFundsForFee = useMemo(() => {
-    return checkFundsForFee(fee, sei.balance, tokenId, sei.id, intAmount);
-  }, [fee, sei.balance, intAmount]);
+  const hasFundsForFee = checkFundsForFee(
+    fee,
+    sei.balance,
+    tokenId,
+    sei.id,
+    intAmount,
+  );
 
   useEffect(() => {
     if (loadingMaxAmount) {
@@ -102,7 +99,7 @@ export default function TransferAmountScreen({
     }
     if (
       !decimalAmount ||
-      intAmount > token.balance ||
+      (token?.balance && intAmount > token.balance) ||
       +decimalAmount === 0 ||
       !Number(decimalAmount)
     ) {
@@ -149,6 +146,9 @@ export default function TransferAmountScreen({
 
   async function onMax() {
     try {
+      if (!token) {
+        return;
+      }
       if (token.id !== sei.id) {
         setDecimalAmount(
           formatAmount(token.balance, token.decimals, {
@@ -189,7 +189,7 @@ export default function TransferAmountScreen({
 
       // Disallow more decimals than the token allows.
       const decimals = decimalAmount.split(".")[1].length;
-      if (decimals >= token.decimals) {
+      if (token?.decimals && decimals >= token.decimals) {
         return;
       }
     }
@@ -208,11 +208,14 @@ export default function TransferAmountScreen({
 
   if (!token) {
     // Happens when sending max amount of a native token. The token is no longer available.
-    return <></>;
+    return null;
   }
 
   async function feeEstimation(amount: bigint = intAmount) {
     try {
+      if (!token) {
+        return;
+      }
       if (isEvmAddress(recipient.address)) {
         const simulation = await simulateEvmTx(
           getMnemonic(activeAccount!.address!),
@@ -237,7 +240,7 @@ export default function TransferAmountScreen({
         recipient.address,
         token,
         amount,
-        signingClientAndSender || undefined,
+        signingClientAndSender.data,
       );
       setGas(gas);
       const estimatedFee = estimateTransferFeeWithGas(gasPrice, gas);
@@ -290,7 +293,7 @@ export default function TransferAmountScreen({
 
   return (
     <SafeLayout refreshFn={refreshFn}>
-      {!signingClientAndSender ? (
+      {signingClientAndSender.isLoading ? (
         <Row style={{ flex: 1, justifyContent: "center" }}>
           <Loader size="large" />
         </Row>

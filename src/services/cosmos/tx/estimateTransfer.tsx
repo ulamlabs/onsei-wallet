@@ -14,7 +14,27 @@ export async function estimateTransferGas(
   preloadedData?: [SigningStargateClient, string],
 ): Promise<number> {
   const [client, sender] = preloadedData || (await getSigningClientAndSender());
-  const msg = getSendAnyTokensMsg(sender, receiver, token, amount.toString());
+  const msg = getSendAnyTokensMsg(sender, receiver, {
+    isNFT: false,
+    token,
+    amount: amount.toString(),
+  });
+  const gas = await client.simulate(sender, [msg], undefined);
+  return gas;
+}
+
+export async function estimateNftTransferGas(
+  receiver: string,
+  contractAddress: string,
+  tokenId: string,
+  preloadedData?: [SigningStargateClient, string],
+): Promise<number> {
+  const [client, sender] = preloadedData || (await getSigningClientAndSender());
+  const msg = getSendAnyTokensMsg(sender, receiver, {
+    isNFT: true,
+    contractAddress,
+    tokenId,
+  });
   const gas = await client.simulate(sender, [msg], undefined);
   return gas;
 }
@@ -30,9 +50,29 @@ export async function estimateTransferFee(
   return estimateTransferFeeWithGas(gasPrice, gas);
 }
 
+export async function estimateNftTransferFee(
+  receiver: string,
+  contractAddress: string,
+  tokenId: string,
+  gasPrice: string,
+  preloadedData?: [SigningStargateClient, string],
+): Promise<StdFee> {
+  const gas = await estimateNftTransferGas(
+    receiver,
+    contractAddress,
+    tokenId,
+    preloadedData,
+  );
+  return estimateTransferFeeWithGas(gasPrice, gas);
+}
+
 export function estimateTransferFeeWithGas(
   gasPrice: string,
   gas: number,
 ): StdFee {
-  return calculateFee(Math.ceil(gas * GAS_MULTIPLIER), gasPrice);
+  console.log("x:gas", gas);
+  console.log("x:gasPrice", gasPrice);
+  const fee = calculateFee(Math.ceil(gas * GAS_MULTIPLIER), gasPrice);
+  console.log("x:fee", fee);
+  return fee;
 }

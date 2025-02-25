@@ -5,8 +5,18 @@ import {
   saveToStorage,
   unique,
 } from "@/utils";
-import { SerializedTx, Transaction } from "./types";
-import { deserializeTxn, serializeTxn } from "./utils";
+import {
+  NFTTransaction,
+  SerializedNftTxn,
+  SerializedTx,
+  Transaction,
+} from "./types";
+import {
+  deserializeNftTxn,
+  deserializeTxn,
+  serializeNftTxn,
+  serializeTxn,
+} from "./utils";
 
 const TXN_HISTORY_COUNT = 100;
 
@@ -16,12 +26,26 @@ export const getStoredTransactions = async (address: string) => {
   return txns.map(deserializeTxn);
 };
 
+export const getStoredNftTransactions = async (address: string) => {
+  const key = getStorageKey(address);
+  const txns = await loadFromStorage<SerializedNftTxn[]>(key, []);
+  return txns.map(deserializeNftTxn);
+};
+
 export const storeNewTransaction = async (
   address: string,
   transaction: Transaction,
 ) => {
   const savedTxns = await getStoredTransactions(address);
   await saveTransactionsToStorage(address, [transaction, ...savedTxns]);
+};
+
+export const storeNewNftTransaction = async (
+  address: string,
+  transaction: NFTTransaction,
+) => {
+  const savedTxns = await getStoredNftTransactions(address);
+  await saveNftTransactionsToStorage(address, [transaction, ...savedTxns]);
 };
 
 export const combineTransactionsWithStorage = async (
@@ -53,6 +77,19 @@ const saveTransactionsToStorage = async (
   }
 
   await saveToStorage(key, transactions.map(serializeTxn));
+};
+
+const saveNftTransactionsToStorage = async (
+  address: string,
+  transactions: NFTTransaction[],
+) => {
+  const key = getStorageKey(address);
+  transactions.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+  if (transactions.length > TXN_HISTORY_COUNT) {
+    transactions.splice(TXN_HISTORY_COUNT);
+  }
+
+  await saveToStorage(key, transactions.map(serializeNftTxn));
 };
 
 export const getAllKnownTransactionHashes = async (addresses: string[]) => {

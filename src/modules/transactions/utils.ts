@@ -1,4 +1,9 @@
-import { SerializedTx, Transaction } from "./types";
+import {
+  NFTTransaction,
+  SerializedNftTxn,
+  SerializedTx,
+  Transaction,
+} from "./types";
 
 export function getTxEventQueries(address: string) {
   return [
@@ -24,4 +29,20 @@ export const deserializeTxn = (txn: SerializedTx) => {
     fee: BigInt(txn.fee || 0),
     timestamp: new Date(txn.timestamp),
   } as Transaction;
+};
+
+export const serializeNftTxn = (txn: NFTTransaction) => {
+  return {
+    ...txn,
+    fee: txn.fee.toString(),
+    timestamp: txn.timestamp.toISOString(),
+  } as SerializedNftTxn;
+};
+
+export const deserializeNftTxn = (txn: SerializedNftTxn) => {
+  return {
+    ...txn,
+    fee: BigInt(txn.fee || 0),
+    timestamp: new Date(txn.timestamp),
+  } as NFTTransaction;
 };

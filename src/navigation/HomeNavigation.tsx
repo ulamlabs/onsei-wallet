@@ -62,6 +62,10 @@ import { getNFTName } from "@/screens/nfts/utils";
 import NFTDetailsMoreOptions from "@/screens/nfts/nftDetails/NFTDetailsMoreOptions";
 import NFTCollectionsScreen from "@/screens/nfts/nftCollections/NFTCollectionsScreen";
 import NFTCollectionsScreenHeader from "@/screens/nfts/nftCollections/NFTCollectionsScreenHeader";
+import SendNFTAddressScreen from "@/screens/nfts/sendNFTAddress/SendNFTAddressScreen";
+import SendNFTConfirmScreen from "@/screens/nfts/sendNFTAddress/SendNFTConfirmScreen";
+import SendNFTCompletedScreen from "@/screens/nfts/sendNFTAddress/SendNFTCompletedScreen";
+import SendNFTSendingScreen from "@/screens/nfts/sendNFTAddress/SendNFTSendingScreen";
 
 export type Recipient = {
   address: string;
@@ -147,6 +151,41 @@ export type HomeParamList = {
   "Hidden NFTs": undefined;
   "NFT Details": { nft: NFTInfo };
   "NFT Collections": { collection: CollectionInfo };
+  "Send NFT - Address": { nft: NFTInfo; address?: string; gas?: number };
+  "Send NFT - Confirm": {
+    nft: NFTInfo;
+    memo: string;
+    transfer: {
+      recipient: Recipient;
+      contractAddress: string;
+      tokenId: string;
+      memo: string;
+      fee?: StdFee | null;
+      evmTxData?: {
+        privateKey: `0x${string}`;
+        contractAddress: `0x${string}`;
+      };
+    };
+  };
+  "Send NFT - Sending": {
+    nft: NFTInfo;
+    memo: string;
+    transfer: {
+      recipient: Recipient;
+      contractAddress: string;
+      tokenId: string;
+      memo: string;
+      fee: StdFee;
+      evmTxData?: {
+        privateKey: `0x${string}`;
+        contractAddress: `0x${string}`;
+      };
+    };
+  };
+  "Send NFT - Completed": {
+    nft: NFTInfo;
+    tx: DeliverTxResponse | { code: number; transactionHash: `0x${string}` };
+  };
 };
 
 const { Navigator, Screen } = createNativeStackNavigator<HomeParamList>();
@@ -379,6 +418,42 @@ export default function HomeNavigation() {
             <NFTCollectionsScreenHeader collection={route.params.collection} />
           ),
         })}
+      />
+      <Screen
+        name="Send NFT - Address"
+        component={SendNFTAddressScreen}
+        options={() => ({
+          header: () => (
+            <SubScreenHeader
+              title="Choose address to send NFT"
+              icon="back"
+              onIconPress={() => navigation.goBack()}
+            />
+          ),
+        })}
+      />
+      <Screen
+        name="Send NFT - Confirm"
+        component={SendNFTConfirmScreen}
+        options={{
+          header: () => (
+            <SubScreenHeader
+              title="Send NFT"
+              icon="back"
+              onIconPress={() => navigation.goBack()}
+            />
+          ),
+        }}
+      />
+      <Screen
+        name="Send NFT - Sending"
+        component={SendNFTSendingScreen}
+        options={{ headerShown: false }}
+      />
+      <Screen
+        name="Send NFT - Completed"
+        component={SendNFTCompletedScreen}
+        options={{ headerShown: false }}
       />
     </Navigator>
   );

@@ -1,0 +1,11 @@
+{
+  "name": "NFT #11",
+  "description": "A unique NFT #11",
+  "image": "https://ipfs.io/ipfs/bafybeiaewu3knvtnhktd5uobcg6jzp7f5fpnxkeorjrl3yekijo5zuurei/11.png",
+  "attributes": {
+    "Background": "Generated",
+    "Color": "Green",
+    "Size": "Medium",
+    "Rarity": "Common"
+  }
+}

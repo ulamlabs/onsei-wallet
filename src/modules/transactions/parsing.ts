@@ -3,7 +3,7 @@ import { dataToMemo } from "@/services/evm";
 import { SZABO } from "@/services/evm/consts";
 import { DeliverTxResponse } from "@cosmjs/stargate";
 import { etherUnits, Transaction as evmTx } from "viem";
-import { Transaction, TxEvent, TxResponse } from "./types";
+import { NFTTransaction, Transaction, TxEvent, TxResponse } from "./types";
 
 type TransactionEventParams = Pick<
   Transaction,
@@ -13,6 +13,17 @@ type TransactionEventParams = Pick<
   | "from"
   | "to"
   | "contract"
+  | "contractAction"
+  | "sender"
+>;
+
+type NftTransactionEventParams = Pick<
+  NFTTransaction,
+  | "type"
+  | "tokenId"
+  | "contractAddress"
+  | "from"
+  | "to"
   | "contractAction"
   | "sender"
 >;
@@ -70,6 +81,22 @@ export function parseTx(
   };
 }
 
+export function parseNftTx(
+  tx: TxResponse,
+  memo = "",
+  simulatedFee = "",
+): NFTTransaction {
+  const fee = simulatedFee || tx.tx?.auth_info?.fee?.amount[0]?.amount;
+  return {
+    timestamp: new Date(tx.timestamp),
+    fee: fee ? BigInt(fee) : 0n,
+    hash: tx.txhash,
+    status: tx.code === 0 ? "success" : "fail",
+    memo: tx.tx?.body?.memo || memo,
+    ...getNftParamsFromEvents(tx),
+  };
+}
+
 function getParamsFromEvents(tx: TxResponse): TransactionEventParams {
   const events = parseEvents(tx.events);
   const action = events["message.action"] ?? "";
@@ -98,8 +125,47 @@ function getParamsFromEvents(tx: TxResponse): TransactionEventParams {
   return result;
 }
 
+function getNftParamsFromEvents(tx: TxResponse): NftTransactionEventParams {
+  const events = parseEvents(tx.events);
+  const action = events["message.action"] ?? "";
+  const receiver = events["coin_received.receiver"] ?? "";
+  const result: NftTransactionEventParams = {
+    sender: events["signer.sei_addr"] ?? events["message.sender"] ?? "",
+    type: action.split(".").at(-1) ?? "",
+    contractAction: events["wasm.action"] ?? "",
+    tokenId: "",
+    contractAddress: "",
+    from: "",
+    to: tx.to || receiver || "",
+  };
+
+  if (
+    action === "/cosmos.bank.v1beta1.MsgSend" ||
+    action === "/cosmos.bank.v1beta1.MsgMultiSend"
+  ) {
+    parseNftMsgSend(result, events);
+  } else if (action === "/cosmwasm.wasm.v1.MsgExecuteContract") {
+    parseNftMsgExecuteContract(result, events);
+  } else if (action === "/seiprotocol.seichain.evm.MsgEVMTransaction") {
+    parseNftMsgEVMTransaction(result, events);
+  }
+  return result;
+}
+
 function parseMsgEVMTransaction(
   result: TransactionEventParams,
+  events: Record<string, string>,
+) {
+  const from = events["signer.evm_addr"] || events["signer.sei_addr"] || "";
+  const [amount, token] = splitAmountAndDenom(events["coin_spent.amount"]);
+
+  if (token && amount) {
+    Object.assign(result, { token, from, amount });
+  }
+}
+
+function parseNftMsgEVMTransaction(
+  result: NftTransactionEventParams,
   events: Record<string, string>,
 ) {
   const from = events["signer.evm_addr"] || events["signer.sei_addr"] || "";
@@ -123,6 +189,18 @@ function parseMsgSend(
   }
 }
 
+function parseNftMsgSend(
+  result: NftTransactionEventParams,
+  events: Record<string, string>,
+) {
+  const from = events["transfer.sender"] ?? ""; // might be missing in MsgMultiSend
+  const to = events["transfer.recipient"];
+
+  if (to) {
+    Object.assign(result, { from, to });
+  }
+}
+
 function parseMsgExecuteContract(
   result: TransactionEventParams,
   events: Record<string, string>,
@@ -134,6 +212,21 @@ function parseMsgExecuteContract(
     const cw20Data = parseCw20Events(events);
     if (cw20Data) {
       Object.assign(result, cw20Data);
+    }
+  }
+}
+
+function parseNftMsgExecuteContract(
+  result: NftTransactionEventParams,
+  events: Record<string, string>,
+) {
+  result.contractAddress = events["execute._contract_address"];
+
+  if (result.contractAction === "transfer") {
+    // might be CW721
+    const cw721Data = parseCw721Events(events);
+    if (cw721Data) {
+      Object.assign(result, cw721Data);
     }
   }
 }
@@ -152,6 +245,22 @@ function parseCw20Events(events: Record<string, string>) {
   }
 
   return { token, from, to, amount: BigInt(amount) };
+}
+
+function parseCw721Events(events: Record<string, string>) {
+  if (events["wasm.action"] !== "transfer") {
+    return null;
+  }
+
+  const token = events["execute._contract_address"];
+  const from = events["wasm.from"];
+  const to = events["wasm.to"];
+  const tokenId = events["wasm.token_id"];
+  if (!(token && from && to && tokenId)) {
+    return null;
+  }
+
+  return { token, from, to, tokenId };
 }
 
 function splitAmountAndDenom(amountAndDenom: string): [bigint, string] {
@@ -229,6 +338,48 @@ export function parseEvmToTransaction(
     sender,
     memo,
     amount,
+    fee,
+    timestamp: new Date(),
+  };
+}
+
+export function parseEvmToNftTransaction(
+  tx: evmTx,
+  contractAddress: string,
+  tokenId: string,
+  success?: "success" | "reverted",
+): NFTTransaction {
+  const fee = (tx.gas * (tx.gasPrice || SZABO)) / SZABO;
+  let contractAction = "";
+  let to = tx.to || "";
+  let txType = "transfer";
+  const status: "success" | "fail" = success === "success" ? "success" : "fail";
+  const sender = tx.from;
+  const memo = dataToMemo(tx.input);
+
+  if (tx.input !== "0x") {
+    const functionSignature = tx.input.slice(0, 10); // First 4 bytes is the function selector
+    const erc721TransferSignature = "0x42842e0e"; // ERC-721 transfer function signature
+    console.log("functionSignature", functionSignature);
+    if (functionSignature === erc721TransferSignature) {
+      // ERC-721 Token Transfer
+      contractAction = "transfer";
+      to = `0x${tx.input.slice(34, 74)}`; // Extract the 'to' address from the input data
+      txType = "contract";
+    }
+  }
+
+  return {
+    contractAddress,
+    tokenId,
+    from: tx.from,
+    to,
+    type: txType,
+    status,
+    hash: tx.hash,
+    contractAction,
+    sender,
+    memo,
     fee,
     timestamp: new Date(),
   };

@@ -1,0 +1,9 @@
+{
+  "name": "NFT #3",
+  "description": "A unique NFT #3",
+  "image": "ipfs://bafybeihwkyfwgkvw2zlam2thomctz6a46z7eyqpdsob7unovhk25rn3z6i/3.png",
+  "attributes": {
+    "Background": "Generated",
+    "ID": "3"
+  }
+}

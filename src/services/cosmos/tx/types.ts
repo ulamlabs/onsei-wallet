@@ -11,6 +11,14 @@ export type Transfer = {
   memo?: string;
 };
 
+export type NFTTransfer = {
+  contractAddress: string;
+  tokenId: string;
+  recipient: string;
+  fee: StdFee;
+  memo?: string;
+};
+
 export type DirectTxnParams = {
   signerAddress: string;
   signDoc: DirectSignDoc;

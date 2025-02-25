@@ -1,0 +1,22 @@
+{
+  "message": "Invalid string format",
+  "stack": "Error: Invalid string format
+      at fromString (http://192.168.10.113:8081/node_modules/expo/AppEntry.bundle//&platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=true&transform.routerRoot=app:557665:26)
+      at ?anon_0_ (http://192.168.10.113:8081/node_modules/expo/AppEntry.bundle//&platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=true&transform.routerRoot=app:606001:49)
+      at next (native)
+      at asyncGeneratorStep (http://192.168.10.113:8081/node_modules/expo/AppEntry.bundle//&platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=true&transform.routerRoot=app:7011:19)
+      at _next (http://192.168.10.113:8081/node_modules/expo/AppEntry.bundle//&platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=true&transform.routerRoot=app:7025:29)
+      at tryCallOne (address at InternalBytecode.js:1:1180)
+      at anonymous (address at InternalBytecode.js:1:1874)
+      at apply (native)
+      at anonymous (http://192.168.10.113:8081/node_modules/expo/AppEntry.bundle//&platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=true&transform.routerRoot=app:49522:26)
+      at _callTimer (http://192.168.10.113:8081/node_modules/expo/AppEntry.bundle//&platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=true&transform.routerRoot=app:49401:17)
+      at _callReactNativeMicrotasksPass (http://192.168.10.113:8081/node_modules/expo/AppEntry.bundle//&platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=true&transform.routerRoot=app:49446:17)
+      at callReactNativeMicrotasks (http://192.168.10.113:8081/node_modules/expo/AppEntry.bundle//&platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=true&transform.routerRoot=app:49652:44)
+      at __callReactNativeMicrotasks (http://192.168.10.113:8081/node_modules/expo/AppEntry.bundle//&platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=true&transform.routerRoot=app:8232:48)
+      at anonymous (http://192.168.10.113:8081/node_modules/expo/AppEntry.bundle//&platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=true&transform.routerRoot=app:8005:45)
+      at __guard (http://192.168.10.113:8081/node_modules/expo/AppEntry.bundle//&platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=true&transform.routerRoot=app:8204:15)
+      at flushedQueue (http://192.168.10.113:8081/node_modules/expo/AppEntry.bundle//&platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=true&transform.routerRoot=app:8004:21)
+      at invokeCallbackAndReturnFlushedQueue (http://192.168.10.113:8081/node_modules/expo/AppEntry.bundle//&platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=true&transform.routerRoot=app:7998:33)",
+  "name": "Error"
+}

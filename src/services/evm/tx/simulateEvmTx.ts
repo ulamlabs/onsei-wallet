@@ -8,6 +8,7 @@ import {
   getPrivateKeyFromMnemonic,
   resolvePointerContract,
 } from "../utils";
+import { erc721Abi } from "viem";
 
 export async function simulateEvmTx(
   mnemonic: string,
@@ -88,6 +89,59 @@ export async function simulateEvmTx(
   return { stdFee, dataForTx, pointerContract };
 }
 
+export async function simulateEvmNftTx(
+  mnemonic: string,
+  receiver: `0x${string}`,
+  contractAddress: `0x${string}`,
+  tokenId: string,
+) {
+  const isMainnet = useSettingsStore.getState().settings.node === "MainNet";
+  const evmClient = await getEvmClient(mnemonic, !isMainnet);
+  const { account, walletClient } = evmClient;
+  const privateKey = await getPrivateKeyFromMnemonic(mnemonic);
+
+  if (!contractAddress) {
+    throw new Error(
+      "We couldn't find the contract information needed to process your transaction.",
+    );
+  }
+
+  const { contract, signer, provider } = prepareErc721Contract(
+    contractAddress as `0x${string}`,
+    privateKey,
+  );
+
+  console.log("contract", contract);
+  const encodedData = contract.interface.encodeFunctionData("transferFrom", [
+    signer.address,
+    receiver,
+    tokenId,
+  ]);
+  console.log("encodedData", encodedData);
+  const gas = await provider.estimateGas({
+    from: account.address,
+    to: contractAddress,
+    value: "0x0",
+    data: encodedData,
+  });
+  console.log("gas", gas);
+
+  const gasPrice = await walletClient.getGasPrice();
+  const fee = (gas * gasPrice) / SZABO; // in usei
+  console.log("fee", fee);
+  const stdFee: StdFee = {
+    amount: [{ amount: `${+fee.toString()}`, denom: "usei" }],
+    gas: "",
+  };
+  const dataForTx = {
+    tokenId,
+    privateKey,
+    contractAddress,
+  };
+
+  return { stdFee, dataForTx };
+}
+
 export function prepareContract(
   pointerContract: `0x${string}`,
   privateKey: string,
@@ -97,6 +151,18 @@ export function prepareContract(
   const provider = new ethers.JsonRpcProvider(evmRpcEndpoint);
   const signer = new ethers.Wallet(privateKey, provider);
   const contract = new ethers.Contract(pointerContract, erc20Abi, signer);
+  return { contract, signer, provider };
+}
+
+export function prepareErc721Contract(
+  pointerContract: `0x${string}`,
+  privateKey: string,
+) {
+  const isMainnet = useSettingsStore.getState().settings.node === "MainNet";
+  const evmRpcEndpoint = isMainnet ? EVM_RPC_MAIN : EVM_RPC_TEST;
+  const provider = new ethers.JsonRpcProvider(evmRpcEndpoint);
+  const signer = new ethers.Wallet(privateKey, provider);
+  const contract = new ethers.Contract(pointerContract, erc721Abi, signer);
   return { contract, signer, provider };
 }
 
@@ -115,6 +181,35 @@ export async function sendEvmTx(
   ]);
   const transaction = {
     to: pointerContract,
+    data: memo
+      ? encodedData + ethers.hexlify(ethers.toUtf8Bytes(memo)).slice(2)
+      : encodedData,
+  };
+
+  const tx = await signer.sendTransaction(transaction);
+  return tx;
+}
+
+export async function sendEvmNftTx(
+  contractAddress: `0x${string}`,
+  privateKey: string,
+  recipient: `0x${string}`,
+  tokenId: string,
+  memo?: string,
+) {
+  const { contract, signer } = prepareErc721Contract(
+    contractAddress,
+    privateKey,
+  );
+
+  const encodedData = contract.interface.encodeFunctionData("transferFrom", [
+    signer.address,
+    recipient,
+    tokenId,
+  ]);
+
+  const transaction = {
+    to: contractAddress,
     data: memo
       ? encodedData + ethers.hexlify(ethers.toUtf8Bytes(memo)).slice(2)
       : encodedData,

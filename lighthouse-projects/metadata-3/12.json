@@ -1,0 +1,11 @@
+{
+  "name": "NFT #12",
+  "description": "A unique NFT #12",
+  "image": "https://ipfs.io/ipfs/bafybeiaewu3knvtnhktd5uobcg6jzp7f5fpnxkeorjrl3yekijo5zuurei/12.png",
+  "attributes": {
+    "Background": "Generated",
+    "Color": "Blue",
+    "Size": "Large",
+    "Rarity": "Rare"
+  }
+}
