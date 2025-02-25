@@ -94,7 +94,7 @@ export default function TransferSelectAddressScreen({
     });
   }
 
-  function onSavedAddressClick(recipientAddress:string){
+  function onSavedAddressClick(recipientAddress: string) {
     searchInput.onChangeText(recipientAddress);
     validateTypedAddress();
   }
