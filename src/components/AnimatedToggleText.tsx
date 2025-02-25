@@ -11,7 +11,7 @@ function AnimatedToggleText({ color, label }: Props) {
     <Animated.Text
       style={{
         textAlign: "center",
-        verticalAlign:"middle",
+        verticalAlign: "middle",
         color: color,
         paddingVertical: 18,
         paddingHorizontal: 24,
