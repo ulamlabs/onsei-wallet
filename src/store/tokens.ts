@@ -7,9 +7,10 @@ import {
   fetchAccountBalances,
   fetchCW20TokenBalance,
 } from "@/services/cosmos";
-import { fetchERC20TokenBalance } from "@/services/evm";
+import { fetchERC20TokenBalance, getPointerContract } from "@/services/evm";
 import { Node } from "@/types";
 import { loadFromStorage, removeFromStorage, saveToStorage } from "@/utils";
+import { isAddress as IsEvmAddress } from "viem";
 import { create } from "zustand";
 import { useSettingsStore } from "./settings";
 import { useToastStore } from "./toast";
@@ -130,8 +131,19 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
     );
 
     for (const token of nonNativeToAdd) {
-      await useTokenRegistryStore.getState().addNonNativeToRegistry(token);
-      await updateNonNativeBalance(token);
+      const pointerContract = IsEvmAddress(token.id)
+        ? undefined
+        : await getPointerContract(token.id);
+      const parsedToken = {
+        ...token,
+        id: token.id.toLowerCase(),
+        pointerContract,
+      };
+
+      await useTokenRegistryStore
+        .getState()
+        .addNonNativeToRegistry(parsedToken);
+      await updateNonNativeBalance(parsedToken);
     }
 
     if (nativesToAdd.length > 0) {
@@ -181,6 +193,7 @@ export const useTokensStore = create<TokensStore>((set, get) => ({
         (t) => t.type === "cw20" || t.type === "erc20",
       );
     }
+
     await get()._updateNativeBalances();
     await Promise.all([
       ...nonNativeToUpdate.map((token) => _updateNonNativeBalance(token)),
@@ -384,5 +397,7 @@ function deserializeToken(token: CosmTokenWithBalance): CosmTokenWithBalance {
 }
 
 function getNativeIds(tokens: CosmToken[]) {
-  return tokens.filter((t) => t.type !== "cw20").map((t) => t.id);
+  return tokens
+    .filter((t) => t.type !== "cw20" && t.type !== "erc20")
+    .map((t) => t.id);
 }

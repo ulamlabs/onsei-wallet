@@ -6,3 +6,5 @@ export const erc20Abi = [
   "function balanceOf(address account) view returns (uint256)",
   "function transfer(address recipient, uint256 amount) external returns (bool)",
 ];
+
+export const erc20TransferSignature = "0xa9059cbb"; // ERC-20 transfer function signature

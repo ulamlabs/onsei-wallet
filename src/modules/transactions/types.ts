@@ -102,18 +102,27 @@ export type RpcResponseTx = {
   height: string;
   index: number;
   tx_result: {
-    data: string;
+    code: number;
+    data: string; // Base64-encoded data
     log: string;
     gas_wanted: string;
     gas_used: string;
+    codespace?: string;
+    events: TxEvent[];
     evm_tx_info?: {
       senderAddress: `0x${string}`;
       nonce: string;
       txHash: `0x${string}`;
+      vmError?: string;
     };
   };
+  tx: string; // Base64-encoded full transaction data
 };
 
 export type BlockResponse = {
   block: { header: { height: string; time: string } };
+};
+
+export type PointeeResponse = {
+  pointee: string;
 };

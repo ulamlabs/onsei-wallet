@@ -76,7 +76,7 @@ export async function getPointerContract(
   const pointerContractAddress =
     pointerContract?.data?.nativePointer?.pointerAddress ||
     pointerContract?.data?.cw20Pointer?.pointerAddress;
-  return pointerContractAddress;
+  return pointerContractAddress?.toLowerCase();
 }
 
 export const resolvePointerContract = async (token: {

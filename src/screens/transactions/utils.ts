@@ -43,11 +43,11 @@ export function getSentOrReceived(
 
 export function getTokenFromTxn(txn: Transaction) {
   const { tokenRegistryMap, tokenPricesMap } = useTokenRegistryStore.getState();
-
+  const token = txn.token || txn.contract;
   return {
     ...unknownToken,
-    ...tokenRegistryMap.get(txn.token),
-    price: tokenPricesMap.get(txn.token)?.price || 0,
+    ...tokenRegistryMap.get(token),
+    price: tokenPricesMap.get(token)?.price || 0,
   } as CosmTokenWithBalance;
 }
 

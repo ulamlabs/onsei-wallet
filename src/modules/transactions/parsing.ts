@@ -1,6 +1,6 @@
 import { CosmTokenWithBalance } from "@/services/cosmos";
 import { dataToMemo } from "@/services/evm";
-import { SZABO } from "@/services/evm/consts";
+import { SZABO, erc20TransferSignature } from "@/services/evm/consts";
 import { DeliverTxResponse } from "@cosmjs/stargate";
 import { etherUnits, Transaction as evmTx } from "viem";
 import { Transaction, TxEvent, TxResponse } from "./types";
@@ -190,15 +190,21 @@ export function parseEvmToTransaction(
   token?: CosmTokenWithBalance,
   success?: "success" | "reverted",
   logs?: TxEvent[],
+  contractHash?: string,
 ): Transaction {
   const events = logs ? parseEvents(logs || [], false) : "";
-  const tokenLog = events ? splitAmountAndDenom(events["transfer.amount"]) : "";
-  const fee = (tx.gas * (tx.gasPrice || SZABO)) / SZABO;
+  const tokenLog = events
+    ? splitAmountAndDenom(
+        events["transfer.amount"] || events["coin_spent.amount"],
+      )
+    : "";
+
+  const fee = (BigInt(tx.gas) * BigInt(tx.gasPrice || SZABO)) / SZABO;
   let contract = "";
-  let contractAction = "";
+  const contractAction = "";
   let to = tx.to || "";
   let amount =
-    tx.value / BigInt(10 ** (etherUnits.wei - (token?.decimals || 6)));
+    BigInt(tx.value) / BigInt(10 ** (etherUnits.wei - (token?.decimals || 6)));
   let txType = "transfer";
   const status: "success" | "fail" = success === "success" ? "success" : "fail";
   const sender = tx.from;
@@ -206,10 +212,9 @@ export function parseEvmToTransaction(
 
   if (tx.input !== "0x") {
     const functionSignature = tx.input.slice(0, 10); // First 4 bytes is the function selector
-    const erc20TransferSignature = "0xa9059cbb"; // ERC-20 transfer function signature
+
     if (functionSignature === erc20TransferSignature) {
       // ERC-20 Token Transfer
-      contractAction = "transfer";
       to = `0x${tx.input.slice(34, 74)}`; // Extract the 'to' address from the input data
       amount = BigInt(`0x${tx.input.slice(74, 138)}`); // Extract and convert the amount
       contract = tx.to || "";
@@ -218,13 +223,13 @@ export function parseEvmToTransaction(
   }
 
   return {
-    token: token?.id || tokenLog[1] || "",
+    token: token?.id || tokenLog[1] || contract || "",
     from: tx.from,
     to,
     type: txType,
     status,
     hash: tx.hash,
-    contract,
+    contract: contractHash || contract,
     contractAction,
     sender,
     memo,
