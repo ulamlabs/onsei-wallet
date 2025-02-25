@@ -22,11 +22,12 @@ type NFTDetailsScreenProps = NativeStackScreenProps<
 >;
 
 export default function NFTDetailsScreen({
+  navigation,
   route: {
     params: { nft },
   },
 }: NFTDetailsScreenProps) {
-  const { error, info } = useToastStore();
+  const { error } = useToastStore();
 
   const description = getNFTDescription(nft);
   const imageSrc = getNFTImage(nft);
@@ -41,7 +42,7 @@ export default function NFTDetailsScreen({
   };
 
   const handleSend = () => {
-    info({ description: "Coming soon" });
+    navigation.navigate("Send NFT - Address", { nft });
   };
 
   return (

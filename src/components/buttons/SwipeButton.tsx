@@ -17,17 +17,19 @@ import {
 import { Row } from "../layout";
 import { Text } from "../typography";
 
-type Props = {
+type SwipeButtonProps = {
+  title: string;
   disabled?: boolean;
   setScrolling: Dispatch<SetStateAction<boolean>>;
   onSuccess: () => void;
 };
 
 export default function SwipeButton({
+  title,
   disabled,
   setScrolling,
   onSuccess,
-}: Props) {
+}: SwipeButtonProps) {
   const [translateX] = useState<Animated.Value & { _value?: number }>(
     new Animated.Value(0),
   );
@@ -192,7 +194,7 @@ export default function SwipeButton({
         <Text
           style={{ fontFamily: FontWeights.bold, fontSize: FontSizes.base }}
         >
-          Swipe to send
+          {title}
         </Text>
         <Row style={{ width: 48, gap: 0, paddingRight: 16 }}>
           <Animated.View style={{ opacity: arrowOpacity1 }}>

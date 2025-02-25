@@ -24,22 +24,22 @@ export default function MoreOptions<T>({ options, icon }: MoreOptionsProps<T>) {
   };
   const hasMoreOptions = !!options?.length;
 
+  if (!hasMoreOptions) {
+    return null;
+  }
+
   return (
     <View>
-      {hasMoreOptions && (
-        <Pressable onPress={handleMoreOptionsPress} ref={moreOptionsButtonRef}>
-          {icon ?? <More color={Colors.text} size={28} />}
-        </Pressable>
-      )}
-      {hasMoreOptions && (
-        <Dropdown
-          visible={showMoreOptions}
-          options={options}
-          buttonRef={moreOptionsButtonRef}
-          onClose={() => setShowMoreOptions(false)}
-          onSelect={handleMoreOptionsSelect}
-        />
-      )}
+      <Pressable onPress={handleMoreOptionsPress} ref={moreOptionsButtonRef}>
+        {icon ?? <More color={Colors.text} size={28} />}
+      </Pressable>
+      <Dropdown
+        visible={showMoreOptions}
+        options={options}
+        buttonRef={moreOptionsButtonRef}
+        onClose={() => setShowMoreOptions(false)}
+        onSelect={handleMoreOptionsSelect}
+      />
     </View>
   );
 }

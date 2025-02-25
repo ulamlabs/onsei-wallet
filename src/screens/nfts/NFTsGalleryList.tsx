@@ -48,7 +48,7 @@ const cardSize =
 
 type NFTGalleryCardProps = {
   nft: NFTInfo;
-  onPress: () => void;
+  onPress?: () => void;
 };
 
 export function NFTGalleryCard({ nft, onPress }: NFTGalleryCardProps) {

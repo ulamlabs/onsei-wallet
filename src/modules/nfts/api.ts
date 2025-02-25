@@ -71,12 +71,12 @@ async function getContractAddressesByCodeIds(
   if (!codeIds) {
     return [];
   }
-  const contractAddresses = [];
-  for (const codeId of codeIds) {
-    const contracts = await fetchCW721Contracts(codeId, node);
-    contractAddresses.push(...contracts);
-  }
-  return contractAddresses;
+
+  const contracts = await Promise.all(
+    codeIds.map((codeId) => fetchCW721Contracts(codeId, node)),
+  );
+
+  return contracts.flat();
 }
 
 async function fetchTokenMetadata(

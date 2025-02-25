@@ -196,38 +196,27 @@ export default function TransferSendingScreen({
     resetNavigationStack(navigation);
   }
 
-  function getContent() {
-    if (loading) {
-      return (
-        <>
-          <Loader size="large" systemLoader={false} />
-          <Headline>Sending ...</Headline>
-        </>
-      );
-    }
-
-    if (error) {
-      return (
-        <>
-          <ResultHeader
-            type="Fail"
-            header="Something went wrong"
-            description={error}
-          />
-          <TertiaryButton onPress={done} title="Close" />
-        </>
-      );
-    }
-
-    return <></>;
-  }
-
   return (
     <SafeLayoutBottom>
       <Column
         style={{ justifyContent: "center", flex: 1, alignItems: "center" }}
       >
-        {getContent()}
+        {loading && (
+          <>
+            <Loader size="large" systemLoader={false} />
+            <Headline>Sending ...</Headline>
+          </>
+        )}
+        {error && (
+          <>
+            <ResultHeader
+              type="Fail"
+              header="Something went wrong"
+              description={error}
+            />
+            <TertiaryButton onPress={done} title="Close" />
+          </>
+        )}
       </Column>
     </SafeLayoutBottom>
   );

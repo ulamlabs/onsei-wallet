@@ -82,6 +82,7 @@ function NFTGalleryStates() {
   if (listStates.isSuccess && nfts.isSuccess) {
     return <NFTsGalleryContent nfts={nfts.data} />;
   }
+  return <ErrorNFTsGallery />;
 }
 
 const styles = StyleSheet.create({

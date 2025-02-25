@@ -20,8 +20,8 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Scan, TickCircle } from "iconsax-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { SectionList, View } from "react-native";
-import { isAddress } from "viem";
 import AddressBox from "./AddressBox";
+import getChain from "@/utils/getChain";
 
 type TransferSelectAddressScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -139,7 +139,7 @@ export default function TransferSelectAddressScreen({
           <Row style={{ justifyContent: "flex-start" }}>
             <TickCircle variant="Bold" color={Colors.success} />
             <Text style={{ color: Colors.success }}>
-              Correct {isAddress(typedAddress) ? "EVM" : "SEI"} address
+              {["Correct", getChain(typedAddress), "address"].join(" ")}
             </Text>
           </Row>
         )}
@@ -198,9 +198,7 @@ export default function TransferSelectAddressScreen({
               >
                 {data.section.title}
               </Text>
-            ) : (
-              <></>
-            );
+            ) : null;
           }}
         />
 

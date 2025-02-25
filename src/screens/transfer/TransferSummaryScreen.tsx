@@ -95,7 +95,7 @@ export default function TransferSummaryScreen({
       .catch(() => setEstimationFailed(true));
   }
 
-  function send() {
+  function handleSwipeCompleted() {
     if (!fee) {
       return;
     }
@@ -154,7 +154,8 @@ export default function TransferSummaryScreen({
         )}
       </View>
       <SwipeButton
-        onSuccess={send}
+        title="Swipe to send"
+        onSuccess={handleSwipeCompleted}
         disabled={!fee || !hasFundsForFee}
         setScrolling={setScrollEnabled}
       />

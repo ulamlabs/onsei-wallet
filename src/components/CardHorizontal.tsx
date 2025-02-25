@@ -28,9 +28,13 @@ export default function CardHorizontal({
         }}
       />
       <View style={styles.cardInfo}>
-        {typeof title === "string" ? <BasicCardTitle title={title} /> : title}
+        {typeof title === "string" ? (
+          <BasicCardHorizontalTitle title={title} />
+        ) : (
+          title
+        )}
         {typeof subtitle === "string" ? (
-          <BasicCardSubtitle subtitle={subtitle} />
+          <BasicCardHorizontalSubtitle subtitle={subtitle} />
         ) : (
           subtitle
         )}
@@ -39,19 +43,23 @@ export default function CardHorizontal({
   );
 }
 
-type BasicCardTitleProps = {
+type BasicCardHorizontalTitleProps = {
   title: string;
 };
 
-export function BasicCardTitle({ title }: BasicCardTitleProps) {
+export function BasicCardHorizontalTitle({
+  title,
+}: BasicCardHorizontalTitleProps) {
   return <Text style={styles.cardTitle}>{title}</Text>;
 }
 
-type BasicCardSubtitleProps = {
+type BasicCardHorizontalSubtitleProps = {
   subtitle: string;
 };
 
-export function BasicCardSubtitle({ subtitle }: BasicCardSubtitleProps) {
+export function BasicCardHorizontalSubtitle({
+  subtitle,
+}: BasicCardHorizontalSubtitleProps) {
   return <Text style={styles.cardSubtitle}>{subtitle}</Text>;
 }
 

@@ -1,15 +1,19 @@
-import { View, StyleSheet } from "react-native";
-import { Box, OptionGroup, Text } from "@/components";
+import { View, StyleSheet, Pressable } from "react-native";
+import { Box, OptionGroup, Paragraph, Text } from "@/components";
 import { Colors, FontSizes, FontWeights } from "@/styles";
 import SectionTitle from "./SectionTitle";
 import { trimAddress } from "@/utils";
-import { NFTInfo, useCollectionMinter } from "@/modules/nfts/api";
+import { NFTInfo } from "@/modules/nfts/api";
 import { ReactNode } from "react";
-import Skeleton from "@/components/Skeleton";
+import getChain from "@/utils/getChain";
+import getNFTStandard from "@/utils/getNFTStandard";
+import { InfoCircle } from "iconsax-react-native";
+import { useModalStore } from "@/store";
 
 type DetailItem = {
   title: string;
   value: ReactNode;
+  info?: string;
 };
 
 type DetailsSectionProps = {
@@ -17,7 +21,7 @@ type DetailsSectionProps = {
 };
 
 export const DetailsSection = ({ nft }: DetailsSectionProps) => {
-  const collectionMinter = useCollectionMinter(nft.collection.contractAddress);
+  const { alert } = useModalStore();
 
   const data = [
     {
@@ -25,20 +29,17 @@ export const DetailsSection = ({ nft }: DetailsSectionProps) => {
       value: trimAddress(nft.collection.contractAddress),
     },
     {
-      title: "Minter",
-      value: collectionMinter.isLoading ? (
-        <Skeleton width={120} height={24} />
-      ) : (
-        trimAddress(collectionMinter.data?.minter ?? "")
-      ),
+      title: "Token Standard",
+      value: getNFTStandard(nft.collection.contractAddress),
+    },
+    {
+      title: "Chain",
+      value: getChain(nft.collection.contractAddress),
     },
     {
       title: "Royalty",
       value: `${nft.info.extension?.royalty_percentage}%`,
-    },
-    {
-      title: "Royalty recipient",
-      value: trimAddress(nft.info.extension?.royalty_payment_address),
+      info: "The percentage of the sale price that the creator will receive as a royalty.",
     },
   ] satisfies DetailItem[];
 
@@ -48,7 +49,34 @@ export const DetailsSection = ({ nft }: DetailsSectionProps) => {
       <OptionGroup>
         {data.map((item) => (
           <Box key={item.title} style={styles.item}>
-            <Text style={styles.title}>{item.title}</Text>
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
+            >
+              <Text style={styles.title}>{item.title}</Text>
+              {item.info && (
+                <Pressable
+                  onPress={() =>
+                    alert({
+                      title: "",
+                      description: (
+                        <Paragraph size="base" style={styles.infoDescription}>
+                          {item.info}
+                        </Paragraph>
+                      ),
+                      icon: InfoCircle,
+                      ok: "Got it",
+                      iconStyle: { transform: [{ rotate: "180deg" }] },
+                    })
+                  }
+                >
+                  <InfoCircle
+                    size={18}
+                    color={Colors.text100}
+                    style={{ transform: [{ rotate: "180deg" }] }}
+                  />
+                </Pressable>
+              )}
+            </View>
             <Text style={styles.value}>{item.value}</Text>
           </Box>
         ))}
@@ -77,5 +105,12 @@ const styles = StyleSheet.create({
   },
   item: {
     borderRadius: 0,
+  },
+  infoDescription: {
+    color: Colors.text,
+    fontFamily: FontWeights.regular,
+    fontSize: FontSizes.lg,
+    lineHeight: 27,
+    letterSpacing: 0,
   },
 });

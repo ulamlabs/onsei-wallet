@@ -26,16 +26,6 @@ export function mapAttributesFromObject(
   );
 }
 
-export function formatNFTName(name: string | null | undefined) {
-  if (name === undefined) {
-    return "NFT name unavailable";
-  }
-  if (name?.trim() === "" || name === null) {
-    return "Untitled NFT";
-  }
-  return name.trim();
-}
-
 export function getExplorerBaseUrl() {
   const { node } = useSettingsStore.getState().settings;
   return node === "TestNet" ? "testnet.seistream.app" : "seistream.app";

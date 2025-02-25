@@ -22,7 +22,11 @@ export default function AddressBox({
       style={[style]}
       onPress={() => (onPress ? onPress(address.address) : null)}
     >
-      <Box style={{ backgroundColor: Colors.tokenBoxBackground }}>
+      <Box
+        style={{
+          backgroundColor: Colors.tokenBoxBackground,
+        }}
+      >
         <View>
           <Text
             style={{ fontFamily: FontWeights.bold, fontSize: FontSizes.base }}
