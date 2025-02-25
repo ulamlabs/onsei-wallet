@@ -94,6 +94,11 @@ export default function TransferSelectAddressScreen({
     });
   }
 
+  function onSavedAddressClick(recipientAddress:string){
+    searchInput.onChangeText(recipientAddress);
+    validateTypedAddress();
+  }
+
   function validateTypedAddress() {
     if (isCorrectAddress(typedAddress)) {
       select(typedAddress);
@@ -192,7 +197,7 @@ export default function TransferSelectAddressScreen({
           renderItem={(data) => (
             <AddressBox
               address={data.item}
-              onPress={select}
+              onPress={onSavedAddressClick}
               key={data.item.address}
               style={{ marginBottom: 10 }}
             />
