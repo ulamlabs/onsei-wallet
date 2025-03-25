@@ -1,4 +1,19 @@
-# onsei wallet
+# Onsei Wallet
+
+Onsei Wallet is an open-source, non-custodial wallet built for the Sei Network. This repository serves as a minimal reference implementation that can be used as a starting point for developers building their own wallet solutions or integrating Sei-related functionality into other applications.
+
+## Features
+
+- Sending and receiving SEI tokens
+- Viewing transaction history
+- Managing address book entries
+- Creating new wallets using mnemonic phrases
+- Importing existing wallets
+- Setting custom network fee parameters
+- Enabling biometric and PIN-based security
+- Configuring in-app notifications
+
+This project is intended as an open-source example that can be adapted and extended to meet different needs across the Sei ecosystem.
 
 # Getting Started
 
