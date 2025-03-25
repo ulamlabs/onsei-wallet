@@ -1,5 +1,9 @@
 # Onsei Wallet
 
+![alt text][logo]
+
+[logo]: https://github.com/ulamlabs/onsei-wallet/blob/master/assets/ulam_labs.png "ULAM LABS"
+
 Onsei Wallet is an open-source, non-custodial wallet built for the Sei Network. This repository serves as a minimal reference implementation that can be used as a starting point for developers building their own wallet solutions or integrating Sei-related functionality into other applications.
 
 ## Features
