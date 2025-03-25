@@ -1,8 +1,10 @@
 # Onsei Wallet
 
-![alt text][logo]
-
-[logo]: https://github.com/ulamlabs/onsei-wallet/blob/master/assets/ulam_labs.png "ULAM LABS"
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/ulamlabs/onsei-wallet/blob/master/assets/ulam_labs.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/ulamlabs/onsei-wallet/blob/bc7674dfd78d2d70af0fcd69d3f61843f2779682/assets/ulam_labs_black.png">
+  <img alt="Shows a black logo in light color mode and a white one in dark color mode." src="">
+</picture>
 
 Onsei Wallet is an open-source, non-custodial wallet built for the Sei Network. This repository serves as a minimal reference implementation that can be used as a starting point for developers building their own wallet solutions or integrating Sei-related functionality into other applications.
 
@@ -30,6 +32,11 @@ ULAM LABS does not make any warranties, express or implied, and shall not be hel
 Developers are encouraged to review, test, and audit the code before deploying or integrating it into their own applications.
 
 For licensing terms, see the LICENSE file included in this repository.
+
+## The Onsei Wallet (testnet version) is available on the App Store and Google Play. It can be downloaded for testing and exploration purposes.
+
+- [Download on the App Store](https://apps.apple.com/pl/app/onsei-wallet/id6498712168?l=pl)
+- [Download on Google Play](https://play.google.com/store/apps/details?id=com.ulamlabs.seiwallet)
 
 # Getting Started
 
