@@ -54,8 +54,14 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
     const { nonNativeRegistry, tokenRegistry, tokenPricesMap, getPrices } =
       get();
 
-    const exists = nonNativeRegistry.find((t) => t.id === newToken.id);
-    if (exists) {
+    const existsOnSei = nonNativeRegistry.some((t) => t.id === newToken.id);
+    const existsOnEvm = newToken.pointerContract
+      ? nonNativeRegistry.some(
+          (t) => t.id === newToken.pointerContract?.toLowerCase(),
+        )
+      : false;
+
+    if (existsOnSei && existsOnEvm) {
       return;
     }
 
@@ -68,8 +74,38 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
       timestamp: new Date(),
     });
 
-    const updatedRegistry = [...tokenRegistry, newToken];
-    const updatedNonNativeRegistry = [...nonNativeRegistry, newToken];
+    const tokenFromPointer = newToken.pointerContract
+      ? ({
+          ...newToken,
+          id: newToken.pointerContract.toLowerCase(),
+          pointerContract: newToken.pointerContract.toLowerCase(),
+        } as CosmToken)
+      : null;
+
+    let updatedRegistry = [...tokenRegistry];
+    let updatedNonNativeRegistry = [...nonNativeRegistry];
+
+    if (existsOnSei && !existsOnEvm && tokenFromPointer) {
+      updatedRegistry = [...updatedRegistry, tokenFromPointer];
+      updatedNonNativeRegistry = [
+        ...updatedNonNativeRegistry,
+        tokenFromPointer,
+      ];
+    } else if (!existsOnSei && existsOnEvm) {
+      updatedRegistry = [...updatedRegistry, newToken];
+      updatedNonNativeRegistry = [...updatedNonNativeRegistry, newToken];
+    } else if (!existsOnSei && !existsOnEvm) {
+      updatedRegistry = [
+        ...updatedRegistry,
+        newToken,
+        ...(tokenFromPointer ? [tokenFromPointer] : []),
+      ];
+      updatedNonNativeRegistry = [
+        ...updatedNonNativeRegistry,
+        newToken,
+        ...(tokenFromPointer ? [tokenFromPointer] : []),
+      ];
+    }
 
     saveToStorage(getRegistryKey(), updatedRegistry);
     saveToStorage(getNonNativeKey(), updatedNonNativeRegistry);
@@ -149,6 +185,9 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
     const uniqueNativeTokens = nativeTokens.filter(
       (t) => !registryTokensIds.has(t.id),
     );
+    const nonNativeTokens = registryTokens.filter(
+      (token) => token.type === "erc20" || token.type === "cw20",
+    );
 
     const tokenRegistry = [
       ...registryTokens,
@@ -160,6 +199,7 @@ export const useTokenRegistryStore = create<TokenRegistryStore>((set, get) => ({
     set({
       tokenRegistry,
       tokenRegistryMap: tokensToMap(tokenRegistry),
+      nonNativeRegistry: nonNativeTokens,
     });
   },
 }));
@@ -259,7 +299,7 @@ function parseRegistryToken(token: RegistryToken): CosmToken {
     type:
       (token.type_asset === "sdk.coin" ? "native" : token.type_asset) ??
       "native",
-    id: token.base,
+    id: token.type_asset === "erc20" ? token.base.toLowerCase() : token.base,
     decimals: getDecimals(token.denom_units),
     name: token.name,
     symbol: token.symbol,

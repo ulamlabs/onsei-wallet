@@ -23,6 +23,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { SearchNormal } from "iconsax-react-native";
 import { useEffect, useState } from "react";
 import { FlatList, View } from "react-native";
+import { isAddress as isEvmAddress } from "viem";
 import TokenToggleBox from "./TokenToggleBox";
 
 const TOKENS_PER_PAGE = 20;
@@ -51,7 +52,10 @@ export default function ManageTokensScreen({ navigation }: Props) {
   }, [searchInput.value]);
 
   async function updateTokens() {
-    if (isValidSeiCosmosAddress(searchInput.value)) {
+    if (
+      isValidSeiCosmosAddress(searchInput.value) ||
+      isEvmAddress(searchInput.value)
+    ) {
       await fetchToken();
       return;
     }
@@ -162,16 +166,18 @@ export default function ManageTokensScreen({ navigation }: Props) {
             data={tokens}
             nestedScrollEnabled={true}
             ListHeaderComponent={<View style={{ height: 12 }} />}
-            renderItem={({ item: token }) => (
-              <View style={{ marginVertical: 6 }}>
-                <TokenToggleBox
-                  token={token}
-                  key={token.id}
-                  selected={isSelected(token.id)}
-                  onToggle={() => onToggle(token)}
-                />
-              </View>
-            )}
+            renderItem={({ item: token }) =>
+              token.id === token.pointerContract ? null : (
+                <View style={{ marginVertical: 6 }}>
+                  <TokenToggleBox
+                    token={token}
+                    key={token.id}
+                    selected={isSelected(token.id)}
+                    onToggle={() => onToggle(token)}
+                  />
+                </View>
+              )
+            }
             onEndReached={addTokensToList}
             onEndReachedThreshold={0.3}
           />

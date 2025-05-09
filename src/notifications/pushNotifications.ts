@@ -62,7 +62,7 @@ export async function notifyTx(
   const { tokenRegistryMap, refreshRegistryCache } =
     useTokenRegistryStore.getState();
   const { updateBalances } = useTokensStore.getState();
-  const { activeAccount } = useAccountsStore.getState();
+  const { activeAccount, accounts } = useAccountsStore.getState();
 
   if (!tx.token || !tx.to) {
     // We only care about incoming token transfers. We can't reliably link the tx to the account for other tx types.
@@ -78,7 +78,12 @@ export async function notifyTx(
     await refreshRegistryCache();
   }
 
-  if (addresses.has(tx.sender)) {
+  if (
+    addresses.has(tx.sender) ||
+    accounts.some(
+      (acc) => acc.evmAddress.toLowerCase() === tx.sender.toLowerCase(),
+    )
+  ) {
     // Don't notify user's own transactions.
     return false;
   }

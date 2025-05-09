@@ -80,6 +80,11 @@ export default function TransferSelectAddressScreen({
     [typedAddress],
   );
 
+  const evmTransactionNotLinkedError = useMemo(
+    () => isAddress(typedAddress) && !activeAccount?.addressLinked,
+    [typedAddress, activeAccount],
+  );
+
   function select(recipientAddress: string) {
     const name = [...allAddressBook, ...allAccounts].find(
       (address) => address.address === recipientAddress,
@@ -87,6 +92,11 @@ export default function TransferSelectAddressScreen({
     navigation.navigate("transferSelectToken", {
       recipient: { address: recipientAddress, name },
     });
+  }
+
+  function onSavedAddressClick(recipientAddress: string) {
+    searchInput.onChangeText(recipientAddress);
+    validateTypedAddress();
   }
 
   function validateTypedAddress() {
@@ -150,6 +160,12 @@ export default function TransferSelectAddressScreen({
           </Paragraph>
         )}
 
+        {evmTransactionNotLinkedError && (
+          <Paragraph style={{ textAlign: "center" }}>
+            Account is not linked, unable to do transactions to EVM addresses
+          </Paragraph>
+        )}
+
         {addressFocused && (
           <ClipboardAddressBox
             onPaste={(content) => {
@@ -181,7 +197,7 @@ export default function TransferSelectAddressScreen({
           renderItem={(data) => (
             <AddressBox
               address={data.item}
-              onPress={select}
+              onPress={onSavedAddressClick}
               key={data.item.address}
               style={{ marginBottom: 10 }}
             />
@@ -220,7 +236,12 @@ export default function TransferSelectAddressScreen({
       <PrimaryButton
         title="Next"
         onPress={validateTypedAddress}
-        disabled={!searchInput.value || isInvalidAddress || sameAddressError}
+        disabled={
+          !searchInput.value ||
+          isInvalidAddress ||
+          sameAddressError ||
+          evmTransactionNotLinkedError
+        }
         elevate
       />
     </SafeLayout>

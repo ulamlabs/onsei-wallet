@@ -8,6 +8,13 @@ export function getTxEventQueries(address: string) {
   ];
 }
 
+export function getRpcQueries(address: string) {
+  return [
+    `coin_spent.spender%3D%27${address}%27`,
+    `coin_received.receiver%3D%27${address}%27`,
+  ];
+}
+
 export const serializeTxn = (txn: Transaction) => {
   return {
     ...txn,
