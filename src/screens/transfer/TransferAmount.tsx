@@ -37,8 +37,6 @@ export default function TransferAmount({
       return (
         <Text
           style={[{ color: error ? Colors.danger : Colors.text }, styles.text]}
-          adjustsFontSizeToFit={true}
-          numberOfLines={1}
         >
           {formattedAmount || 0} {token.symbol}
         </Text>
@@ -89,7 +87,7 @@ export default function TransferAmount({
 
 const styles = StyleSheet.create({
   text: {
-    fontSize: 40,
+    fontSize: 18,
     fontFamily: FontWeights.bold,
     textAlign: "center",
   },
