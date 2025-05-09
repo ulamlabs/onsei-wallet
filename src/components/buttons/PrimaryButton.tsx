@@ -8,6 +8,7 @@ export default function PrimaryButton({
 }: BaseButtonProps) {
   return (
     <BaseButton
+      disabled={disabled}
       {...props}
       color={disabled ? Colors.disabledButtonText : Colors.background}
       style={[
@@ -18,7 +19,6 @@ export default function PrimaryButton({
         },
         styles,
       ]}
-      disabled={disabled}
       textStyle={{ fontSize: 16 }}
     />
   );

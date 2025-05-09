@@ -49,13 +49,15 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import BottomBarsNavigation from "./BottomBarsNavigation";
 import { navigatorScreenOptions } from "./const";
-import AddressBookHeaderOptions from "./header/AddressBookHeader";
 import CancelHeaderRight from "./header/CancelHeaderRight";
 import DefaultHeaderLeft from "./header/DefaultHeaderLeft";
 import DefaultHeaderTitle from "./header/DefaultHeaderTitle";
 import { newWalletScreenOptions } from "./header/NewWalletHeader";
 import { SettingsHeaderLeft } from "./header/SettingsHeaderLeft";
 import SettingsHeaderRight from "./header/SettingsHeaderRight";
+import BridgeAggregatorAssets from "@/screens/bridgeAggregator/BridgeAggregatorAssets";
+import BridgeAggregatorChains from "@/screens/bridgeAggregator/BridgeAggregatorChains";
+import AddressBookHeaderOptions from "./header/AddressBookHeader";
 
 export type Recipient = {
   address: string;
@@ -137,6 +139,8 @@ export type HomeParamList = {
   "Connected Apps": undefined;
   "Link Addresses": { address: string };
   "Address Book": AddressBookNavParams;
+  BridgeAssets: undefined;
+  BridgeChains: undefined;
 };
 
 const { Navigator, Screen } = createNativeStackNavigator<HomeParamList>();
@@ -286,6 +290,20 @@ export default function HomeNavigation() {
         name="Address Book"
         component={AddressBook}
         options={({ route }) => AddressBookHeaderOptions(route, "Address Book")}
+      />
+      <Screen
+        name="BridgeAssets"
+        component={BridgeAggregatorAssets}
+        options={{
+          title: "Select token",
+        }}
+      />
+      <Screen
+        name="BridgeChains"
+        component={BridgeAggregatorChains}
+        options={{
+          title: "Select network",
+        }}
       />
     </Navigator>
   );

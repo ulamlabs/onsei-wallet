@@ -1,6 +1,5 @@
 import { useToastStore } from "@/store";
 import { Colors } from "@/styles";
-import { scale, verticalScale } from "@/utils";
 import { useNavigation } from "@react-navigation/native";
 import React, { PropsWithChildren, useCallback, useState } from "react";
 import {
@@ -12,7 +11,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import useSafeLayoutPaddings from "./useSafeLayoutPaddings";
 
 type LayoutProps = PropsWithChildren & {
   staticView?: boolean;
@@ -32,13 +31,10 @@ export default function SafeLayout({
   containerStyle,
 }: LayoutProps) {
   const [refreshing, setRefreshing] = useState(false);
-  const insets = useSafeAreaInsets();
+  const layoutPaddings = useSafeLayoutPaddings();
   const layoutStyle: ViewStyle = {
     minHeight: "100%",
-    paddingTop: verticalScale(24), // No need for insets at the top, beacuse header handles it
-    paddingBottom: Math.max(verticalScale(50), insets.bottom),
-    paddingLeft: Math.max(scale(16), insets.left),
-    paddingRight: Math.max(scale(16), insets.right),
+    ...layoutPaddings,
   };
   const { error } = useToastStore();
   const navigation = useNavigation();

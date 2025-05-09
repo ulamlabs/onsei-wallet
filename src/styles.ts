@@ -48,6 +48,20 @@ export const Colors = {
   disabledButtonText: "#8A8A8A",
   disabledPrimaryButtonBackground: "#505050",
   transparent: "rgba(18,18,18,0)",
+  grey950: "#030303",
+  grey925: "#0B0B0B",
+  grey900: "#101010",
+  grey851: "#161616",
+  grey850: "#171717",
+  grey826: "#1D1D1D",
+  grey825: "#1E1E1E",
+  grey801: "#232323",
+  grey800: "#242424",
+  grey750: "#292929",
+  grey725: "#2E2D2D",
+  grey425: "#939393",
+  grey400: "#9E9E9E",
+  grey50: "#FAFAFA",
 };
 
 export const FontSizes = {
