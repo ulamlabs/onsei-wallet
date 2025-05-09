@@ -7,7 +7,7 @@ import {
 } from "@/components";
 import { useInputState } from "@/hooks";
 import { CosmToken } from "@/services/cosmos";
-import { getSeiAddress } from "@/services/evm";
+import { getSeiAddress, isAddressLinked } from "@/services/evm";
 import { useModalStore, useTokensStore } from "@/store";
 import { NavigatorParamsList } from "@/types";
 import { searchTokens } from "@/utils";
@@ -30,6 +30,7 @@ export default function TransferSelectTokenScreen({
   const tokensStore = useTokensStore();
   const [tokens, setTokens] = useState(tokensStore.tokens);
   const [linkedToSei, setLinkedToSei] = useState(false);
+  const [linkedToEvm, setLinkedToEvm] = useState(false);
   const { alert } = useModalStore();
 
   useEffect(() => {
@@ -38,8 +39,11 @@ export default function TransferSelectTokenScreen({
         const isLinkedToSei = await getSeiAddress(recipient.address);
         setLinkedToSei(!!isLinkedToSei);
         return;
+      } else {
+        const isLinkedToEvm = await isAddressLinked(recipient.address);
+        setLinkedToEvm(!!isLinkedToEvm);
+        return;
       }
-      setLinkedToSei(true);
     }
 
     checkLinked();
@@ -55,6 +59,19 @@ export default function TransferSelectTokenScreen({
         description:
           "You cannot transfer CW20 tokens to an address that is not linked to SEI",
         title: "Cannot transfer CW20 token",
+      });
+      return;
+    }
+
+    if (
+      token.type === "erc20" &&
+      !linkedToEvm &&
+      !isEvmAddress(recipient.address)
+    ) {
+      alert({
+        description:
+          "You cannot transfer ERC20 tokens to an address that is not linked to EVM",
+        title: "Cannot transfer ERC20 token",
       });
       return;
     }

@@ -26,6 +26,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useMemo, useState } from "react";
 import { isAddress as isEvmAddress } from "viem";
 import TransferAmount from "./TransferAmount";
+import { getEVMAddressFromSeiAddress } from "@/services/evm";
 
 type TransferAmountScreenProps = NativeStackScreenProps<
   NavigatorParamsList,
@@ -213,10 +214,17 @@ export default function TransferAmountScreen({
 
   async function feeEstimation(amount: bigint = intAmount) {
     try {
-      if (isEvmAddress(recipient.address)) {
+      const changeAddress =
+        token.type === "erc20" && !isEvmAddress(recipient.address);
+      let newAddress = "";
+      if (changeAddress) {
+        newAddress = await getEVMAddressFromSeiAddress(recipient.address);
+      }
+      const addressToUse = changeAddress ? newAddress : recipient.address;
+      if (isEvmAddress(addressToUse)) {
         const simulation = await simulateEvmTx(
           getMnemonic(activeAccount!.address!),
-          recipient.address as `0x${string}`,
+          addressToUse as `0x${string}`,
           intAmount,
           token,
           decimalAmount,
@@ -234,7 +242,7 @@ export default function TransferAmountScreen({
         return simulation.stdFee;
       }
       const gas = await estimateTransferGas(
-        recipient.address,
+        addressToUse,
         token,
         amount,
         signingClientAndSender || undefined,
