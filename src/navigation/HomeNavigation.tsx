@@ -15,6 +15,7 @@ import PinChangeScreen from "@/screens/auth/PinChangeScreen";
 import PinChangeSuccessScreen from "@/screens/auth/PinChangeSuccessScreen";
 import PinDisableScreen from "@/screens/auth/PinDisableScreen";
 import PinEnableScreen from "@/screens/auth/PinEnableScreen";
+import HistoryScreen from "@/screens/dApps/HistoryScreen";
 import {
   AddWalletScreen,
   ConfirmMnemonicScreen,
@@ -133,6 +134,7 @@ export type HomeParamList = {
   "Transaction details": { transaction: SerializedTx };
   "Connect Wallet": undefined;
   "Connected Apps": undefined;
+  History: undefined;
   "Link Addresses": { address: string };
   "Address Book": { addressCount?: number; allAddressCount?: number };
 };
@@ -279,6 +281,7 @@ export default function HomeNavigation() {
       <Screen name="Transaction details" component={TransactionDetails} />
       <Screen name="Connect Wallet" component={ConnectWalletScreen} />
       <Screen name="Connected Apps" component={ConnectedAppsScreen} />
+      <Screen name="History" component={HistoryScreen} />
       <Screen name="Link Addresses" component={LinkAddressesScreen} />
       <Screen
         name="Address Book"
