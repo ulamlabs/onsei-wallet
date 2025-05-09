@@ -17,6 +17,7 @@ import { useTokensStore } from "./tokens";
 export type AccountOptions = {
   passphraseSkipped: boolean;
   addressLinked: boolean;
+  avatar: string | null;
 };
 
 export type Account = {
@@ -50,6 +51,7 @@ export type AccountsStore = {
   editAccountName: (address: string, newName: string) => void;
   getEvmAddress: (mnemonic: string) => Promise<`0x${string}`>;
   setLinkForAddress: (address: string) => void;
+  setAvatar: (accountAddress: string, avatar: string | null) => void;
 };
 
 export const useAccountsStore = create<AccountsStore>((set, get) => ({
@@ -128,7 +130,7 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
   storeAccount: async (
     name,
     wallet,
-    options = { addressLinked: false, passphraseSkipped: false },
+    options = { addressLinked: false, passphraseSkipped: false, avatar: null },
   ) => {
     const accounts = get().accounts;
     validateEntry(name, wallet.address, accounts);
@@ -140,6 +142,7 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
       evmAddress: wallet.evmAddress,
       passphraseSkipped: options.passphraseSkipped,
       addressLinked: options.addressLinked,
+      avatar: options.avatar,
     };
     set((state) => {
       const accounts = [...state.accounts, account];
@@ -215,6 +218,18 @@ export const useAccountsStore = create<AccountsStore>((set, get) => ({
         accounts: updatedAccounts,
         activeAccount: updatedActive,
       };
+    });
+  },
+  setAvatar: (accountAddress, avatar) => {
+    set((state) => {
+      const updatedAccounts = state.accounts.map((acc) => {
+        if (acc.address === accountAddress) {
+          return { ...acc, avatar };
+        }
+        return acc;
+      });
+      saveToStorage("accounts", updatedAccounts);
+      return { ...state, accounts: updatedAccounts };
     });
   },
 }));

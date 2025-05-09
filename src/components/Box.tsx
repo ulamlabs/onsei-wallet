@@ -3,12 +3,12 @@ import { PropsWithChildren } from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import { Row } from "./layout";
 
-type Props = PropsWithChildren & {
+export type BoxProps = PropsWithChildren & {
   style?: StyleProp<ViewStyle>;
   testID?: string;
 };
 
-export default function Box({ children, style, testID }: Props) {
+export default function Box({ children, style, testID }: BoxProps) {
   return (
     <Row
       testID={testID}

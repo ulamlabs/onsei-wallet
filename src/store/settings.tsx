@@ -6,16 +6,23 @@ import { create } from "zustand";
 
 const SETTINGS_KEY = "settings.json";
 
-const DEFAULT_SETTINGS = {
-  "auth.biometricsEnabled": false,
-  node: "MainNet" as Node,
-  globalGasPrice: "Low" as FeeTier,
-  localGasPrice: "Low" as FeeTier,
-  allowNotifications: true,
-  "walletConnet.sessions": [] as WalletConnectSession[],
+type Settings = {
+  "auth.biometricsEnabled": boolean;
+  node: Node;
+  globalGasPrice: FeeTier;
+  localGasPrice: FeeTier;
+  allowNotifications: boolean;
+  "walletConnet.sessions": WalletConnectSession[];
 };
 
-type Settings = typeof DEFAULT_SETTINGS;
+const DEFAULT_SETTINGS = {
+  "auth.biometricsEnabled": false,
+  node: "MainNet",
+  globalGasPrice: "Low",
+  localGasPrice: "Low",
+  allowNotifications: true,
+  "walletConnet.sessions": [],
+} satisfies Settings;
 
 type SettingsStore = {
   settings: Settings;

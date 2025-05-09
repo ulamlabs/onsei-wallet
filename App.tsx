@@ -36,6 +36,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import "react-native-get-random-values";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { useNFTsGalleryStore } from "@/store/nftsGallery";
+import { PaperProvider } from "react-native-paper";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -62,6 +64,7 @@ export default function App() {
   const tokenRegistryStore = useTokenRegistryStore();
   const isAppActive = useAppIsActive();
   const dAppsStore = useDAppsStore();
+  const nftsGalleryStore = useNFTsGalleryStore();
 
   async function onRestore() {
     await tokenRegistryStore.refreshRegistryCache();
@@ -99,6 +102,7 @@ export default function App() {
       authStore.init(),
       addressStore.init(),
       dAppsStore.init(),
+      nftsGalleryStore.init(),
     ]);
     setReady(true);
   }
@@ -120,7 +124,7 @@ export default function App() {
 
   function getContent() {
     if (!ready || !fontsLoaded || fontError) {
-      return <></>;
+      return null;
     }
     if (onboardingStore.state === "onboarding") {
       return <OnboardingNavigation />;
@@ -134,7 +138,7 @@ export default function App() {
       return <HomeNavigation />;
     }
 
-    return <></>;
+    return null;
   }
 
   return (
@@ -150,37 +154,41 @@ export default function App() {
             <SplashAnimation onFinish={() => setSplashFinished(true)} />
           )}
           <SafeAreaProvider>
-            {!isAppActive && (
-              <SafeLayout
-                containerStyle={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  zIndex: 10,
-                  elevation: 10,
-                  width: "100%",
-                  height: "100%",
-                }}
-              >
-                <View
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flex: 1,
+            <PaperProvider>
+              {!isAppActive && (
+                <SafeLayout
+                  containerStyle={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    zIndex: 10,
+                    elevation: 10,
+                    width: "100%",
+                    height: "100%",
                   }}
                 >
-                  <EyeSlash color={Colors.text} size={100} />
-                </View>
-              </SafeLayout>
-            )}
-            <StatusBar style="light" />
-            {getContent()}
-            <Modals />
-            <Toasts />
-            {ready && hasAccounts && onboardingStore.state !== "onboarding" && (
-              <NotificationsListener />
-            )}
-            <Web3WalletController />
+                  <View
+                    style={{
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flex: 1,
+                    }}
+                  >
+                    <EyeSlash color={Colors.text} size={100} />
+                  </View>
+                </SafeLayout>
+              )}
+              <StatusBar style="light" />
+              {getContent()}
+              <Modals />
+              <Toasts />
+              {ready &&
+                hasAccounts &&
+                onboardingStore.state !== "onboarding" && (
+                  <NotificationsListener />
+                )}
+              <Web3WalletController />
+            </PaperProvider>
           </SafeAreaProvider>
         </PostHogProvider>
       </NavigationContainer>
